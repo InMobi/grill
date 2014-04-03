@@ -1,0 +1,1737 @@
+<wadl:application xmlns:wadl="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <wadl:doc xmlns:enunciate="http://enunciate.codehaus.org/" enunciate:generatedBy="Enunciate-1.25"/>
+  <wadl:grammars>
+    <wadl:include href="ns0.xsd"/>
+  </wadl:grammars>
+  <wadl:resources base="https://github.corp.inmobi.com/pages/platform/grill/wsdocs">
+    <wadl:resource path="/metastore">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[API to know if metastore service is up and running]]>
+        </wadl:doc>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[Simple text saying it up]]>
+          </wadl:doc>
+          <wadl:representation mediaType="text/plain"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[API to know if Query service is up and running]]>
+        </wadl:doc>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[Simple text saying it up]]>
+          </wadl:doc>
+          <wadl:representation mediaType="text/plain"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryscheduler">
+      <wadl:method name="GET">
+        <wadl:response>
+          <wadl:representation mediaType="text/plain"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/quota">
+      <wadl:method name="GET">
+        <wadl:response>
+          <wadl:representation mediaType="text/plain"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/session">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[API to know if session service is up and running]]>
+        </wadl:doc>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[Simple text saying it up]]>
+          </wadl:doc>
+          <wadl:representation mediaType="text/plain"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create a new session with Grill server]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A Session handle unique to this session]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="grillSessionHandle"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Close a Grill server session]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[Session handle object of the session to be closed]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult object indicating if the operation was successful (check result.getStatus())]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/cubes">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all cubes in the metastores]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all cubes names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Delete all cubes]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create a new cube]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The XCube representation of the cube definition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/databases">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all databases in the metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all database names.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create a new database]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The db name]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="ignoreifexist" style="query">
+            <wadl:doc>
+              <![CDATA[If true, create will be ignored if db already exists, otherwise it fails.]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimensions">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all dimension tables in the metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all dimension table names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create a new dimension tabble]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/facts">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all fact tables in the metastores]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all fact table names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Delete all fact tables]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="cascade" style="query"/>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create a new fact tabble]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/storages">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all storages in the metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all the storage names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create new storage]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The XStorage representation of storage]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Delete all storages in metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/preparedqueries">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all prepared queries in the query server; can be filtered with user]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="user" style="query">
+            <wadl:doc>
+              <![CDATA[If any user is passed, all the queries prepared by the user will be returned, otherwise all the queries will be returned]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[List of QueryPrepareHandle objects]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Prepare a query or 'explain and prepare' the query]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[QueryPrepareHandle incase of SubmitOp#PREPARE operation.
+QueryPlan incase of SubmitOp#EXPLAIN_AND_PREPARE and the
+query plan will contain the prepare handle as well.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="querySubmitResult"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Destroy all the prepared queries; Can be filtered with user]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The session in which cancel is issued]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="user" style="query">
+            <wadl:doc>
+              <![CDATA[If any user is passed, all the queries prepared by the user will be destroyed, otherwise all the queries will be destroyed]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful destroy.
+APIResult with state Status#FAILED in case of destroy failure.
+APIResult with state Status#PARTIAL in case of partial destroy.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/queries">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all the queries in the query server; can be filtered with state and user.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="state" style="query">
+            <wadl:doc>
+              <![CDATA[If any state is passed, all the queries in that state will be returned, otherwise all queries will be returned. Possible states are QueryStatus.Status#values()]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="user" style="query">
+            <wadl:doc>
+              <![CDATA[If any user is passed, all the queries submitted by the user will be returned, otherwise all the queries will be returned]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[List of QueryHandle objects]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Submit the query for explain or execute or execute with a timeout]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[QueryHandle in case of SubmitOp#EXECUTE operation.
+QueryPlan in case of SubmitOp#EXPLAIN operation.
+QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="querySubmitResult"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Cancel all the queries in query server; can be filtered with state and user]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The session in which cancel is issued]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="state" style="query">
+            <wadl:doc>
+              <![CDATA[If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be cancelled. Possible states are QueryStatus.Status#values() The queries in QueryStatus.Status#FAILED,QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="user" style="query">
+            <wadl:doc>
+              <![CDATA[If any user is passed, all the queries submitted by the user will be cancelled, otherwise all the queries will be cancelled]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful cancellation.
+APIResult with state Status#FAILED in case of cancellation failure.
+APIResult with state Status#PARTIAL in case of partial cancellation.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/session/params">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get a list of key=value parameters set for this session]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[session handle object]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="verbose" style="query">
+            <wadl:doc>
+              <![CDATA[If true, all the parameters will be returned. If false, configuration parameters will be returned]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="key" style="query">
+            <wadl:doc>
+              <![CDATA[if this is empty, output will contain all parameters and their values, if it is non empty parameters will be filtered by key]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[List of Strings, one entry per key-value pair]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Set value for a parameter specified by key
+
+The parameters can be a system property or a hive variable or a configuration.
+To set key as system property, the key should be prefixed with 'system:'.
+To set key as a hive variable, the key should be prefixed with 'hivevar:'.
+To set key as configuration parameter, the key should be prefixed with 'hiveconf:'.
+If no prefix is attached, the parameter is set as configuration.
+
+System properties are not restricted to the session, they would be set globally]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult object indicating if set operation was successful]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/cubes/{cubename}">
+      <wadl:param name="cubename" style="template">
+        <wadl:doc>
+          <![CDATA[The cube name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Update cube definition]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The XCube representation of the updated cube definition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if udpate has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the cube specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of XCube]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the cube, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/databases/current">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the current database]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[The current db name]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Set the current db]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The db name]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if set was successful.
+APIResult with state Status#FAILED, if set has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/databases/{dbname}">
+      <wadl:param name="dbname" style="template">
+        <wadl:doc>
+          <![CDATA[The db name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Delete the db specified by name. Deleting underlying tables is optional.
+If db does not exist, delete is ignored.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="cascade" style="query">
+            <wadl:doc>
+              <![CDATA[if true, all the tables inside the db will also be dropped.]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if delete was successful.
+APIResult with state Status#FAILED, if delete has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimensions/{dimname}">
+      <wadl:param name="dimname" style="template"/>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Update dimension table definition]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The DimensionTable representation of the updated dim table definition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if udpate has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the dimension table, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="cascade" style="query">
+            <wadl:doc>
+              <![CDATA[if true, all the storage tables of dimension table will also be dropped]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the dimension table specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of DimensionTable]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/facts/{factname}">
+      <wadl:param name="factname" style="template">
+        <wadl:doc>
+          <![CDATA[The fact table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the fact table specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of FactTable]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Update fact table definition]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The FactTable representation of the updated fact table definition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if udpate has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the fact table, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="cascade" style="query">
+            <wadl:doc>
+              <![CDATA[If true, all the storage tables of the fact will also be dropped]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/storages/{storage}">
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Update storage definition]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The XStorage representation of the updated storage definition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if udpate has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the storage specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of XStorage]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the storage, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/preparedqueries/{prepareHandle}">
+      <wadl:param name="prepareHandle" style="template">
+        <wadl:doc>
+          <![CDATA[The prepare handle]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Modify prepared query's configuration. This would be picked up for subsequent runs
+of the prepared queries. The query wont be re-prepared with new configuration.]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful update.
+APIResult with state Status#FAILED in case of udpate failure.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Submit prepared query for execution]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[QueryHandle in case of SubmitOp#EXECUTE operation.
+QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="querySubmitResult"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/preparedqueries/{preparehandle}">
+      <wadl:param name="preparehandle" style="template">
+        <wadl:doc>
+          <![CDATA[The prepare handle]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get a prepared query specified by handle]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[GrillPreparedQuery]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="grillPreparedQuery"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Destroy the prepared query specified by handle]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful destroy.
+APIResult with state Status#FAILED in case of destroy failure.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/queries/{queryhandle}">
+      <wadl:param name="queryhandle" style="template">
+        <wadl:doc>
+          <![CDATA[The query handle]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get grill query and its current status]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[GrillQuery]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="grillQuery"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Cancel the query specified by the handle]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful cancellation.
+APIResult with state Status#FAILED in case of cancellation failure.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Modify query configuration if it is not running yet.]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful update.
+APIResult with state Status#FAILED in case of udpate failure.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/session/resources/add">
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Add a resource to the session to all GrillServices running in this Grill server
+
+<p>
+The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation
+was successful for all services running in this Grill server.
+</p>]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#PARTIAL, if add succeeded only for some services.
+APIResult with state Status#FAILED, if add has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/session/resources/delete">
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Delete a resource from sesssion from all the @{link GrillService}s running in this Grill server
+<p>
+Similar to addResource, this call is successful only if resource was deleted from all services.
+</p>]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if delete was successful.
+APIResult with state Status#PARTIAL, if delete succeeded only for some services.
+APIResult with state Status#FAILED, if delete has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/cubes/{cubename}/facts">
+      <wadl:param name="cubename" style="template"/>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all facts that belong to a cube in the metastores]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[List of FactTable objects]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimensions/{dimname}/storages">
+      <wadl:param name="dimname" style="template">
+        <wadl:doc>
+          <![CDATA[The dimension table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all storages of the dimension table in the metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all the storage names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Add storage to dimension table]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The Storage table description]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#FAILED, if add has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop all the storage tables of a dimension table]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/facts/{factname}/storages">
+      <wadl:param name="factname" style="template">
+        <wadl:doc>
+          <![CDATA[The fact table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all storages of the fact table in the metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all the storage names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop all the storage tables of a fact table]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Add storage to fact table]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The Storage table description]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#FAILED, if add has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/queries/{queryhandle}/resultset">
+      <wadl:param name="queryhandle" style="template">
+        <wadl:doc>
+          <![CDATA[The query handle]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Fetch the result set]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="fromindex" style="query">
+            <wadl:doc>
+              <![CDATA[start index of the result]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="fetchsize" style="query">
+            <wadl:doc>
+              <![CDATA[fetch size]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[QueryResult]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="queryResult"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Close the result set once fetching is done]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful close.
+APIResult with state Status#FAILED in case of close failure.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/queries/{queryhandle}/resultsetmetadata">
+      <wadl:param name="queryhandle" style="template">
+        <wadl:doc>
+          <![CDATA[The query handle]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get resultset metadata of the query]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[QueryResultSetMetadata]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="queryResultSetMetadata"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimensions/{dimname}/storages/{storage}">
+      <wadl:param name="dimname" style="template">
+        <wadl:doc>
+          <![CDATA[The fact table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the dim storage table]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of XStorageTableElement]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the storage of a dimension table, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/facts/{factname}/storages/{storage}">
+      <wadl:param name="factname" style="template">
+        <wadl:doc>
+          <![CDATA[The fact table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the storage of a fact, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the fact storage table]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of XStorageTableElement]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimensions/{dimname}/storages/{storage}/partition">
+      <wadl:param name="dimname" style="template">
+        <wadl:doc>
+          <![CDATA[The dimension table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the partitions in the storage of a dimension table, specified by exact values]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="values" style="query">
+            <wadl:doc>
+              <![CDATA[Comma separated values]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimensions/{dimname}/storages/{storage}/partitions">
+      <wadl:param name="dimname" style="template">
+        <wadl:doc>
+          <![CDATA[The dimension table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all partition of the dimension table in the specified storage;
+can be filtered]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="filter" style="query">
+            <wadl:doc>
+              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of PartitionList containing XPartition objects]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the partitions in the storage of a dimension table; can specified filter as well]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="filter" style="query">
+            <wadl:doc>
+              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Add a new partition for a storage of dimension]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[XPartition representation of partition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#FAILED, if add has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/facts/{factname}/storages/{storage}/partition">
+      <wadl:param name="factname" style="template">
+        <wadl:doc>
+          <![CDATA[The fact table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the partitions in the storage of a fact table, specified by exact values]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="values" style="query">
+            <wadl:doc>
+              <![CDATA[Comma separated values]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/facts/{factname}/storages/{storage}/partitions">
+      <wadl:param name="factname" style="template">
+        <wadl:doc>
+          <![CDATA[The fact table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all partitions of the fact table in the specified storage;
+can be filtered as well.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="filter" style="query">
+            <wadl:doc>
+              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of PartitionList containing XPartition objects]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the partitions in the storage of a fact; can specified filter as well]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="filter" style="query">
+            <wadl:doc>
+              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Add a new partition for a storage of fact]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[XPartition representation of partition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#FAILED, if add has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+  </wadl:resources>
+</wadl:application>

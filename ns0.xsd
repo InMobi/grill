@@ -1,0 +1,282 @@
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="result" type="APIResult"/>
+  <xs:element name="conf" type="grillConf"/>
+  <xs:element name="grillSessionHandle" type="grillSessionHandle"/>
+  <xs:element name="stringList" type="stringList"/>
+  <xs:element name="grillPreparedQuery" type="grillPreparedQuery"/>
+  <xs:element name="grillQuery" type="grillQuery"/>
+  <xs:element name="inMemoryQueryResult" type="inMemoryQueryResult"/>
+  <xs:element name="persistentQueryResult" type="persistentQueryResult"/>
+  <xs:element name="queryCost" type="queryCost"/>
+  <xs:element name="queryHandle" type="queryHandle"/>
+  <xs:element name="queryHandleWithResultSet" type="queryHandleWithResultSet"/>
+  <xs:element name="queryPlan" type="queryPlan"/>
+  <xs:element name="queryPrepareHandle" type="queryPrepareHandle"/>
+  <xs:element name="queryResult" type="queryResult"/>
+  <xs:element name="queryResultSetMetadata" type="queryResultSetMetadata"/>
+  <xs:element name="queryStatus" type="queryStatus"/>
+  <xs:element name="querySubmitResult" type="querySubmitResult"/>
+  <xs:element name="resultColumn" type="resultColumn"/>
+  <xs:element name="resultColumnType" type="resultColumnType"/>
+  <xs:element name="resultRow" type="resultRow"/>
+  <xs:complexType name="APIResult">
+    <xs:sequence>
+      <xs:element name="status" type="status" minOccurs="0"/>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SUCCEEDED"/>
+      <xs:enumeration value="PARTIAL"/>
+      <xs:enumeration value="FAILED"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="grillConf">
+    <xs:sequence>
+      <xs:element name="properties" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="key" minOccurs="1" type="xs:string"/>
+                  <xs:element name="value" minOccurs="1" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="grillSessionHandle">
+    <xs:sequence>
+      <xs:element name="secretId" type="xs:string" minOccurs="0"/>
+      <xs:element name="publicId" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="priority">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VERY_HIGH"/>
+      <xs:enumeration value="HIGH"/>
+      <xs:enumeration value="NORMAL"/>
+      <xs:enumeration value="LOW"/>
+      <xs:enumeration value="VERY_LOW"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="stringList">
+    <xs:sequence>
+      <xs:element name="elements" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="grillPreparedQuery">
+    <xs:sequence>
+      <xs:element name="conf" type="grillConf" minOccurs="0"/>
+      <xs:element name="preparedTime" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="selectedDriverClassName" type="xs:string" minOccurs="0"/>
+      <xs:element name="preparedUser" type="xs:string" minOccurs="0"/>
+      <xs:element name="userQuery" type="xs:string" minOccurs="0"/>
+      <xs:element name="driverQuery" type="xs:string" minOccurs="0"/>
+      <xs:element name="prepareHandle" type="queryPrepareHandle" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="grillQuery">
+    <xs:sequence>
+      <xs:element name="userQuery" type="xs:string" minOccurs="0"/>
+      <xs:element name="priority" type="priority" minOccurs="0"/>
+      <xs:element name="driverOpHandle" type="xs:string" minOccurs="0"/>
+      <xs:element name="queryHandle" type="queryHandle" minOccurs="0"/>
+      <xs:element name="isPersistent" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="queryConf" type="grillConf" minOccurs="0"/>
+      <xs:element name="submittedUser" type="xs:string" minOccurs="0"/>
+      <xs:element name="submissionTime" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="driverQuery" type="xs:string" minOccurs="0"/>
+      <xs:element name="resultSetPath" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="queryStatus" minOccurs="0"/>
+      <xs:element name="selectedDriverClassName" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="inMemoryQueryResult">
+    <xs:complexContent>
+      <xs:extension base="queryResult">
+        <xs:sequence>
+          <xs:element name="rows" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="rows" type="resultRow" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="persistentQueryResult">
+    <xs:complexContent>
+      <xs:extension base="queryResult">
+        <xs:sequence>
+          <xs:element name="persistedURI" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="queryCost">
+    <xs:sequence>
+      <xs:element name="estimatedExecTimeMillis" type="xs:long" minOccurs="1"/>
+      <xs:element name="estimatedResourceUsage" type="xs:double" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="queryHandle">
+    <xs:complexContent>
+      <xs:extension base="querySubmitResult">
+        <xs:sequence>
+          <xs:element name="handleId" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="queryHandleWithResultSet">
+    <xs:complexContent>
+      <xs:extension base="querySubmitResult">
+        <xs:sequence>
+          <xs:element name="queryHandle" type="queryHandle" minOccurs="0"/>
+          <xs:element name="result" type="queryResult" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="queryPlan">
+    <xs:complexContent>
+      <xs:extension base="querySubmitResult">
+        <xs:sequence>
+          <xs:element name="planString" type="xs:string" minOccurs="0"/>
+          <xs:element name="hasSubQuery" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="obyWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="prepareHandle" type="queryPrepareHandle" minOccurs="0"/>
+          <xs:element name="queryCost" type="queryCost" minOccurs="0"/>
+          <xs:element name="filterWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="joinWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="numGbys" type="xs:int" minOccurs="1"/>
+          <xs:element name="numAggrExprs" type="xs:int" minOccurs="1"/>
+          <xs:element name="scanMode" type="xs:string" minOccurs="0"/>
+          <xs:element name="numObys" type="xs:int" minOccurs="1"/>
+          <xs:element name="tableWeights" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="key" minOccurs="1" type="xs:string"/>
+                      <xs:element name="value" minOccurs="1" type="xs:double"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="numSels" type="xs:int" minOccurs="1"/>
+          <xs:element name="numSelDi" type="xs:int" minOccurs="1"/>
+          <xs:element name="havingWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="execMode" type="xs:string" minOccurs="0"/>
+          <xs:element name="numFilters" type="xs:int" minOccurs="1"/>
+          <xs:element name="numHaving" type="xs:int" minOccurs="1"/>
+          <xs:element name="selectWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="tablesQueried" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="tablesQueried" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="numJoins" type="xs:int" minOccurs="1"/>
+          <xs:element name="gbyWeight" type="xs:double" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="queryPrepareHandle">
+    <xs:complexContent>
+      <xs:extension base="querySubmitResult">
+        <xs:sequence>
+          <xs:element name="prepareHandleId" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="queryResult"/>
+  <xs:complexType name="queryResultSetMetadata">
+    <xs:sequence>
+      <xs:element name="columns" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="columns" type="resultColumn" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="queryStatus">
+    <xs:sequence>
+      <xs:element name="statusMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="progress" type="xs:double" minOccurs="1"/>
+      <xs:element name="status" type="status" minOccurs="0"/>
+      <xs:element name="isResultSetAvailable" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="progressMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NEW"/>
+      <xs:enumeration value="QUEUED"/>
+      <xs:enumeration value="LAUNCHED"/>
+      <xs:enumeration value="RUNNING"/>
+      <xs:enumeration value="SUCCESSFUL"/>
+      <xs:enumeration value="FAILED"/>
+      <xs:enumeration value="CANCELED"/>
+      <xs:enumeration value="CLOSED"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="querySubmitResult" abstract="true"/>
+  <xs:complexType name="resultColumn">
+    <xs:sequence>
+      <xs:element name="type" type="resultColumnType" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="resultColumnType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BOOLEAN"/>
+      <xs:enumeration value="TINYINT"/>
+      <xs:enumeration value="SMALLINT"/>
+      <xs:enumeration value="INT"/>
+      <xs:enumeration value="BIGINT"/>
+      <xs:enumeration value="FLOAT"/>
+      <xs:enumeration value="DOUBLE"/>
+      <xs:enumeration value="STRING"/>
+      <xs:enumeration value="TIMESTAMP"/>
+      <xs:enumeration value="BINARY"/>
+      <xs:enumeration value="ARRAY"/>
+      <xs:enumeration value="MAP"/>
+      <xs:enumeration value="STRUCT"/>
+      <xs:enumeration value="UNIONTYPE"/>
+      <xs:enumeration value="USER_DEFINED"/>
+      <xs:enumeration value="DECIMAL"/>
+      <xs:enumeration value="NULL"/>
+      <xs:enumeration value="DATE"/>
+      <xs:enumeration value="VARCHAR"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="resultRow">
+    <xs:sequence>
+      <xs:element name="values" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="values" type="xs:anyType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

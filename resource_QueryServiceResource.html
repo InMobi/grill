@@ -1,0 +1,908 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>QueryServiceResource</title>
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS: implied media="all" -->
+  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/prettify.css">
+
+  <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+  <script src="js/libs/modernizr-1.7.min.js"></script>
+
+</head>
+
+<body class="home">
+
+  <div class="container">
+    <header>
+      <div id="header" class="column first last span-20">
+        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">QueryServiceResource</a></div>
+        <div id="primary" class="column span-18 append-1 prepend-1 first last">
+          <ul class="navigation">
+            <li id="nav-rest"><a href="rest.html">REST</a></li>
+            <li id="nav-data"><a href="model.html">Data Model</a></li>
+            <li id="nav-downloads"><a href="downloads.html">Files and Libraries</a></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="xbreadcrumbs" id="breadcrumbs">
+            <li>
+              <a href="index.html" class="home">Home</a> &gt;
+            </li>
+            <li>
+              <a href="rest.html">REST</a> &gt;
+              <ul>
+                <li><a href="model.html">Data Model</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
+                <li><a href="rest.html">REST</a></li>
+              </ul>
+            </li>
+            <li class="current">
+              <a href="resource_QueryServiceResource.html">QueryServiceResource</a>
+              <ul>
+                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
+                <li><a href="resource_MetastoreResource.html">MetastoreResource</a></li>
+                <li><a href="resource_SessionResource.html">SessionResource</a></li>
+                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
+                <li><a href="resource_QueryServiceResource.html">QueryServiceResource</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <div id="main" class="column first last span-20">
+      <h1>QueryServiceResource</h1>
+
+      <p>The following resources are part of this group:</p>
+      <ul>
+        <li><a href="#path__queryapi.html">/queryapi</a></li>
+        <li><a href="#path__queryapi_preparedqueries.html">/queryapi/preparedqueries</a></li>
+        <li><a href="#path__queryapi_queries.html">/queryapi/queries</a></li>
+        <li><a href="#path__queryapi_preparedqueries_-prepareHandle-.html">/queryapi/preparedqueries/{prepareHandle}</a></li>
+        <li><a href="#path__queryapi_preparedqueries_-preparehandle-.html">/queryapi/preparedqueries/{preparehandle}</a></li>
+        <li><a href="#path__queryapi_queries_-queryhandle-.html">/queryapi/queries/{queryhandle}</a></li>
+        <li><a href="#path__queryapi_queries_-queryhandle-_resultset.html">/queryapi/queries/{queryhandle}/resultset</a></li>
+        <li><a href="#path__queryapi_queries_-queryhandle-_resultsetmetadata.html">/queryapi/queries/{queryhandle}/resultsetmetadata</a></li>
+      </ul>
+      <a name="path__queryapi.html"></a>
+      <h1>/queryapi</h1>
+      <p class="note">Mount Point: <a href="../queryapi">/queryapi</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            API to know if Query service is up and running
+          </p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>Simple text saying it up</p>
+      <a name="path__queryapi_preparedqueries.html"></a>
+      <h1>/queryapi/preparedqueries</h1>
+      <p class="note">Mount Point: <a href="../queryapi/preparedqueries">/queryapi/preparedqueries</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#POST">POST</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all prepared queries in the query server; can be filtered with user
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            If any user is passed, all the queries prepared by the user will be returned, otherwise all the queries will be returned
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>List of QueryPrepareHandle objects</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Prepare a query or 'explain and prepare' the query
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which user is preparing the query. Any configuration set in the session will be picked up.
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>query</td>
+          <td>
+            The query to prepare
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>op</td>
+          <td>
+            The operation on the query. Supported operations are SubmitOp#EXPLAIN_AND_PREPARE or SubmitOp#PREPARE
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>conf</td>
+          <td>
+            The configuration for preparing the query
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
+        </tr>
+      </table>
+      <p>QueryPrepareHandle incase of SubmitOp#PREPARE operation.
+QueryPlan incase of SubmitOp#EXPLAIN_AND_PREPARE and the
+query plan will contain the prepare handle as well.</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Destroy all the prepared queries; Can be filtered with user
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which cancel is issued
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            If any user is passed, all the queries prepared by the user will be destroyed, otherwise all the queries will be destroyed
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful destroy.
+APIResult with state Status#FAILED in case of destroy failure.
+APIResult with state Status#PARTIAL in case of partial destroy.</p>
+      <a name="path__queryapi_queries.html"></a>
+      <h1>/queryapi/queries</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries">/queryapi/queries</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#POST">POST</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all the queries in the query server; can be filtered with state and user.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>state</td>
+          <td>
+            If any state is passed, all the queries in that state will be returned, otherwise all queries will be returned. Possible states are QueryStatus.Status#values()
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            If any user is passed, all the queries submitted by the user will be returned, otherwise all the queries will be returned
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>List of QueryHandle objects</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Submit the query for explain or execute or execute with a timeout
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which user is submitting the query. Any configuration set in the session will be picked up.
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>query</td>
+          <td>
+            The query to run
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>op</td>
+          <td>
+            The operation on the query. Supported operations are SubmitOp#EXPLAIN, SubmitOp#EXECUTE and SubmitOp#EXECUTE_WITH_TIMEOUT
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>conf</td>
+          <td>
+            The configuration for the query
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>timeoutmillis</td>
+          <td>
+            The timeout for the query, honored only in case of SubmitOp#EXECUTE_WITH_TIMEOUT operation
+          </td>
+          <td>formdata</td>
+          <td>30000</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
+        </tr>
+      </table>
+      <p>QueryHandle in case of SubmitOp#EXECUTE operation.
+QueryPlan in case of SubmitOp#EXPLAIN operation.
+QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Cancel all the queries in query server; can be filtered with state and user
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which cancel is issued
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>state</td>
+          <td>
+            If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be cancelled. Possible states are QueryStatus.Status#values() The queries in QueryStatus.Status#FAILED,QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            If any user is passed, all the queries submitted by the user will be cancelled, otherwise all the queries will be cancelled
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful cancellation.
+APIResult with state Status#FAILED in case of cancellation failure.
+APIResult with state Status#PARTIAL in case of partial cancellation.</p>
+      <a name="path__queryapi_preparedqueries_-prepareHandle-.html"></a>
+      <h1>/queryapi/preparedqueries/{prepareHandle}</h1>
+      <p class="note">Mount Point: <a href="../queryapi/preparedqueries/{prepareHandle}">/queryapi/preparedqueries/{prepareHandle}</a></p>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Modify prepared query's configuration. This would be picked up for subsequent runs
+of the prepared queries. The query wont be re-prepared with new configuration.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>prepareHandle</td>
+          <td>
+            The prepare handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>conf</td>
+          <td>
+            The new configuration, will be on top of old one
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful update.
+APIResult with state Status#FAILED in case of udpate failure.</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Submit prepared query for execution
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which user is submitting the query. Any configuration set in the session will be picked up.
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>prepareHandle</td>
+          <td>
+            The Query to run
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>op</td>
+          <td>
+            The operation on the query. Supported operations are SubmitOp#EXECUTE and SubmitOp#EXECUTE_WITH_TIMEOUT
+          </td>
+          <td>formdata</td>
+          <td>EXECUTE</td>
+        </tr>
+        <tr>
+          <td>conf</td>
+          <td>
+            The configuration for the execution of query
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>timeoutmillis</td>
+          <td>
+            The timeout for the query, honored only in case of SubmitOp#EXECUTE_WITH_TIMEOUT operation
+          </td>
+          <td>formdata</td>
+          <td>30000</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
+        </tr>
+      </table>
+      <p>QueryHandle in case of SubmitOp#EXECUTE operation.
+QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
+      <a name="path__queryapi_preparedqueries_-preparehandle-.html"></a>
+      <h1>/queryapi/preparedqueries/{preparehandle}</h1>
+      <p class="note">Mount Point: <a href="../queryapi/preparedqueries/{preparehandle}">/queryapi/preparedqueries/{preparehandle}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get a prepared query specified by handle
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>preparehandle</td>
+          <td>
+            The prepare handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery</a></td>
+        </tr>
+      </table>
+      <p>GrillPreparedQuery</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Destroy the prepared query specified by handle
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>preparehandle</td>
+          <td>
+            The prepare handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful destroy.
+APIResult with state Status#FAILED in case of destroy failure.</p>
+      <a name="path__queryapi_queries_-queryhandle-.html"></a>
+      <h1>/queryapi/queries/{queryhandle}</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryhandle}">/queryapi/queries/{queryhandle}</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+        <li><a href="#PUT">PUT</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get grill query and its current status
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryhandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_grillQuery.html">grillQuery</a></td>
+        </tr>
+      </table>
+      <p>GrillQuery</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Cancel the query specified by the handle
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryhandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful cancellation.
+APIResult with state Status#FAILED in case of cancellation failure.</p>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Modify query configuration if it is not running yet.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryhandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>conf</td>
+          <td>
+            The new configuration, will be on top of old one
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful update.
+APIResult with state Status#FAILED in case of udpate failure.</p>
+      <a name="path__queryapi_queries_-queryhandle-_resultset.html"></a>
+      <h1>/queryapi/queries/{queryhandle}/resultset</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryhandle}/resultset">/queryapi/queries/{queryhandle}/resultset</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Fetch the result set
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryhandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>fromindex</td>
+          <td>
+            start index of the result
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>fetchsize</td>
+          <td>
+            fetch size
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_queryResult.html">queryResult</a></td>
+        </tr>
+      </table>
+      <p>QueryResult</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Close the result set once fetching is done
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryhandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful close.
+APIResult with state Status#FAILED in case of close failure.</p>
+      <a name="path__queryapi_queries_-queryhandle-_resultsetmetadata.html"></a>
+      <h1>/queryapi/queries/{queryhandle}/resultsetmetadata</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryhandle}/resultsetmetadata">/queryapi/queries/{queryhandle}/resultsetmetadata</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get resultset metadata of the query
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryhandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_queryResultSetMetadata.html">queryResultSetMetadata</a></td>
+        </tr>
+      </table>
+      <p>QueryResultSetMetadata</p>
+
+      <div class="clear" />
+    </div>
+    <footer>
+      <div id="footer">
+        Generated by <a href="http://enunciate.codehaus.org">Enunciate</a>.
+      </div>
+    </footer>
+  </div> <!--! end of #container -->
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if necessary -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
+  <script>window.jQuery || document.write("<script src='js/libs/jquery-1.5.1.min.js'>\x3C/script>")</script>
+
+  <!--manage the navigation menu-->
+  <script src="js/libs/xbreadcrumbs.js"></script>
+  <script>
+    $(function() {
+      $('#breadcrumbs').xBreadcrumbs();
+    });
+  </script>
+
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script>DD_belatedPNG.fix("img, .png_bg"); // Fix any <img> or .png_bg bg-images. Also, please read goo.gl/mZiyb </script>
+  <![endif]-->
+
+</body>
+</html>
