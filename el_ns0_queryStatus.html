@@ -105,21 +105,21 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;queryStatus&gt;
-  &lt;errorMessage&gt;...&lt;/errorMessage&gt;
-  &lt;statusMessage&gt;...&lt;/statusMessage&gt;
-  &lt;status&gt;...&lt;/status&gt;
-  &lt;progress&gt;...&lt;/progress&gt;
-  &lt;progressMessage&gt;...&lt;/progressMessage&gt;
   &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
+  &lt;errorMessage&gt;...&lt;/errorMessage&gt;
+  &lt;progressMessage&gt;...&lt;/progressMessage&gt;
+  &lt;progress&gt;...&lt;/progress&gt;
+  &lt;status&gt;...&lt;/status&gt;
+  &lt;statusMessage&gt;...&lt;/statusMessage&gt;
 &lt;/queryStatus&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
+  &quot;isResultSetAvailable&quot; : false,
   &quot;errorMessage&quot; : &quot;...&quot;,
-  &quot;statusMessage&quot; : &quot;...&quot;,
-  &quot;status&quot; : &quot;NEW&quot;,
-  &quot;progress&quot; : ...,
   &quot;progressMessage&quot; : &quot;...&quot;,
-  &quot;isResultSetAvailable&quot; : false
+  &quot;progress&quot; : ...,
+  &quot;status&quot; : &quot;NEW&quot;,
+  &quot;statusMessage&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />

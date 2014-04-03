@@ -3,7 +3,7 @@
   <wadl:grammars>
     <wadl:include href="ns0.xsd"/>
   </wadl:grammars>
-  <wadl:resources base="https://github.corp.inmobi.com/pages/platform/grill/wsdocs">
+  <wadl:resources base="https://github.com/pages/InMobi/grill/wsdocs">
     <wadl:resource path="/metastore">
       <wadl:method name="GET">
         <wadl:doc>
