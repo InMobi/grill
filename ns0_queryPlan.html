@@ -123,33 +123,9 @@
         </tr>
         <tr>
           <td>
-            execMode (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            scanMode (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            hasSubQuery (boolean)
+            numSelDi (int)
           </td>
           <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
-          </td>
-          <td>0/1</td>
           <td>
           </td>
         </tr>
@@ -158,6 +134,30 @@
             numObys (int)
           </td>
           <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            selectWeight (double)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            obyWeight (double)
+          </td>
+          <td>0/1</td>
           <td>
           </td>
         </tr>
@@ -179,7 +179,7 @@
         </tr>
         <tr>
           <td>
-            numFilters (int)
+            numJoins (int)
           </td>
           <td>1/1</td>
           <td>
@@ -187,9 +187,17 @@
         </tr>
         <tr>
           <td>
-            numJoins (int)
+            numGbys (int)
           </td>
           <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            scanMode (string)
+          </td>
+          <td>0/1</td>
           <td>
           </td>
         </tr>
@@ -203,7 +211,7 @@
         </tr>
         <tr>
           <td>
-            obyWeight (double)
+            execMode (string)
           </td>
           <td>0/1</td>
           <td>
@@ -211,7 +219,7 @@
         </tr>
         <tr>
           <td>
-            numSels (int)
+            hasSubQuery (boolean)
           </td>
           <td>1/1</td>
           <td>
@@ -219,15 +227,15 @@
         </tr>
         <tr>
           <td>
-            planString (string)
+            tablesQueried/tablesQueried (string)
           </td>
-          <td>0/1</td>
+          <td>0/unbounded</td>
           <td>
           </td>
         </tr>
         <tr>
           <td>
-            selectWeight (double)
+            planString (string)
           </td>
           <td>0/1</td>
           <td>
@@ -251,6 +259,14 @@
         </tr>
         <tr>
           <td>
+            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             filterWeight (double)
           </td>
           <td>0/1</td>
@@ -259,23 +275,7 @@
         </tr>
         <tr>
           <td>
-            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            tablesQueried/tablesQueried (string)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numSelDi (int)
+            numSels (int)
           </td>
           <td>1/1</td>
           <td>
@@ -283,7 +283,7 @@
         </tr>
         <tr>
           <td>
-            numGbys (int)
+            numFilters (int)
           </td>
           <td>1/1</td>
           <td>
@@ -307,33 +307,9 @@
           </td>
         </tr>
         <tr>
-          <td>execMode</td>
+          <td>numSelDi</td>
           <td>
-            execMode (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>scanMode</td>
-          <td>
-            scanMode (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>hasSubQuery</td>
-          <td>
-            hasSubQuery (boolean)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>prepareHandle</td>
-          <td>
-            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+            numSelDi (int)
           </td>
           <td>
           </td>
@@ -342,6 +318,30 @@
           <td>numObys</td>
           <td>
             numObys (int)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>selectWeight</td>
+          <td>
+            selectWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>queryCost</td>
+          <td>
+            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>obyWeight</td>
+          <td>
+            obyWeight (double)
           </td>
           <td>
           </td>
@@ -363,17 +363,25 @@
           </td>
         </tr>
         <tr>
-          <td>numFilters</td>
+          <td>numJoins</td>
           <td>
-            numFilters (int)
+            numJoins (int)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>numJoins</td>
+          <td>numGbys</td>
           <td>
-            numJoins (int)
+            numGbys (int)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>scanMode</td>
+          <td>
+            scanMode (string)
           </td>
           <td>
           </td>
@@ -387,17 +395,25 @@
           </td>
         </tr>
         <tr>
-          <td>obyWeight</td>
+          <td>execMode</td>
           <td>
-            obyWeight (double)
+            execMode (string)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>numSels</td>
+          <td>hasSubQuery</td>
           <td>
-            numSels (int)
+            hasSubQuery (boolean)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>tablesQueried</td>
+          <td>
+            array of tablesQueried/tablesQueried (string)
           </td>
           <td>
           </td>
@@ -406,14 +422,6 @@
           <td>planString</td>
           <td>
             planString (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>selectWeight</td>
-          <td>
-            selectWeight (double)
           </td>
           <td>
           </td>
@@ -435,6 +443,14 @@
           </td>
         </tr>
         <tr>
+          <td>prepareHandle</td>
+          <td>
+            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
           <td>filterWeight</td>
           <td>
             filterWeight (double)
@@ -443,33 +459,17 @@
           </td>
         </tr>
         <tr>
-          <td>queryCost</td>
+          <td>numSels</td>
           <td>
-            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
+            numSels (int)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>tablesQueried</td>
+          <td>numFilters</td>
           <td>
-            array of tablesQueried/tablesQueried (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>numSelDi</td>
-          <td>
-            numSelDi (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>numGbys</td>
-          <td>
-            numGbys (int)
+            numFilters (int)
           </td>
           <td>
           </td>

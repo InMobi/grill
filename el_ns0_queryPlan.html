@@ -106,13 +106,14 @@
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;queryPlan&gt;
   &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
-  &lt;execMode&gt;...&lt;/execMode&gt;
-  &lt;scanMode&gt;...&lt;/scanMode&gt;
-  &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
-  &lt;prepareHandle&gt;
-    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
-  &lt;/prepareHandle&gt;
+  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
   &lt;numObys&gt;...&lt;/numObys&gt;
+  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
+  &lt;queryCost&gt;
+    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
+    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
+  &lt;/queryCost&gt;
+  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
   &lt;tableWeights&gt;
     &lt;entry&gt;
       &lt;key&gt;...&lt;/key&gt;
@@ -129,60 +130,59 @@
     &lt;!--...more entries...--&gt;
   &lt;/tableWeights&gt;
   &lt;joinWeight&gt;...&lt;/joinWeight&gt;
-  &lt;numFilters&gt;...&lt;/numFilters&gt;
   &lt;numJoins&gt;...&lt;/numJoins&gt;
+  &lt;numGbys&gt;...&lt;/numGbys&gt;
+  &lt;scanMode&gt;...&lt;/scanMode&gt;
   &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
-  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
-  &lt;numSels&gt;...&lt;/numSels&gt;
-  &lt;planString&gt;...&lt;/planString&gt;
-  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
-  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
-  &lt;numHaving&gt;...&lt;/numHaving&gt;
-  &lt;filterWeight&gt;...&lt;/filterWeight&gt;
-  &lt;queryCost&gt;
-    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
-    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
-  &lt;/queryCost&gt;
+  &lt;execMode&gt;...&lt;/execMode&gt;
+  &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
   &lt;tablesQueried&gt;
     &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
     &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
     &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
   &lt;/tablesQueried&gt;
-  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
-  &lt;numGbys&gt;...&lt;/numGbys&gt;
+  &lt;planString&gt;...&lt;/planString&gt;
+  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
+  &lt;numHaving&gt;...&lt;/numHaving&gt;
+  &lt;prepareHandle&gt;
+    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
+  &lt;/prepareHandle&gt;
+  &lt;filterWeight&gt;...&lt;/filterWeight&gt;
+  &lt;numSels&gt;...&lt;/numSels&gt;
+  &lt;numFilters&gt;...&lt;/numFilters&gt;
 &lt;/queryPlan&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
   &quot;gbyWeight&quot; : ...,
-  &quot;execMode&quot; : &quot;...&quot;,
-  &quot;scanMode&quot; : &quot;...&quot;,
-  &quot;hasSubQuery&quot; : false,
-  &quot;prepareHandle&quot; : {
-    &quot;prepareHandleId&quot; : &quot;...&quot;
-  },
+  &quot;numSelDi&quot; : ...,
   &quot;numObys&quot; : ...,
+  &quot;selectWeight&quot; : ...,
+  &quot;queryCost&quot; : {
+    &quot;estimatedExecTimeMillis&quot; : ...,
+    &quot;estimatedResourceUsage&quot; : ...
+  },
+  &quot;obyWeight&quot; : ...,
   &quot;tableWeights&quot; : [ {
     &quot;...&quot; : ...
   }, {
   } ],
   &quot;joinWeight&quot; : ...,
-  &quot;numFilters&quot; : ...,
   &quot;numJoins&quot; : ...,
+  &quot;numGbys&quot; : ...,
+  &quot;scanMode&quot; : &quot;...&quot;,
   &quot;numAggrExprs&quot; : ...,
-  &quot;obyWeight&quot; : ...,
-  &quot;numSels&quot; : ...,
+  &quot;execMode&quot; : &quot;...&quot;,
+  &quot;hasSubQuery&quot; : false,
+  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
   &quot;planString&quot; : &quot;...&quot;,
-  &quot;selectWeight&quot; : ...,
   &quot;havingWeight&quot; : ...,
   &quot;numHaving&quot; : ...,
-  &quot;filterWeight&quot; : ...,
-  &quot;queryCost&quot; : {
-    &quot;estimatedResourceUsage&quot; : ...,
-    &quot;estimatedExecTimeMillis&quot; : ...
+  &quot;prepareHandle&quot; : {
+    &quot;prepareHandleId&quot; : &quot;...&quot;
   },
-  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
-  &quot;numSelDi&quot; : ...,
-  &quot;numGbys&quot; : ...
+  &quot;filterWeight&quot; : ...,
+  &quot;numSels&quot; : ...,
+  &quot;numFilters&quot; : ...
 }</code>
 
       <div class="clear" />
