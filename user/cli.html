@@ -122,7 +122,208 @@
     <div id="bodyColumn">
       <div id="contentBox">
         <!-- ~ --><!-- #%L --><!-- Grill --><!-- %% --><!-- Copyright (C) 2014 Inmobi --><!-- %% --><!-- Licensed under the Apache License, Version 2.0 (the "License"); --><!-- you may not use this file except in compliance with the License. --><!-- You may obtain a copy of the License at --><!--  --><!-- http://www.apache.org/licenses/LICENSE-2.0 --><!--  --><!-- Unless required by applicable law or agreed to in writing, software --><!-- distributed under the License is distributed on an "AS IS" BASIS, --><!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. --><!-- See the License for the specific language governing permissions and --><!-- limitations under the License. --><!-- #L% --><!-- ~ --><div class="section">
-<h2>User CLI Docs<a name="User_CLI_Docs"></a></h2></div>
+<h2>User CLI Commands<a name="User_CLI_Commands"></a></h2>
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Query management Command</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">query execute <i>sql-text</i> [async]</td>
+<td align="left">Executes Query specified in <i>sql-text</i> in synchronous manner unless <i>async</i> flag is passed. If <i>async</i> flag is passed then query handle is printed which can be used for query management</td></tr>
+<tr class="a">
+<td align="left">query status <i>query-handle</i></td>
+<td align="left">Prints the Status of query mentioned in Query Handle</td></tr>
+<tr class="b">
+<td align="left">query explain <i>sql-text</i></td>
+<td align="left">Prints query execution plan of <i>sql-text</i></td></tr>
+<tr class="a">
+<td align="left">query list</td>
+<td align="left">Prints list of queries associated to the current session</td></tr>
+<tr class="b">
+<td align="left">query kill <i>query-handle</i></td>
+<td align="left">Kill the execution of query specified by <i>query-handle</i></td></tr>
+<tr class="a">
+<td align="left">query results <i>query-handle</i></td>
+<td align="left">Prints the result of Async query specified by <i>query-handle</i></td></tr></table><hr />
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Session Management Command list</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">set <i>name</i>=<i>value</i></td>
+<td align="left">Assign <b>value</b> to session parameter specified with <b>name</b> on grill server</td></tr>
+<tr class="a">
+<td align="left">get <i>name</i></td>
+<td align="left">Fetches and prints session parameter specified with name <b>name</b> from grill server</td></tr>
+<tr class="b">
+<td align="left">show params</td>
+<td align="left">Fetches and prints all session parameter from grill server</td></tr>
+<tr class="a">
+<td align="left">show params</td>
+<td align="left">Fetches and prints all session parameter from grill server</td></tr>
+<tr class="b">
+<td align="left">add jar <i>path to jar file</i></td>
+<td align="left">Adds jar resource to the session</td></tr>
+<tr class="a">
+<td align="left">add file <i>path to file</i></td>
+<td align="left">Adds the file resource to the session</td></tr>
+<tr class="b">
+<td align="left">remove jar <i>path to file</i></td>
+<td align="left">removes jar resource from the session</td></tr>
+<tr class="a">
+<td align="left">remove file <i>path to file</i></td>
+<td align="left">remove the file resource from the session</td></tr>
+<tr class="b">
+<td align="left">close</td>
+<td align="left">Closes the session on the grill server and exits the shell</td></tr></table><hr />
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Cube Management Command list</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">show cubes</td>
+<td align="left">Displays list of cubes</td></tr>
+<tr class="a">
+<td align="left">create cube <i>path to cube-spec.xml</i></td>
+<td align="left">Creates a cube specified in <i>cube-spec.xml</i></td></tr>
+<tr class="b">
+<td align="left">drop cube <i>cube-name</i></td>
+<td align="left">Drops a cube specified by the name</td></tr>
+<tr class="a">
+<td align="left">update cube <i>cube-name</i> <i>cube-spec</i></td>
+<td align="left">updates the cube with <i>cube-name</i> to cube specification specified in <i>cube-spec</i> file</td></tr>
+<tr class="b">
+<td align="left">describe cube <i>cube-name</i></td>
+<td align="left">Print the schema of the cube</td></tr></table><hr />
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Database Management Command list</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">show database</td>
+<td align="left">prints a list of databases on grill server</td></tr>
+<tr class="a">
+<td align="left">use <i>database-name</i></td>
+<td align="left">Sets the session database to database specified by <i>database-name</i></td></tr>
+<tr class="b">
+<td align="left">create database <i>database-name</i></td>
+<td align="left">creates a database specified by <i>database-name</i></td></tr>
+<tr class="a">
+<td align="left">drop database <i>database-name</i></td>
+<td align="left">drops the database specified by <i>database-name</i></td></tr></table><hr />
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Dimension Table Management Command list</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">show dimensions</td>
+<td align="left">print all the dimension tables present in the current database</td></tr>
+<tr class="a">
+<td align="left">create dimension <i>dimension-spec</i> <i>storage-spec</i></td>
+<td align="left">Creates a new dimesion table with specification specified in <i>dimension-spec</i> file and storage specified in <i>storage-spec</i> file</td></tr>
+<tr class="b">
+<td align="left">update dimension <i>dimension-table</i> <i>dimension-spec</i></td>
+<td align="left">Updates dimension table <i>dimension-table</i> as specified in the <i>dimension-spec</i> file</td></tr>
+<tr class="a">
+<td align="left">drop dimension <i>dimension-table</i></td>
+<td align="left">drops dimension table <i>dimension-table</i></td></tr>
+<tr class="b">
+<td align="left">describe dimension <i>dimension-table</i></td>
+<td align="left">Prints the Schema and property of Dimension table <i>dimension-table</i></td></tr>
+<tr class="a">
+<td align="left">dim list storage <i>dimension-table</i></td>
+<td align="left">Prints list of storages associated to a particular <i>dimension-table</i></td></tr>
+<tr class="b">
+<td align="left">dim add storage <i>dimension-table</i> <i>storage-spec</i></td>
+<td align="left">Adds a storage specified in <i>storage-spec</i>file to <i>dimension-table</i></td></tr>
+<tr class="a">
+<td align="left">dim drop storage <i>dimension-table</i> <i>storage-name</i></td>
+<td align="left">Drops <i>storage-name</i> specified in <i>dimension-table</i></td></tr>
+<tr class="b">
+<td align="left">dim get storage <i>dimension-table</i> <i>storage-name</i></td>
+<td align="left">Prints schema of the <i>storage-name</i> in <i>dimension-table</i></td></tr>
+<tr class="a">
+<td align="left">dim list partitions <i>dimension-table</i> <i>storage-name</i></td>
+<td align="left">Prints list of partitions from <i>storage-name</i> in <i>dimension-table</i></td></tr>
+<tr class="b">
+<td align="left">dim drop partitions <i>dimension-table</i> <i>storage-name</i></td>
+<td align="left">drops all partitions from <i>storage-name</i> in <i>dimension-table</i></td></tr>
+<tr class="a">
+<td align="left">dim add partition <i>dimension-table</i> <i>storage-name</i> <i>part-spec</i></td>
+<td align="left">Add a partition specified in <i>part-spec</i> file to <i>storage-name</i> in <i>dimension-table</i></td></tr></table><hr />
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Fact table Management list</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">show facts</td>
+<td align="left">print all the fact tables present in the current database</td></tr>
+<tr class="a">
+<td align="left">create fact <i>fact-spec</i> <i>storage-spec</i></td>
+<td align="left">Creates a new fact table with specification specified in <i>fact-spec</i> file and storage specified in <i>storage-spec</i> file</td></tr>
+<tr class="b">
+<td align="left">update fact <i>fact-table</i> <i>fact-spec</i></td>
+<td align="left">Updates fact table <i>fact-table</i> as specified in the <i>fact-spec</i> file</td></tr>
+<tr class="a">
+<td align="left">drop fact <i>fact-table</i></td>
+<td align="left">drops fact table <i>fact-table</i></td></tr>
+<tr class="b">
+<td align="left">describe fact <i>fact-table</i></td>
+<td align="left">Prints the Schema and property of fact table <i>fact-table</i></td></tr>
+<tr class="a">
+<td align="left">fact list storage <i>fact-table</i></td>
+<td align="left">Prints list of storages associated to a particular <i>fact-table</i></td></tr>
+<tr class="b">
+<td align="left">fact add storage <i>fact-table</i> <i>storage-spec</i></td>
+<td align="left">Adds a storage specified in <i>storage-spec</i>file to <i>fact-table</i></td></tr>
+<tr class="a">
+<td align="left">fact drop storage <i>fact-table</i> <i>storage-name</i></td>
+<td align="left">Drops <i>storage-name</i> specified in <i>fact-table</i></td></tr>
+<tr class="b">
+<td align="left">fact get storage <i>fact-table</i> <i>storage-name</i></td>
+<td align="left">Prints schema of the <i>storage-name</i> in <i>fact-table</i></td></tr>
+<tr class="a">
+<td align="left">fact list partitions <i>fact-table</i> <i>storage-name</i></td>
+<td align="left">Prints list of partitions from <i>storage-name</i> in <i>fact-table</i></td></tr>
+<tr class="b">
+<td align="left">fact drop partitions <i>fact-table</i> <i>storage-name</i></td>
+<td align="left">drops all partitions from <i>storage-name</i> in <i>fact-table</i></td></tr>
+<tr class="a">
+<td align="left">fact add partition <i>fact-table</i> <i>storage-name</i> <i>part-spec</i></td>
+<td align="left">Add a partition specified in <i>part-spec</i> file to <i>storage-name</i> in <i>fact-table</i></td></tr></table><hr />
+<table border="1" class="bodyTable"><caption>
+  <b>Grill Storage Management List</b>
+</caption>
+<tr class="a">
+<td align="left"><b>Command</b></td>
+<td align="left"><b>Description</b></td></tr>
+<tr class="b">
+<td align="left">show storage</td>
+<td align="left">print all the storages present in the current database</td></tr>
+<tr class="a">
+<td align="left">create storage <i>storage-spec</i></td>
+<td align="left">Creates a new storage specified in <i>storage-spec</i> file</td></tr>
+<tr class="b">
+<td align="left">update storage <i>storage-table</i> <i>storage-spec</i></td>
+<td align="left">Updates storage <i>storage-table</i> as specified in the <i>storage-spec</i> file</td></tr>
+<tr class="a">
+<td align="left">drop storage <i>storage-table</i></td>
+<td align="left">drops storage table <i>dimension-table</i></td></tr>
+<tr class="b">
+<td align="left">describe storage <i>storage-table</i></td>
+<td align="left">Prints the Schema and properties of Storage table <i>storage-table</i></td></tr></table></div>
       </div>
     </div>
     <div class="clear">

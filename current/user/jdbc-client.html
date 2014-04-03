@@ -122,7 +122,15 @@
     <div id="bodyColumn">
       <div id="contentBox">
         <!-- ~ --><!-- #%L --><!-- Grill --><!-- %% --><!-- Copyright (C) 2014 Inmobi --><!-- %% --><!-- Licensed under the Apache License, Version 2.0 (the "License"); --><!-- you may not use this file except in compliance with the License. --><!-- You may obtain a copy of the License at --><!--  --><!-- http://www.apache.org/licenses/LICENSE-2.0 --><!--  --><!-- Unless required by applicable law or agreed to in writing, software --><!-- distributed under the License is distributed on an "AS IS" BASIS, --><!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. --><!-- See the License for the specific language governing permissions and --><!-- limitations under the License. --><!-- #L% --><!-- ~ --><div class="section">
-<h2>JDBC Client<a name="JDBC_Client"></a></h2></div>
+<h2>JDBC Client<a name="JDBC_Client"></a></h2>
+<p>This document describes how to use Grill JDBC Client library in your projects.</p>
+<p><b>Using JDBC driver.</b></p>
+<p>The main driver class for accessing grill server is <tt>com.inmobi.grill.client.jdbc.GrillJdbcDriver.java</tt></p>
+<p>Add <tt>grill-client-site.xml</tt> in the class path and configure following parameters as described in <a href="./client-config.html">here</a></p>
+<p>The URI format for connecting to the grill server is of following format :</p>
+<p><tt>jdbc:grill://&lt;hostname&gt;:&lt;port&gt;/&lt;database&gt;;&lt;session confs key value pairs delimited by ;&gt;?&lt;grill-conf key value pair delimited by ;&gt;#&lt;session variables key value pair seperated by ;&gt; </tt></p>
+<p>For Example:</p>
+<p><tt>jdbc:grill://localhost:9000/default;key1=val1;key2=val2?gck1=val1#sess-var1=val1</tt></p></div>
       </div>
     </div>
     <div class="clear">
