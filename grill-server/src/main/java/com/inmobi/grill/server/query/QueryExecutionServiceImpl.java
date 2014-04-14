@@ -342,6 +342,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
         QueryStatus before = ctx.getStatus();
         if (!ctx.getStatus().getStatus().equals(QueryStatus.Status.QUEUED) &&
             !ctx.getStatus().isFinished()) {
+          LOG.info("Updating status for " + ctx.getQueryHandle());
           ctx.setStatus(ctx.getSelectedDriver().getStatus(ctx.getQueryHandle()));
           if (ctx.getStatus().isFinished()) {
             updateFinishedQuery(ctx, before);
@@ -862,13 +863,14 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
           if (!ret) {
             return false;
           }
+          setCancelledStatus(ctx, "Query is cancelled");
+          return true;
         }
-        setCancelledStatus(ctx, "Query is cancelled");
       }
-      return true;
     } finally {
       release(sessionHandle);
     }
+    return false;
   }
 
   @Override
