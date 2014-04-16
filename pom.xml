@@ -19,11 +19,12 @@
     <grizzly.version>2.3.6</grizzly.version>
     <servlet3.version>3.0.1</servlet3.version>
     <slf4j.version>1.7.6</slf4j.version>
+    <metrics.version>3.0.2</metrics.version>
   </properties>
 
   <groupId>com.inmobi.grill</groupId>
   <artifactId>grill-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>Grill</name>
   <packaging>pom</packaging>
 	<description>Unified Analytics Platform For InMobi</description>
@@ -542,12 +543,22 @@
 				<dependency>
 					<groupId>com.codahale.metrics</groupId>
 					<artifactId>metrics-core</artifactId>
-					<version>3.0.1</version>
+          <version>${metrics.version}</version>
 				</dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
 				<dependency>
 					<groupId>com.codahale.metrics</groupId>
 					<artifactId>metrics-ganglia</artifactId>
-					<version>3.0.1</version>
+          <version>${metrics.version}</version>
 				</dependency>
 <dependency>
 <groupId>org.glassfish.jersey.media</groupId>
