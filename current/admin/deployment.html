@@ -136,7 +136,23 @@
 <li>Requires java 1.6+</li>
 <li>Requires Hadoop cdh3u5+</li>
 <li>Requires Hive metastore 0.13+</li>
-<li>Requires Hive server2 0.13+</li></ul></div></div>
+<li>Requires Hive server2 0.13+</li></ul></div>
+<div class="section">
+<h3>Restart and recovery<a name="Restart_and_recovery"></a></h3>
+<p>Grill server should not have problems with Hive Metastore server, Hive Server2 or Hadoop restarts. Grill server can persist its state before going and recover from previous state upon restart. </p>
+<ul>
+<li>Recoverability</li>
+<li>To enable grill server with recoverability, i.e. to allow users access queries before restart, grill server should be started with grill.server.restart.enabled set to true. Admin can set this to false if no recoverability is required.</li>
+<li>Restarting </li>
+<li>To start the grill server a fresh grill.server.recover.onrestart should be disabled. If it is true, the server will load its persisted state before restart.</li></ul></div>
+<div class="section">
+<h3>Server modes<a name="Server_modes"></a></h3>
+<p>Grill server can be started in various modes. The server mode can be specified via configuration when it is starting up. Available modes are</p>
+<ul>
+<li>READ_ONLY : Allows all requests on sesssion resource and Only GET requests on all other resources</li>
+<li>METASTORE_READONLY : Allows Only GET requests on metastore service and all other requests on other services</li>
+<li>METASTORE_NODROP: DELETE requests on metastore are not accepted, all other requests are accepted</li>
+<li>OPEN: This is the default mode. All requests are accepted</li></ul></div></div>
       </div>
     </div>
     <div class="clear">
