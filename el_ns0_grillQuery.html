@@ -105,11 +105,8 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;grillQuery&gt;
-  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
-  &lt;queryHandle&gt;
-    &lt;handleId&gt;...&lt;/handleId&gt;
-  &lt;/queryHandle&gt;
-  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
+  &lt;priority&gt;...&lt;/priority&gt;
+  &lt;userQuery&gt;...&lt;/userQuery&gt;
   &lt;queryConf&gt;
     &lt;properties&gt;
       &lt;entry&gt;
@@ -127,49 +124,52 @@
       &lt;!--...more entries...--&gt;
     &lt;/properties&gt;
   &lt;/queryConf&gt;
-  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
-  &lt;priority&gt;...&lt;/priority&gt;
-  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
-  &lt;userQuery&gt;...&lt;/userQuery&gt;
+  &lt;queryHandle&gt;
+    &lt;handleId&gt;...&lt;/handleId&gt;
+  &lt;/queryHandle&gt;
+  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
+  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
   &lt;status&gt;
+    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
     &lt;errorMessage&gt;...&lt;/errorMessage&gt;
     &lt;status&gt;...&lt;/status&gt;
     &lt;progressMessage&gt;...&lt;/progressMessage&gt;
     &lt;progress&gt;...&lt;/progress&gt;
-    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
     &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
   &lt;/status&gt;
-  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
-  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
+  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
+  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
   &lt;submittedUser&gt;...&lt;/submittedUser&gt;
 &lt;/grillQuery&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;resultSetPath&quot; : &quot;...&quot;,
-  &quot;queryHandle&quot; : {
-    &quot;handleId&quot; : &quot;...&quot;
-  },
-  &quot;driverOpHandle&quot; : &quot;...&quot;,
+  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
+  &quot;userQuery&quot; : &quot;...&quot;,
   &quot;queryConf&quot; : {
     &quot;properties&quot; : [ {
       &quot;...&quot; : ...
     }, {
     } ]
   },
-  &quot;submissionTime&quot; : &quot;...&quot;,
-  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
-  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
-  &quot;userQuery&quot; : &quot;...&quot;,
+  &quot;queryHandle&quot; : {
+    &quot;handleId&quot; : &quot;...&quot;
+  },
+  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;driverOpHandle&quot; : &quot;...&quot;,
+  &quot;isPersistent&quot; : false,
   &quot;status&quot; : {
+    &quot;statusMessage&quot; : &quot;...&quot;,
     &quot;errorMessage&quot; : &quot;...&quot;,
     &quot;status&quot; : &quot;NEW&quot;,
     &quot;progressMessage&quot; : &quot;...&quot;,
     &quot;progress&quot; : ...,
-    &quot;statusMessage&quot; : &quot;...&quot;,
     &quot;isResultSetAvailable&quot; : false
   },
-  &quot;isPersistent&quot; : false,
-  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
+  &quot;resultSetPath&quot; : &quot;...&quot;,
+  &quot;submissionTime&quot; : &quot;...&quot;,
   &quot;submittedUser&quot; : &quot;...&quot;
 }</code>
 
