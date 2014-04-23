@@ -22,6 +22,7 @@ package com.inmobi.grill.server.metastore;
 
 import java.util.*;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.*;
@@ -62,6 +63,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+@Test(groups="unit-test")
 public class TestMetastoreService extends GrillJerseyTest {
   public static final Logger LOG = LogManager.getLogger(TestMetastoreService.class);
   private ObjectFactory cubeObjectFactory;
@@ -123,6 +125,14 @@ public class TestMetastoreService extends GrillJerseyTest {
     assertNotNull(result);
     assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
 
+    // set without session id, we should get bad request
+    try {
+      result = dbTarget.request(mediaType).put(Entity.xml(dbName), APIResult.class);
+      fail("Should have thrown bad request exception");
+    } catch (BadRequestException badReq) {
+      // expected
+    }
+
     String current = dbTarget.queryParam("sessionid", grillSessionId).request(mediaType).get(String.class);
     assertEquals(current, dbName);
   }
@@ -137,7 +147,7 @@ public class TestMetastoreService extends GrillJerseyTest {
     assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
 
     // Create again
-    result = dbTarget.queryParam("sessionid", grillSessionId).queryParam("ignoreifexist", false).request(mediaType).post(Entity.xml(newDb), APIResult.class);
+    result = dbTarget.queryParam("sessionid", grillSessionId).queryParam("ignoreIfExisting", false).request(mediaType).post(Entity.xml(newDb), APIResult.class);
     assertEquals(result.getStatus(), APIResult.Status.FAILED);
     LOG.info(">> Result message " + result.getMessage());
 
@@ -316,7 +326,15 @@ public class TestMetastoreService extends GrillJerseyTest {
     try {
       final XCube cube = createTestCube("testCube1");
       final WebTarget target = target().path("metastore").path("cubes");
-      APIResult result = target.queryParam("sessionid", grillSessionId).request(mediaType).post(Entity.xml(cubeObjectFactory.createXCube(cube)), APIResult.class);
+      APIResult result = null;
+      try {
+        // first try without a session id
+        result = target.request(mediaType).post(Entity.xml(cubeObjectFactory.createXCube(cube)), APIResult.class);
+        fail("Should have thrown bad request exception");
+      } catch (BadRequestException badReq) {
+        // expected
+      }
+      result = target.queryParam("sessionid", grillSessionId).request(mediaType).post(Entity.xml(cubeObjectFactory.createXCube(cube)), APIResult.class);
       assertNotNull(result);
       assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
 
@@ -619,10 +637,10 @@ public class TestMetastoreService extends GrillJerseyTest {
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
         grillSessionId, medType));
     mp.bodyPart(new FormDataBodyPart(
-        FormDataContentDisposition.name("dimtable").fileName("dimtable").build(),
+        FormDataContentDisposition.name("dimensionTable").fileName("dimtable").build(),
         cubeObjectFactory.createDimensionTable(dt), medType));
     mp.bodyPart(new FormDataBodyPart(
-        FormDataContentDisposition.name("storagetables").fileName("storagetables").build(),
+        FormDataContentDisposition.name("storageTables").fileName("storagetables").build(),
         cubeObjectFactory.createXStorageTables(storageTables), medType));
     APIResult result = target()
         .path("metastore")
@@ -956,7 +974,7 @@ public class TestMetastoreService extends GrillJerseyTest {
           FormDataContentDisposition.name("fact").fileName("fact").build(),
           cubeObjectFactory.createFactTable(f), medType));
       mp.bodyPart(new FormDataBodyPart(
-          FormDataContentDisposition.name("storagetables").fileName("storagetables").build(),
+          FormDataContentDisposition.name("storageTables").fileName("storagetables").build(),
           cubeObjectFactory.createXStorageTables(storageTables), medType));
       APIResult result = target()
           .path("metastore")
@@ -1076,7 +1094,7 @@ public class TestMetastoreService extends GrillJerseyTest {
           FormDataContentDisposition.name("fact").fileName("fact").build(),
           cubeObjectFactory.createFactTable(f), medType));
       mp.bodyPart(new FormDataBodyPart(
-          FormDataContentDisposition.name("storagetables").fileName("storagetables").build(),
+          FormDataContentDisposition.name("storageTables").fileName("storagetables").build(),
           cubeObjectFactory.createXStorageTables(storageTables), medType));
       APIResult result = target()
           .path("metastore")
@@ -1173,7 +1191,7 @@ public class TestMetastoreService extends GrillJerseyTest {
           FormDataContentDisposition.name("fact").fileName("fact").build(),
           cubeObjectFactory.createFactTable(f), medType));
       mp.bodyPart(new FormDataBodyPart(
-          FormDataContentDisposition.name("storagetables").fileName("storagetables").build(),
+          FormDataContentDisposition.name("storageTables").fileName("storagetables").build(),
           cubeObjectFactory.createXStorageTables(storageTables), medType));
       APIResult result = target()
           .path("metastore")
