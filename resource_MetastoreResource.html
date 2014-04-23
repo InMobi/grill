@@ -76,21 +76,22 @@
         <li><a href="#path__metastore_dimensions.html">/metastore/dimensions</a></li>
         <li><a href="#path__metastore_facts.html">/metastore/facts</a></li>
         <li><a href="#path__metastore_storages.html">/metastore/storages</a></li>
-        <li><a href="#path__metastore_cubes_-cubename-.html">/metastore/cubes/{cubename}</a></li>
+        <li><a href="#path__metastore_cubes_-cubeName-.html">/metastore/cubes/{cubeName}</a></li>
         <li><a href="#path__metastore_databases_current.html">/metastore/databases/current</a></li>
-        <li><a href="#path__metastore_databases_-dbname-.html">/metastore/databases/{dbname}</a></li>
-        <li><a href="#path__metastore_dimensions_-dimname-.html">/metastore/dimensions/{dimname}</a></li>
-        <li><a href="#path__metastore_facts_-factname-.html">/metastore/facts/{factname}</a></li>
+        <li><a href="#path__metastore_databases_-dbName-.html">/metastore/databases/{dbName}</a></li>
+        <li><a href="#path__metastore_dimensions_-dimName-.html">/metastore/dimensions/{dimName}</a></li>
+        <li><a href="#path__metastore_facts_-factName-.html">/metastore/facts/{factName}</a></li>
+        <li><a href="#path__metastore_storages_-storageName-.html">/metastore/storages/{storageName}</a></li>
         <li><a href="#path__metastore_storages_-storage-.html">/metastore/storages/{storage}</a></li>
-        <li><a href="#path__metastore_cubes_-cubename-_facts.html">/metastore/cubes/{cubename}/facts</a></li>
-        <li><a href="#path__metastore_dimensions_-dimname-_storages.html">/metastore/dimensions/{dimname}/storages</a></li>
-        <li><a href="#path__metastore_facts_-factname-_storages.html">/metastore/facts/{factname}/storages</a></li>
-        <li><a href="#path__metastore_dimensions_-dimname-_storages_-storage-.html">/metastore/dimensions/{dimname}/storages/{storage}</a></li>
-        <li><a href="#path__metastore_facts_-factname-_storages_-storage-.html">/metastore/facts/{factname}/storages/{storage}</a></li>
-        <li><a href="#path__metastore_dimensions_-dimname-_storages_-storage-_partition.html">/metastore/dimensions/{dimname}/storages/{storage}/partition</a></li>
-        <li><a href="#path__metastore_dimensions_-dimname-_storages_-storage-_partitions.html">/metastore/dimensions/{dimname}/storages/{storage}/partitions</a></li>
-        <li><a href="#path__metastore_facts_-factname-_storages_-storage-_partition.html">/metastore/facts/{factname}/storages/{storage}/partition</a></li>
-        <li><a href="#path__metastore_facts_-factname-_storages_-storage-_partitions.html">/metastore/facts/{factname}/storages/{storage}/partitions</a></li>
+        <li><a href="#path__metastore_cubes_-cubeName-_facts.html">/metastore/cubes/{cubeName}/facts</a></li>
+        <li><a href="#path__metastore_dimensions_-dimName-_storages.html">/metastore/dimensions/{dimName}/storages</a></li>
+        <li><a href="#path__metastore_facts_-factName-_storages.html">/metastore/facts/{factName}/storages</a></li>
+        <li><a href="#path__metastore_dimensions_-dimName-_storages_-storage-.html">/metastore/dimensions/{dimName}/storages/{storage}</a></li>
+        <li><a href="#path__metastore_facts_-factName-_storages_-storage-.html">/metastore/facts/{factName}/storages/{storage}</a></li>
+        <li><a href="#path__metastore_dimensions_-dimName-_storages_-storage-_partition.html">/metastore/dimensions/{dimName}/storages/{storage}/partition</a></li>
+        <li><a href="#path__metastore_dimensions_-dimName-_storages_-storage-_partitions.html">/metastore/dimensions/{dimName}/storages/{storage}/partitions</a></li>
+        <li><a href="#path__metastore_facts_-factName-_storages_-storage-_partition.html">/metastore/facts/{factName}/storages/{storage}/partition</a></li>
+        <li><a href="#path__metastore_facts_-factName-_storages_-storage-_partitions.html">/metastore/facts/{factName}/storages/{storage}/partitions</a></li>
       </ul>
       <a name="path__metastore.html"></a>
       <h1>/metastore</h1>
@@ -275,7 +276,7 @@ APIResult with state Status#FAILED, if create has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>ignoreifexist</td>
+          <td>ignoreIfExisting</td>
           <td>
             If true, create will be ignored if db already exists, otherwise it fails.
           </td>
@@ -336,7 +337,7 @@ APIResult with state Status#FAILED, if create has failed</p>
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Create a new dimension tabble
+            Create a new dimension table
           </p>
       <h3>Parameters</h3>
       <table>
@@ -394,7 +395,7 @@ APIResult with state Status#FAILED, if create has failed</p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get all fact tables in the metastores
+            Get all fact tables in the metastore in the current database
           </p>
       <h3>Parameters</h3>
       <table>
@@ -445,7 +446,7 @@ APIResult with state Status#FAILED, if create has failed</p>
         <tr>
           <td>cascade</td>
           <td>
-            (no documentation provided)
+            if set to true, all the underlying tables will be dropped, if set to false, only the fact table will be dropped
           </td>
           <td>query</td>
           <td>false</td>
@@ -620,9 +621,9 @@ APIResult with state Status#FAILED, if create has failed</p>
       <p>APIResult with state Status#SUCCEEDED in case of successful delete.
 APIResult with state Status#FAILED in case of delete failure.
 APIResult with state Status#PARTIAL in case of partial delete.</p>
-      <a name="path__metastore_cubes_-cubename-.html"></a>
-      <h1>/metastore/cubes/{cubename}</h1>
-      <p class="note">Mount Point: <a href="../metastore/cubes/{cubename}">/metastore/cubes/{cubename}</a></p>
+      <a name="path__metastore_cubes_-cubeName-.html"></a>
+      <h1>/metastore/cubes/{cubeName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/cubes/{cubeName}">/metastore/cubes/{cubeName}</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -653,7 +654,7 @@ APIResult with state Status#PARTIAL in case of partial delete.</p>
           <td></td>
         </tr>
         <tr>
-          <td>cubename</td>
+          <td>cubeName</td>
           <td>
             The cube name
           </td>
@@ -700,7 +701,7 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>cubename</td>
+          <td>cubeName</td>
           <td>
             The cube name
           </td>
@@ -738,7 +739,7 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>cubename</td>
+          <td>cubeName</td>
           <td>
             The cube name
           </td>
@@ -827,9 +828,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if set was successful.
 APIResult with state Status#FAILED, if set has failed</p>
-      <a name="path__metastore_databases_-dbname-.html"></a>
-      <h1>/metastore/databases/{dbname}</h1>
-      <p class="note">Mount Point: <a href="../metastore/databases/{dbname}">/metastore/databases/{dbname}</a></p>
+      <a name="path__metastore_databases_-dbName-.html"></a>
+      <h1>/metastore/databases/{dbName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/databases/{dbName}">/metastore/databases/{dbName}</a></p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
@@ -853,7 +854,7 @@ If db does not exist, delete is ignored.
           <td></td>
         </tr>
         <tr>
-          <td>dbname</td>
+          <td>dbName</td>
           <td>
             The db name
           </td>
@@ -878,9 +879,9 @@ If db does not exist, delete is ignored.
       </table>
       <p>APIResult with state Status#SUCCEEDED, if delete was successful.
 APIResult with state Status#FAILED, if delete has failed</p>
-      <a name="path__metastore_dimensions_-dimname-.html"></a>
-      <h1>/metastore/dimensions/{dimname}</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimname}">/metastore/dimensions/{dimname}</a></p>
+      <a name="path__metastore_dimensions_-dimName-.html"></a>
+      <h1>/metastore/dimensions/{dimName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}">/metastore/dimensions/{dimName}</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -911,7 +912,7 @@ APIResult with state Status#FAILED, if delete has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             (no documentation provided)
           </td>
@@ -958,9 +959,9 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
-            The dimneison table name
+            The dimension table name
           </td>
           <td>path</td>
           <td></td>
@@ -1005,7 +1006,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The cube name
           </td>
@@ -1021,9 +1022,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>JAXB representation of DimensionTable</p>
-      <a name="path__metastore_facts_-factname-.html"></a>
-      <h1>/metastore/facts/{factname}</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factname}">/metastore/facts/{factname}</a></p>
+      <a name="path__metastore_facts_-factName-.html"></a>
+      <h1>/metastore/facts/{factName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}">/metastore/facts/{factName}</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -1054,7 +1055,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1092,9 +1093,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
-            (no documentation provided)
+            name of the fact table
           </td>
           <td>path</td>
           <td></td>
@@ -1139,7 +1140,7 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1164,17 +1165,9 @@ APIResult with state Status#FAILED, if udpate has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_storages_-storage-.html"></a>
-      <h1>/metastore/storages/{storage}</h1>
-      <p class="note">Mount Point: <a href="../metastore/storages/{storage}">/metastore/storages/{storage}</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#PUT">PUT</a></li>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-      </ul>
+      <a name="path__metastore_storages_-storageName-.html"></a>
+      <h1>/metastore/storages/{storageName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/storages/{storageName}">/metastore/storages/{storageName}</a></p>
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
@@ -1197,7 +1190,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>storage</td>
+          <td>storageName</td>
           <td>
             The storage name
           </td>
@@ -1221,7 +1214,10 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if update was successful.
-APIResult with state Status#FAILED, if udpate has failed</p>
+APIResult with state Status#FAILED, if update has failed</p>
+      <a name="path__metastore_storages_-storage-.html"></a>
+      <h1>/metastore/storages/{storage}</h1>
+      <p class="note">Mount Point: <a href="../metastore/storages/{storage}">/metastore/storages/{storage}</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
@@ -1246,7 +1242,7 @@ APIResult with state Status#FAILED, if udpate has failed</p>
         <tr>
           <td>storage</td>
           <td>
-            The stroage name
+            The storage name
           </td>
           <td>path</td>
           <td></td>
@@ -1299,13 +1295,13 @@ APIResult with state Status#FAILED, if udpate has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_cubes_-cubename-_facts.html"></a>
-      <h1>/metastore/cubes/{cubename}/facts</h1>
-      <p class="note">Mount Point: <a href="../metastore/cubes/{cubename}/facts">/metastore/cubes/{cubename}/facts</a></p>
+      <a name="path__metastore_cubes_-cubeName-_facts.html"></a>
+      <h1>/metastore/cubes/{cubeName}/facts</h1>
+      <p class="note">Mount Point: <a href="../metastore/cubes/{cubeName}/facts">/metastore/cubes/{cubeName}/facts</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get all facts that belong to a cube in the metastores
+            Get all facts that belong to a cube in the metastore
           </p>
       <h3>Parameters</h3>
       <table>
@@ -1324,9 +1320,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>cubename</td>
+          <td>cubeName</td>
           <td>
-            (no documentation provided)
+            name of the cube
           </td>
           <td>path</td>
           <td></td>
@@ -1340,9 +1336,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>List of FactTable objects</p>
-      <a name="path__metastore_dimensions_-dimname-_storages.html"></a>
-      <h1>/metastore/dimensions/{dimname}/storages</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimname}/storages">/metastore/dimensions/{dimname}/storages</a></p>
+      <a name="path__metastore_dimensions_-dimName-_storages.html"></a>
+      <h1>/metastore/dimensions/{dimName}/storages</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages">/metastore/dimensions/{dimName}/storages</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -1373,7 +1369,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -1411,7 +1407,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -1458,7 +1454,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -1475,9 +1471,9 @@ APIResult with state Status#FAILED, if add has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_facts_-factname-_storages.html"></a>
-      <h1>/metastore/facts/{factname}/storages</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factname}/storages">/metastore/facts/{factname}/storages</a></p>
+      <a name="path__metastore_facts_-factName-_storages.html"></a>
+      <h1>/metastore/facts/{factName}/storages</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages">/metastore/facts/{factName}/storages</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -1508,7 +1504,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1546,7 +1542,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1585,7 +1581,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1600,7 +1596,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td>(custom)</td>
         </tr>
       </table>
-      <p>The Storage table description</p>
+      <p>The storage table description</p>
       <h3>Response Body</h3>
       <table>
         <tr>
@@ -1610,9 +1606,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#FAILED, if add has failed</p>
-      <a name="path__metastore_dimensions_-dimname-_storages_-storage-.html"></a>
-      <h1>/metastore/dimensions/{dimname}/storages/{storage}</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimname}/storages/{storage}">/metastore/dimensions/{dimname}/storages/{storage}</a></p>
+      <a name="path__metastore_dimensions_-dimName-_storages_-storage-.html"></a>
+      <h1>/metastore/dimensions/{dimName}/storages/{storage}</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages/{storage}">/metastore/dimensions/{dimName}/storages/{storage}</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
@@ -1635,7 +1631,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The fact table name
           </td>
@@ -1681,7 +1677,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -1706,9 +1702,9 @@ APIResult with state Status#FAILED, if add has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_facts_-factname-_storages_-storage-.html"></a>
-      <h1>/metastore/facts/{factname}/storages/{storage}</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factname}/storages/{storage}">/metastore/facts/{factname}/storages/{storage}</a></p>
+      <a name="path__metastore_facts_-factName-_storages_-storage-.html"></a>
+      <h1>/metastore/facts/{factName}/storages/{storage}</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}">/metastore/facts/{factName}/storages/{storage}</a></p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
@@ -1731,7 +1727,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1778,7 +1774,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -1802,9 +1798,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>JAXB representation of XStorageTableElement</p>
-      <a name="path__metastore_dimensions_-dimname-_storages_-storage-_partition.html"></a>
-      <h1>/metastore/dimensions/{dimname}/storages/{storage}/partition</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimname}/storages/{storage}/partition">/metastore/dimensions/{dimname}/storages/{storage}/partition</a></p>
+      <a name="path__metastore_dimensions_-dimName-_storages_-storage-_partition.html"></a>
+      <h1>/metastore/dimensions/{dimName}/storages/{storage}/partition</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages/{storage}/partition">/metastore/dimensions/{dimName}/storages/{storage}/partition</a></p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
@@ -1827,7 +1823,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -1860,9 +1856,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_dimensions_-dimname-_storages_-storage-_partitions.html"></a>
-      <h1>/metastore/dimensions/{dimname}/storages/{storage}/partitions</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimname}/storages/{storage}/partitions">/metastore/dimensions/{dimname}/storages/{storage}/partitions</a></p>
+      <a name="path__metastore_dimensions_-dimName-_storages_-storage-_partitions.html"></a>
+      <h1>/metastore/dimensions/{dimName}/storages/{storage}/partitions</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages/{storage}/partitions">/metastore/dimensions/{dimName}/storages/{storage}/partitions</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -1894,7 +1890,7 @@ can be filtered
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -1948,7 +1944,7 @@ can be filtered
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             The dimension table name
           </td>
@@ -2003,7 +1999,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimname</td>
+          <td>dimName</td>
           <td>
             dimension table name
           </td>
@@ -2036,9 +2032,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#FAILED, if add has failed</p>
-      <a name="path__metastore_facts_-factname-_storages_-storage-_partition.html"></a>
-      <h1>/metastore/facts/{factname}/storages/{storage}/partition</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factname}/storages/{storage}/partition">/metastore/facts/{factname}/storages/{storage}/partition</a></p>
+      <a name="path__metastore_facts_-factName-_storages_-storage-_partition.html"></a>
+      <h1>/metastore/facts/{factName}/storages/{storage}/partition</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}/partition">/metastore/facts/{factName}/storages/{storage}/partition</a></p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
@@ -2061,7 +2057,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -2094,9 +2090,9 @@ APIResult with state Status#FAILED, if add has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_facts_-factname-_storages_-storage-_partitions.html"></a>
-      <h1>/metastore/facts/{factname}/storages/{storage}/partitions</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factname}/storages/{storage}/partitions">/metastore/facts/{factname}/storages/{storage}/partitions</a></p>
+      <a name="path__metastore_facts_-factName-_storages_-storage-_partitions.html"></a>
+      <h1>/metastore/facts/{factName}/storages/{storage}/partitions</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}/partitions">/metastore/facts/{factName}/storages/{storage}/partitions</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -2128,7 +2124,7 @@ can be filtered as well.
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -2182,7 +2178,7 @@ can be filtered as well.
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             The fact table name
           </td>
@@ -2237,7 +2233,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>factname</td>
+          <td>factName</td>
           <td>
             fact table name
           </td>

@@ -193,7 +193,7 @@ APIResult with state Status#FAILED, if create has failed]]>
               <![CDATA[The sessionid in which user is working]]>
             </wadl:doc>
           </wadl:param>
-          <wadl:param name="ignoreifexist" style="query">
+          <wadl:param name="ignoreIfExisting" style="query">
             <wadl:doc>
               <![CDATA[If true, create will be ignored if db already exists, otherwise it fails.]]>
             </wadl:doc>
@@ -231,7 +231,7 @@ APIResult with state Status#FAILED, if create has failed]]>
       </wadl:method>
       <wadl:method name="POST">
         <wadl:doc>
-          <![CDATA[Create a new dimension tabble]]>
+          <![CDATA[Create a new dimension table]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
@@ -247,7 +247,7 @@ APIResult with state Status#FAILED, if create has failed]]>
     <wadl:resource path="/metastore/facts">
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Get all fact tables in the metastores]]>
+          <![CDATA[Get all fact tables in the metastore in the current database]]>
         </wadl:doc>
         <wadl:request>
           <wadl:param name="sessionid" style="query">
@@ -274,7 +274,11 @@ APIResult with state Status#FAILED, if create has failed]]>
               <![CDATA[The sessionid in which user is working]]>
             </wadl:doc>
           </wadl:param>
-          <wadl:param name="cascade" style="query"/>
+          <wadl:param name="cascade" style="query">
+            <wadl:doc>
+              <![CDATA[if set to true, all the underlying tables will be dropped, if set to false, only the fact table will be dropped]]>
+            </wadl:doc>
+          </wadl:param>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
@@ -572,8 +576,8 @@ System properties are not restricted to the session, they would be set globally]
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/cubes/{cubename}">
-      <wadl:param name="cubename" style="template">
+    <wadl:resource path="/metastore/cubes/{cubeName}">
+      <wadl:param name="cubeName" style="template">
         <wadl:doc>
           <![CDATA[The cube name]]>
         </wadl:doc>
@@ -689,8 +693,8 @@ APIResult with state Status#FAILED, if set has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/databases/{dbname}">
-      <wadl:param name="dbname" style="template">
+    <wadl:resource path="/metastore/databases/{dbName}">
+      <wadl:param name="dbName" style="template">
         <wadl:doc>
           <![CDATA[The db name]]>
         </wadl:doc>
@@ -722,8 +726,8 @@ APIResult with state Status#FAILED, if delete has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimname}">
-      <wadl:param name="dimname" style="template"/>
+    <wadl:resource path="/metastore/dimensions/{dimName}">
+      <wadl:param name="dimName" style="template"/>
       <wadl:method name="PUT">
         <wadl:doc>
           <![CDATA[Update dimension table definition]]>
@@ -794,8 +798,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/facts/{factname}">
-      <wadl:param name="factname" style="template">
+    <wadl:resource path="/metastore/facts/{factName}">
+      <wadl:param name="factName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
@@ -870,8 +874,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/storages/{storage}">
-      <wadl:param name="storage" style="template">
+    <wadl:resource path="/metastore/storages/{storageName}">
+      <wadl:param name="storageName" style="template">
         <wadl:doc>
           <![CDATA[The storage name]]>
         </wadl:doc>
@@ -895,12 +899,19 @@ APIResult with state Status#FAILED, if drop has failed]]>
         <wadl:response>
           <wadl:doc>
             <![CDATA[APIResult with state Status#SUCCEEDED, if update was successful.
-APIResult with state Status#FAILED, if udpate has failed]]>
+APIResult with state Status#FAILED, if update has failed]]>
           </wadl:doc>
           <wadl:representation mediaType="application/xml" element="result"/>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/storages/{storage}">
+      <wadl:param name="storage" style="template">
+        <wadl:doc>
+          <![CDATA[The storage name]]>
+        </wadl:doc>
+      </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
           <![CDATA[Get the storage specified by name]]>
@@ -1134,11 +1145,15 @@ APIResult with state Status#FAILED, if delete has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/cubes/{cubename}/facts">
-      <wadl:param name="cubename" style="template"/>
+    <wadl:resource path="/metastore/cubes/{cubeName}/facts">
+      <wadl:param name="cubeName" style="template">
+        <wadl:doc>
+          <![CDATA[name of the cube]]>
+        </wadl:doc>
+      </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Get all facts that belong to a cube in the metastores]]>
+          <![CDATA[Get all facts that belong to a cube in the metastore]]>
         </wadl:doc>
         <wadl:request>
           <wadl:param name="sessionid" style="query">
@@ -1156,8 +1171,8 @@ APIResult with state Status#FAILED, if delete has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimname}/storages">
-      <wadl:param name="dimname" style="template">
+    <wadl:resource path="/metastore/dimensions/{dimName}/storages">
+      <wadl:param name="dimName" style="template">
         <wadl:doc>
           <![CDATA[The dimension table name]]>
         </wadl:doc>
@@ -1227,8 +1242,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/facts/{factname}/storages">
-      <wadl:param name="factname" style="template">
+    <wadl:resource path="/metastore/facts/{factName}/storages">
+      <wadl:param name="factName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
@@ -1278,7 +1293,7 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:doc>
         <wadl:request>
           <wadl:doc>
-            <![CDATA[The Storage table description]]>
+            <![CDATA[The storage table description]]>
           </wadl:doc>
           <wadl:representation mediaType="*/*"/>
           <wadl:representation mediaType="application/xml"/>
@@ -1383,8 +1398,8 @@ APIResult with state Status#FAILED in case of close failure.]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimname}/storages/{storage}">
-      <wadl:param name="dimname" style="template">
+    <wadl:resource path="/metastore/dimensions/{dimName}/storages/{storage}">
+      <wadl:param name="dimName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
@@ -1434,8 +1449,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/facts/{factname}/storages/{storage}">
-      <wadl:param name="factname" style="template">
+    <wadl:resource path="/metastore/facts/{factName}/storages/{storage}">
+      <wadl:param name="factName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
@@ -1485,8 +1500,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimname}/storages/{storage}/partition">
-      <wadl:param name="dimname" style="template">
+    <wadl:resource path="/metastore/dimensions/{dimName}/storages/{storage}/partition">
+      <wadl:param name="dimName" style="template">
         <wadl:doc>
           <![CDATA[The dimension table name]]>
         </wadl:doc>
@@ -1522,8 +1537,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimname}/storages/{storage}/partitions">
-      <wadl:param name="dimname" style="template">
+    <wadl:resource path="/metastore/dimensions/{dimName}/storages/{storage}/partitions">
+      <wadl:param name="dimName" style="template">
         <wadl:doc>
           <![CDATA[The dimension table name]]>
         </wadl:doc>
@@ -1609,8 +1624,8 @@ APIResult with state Status#FAILED, if add has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/facts/{factname}/storages/{storage}/partition">
-      <wadl:param name="factname" style="template">
+    <wadl:resource path="/metastore/facts/{factName}/storages/{storage}/partition">
+      <wadl:param name="factName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
@@ -1646,8 +1661,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/facts/{factname}/storages/{storage}/partitions">
-      <wadl:param name="factname" style="template">
+    <wadl:resource path="/metastore/facts/{factName}/storages/{storage}/partitions">
+      <wadl:param name="factName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
