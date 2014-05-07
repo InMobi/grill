@@ -187,7 +187,8 @@
 <p>If server has HiveDriver as one of the drivers, the configuration for hive driver should be set up in hive-site.xml. All the available configuration of the HiveDriver can be found <a href="../admin/hivedriver-config.html">here</a>.</p></div></div>
 <div class="section">
 <h4>Running the server<a name="Running_the_server"></a></h4>
-<p>The command to start the server:</p>
+<p>Before starting the server, you need to set <b>HADOOP_HOME</b> and <b>HIVE_HOME</b> environment variables. These should point to the Hadoop and Hive installation locations on the server.</p>
+<p>Once env variables are set, you can use the following command to start the server:</p>
 <div class="source">
 <pre>
   bin/grill-ctl start
