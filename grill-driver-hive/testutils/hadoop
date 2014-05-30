@@ -105,6 +105,6 @@ shift
 #make sure security appender is turned off
 HADOOP_OPTS="$HADOOP_OPTS -Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,NullAppender}"
 
-export CLASSPATH=$CLASSPATH:`cat $MVN_CLASSPATH_FILE`
+export CLASSPATH=$CLASSPATH:`cat $MVN_CLASSPATH_FILE`:"target/classes"
 echo "Classpath file -->" $MVN_CLASSPATH_FILE
 exec "$JAVA" $JAVA_HEAP_MAX $HADOOP_OPTS $CLASS "$@"
