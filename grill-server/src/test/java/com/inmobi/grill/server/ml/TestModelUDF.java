@@ -77,7 +77,7 @@ public class TestModelUDF {
     createModel();
     createTable();
 
-    FunctionRegistry.registerTemporaryFunction("ml_apply_model",HiveMLUDF.class);
+    FunctionRegistry.registerTemporaryFunction("ml_apply_model", HiveMLUDF.class);
   }
 
   private void createTable() throws Exception {
@@ -124,7 +124,7 @@ public class TestModelUDF {
     JavaRDD<String> lines = sc.textFile(DATA_FILE);
     JavaRDD<LabeledPoint> points = lines.map(new ParsePoint()).cache();
     double stepSize = 0.1;
-    int iterations = 100;
+    int iterations = 50;
 
     LogisticRegressionModel model = LogisticRegressionWithSGD.train(points.rdd(),
       iterations, stepSize);

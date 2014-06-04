@@ -32,7 +32,7 @@ public class ModelLoader {
       ois = new ObjectInputStream(fs.open(modelPath));
       MLModel model = (MLModel) ois.readObject();
       modelCache.put(modelPath, model);
-      LOG.info("Read model " + model.getId() + " from location " + modelPath);
+      LOG.info("Loaded model " + model.getId() + " from location " + modelPath);
       return model;
     } catch (ClassNotFoundException e) {
       throw new IOException(e);
