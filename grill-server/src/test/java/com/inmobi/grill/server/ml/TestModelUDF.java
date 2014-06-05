@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-@Test(groups = "unit")
+@Test(groups = "ml")
 public class TestModelUDF {
   public static final String DATA_FILE = "ml_test_data/lr.data";
   private Path MODEL_LOCATION;

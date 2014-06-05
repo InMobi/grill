@@ -177,6 +177,7 @@
                     <configuration>
                         <failIfNoTests>false</failIfNoTests>
                         <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                        <argLine>-Xms1000m -Xmx2000m -XX:PermSize=1000m -XX:MaxPermSize=2000m</argLine>
                     </configuration>
                 </plugin>
                 <plugin>

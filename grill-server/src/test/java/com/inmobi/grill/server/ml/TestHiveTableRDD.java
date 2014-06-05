@@ -15,6 +15,10 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.mllib.classification.LogisticRegressionModel;
+import org.apache.spark.mllib.classification.LogisticRegressionWithSGD;
+import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.mllib.regression.LabeledPoint;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -29,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.*;
-
+@Test(groups = "ml")
 public class TestHiveTableRDD {
   public static final Log LOG = LogFactory.getLog(TestHiveTableRDD.class);
 
@@ -59,7 +63,7 @@ public class TestHiveTableRDD {
 
   private void createTable() throws Exception {
     hiveClient.executeStatement(session,
-      "CREATE TABLE rdd_test_table(feature_1 double, feature_2 double)" +
+      "CREATE TABLE rdd_test_table(label double, feature_1 double, feature_2 double)" +
         " ROW FORMAT DELIMITED FIELDS TERMINATED BY ' '",
       confOverlay);
 
@@ -69,7 +73,7 @@ public class TestHiveTableRDD {
     String line;
 
     while ((line = br.readLine()) != null) {
-      out.println(line.substring(line.indexOf(',') + 1).trim());
+      out.println(line.replace(",", " ").trim());
     }
 
     hiveClient.executeStatement(session,
@@ -91,22 +95,29 @@ public class TestHiveTableRDD {
     assertNotNull(rdd);
 
     // Do an action on the RDD
-    rdd.cache();
-    long count = rdd.count();
-    LOG.info("@@ Records in RDD = " + count);
+    LOG.info("@@ Starting training on table RDD");
+    // Create trainable RDD from the table
+    final int labelPos = 0;
+    final int featurePositions[] = {1, 2};
+    final DoubleValueMapper doubleValueMapper = new DoubleValueMapper();
+    final FeatureValueMapper[] valueMappers = {doubleValueMapper, doubleValueMapper};
 
-    JavaRDD<Double> feature1Rdd = rdd.map(new TestTableProcessor()).cache();
-    LOG.info("@@ Created double RDD");
+    ColumnFeatureFunction featureMapper = new ColumnFeatureFunction(featurePositions,
+      valueMappers,
+      labelPos,
+      featurePositions.length, 0);
 
+    JavaRDD<LabeledPoint> trainableRDD = rdd.map(featureMapper);
 
-    List<Double> feature1Vals = feature1Rdd.collect();
-    int actualRecordCount = 0;
-    for (Double d : feature1Vals) {
-      actualRecordCount++;
-    }
+    // Train a model using the RDD
+    LogisticRegressionModel model = LogisticRegressionWithSGD.train(trainableRDD.rdd(),
+      10, 0.1);
+    assertNotNull(model);
 
-    LOG.info("@@ Actual Records = " + actualRecordCount);
-    assertEquals(actualRecordCount, count);
+    // Just verify if model is able to predict
+    double testVector[] = {1.0, 1.0};
+    double prediction = model.predict(Vectors.dense(testVector));
+    LOG.info("@@ Prediction for test vector: " + prediction);
     sc.stop();
     LOG.info("@@ End hive table rdd test");
   }
@@ -114,7 +125,9 @@ public class TestHiveTableRDD {
   public static class TestTableProcessor implements Function<Tuple2<WritableComparable, HCatRecord>, Double>, Serializable {
     @Override
     public Double call(Tuple2<WritableComparable, HCatRecord> t) throws Exception {
-      return (Double) t._2().get(0);
+      HCatRecord rec = t._2();
+      System.out.println("@@ " + rec.get(0) + " | " + rec.get(1)  + " | " + rec.get(2));
+      return (Double) rec.get(0);
     }
   }
 }
