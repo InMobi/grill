@@ -4,12 +4,11 @@ package com.inmobi.grill.server.ml;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.io.WritableComparable;
-import org.apache.hive.hcatalog.data.HCatRecord;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.thrift.EmbeddedThriftBinaryCLIService;
 import org.apache.hive.service.cli.thrift.ThriftCLIServiceClient;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.classification.LogisticRegressionModel;
@@ -20,7 +19,7 @@ import org.apache.spark.rdd.RDD;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import scala.Tuple2;
+import scala.Function1;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -28,17 +27,18 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.*;
 
 @Test(groups = "ml")
-public class TestHiveTableRDD {
+public class TestHiveTableRDD implements Serializable {
   public static final Log LOG = LogFactory.getLog(TestHiveTableRDD.class);
 
-  private ThriftCLIServiceClient hiveClient;
-  private SessionHandle session;
-  private Map<String, String> confOverlay = new HashMap<String, String>();
+  private transient ThriftCLIServiceClient hiveClient;
+  private transient SessionHandle session;
+  private transient Map<String, String> confOverlay = new HashMap<String, String>();
   public static final String DATA_FILE = "ml_test_data/lr.data";
 
   @BeforeClass
@@ -89,7 +89,7 @@ public class TestHiveTableRDD {
       .setMaster("local");
 
     JavaSparkContext sc = new JavaSparkContext(sparkConf);
-
+    final double trainingFaction = 0.7;
     // Spec with all details
     TableTrainingSpec trainingSpec = TableTrainingSpec.newBuilder()
       .hiveConf(new HiveConf())
@@ -98,6 +98,7 @@ public class TestHiveTableRDD {
       .partitionFilter(null)
       .labelColumn("label")
       .featureColumns(Arrays.asList("feature_1", "feature_2"))
+      .trainingFraction(trainingFaction)
       .build();
 
     boolean isValid = trainingSpec.validate();
@@ -112,31 +113,53 @@ public class TestHiveTableRDD {
       .table("rdd_test_table")
       .labelColumn("label")
       .build();
+
     assertTrue(trainingSpec2.validate());
     assertEquals(trainingSpec2.labelPos, 0);
     assertEquals(trainingSpec2.featurePositions, new int[]{1, 2});
     assertEquals(trainingSpec2.numFeatures, 2);
 
-    RDD<LabeledPoint> trainableRDD = trainingSpec.createTrainableRDD(sc);
+    LOG.info("@@ Training spec validated");
+
+    try {
+      trainingSpec.createRDDs(sc);
+    } catch (Exception exc) {
+      exc.printStackTrace();
+      throw exc;
+    }
+
+    LOG.info("@@ RDDs created");
+
+    long totalSamples = trainingSpec.labeledRDD.count();
+    LOG.info("@@ Total size " + totalSamples);
+
+
+    RDD<LabeledPoint> trainingRDD = trainingSpec.getTrainingRDD();
+    long trainingSamples = trainingRDD.toJavaRDD().count();
+    LOG.info("@@ Training size "  + trainingSamples);
+
+    RDD<LabeledPoint> testingRDD = trainingSpec.getTestingRDD();
+    long testingSamples = testingRDD.toJavaRDD().count();
+    LOG.info("@@ Testing size "  + testingSamples);
 
     // Train a model using the RDD
-    LogisticRegressionModel model = LogisticRegressionWithSGD.train(trainableRDD, 10, 0.1);
+    LOG.info("@@ Training model");
+    final LogisticRegressionModel model = LogisticRegressionWithSGD.train(trainingSpec.labeledRDD.rdd(), 10, 0.1);
     assertNotNull(model);
 
+    LOG.info("@@ Running test on testing RDD");
     // Just verify if model is able to predict
-    double testVector[] = {1.0, 1.0};
-    double prediction = model.predict(Vectors.dense(testVector));
-    LOG.info("@@ Prediction for test vector: " + prediction);
+    JavaRDD<Double> prediction = testingRDD.toJavaRDD().map(new Function<LabeledPoint, Double>() {
+      @Override
+      public Double call(LabeledPoint v1) throws Exception {
+        return model.predict(v1.features());
+      }
+    });
+
+    List<Double> predictedOutput = prediction.collect();
+    assertNotNull(predictedOutput);
+    assertTrue(!predictedOutput.isEmpty());
     sc.stop();
     LOG.info("@@ End hive table rdd test");
-  }
-
-  public static class TestTableProcessor implements Function<Tuple2<WritableComparable, HCatRecord>, Double>, Serializable {
-    @Override
-    public Double call(Tuple2<WritableComparable, HCatRecord> t) throws Exception {
-      HCatRecord rec = t._2();
-      System.out.println("@@ " + rec.get(0) + " | " + rec.get(1)  + " | " + rec.get(2));
-      return (Double) rec.get(0);
-    }
   }
 }

@@ -1,6 +1,8 @@
 package com.inmobi.grill.server.ml;
 
+import com.google.common.base.Preconditions;
 import com.inmobi.grill.api.GrillException;
+import javolution.io.Struct;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,17 +14,35 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hive.hcatalog.data.HCatRecord;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.rdd.RDD;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
-public class TableTrainingSpec {
+public class TableTrainingSpec implements Serializable {
   public static final Log LOG = LogFactory.getLog(TableTrainingSpec.class);
+  private transient RDD<LabeledPoint> trainingRDD;
+  private transient RDD<LabeledPoint> testingRDD;
+  private String db;
+  private String table;
+  private String partitionFilter;
+  private List<String> featureColumns;
+  private String labelColumn;
+  transient private HiveConf conf;
+  // By default all samples are considered for training
+  private double trainingFraction = 1.0;
+  int labelPos;
+  int[] featurePositions;
+  int numFeatures;
+  transient JavaRDD<LabeledPoint> labeledRDD;
 
   public static TableTrainingSpecBuilder newBuilder() {
     return new TableTrainingSpecBuilder();
@@ -69,17 +89,58 @@ public class TableTrainingSpec {
     public TableTrainingSpec build() {
       return spec;
     }
+
+    public TableTrainingSpecBuilder trainingFraction(double trainingFraction) {
+      Preconditions.checkArgument(trainingFraction >= 0 && trainingFraction <= 1.0,
+        "Training fraction shoule be between 0 and 1");
+      spec.trainingFraction = trainingFraction;
+      return this;
+    }
   }
 
-  private String db;
-  private String table;
-  private String partitionFilter;
-  private List<String> featureColumns;
-  private String labelColumn;
-  private HiveConf conf;
-  int labelPos;
-  int[] featurePositions;
-  int numFeatures;
+  public static class DataSample implements Serializable {
+    private final LabeledPoint labeledPoint;
+    private final double sample;
+
+    public DataSample(LabeledPoint labeledPoint) {
+      sample = Math.random();
+      this.labeledPoint = labeledPoint;
+    }
+  }
+
+  public static class TrainingFilter implements Function<DataSample, Boolean> {
+    private double trainingFraction;
+
+    public TrainingFilter(double fraction) {
+      trainingFraction = fraction;
+    }
+
+    @Override
+    public Boolean call(DataSample v1) throws Exception {
+      return v1.sample <= trainingFraction;
+    }
+  }
+
+  public static class TestingFilter implements Function<DataSample, Boolean> {
+    private double trainingFraction;
+
+    public TestingFilter(double fraction) {
+      trainingFraction = fraction;
+    }
+
+    @Override
+    public Boolean call(DataSample v1) throws Exception {
+      return v1.sample > trainingFraction;
+    }
+  }
+
+  public static class GetLabeledPoint implements Function<DataSample, LabeledPoint> {
+    @Override
+    public LabeledPoint call(DataSample v1) throws Exception {
+      return v1.labeledPoint;
+    }
+  }
+
 
   boolean validate() {
     List<FieldSchema> columns;
@@ -138,7 +199,7 @@ public class TableTrainingSpec {
     return valid;
   }
 
-  public RDD<LabeledPoint> createTrainableRDD(JavaSparkContext sparkContext) throws GrillException {
+  public void createRDDs(JavaSparkContext sparkContext) throws GrillException {
     // Validate the spec
     if (!validate()) {
       throw new GrillException("Table spec not valid: " + toString());
@@ -162,8 +223,73 @@ public class TableTrainingSpec {
 
     ColumnFeatureFunction trainPrepFunction =
       new ColumnFeatureFunction(featurePositions, valueMappers, labelPos, numFeatures, 0);
+    labeledRDD = tableRDD.map(trainPrepFunction);
 
-    return tableRDD.map(trainPrepFunction).rdd();
+    if (trainingFraction <= 1.0) {
+      // We have to split the RDD between a training RDD and a testing RDD
+      LOG.info("Splitting RDD for table " + db + "." + table + " with split fraction " + trainingFraction);
+      JavaRDD<DataSample> sampledRDD = labeledRDD.map(new Function<LabeledPoint, DataSample>() {
+        @Override
+        public DataSample call(LabeledPoint v1) throws Exception {
+          return new DataSample(v1);
+        }
+      });
+
+      trainingRDD = sampledRDD.filter(new TrainingFilter(trainingFraction)).map(new GetLabeledPoint()).rdd();
+      testingRDD = sampledRDD.filter(new TestingFilter(trainingFraction)).map(new GetLabeledPoint()).rdd();
+    } else {
+      LOG.info("Using same RDD for train and test");
+      trainingRDD = testingRDD = labeledRDD.rdd();
+    }
+    LOG.info("Generated RDDs");
+  }
+
+  public RDD<LabeledPoint> getTrainingRDD() {
+    return trainingRDD;
+  }
+
+  public RDD<LabeledPoint> getTestingRDD() {
+    return testingRDD;
+  }
+
+  public String getDb() {
+    return db;
+  }
+
+  public String getTable() {
+    return table;
+  }
+
+  public String getPartitionFilter() {
+    return partitionFilter;
+  }
+
+  public List<String> getFeatureColumns() {
+    return featureColumns;
+  }
+
+  public String getLabelColumn() {
+    return labelColumn;
+  }
+
+  public HiveConf getConf() {
+    return conf;
+  }
+
+  public double getTrainingFraction() {
+    return trainingFraction;
+  }
+
+  public int getLabelPos() {
+    return labelPos;
+  }
+
+  public int[] getFeaturePositions() {
+    return featurePositions;
+  }
+
+  public int getNumFeatures() {
+    return numFeatures;
   }
 
   @Override
