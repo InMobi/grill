@@ -7,7 +7,6 @@ import org.apache.hive.hcatalog.data.HCatRecord;
 import org.apache.hive.hcatalog.mapreduce.HCatInputFormat;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.rdd.HadoopRDD;
 
 import java.io.IOException;
 
@@ -35,4 +34,6 @@ public class HiveTableRDD {
 
     return rdd;
   }
+
+
 }

@@ -3,7 +3,6 @@ package com.inmobi.grill.server.ml;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hive.hcatalog.data.HCatRecord;
@@ -11,14 +10,13 @@ import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.thrift.EmbeddedThriftBinaryCLIService;
 import org.apache.hive.service.cli.thrift.ThriftCLIServiceClient;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.classification.LogisticRegressionModel;
 import org.apache.spark.mllib.classification.LogisticRegressionWithSGD;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
+import org.apache.spark.rdd.RDD;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -28,11 +26,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.*;
+
 @Test(groups = "ml")
 public class TestHiveTableRDD {
   public static final Log LOG = LogFactory.getLog(TestHiveTableRDD.class);
@@ -90,28 +89,38 @@ public class TestHiveTableRDD {
       .setMaster("local");
 
     JavaSparkContext sc = new JavaSparkContext(sparkConf);
-    JavaPairRDD<WritableComparable, HCatRecord> rdd =
-      HiveTableRDD.createHiveTableRDD(sc, new Configuration(), null, "rdd_test_table", null);
-    assertNotNull(rdd);
 
-    // Do an action on the RDD
-    LOG.info("@@ Starting training on table RDD");
-    // Create trainable RDD from the table
-    final int labelPos = 0;
-    final int featurePositions[] = {1, 2};
-    final DoubleValueMapper doubleValueMapper = new DoubleValueMapper();
-    final FeatureValueMapper[] valueMappers = {doubleValueMapper, doubleValueMapper};
+    // Spec with all details
+    TableTrainingSpec trainingSpec = TableTrainingSpec.newBuilder()
+      .hiveConf(new HiveConf())
+      .database("default")
+      .table("rdd_test_table")
+      .partitionFilter(null)
+      .labelColumn("label")
+      .featureColumns(Arrays.asList("feature_1", "feature_2"))
+      .build();
 
-    ColumnFeatureFunction featureMapper = new ColumnFeatureFunction(featurePositions,
-      valueMappers,
-      labelPos,
-      featurePositions.length, 0);
+    boolean isValid = trainingSpec.validate();
+    assertTrue(isValid, "Test table spec is valid");
+    assertEquals(trainingSpec.labelPos, 0);
+    assertEquals(trainingSpec.featurePositions, new int[]{1, 2});
+    assertEquals(trainingSpec.numFeatures, 2);
 
-    JavaRDD<LabeledPoint> trainableRDD = rdd.map(featureMapper);
+    // Spec with min required details
+    TableTrainingSpec trainingSpec2 = TableTrainingSpec.newBuilder()
+      .hiveConf(new HiveConf())
+      .table("rdd_test_table")
+      .labelColumn("label")
+      .build();
+    assertTrue(trainingSpec2.validate());
+    assertEquals(trainingSpec2.labelPos, 0);
+    assertEquals(trainingSpec2.featurePositions, new int[]{1, 2});
+    assertEquals(trainingSpec2.numFeatures, 2);
+
+    RDD<LabeledPoint> trainableRDD = trainingSpec.createTrainableRDD(sc);
 
     // Train a model using the RDD
-    LogisticRegressionModel model = LogisticRegressionWithSGD.train(trainableRDD.rdd(),
-      10, 0.1);
+    LogisticRegressionModel model = LogisticRegressionWithSGD.train(trainableRDD, 10, 0.1);
     assertNotNull(model);
 
     // Just verify if model is able to predict
