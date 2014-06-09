@@ -66,7 +66,10 @@ public class TestModelUDF {
 
   @BeforeClass
   public void setup() throws Exception {
-    File modelFile = new File("target/lr_model.out");
+    File modelDir = new File("target/lr");
+    modelDir.mkdir();
+
+    File modelFile = new File(modelDir, "model_v1");
     MODEL_LOCATION = new Path(modelFile.toURI());
 
     HiveConf conf = new HiveConf(TestModelUDF.class);
@@ -77,7 +80,7 @@ public class TestModelUDF {
     createModel();
     createTable();
 
-    FunctionRegistry.registerTemporaryFunction("ml_apply_model", HiveMLUDF.class);
+    FunctionRegistry.registerGenericUDF(false, HiveMLUDF.UDF_NAME, HiveMLUDF.class);
   }
 
   private void createTable() throws Exception {
@@ -151,10 +154,11 @@ public class TestModelUDF {
   public void testModelUDF() throws Exception {
     Map<String, String> overlay = new HashMap<String, String>();
 
+    hiveClient.executeStatement(session, "SET " + ModelLoader.MODEL_PATH_BASE_DIR + "=" + "target", overlay);
     // Execute query
     OperationHandle op = hiveClient.executeStatement(session,
       "INSERT OVERWRITE LOCAL DIRECTORY 'target/lr_query_out'" +
-        "SELECT ml_apply_model('"+ MODEL_LOCATION.toUri() + "', feature_1, feature_2) FROM lr_test_table", overlay);
+        "SELECT predict('lr', 'model_v1', feature_1, feature_2) FROM lr_test_table", overlay);
     List<String> lines = FileUtils.readLines(new File("target/lr_query_out/000000_0"));
     assertEquals(lines.size(), 647);
   }
