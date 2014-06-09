@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.ml;
+package com.inmobi.grill.server.ml.spark;
 
 import com.google.common.base.Preconditions;
 import org.apache.hadoop.io.WritableComparable;

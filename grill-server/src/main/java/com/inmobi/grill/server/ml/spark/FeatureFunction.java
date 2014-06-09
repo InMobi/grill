@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.ml;
+package com.inmobi.grill.server.ml.spark;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hive.hcatalog.data.HCatRecord;

@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.ml;
+package com.inmobi.grill.server.ml.spark;
 
 /**
  * Directly return input when it is known to be double

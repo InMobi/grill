@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.ml;
+package com.inmobi.grill.server.ml.spark;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;

@@ -1,8 +1,7 @@
-package com.inmobi.grill.server.ml;
+package com.inmobi.grill.server.ml.spark;
 
 import com.google.common.base.Preconditions;
 import com.inmobi.grill.api.GrillException;
-import javolution.io.Struct;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 public class TableTrainingSpec implements Serializable {

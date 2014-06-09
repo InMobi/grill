@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.ml;
+package com.inmobi.grill.server.ml.spark;
 
 import org.apache.spark.api.java.function.Function;
 
