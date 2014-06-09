@@ -223,7 +223,7 @@ public class TableTrainingSpec implements Serializable {
       new ColumnFeatureFunction(featurePositions, valueMappers, labelPos, numFeatures, 0);
     labeledRDD = tableRDD.map(trainPrepFunction);
 
-    if (trainingFraction <= 1.0) {
+    if (trainingFraction <= 1.0 && trainingFraction >= 0) {
       // We have to split the RDD between a training RDD and a testing RDD
       LOG.info("Splitting RDD for table " + db + "." + table + " with split fraction " + trainingFraction);
       JavaRDD<DataSample> sampledRDD = labeledRDD.map(new Function<LabeledPoint, DataSample>() {
