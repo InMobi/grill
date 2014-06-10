@@ -12,13 +12,15 @@ import org.apache.spark.rdd.RDD;
 import java.util.Map;
 
 public class SVMTrainer extends BaseSparkTrainer {
+  public static final String NAME = "spark_svm";
+  public static final String DESCRIPTION = "Spark SVM classifier trainer";
   private double minBatchFraction;
   private double regParam;
   private double stepSize;
   private int iterations;
 
-  public SVMTrainer(String name, String description, JavaSparkContext sparkContext) {
-    super(name, description, sparkContext);
+  public SVMTrainer(JavaSparkContext sparkContext) {
+    super(NAME, DESCRIPTION, sparkContext);
   }
 
   @Override

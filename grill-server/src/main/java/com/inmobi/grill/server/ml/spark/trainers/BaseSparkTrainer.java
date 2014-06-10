@@ -31,10 +31,14 @@ public abstract class BaseSparkTrainer implements MLTrainer {
   protected String partitionFilter;
   protected List<String> features;
 
-  public BaseSparkTrainer(String name, String description, JavaSparkContext sparkContext) {
+  protected BaseSparkTrainer(String name, String description, JavaSparkContext sparkContext) {
     this.name = name;
     this.description = description;
     this.sparkContext = sparkContext;
+  }
+
+  public BaseSparkTrainer(JavaSparkContext sparkContext) {
+    this("spark_base_classifier", "base trainer class", sparkContext);
   }
 
   @Override

@@ -8,14 +8,17 @@ import org.apache.spark.mllib.classification.NaiveBayes;
 import org.apache.spark.mllib.classification.NaiveBayesModel;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.rdd.RDD;
+import scala.tools.cmd.gen.AnyVals;
 
 import java.util.Map;
 
 public class NaiveBayesTrainer extends BaseSparkTrainer {
+  public static final String NAME = "spark_naive_bayes";
+  public static final String DESCRIPTION = "Spark Naive Bayes classifier trainer";
   private double lambda = 1.0;
 
-  public NaiveBayesTrainer(String name, String description, JavaSparkContext sparkContext) {
-    super(name, description, sparkContext);
+  public NaiveBayesTrainer(JavaSparkContext sparkContext) {
+    super(NAME, DESCRIPTION, sparkContext);
   }
 
   @Override

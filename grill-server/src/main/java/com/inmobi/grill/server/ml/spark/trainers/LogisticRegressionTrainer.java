@@ -12,12 +12,14 @@ import org.apache.spark.rdd.RDD;
 import java.util.Map;
 
 public class LogisticRegressionTrainer extends BaseSparkTrainer {
+  public static final String NAME = "spark_logistic_regression";
+  public static final String DESCRIPTION = "Spark logistic regression trainer";
   private int iterations;
   private double stepSize;
   private double minBatchFraction;
 
-  public LogisticRegressionTrainer(String name, String description, JavaSparkContext sparkContext) {
-    super(name, description, sparkContext);
+  public LogisticRegressionTrainer(JavaSparkContext sparkContext) {
+    super(NAME, DESCRIPTION, sparkContext);
   }
 
   @Override
