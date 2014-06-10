@@ -1,8 +1,8 @@
-package com.inmobi.grill.server.ml.spark;
+package com.inmobi.grill.server.ml.spark.trainers;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.ml.MLModel;
-import com.inmobi.grill.server.ml.models.SparkLRModel;
+import com.inmobi.grill.server.ml.spark.models.LogitRegressionClassificationModel;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.classification.LogisticRegressionModel;
 import org.apache.spark.mllib.classification.LogisticRegressionWithSGD;
@@ -16,40 +16,22 @@ public class LogisticRegressionTrainer extends BaseSparkTrainer {
   private double stepSize;
   private double minBatchFraction;
 
-  private static final int DEFAULT_ITERATIONS = 100;
-  private static final double DEFAULT_STEP_SIZE = 1.0;
-  private static final double DEFAULT_MIN_BATCH_FRACTION = 1.0;
-
   public LogisticRegressionTrainer(String name, String description, JavaSparkContext sparkContext) {
     super(name, description, sparkContext);
   }
 
   @Override
   public void parseTrainerParams(Map<String, String> params) {
-    if (params.containsKey("iterations")) {
-      iterations = Integer.parseInt(params.get("iterations"));
-    } else {
-      iterations = DEFAULT_ITERATIONS;
-    }
-
-    if (params.containsKey("stepSize")) {
-      stepSize = Double.parseDouble(params.get("stepSize"));
-    } else {
-      stepSize = DEFAULT_STEP_SIZE;
-    }
-
-    if (params.containsKey("minBatchFraction")) {
-      minBatchFraction = Double.parseDouble(params.get("minBatchFraction"));
-    } else {
-      minBatchFraction = DEFAULT_MIN_BATCH_FRACTION;
-    }
+    iterations = getParamValue("iterations", 100);
+    stepSize = getParamValue("stepSize", 1.0d);
+    minBatchFraction = getParamValue("minBatchFraction", 1.0d);
   }
 
   @Override
   protected MLModel trainInternal(String modelId, RDD<LabeledPoint> trainingRDD) throws GrillException {
     LogisticRegressionModel lrModel =
       LogisticRegressionWithSGD.train(trainingRDD, iterations, stepSize, minBatchFraction);
-    return new SparkLRModel(modelId, lrModel);
+    return new LogitRegressionClassificationModel(modelId, lrModel);
   }
 
 }

@@ -36,6 +36,7 @@ public class TableTrainingSpec implements Serializable {
   private String labelColumn;
   transient private HiveConf conf;
   // By default all samples are considered for training
+  private boolean splitTraining;
   private double trainingFraction = 1.0;
   int labelPos;
   int[] featurePositions;
@@ -92,6 +93,7 @@ public class TableTrainingSpec implements Serializable {
       Preconditions.checkArgument(trainingFraction >= 0 && trainingFraction <= 1.0,
         "Training fraction shoule be between 0 and 1");
       spec.trainingFraction = trainingFraction;
+      spec.splitTraining = true;
       return this;
     }
   }
@@ -223,7 +225,7 @@ public class TableTrainingSpec implements Serializable {
       new ColumnFeatureFunction(featurePositions, valueMappers, labelPos, numFeatures, 0);
     labeledRDD = tableRDD.map(trainPrepFunction);
 
-    if (trainingFraction <= 1.0 && trainingFraction >= 0) {
+    if (splitTraining) {
       // We have to split the RDD between a training RDD and a testing RDD
       LOG.info("Splitting RDD for table " + db + "." + table + " with split fraction " + trainingFraction);
       JavaRDD<DataSample> sampledRDD = labeledRDD.map(new Function<LabeledPoint, DataSample>() {

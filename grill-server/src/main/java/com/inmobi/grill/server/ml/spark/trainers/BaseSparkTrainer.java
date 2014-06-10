@@ -1,29 +1,30 @@
-package com.inmobi.grill.server.ml.spark;
+package com.inmobi.grill.server.ml.spark.trainers;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.ml.MLModel;
 import com.inmobi.grill.server.ml.MLTrainer;
+import com.inmobi.grill.server.ml.spark.TableTrainingSpec;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.io.WritableComparable;
-import org.apache.hive.hcatalog.data.HCatRecord;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.rdd.RDD;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class BaseSparkTrainer implements MLTrainer {
+  public static final Log LOG = LogFactory.getLog(BaseSparkTrainer.class);
+
   protected final String name;
   protected final String description;
   protected final JavaSparkContext sparkContext;
   protected Map<String, String> params;
-  protected HiveConf conf;
+  protected transient HiveConf conf;
   private double trainingFraction;
   private boolean useTrainingFraction;
   protected String label;
@@ -57,11 +58,12 @@ public abstract class BaseSparkTrainer implements MLTrainer {
   }
 
   @Override
-  public MLModel train(String db, String table, String modelId, String... params) throws GrillException {
+  public MLModel train(HiveConf conf, String db, String table, String modelId, String... params) throws GrillException {
     parseParams(params);
-
+    LOG.info("Training " + " with " + features.size() + " features");
     TableTrainingSpec.TableTrainingSpecBuilder builder =
       TableTrainingSpec.newBuilder()
+        .hiveConf(conf)
         .database(db)
         .table(table)
         .partitionFilter(partitionFilter)
@@ -76,6 +78,7 @@ public abstract class BaseSparkTrainer implements MLTrainer {
     spec.createRDDs(sparkContext);
 
     RDD<LabeledPoint> trainingRDD = spec.getTrainingRDD();
+    LOG.info("@@ " + name + " Training sample size " + trainingRDD.count());
     return trainInternal(modelId, trainingRDD);
   }
 
@@ -123,6 +126,26 @@ public abstract class BaseSparkTrainer implements MLTrainer {
     }
 
     parseTrainerParams(params);
+  }
+
+  public double getParamValue(String param, double defaultVal) {
+    if (params.containsKey(param)) {
+      try {
+        return Double.parseDouble(params.get(param));
+      } catch (NumberFormatException nfe) {
+      }
+    }
+    return defaultVal;
+  }
+
+  public int getParamValue(String param, int defaultVal) {
+    if (params.containsKey(param)) {
+      try {
+        return Integer.parseInt(params.get(param));
+      } catch (NumberFormatException nfe) {
+      }
+    }
+    return defaultVal;
   }
 
   public abstract void parseTrainerParams(Map<String, String> params);

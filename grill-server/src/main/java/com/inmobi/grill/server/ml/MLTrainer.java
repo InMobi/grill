@@ -9,5 +9,5 @@ public interface MLTrainer {
   public String getDescription();
   public void configure(HiveConf configuration);
   public HiveConf getConf();
-  public MLModel train(String db, String table, String modelId, String ... params) throws GrillException;
+  public MLModel train(HiveConf conf, String db, String table, String modelId, String ... params) throws GrillException;
 }

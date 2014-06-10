@@ -1,10 +1,8 @@
 package com.inmobi.grill.server.ml;
 
-import com.inmobi.grill.server.ml.models.SparkLRModel;
-import lombok.val;
+import com.inmobi.grill.server.ml.spark.models.LogitRegressionClassificationModel;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.conf.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -12,11 +10,8 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.FunctionRegistry;
 import org.apache.hive.service.cli.CLIServiceClient;
 import org.apache.hive.service.cli.OperationHandle;
-import org.apache.hive.service.cli.RowSet;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.thrift.EmbeddedThriftBinaryCLIService;
-import org.apache.hive.service.cli.thrift.TColumnValue;
-import org.apache.hive.service.cli.thrift.TRow;
 import org.apache.hive.service.cli.thrift.ThriftCLIServiceClient;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -30,7 +25,6 @@ import org.testng.annotations.*;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -132,7 +126,8 @@ public class TestModelUDF {
     LogisticRegressionModel model = LogisticRegressionWithSGD.train(points.rdd(),
       iterations, stepSize);
 
-    SparkLRModel udfModel = new SparkLRModel("spark-lr-v-1.0", model);
+    LogitRegressionClassificationModel udfModel =
+      new LogitRegressionClassificationModel("spark-lr-v-1.0", model);
     // Save model to disk
 
     FileSystem fs = MODEL_LOCATION.getFileSystem(new Configuration());
