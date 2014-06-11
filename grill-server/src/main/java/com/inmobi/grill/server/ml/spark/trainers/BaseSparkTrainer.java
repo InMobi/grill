@@ -1,16 +1,18 @@
 package com.inmobi.grill.server.ml.spark.trainers;
 
 import com.inmobi.grill.api.GrillException;
-import com.inmobi.grill.server.ml.MLModel;
-import com.inmobi.grill.server.ml.MLTrainer;
+import com.inmobi.grill.server.api.ml.MLModel;
+import com.inmobi.grill.server.api.ml.MLTrainer;
 import com.inmobi.grill.server.ml.spark.TableTrainingSpec;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.rdd.RDD;
+import org.apache.tools.ant.taskdefs.Java;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,9 +22,7 @@ import java.util.Map;
 public abstract class BaseSparkTrainer implements MLTrainer {
   public static final Log LOG = LogFactory.getLog(BaseSparkTrainer.class);
 
-  protected final String name;
-  protected final String description;
-  protected final JavaSparkContext sparkContext;
+  protected JavaSparkContext sparkContext;
   protected Map<String, String> params;
   protected transient HiveConf conf;
   private double trainingFraction;
@@ -31,24 +31,8 @@ public abstract class BaseSparkTrainer implements MLTrainer {
   protected String partitionFilter;
   protected List<String> features;
 
-  protected BaseSparkTrainer(String name, String description, JavaSparkContext sparkContext) {
-    this.name = name;
-    this.description = description;
+  public void setSparkContext(JavaSparkContext sparkContext) {
     this.sparkContext = sparkContext;
-  }
-
-  public BaseSparkTrainer(JavaSparkContext sparkContext) {
-    this("spark_base_classifier", "base trainer class", sparkContext);
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
   }
 
   @Override
@@ -57,17 +41,17 @@ public abstract class BaseSparkTrainer implements MLTrainer {
   }
 
   @Override
-  public void configure(HiveConf configuration) {
-    this.conf = configuration;
+  public void configure(Configuration configuration) {
+    this.conf = new HiveConf(configuration, BaseSparkTrainer.class);
   }
 
   @Override
-  public MLModel train(HiveConf conf, String db, String table, String modelId, String... params) throws GrillException {
+  public MLModel train(Configuration conf, String db, String table, String modelId, String... params) throws GrillException {
     parseParams(params);
     LOG.info("Training " + " with " + features.size() + " features");
     TableTrainingSpec.TableTrainingSpecBuilder builder =
       TableTrainingSpec.newBuilder()
-        .hiveConf(conf)
+        .hiveConf(new HiveConf(conf, BaseSparkTrainer.class))
         .database(db)
         .table(table)
         .partitionFilter(partitionFilter)
@@ -82,7 +66,6 @@ public abstract class BaseSparkTrainer implements MLTrainer {
     spec.createRDDs(sparkContext);
 
     RDD<LabeledPoint> trainingRDD = spec.getTrainingRDD();
-    LOG.info("@@ " + name + " Training sample size " + trainingRDD.count());
     return trainInternal(modelId, trainingRDD);
   }
 

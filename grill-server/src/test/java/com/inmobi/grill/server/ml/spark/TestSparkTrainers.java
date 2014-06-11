@@ -1,7 +1,7 @@
 package com.inmobi.grill.server.ml.spark;
 
-import com.inmobi.grill.server.ml.MLModel;
-import com.inmobi.grill.server.ml.MLTrainer;
+import com.inmobi.grill.server.api.ml.MLModel;
+import com.inmobi.grill.server.api.ml.MLTrainer;
 import com.inmobi.grill.server.ml.TestModelUDF;
 import com.inmobi.grill.server.ml.spark.trainers.LogisticRegressionTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.NaiveBayesTrainer;

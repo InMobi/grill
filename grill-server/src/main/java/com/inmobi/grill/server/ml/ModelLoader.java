@@ -1,9 +1,9 @@
 package com.inmobi.grill.server.ml;
 
+import com.inmobi.grill.server.api.ml.MLModel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -26,9 +26,14 @@ public class ModelLoader {
 
   public static MLModel loadModel(JobConf conf, String algorithm, String modelID) throws IOException {
     LOG.info("Loading model algorithm: " + algorithm + " modelID: " + modelID);
+
     String modelDataBaseDir = conf.get(MODEL_PATH_BASE_DIR, MODEL_PATH_BASE_DIR_DEFAULT);
     Path modelBasePath = new Path(modelDataBaseDir);
     Path modelPath = new Path(new Path(modelBasePath, algorithm), modelID);
+
+    if (modelCache.containsKey(modelPath)) {
+      return modelCache.get(modelPath);
+    }
 
     FileSystem fs = modelPath.getFileSystem(new HiveConf());
     ObjectInputStream ois = null;
@@ -45,4 +50,9 @@ public class ModelLoader {
       IOUtils.closeQuietly(ois);
     }
   }
+
+  protected static void clearCache() {
+    modelCache.clear();
+  }
+
 }

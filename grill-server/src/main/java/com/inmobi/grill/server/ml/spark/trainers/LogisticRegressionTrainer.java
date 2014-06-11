@@ -1,7 +1,7 @@
 package com.inmobi.grill.server.ml.spark.trainers;
 
 import com.inmobi.grill.api.GrillException;
-import com.inmobi.grill.server.ml.MLModel;
+import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.ml.spark.models.LogitRegressionClassificationModel;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.classification.LogisticRegressionModel;
@@ -18,9 +18,6 @@ public class LogisticRegressionTrainer extends BaseSparkTrainer {
   private double stepSize;
   private double minBatchFraction;
 
-  public LogisticRegressionTrainer(JavaSparkContext sparkContext) {
-    super(NAME, DESCRIPTION, sparkContext);
-  }
 
   @Override
   public void parseTrainerParams(Map<String, String> params) {
@@ -36,4 +33,13 @@ public class LogisticRegressionTrainer extends BaseSparkTrainer {
     return new LogitRegressionClassificationModel(modelId, lrModel);
   }
 
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public String getDescription() {
+    return DESCRIPTION;
+  }
 }
