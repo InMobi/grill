@@ -53,4 +53,24 @@
   <value>target/persist-dir</value>
 </property>
 
+<property>
+    <name>grill.ml.drivers</name>
+    <value>com.inmobi.grill.server.ml.spark.SparkMLDriver</value>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.master</name>
+    <value>local</value>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.app.name</name>
+    <value>Grill</value>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.jars</name>
+    <value></value>
+</property>
+
 </configuration>

@@ -177,4 +177,40 @@
 
 </property>
 
+
+<property>
+    <name>grill.ml.drivers</name>
+    <value>com.inmobi.grill.server.ml.spark.SparkMLDriver</value>
+    <description>List of comma separated driver classes used by the machine learning service</description>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.master</name>
+    <value>local</value>
+    <description>Spark Master URI for Spark ML driver</description>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.app.name</name>
+    <value>Grill</value>
+    <description>Spark app name</description>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.home</name>
+    <value></value>
+    <description>Spark install location</description>
+</property>
+
+<property>
+    <name>grill.ml.sparkdriver.spark.jars</name>
+    <value></value>
+    <description>List of comma separated jar files to be shipped with the spark jobs. Used by Spark ML driver</description>
+</property>
+
+<property>
+    <name>grill.ml.model.basedir</name>
+    <value>.</value>
+</property>
+
 </configuration>

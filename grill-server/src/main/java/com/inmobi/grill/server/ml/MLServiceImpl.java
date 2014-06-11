@@ -26,7 +26,7 @@ public class MLServiceImpl extends GrillService implements MLService {
   private List<MLDriver> drivers;
   private HiveConf conf;
 
-  protected MLServiceImpl(String name, CLIService cliService) {
+  public MLServiceImpl(String name, CLIService cliService) {
     super(NAME, cliService);
   }
 
