@@ -65,6 +65,8 @@ public class MLServiceImpl extends GrillService implements MLService {
     String database = null;
     if (SessionState.get() != null) {
       database = SessionState.get().getCurrentDatabase();
+    } else {
+      database = "default";
     }
 
     MLModel model = trainer.train(getHiveConf(), database, table, modelId, args);

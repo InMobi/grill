@@ -10,10 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -22,13 +20,10 @@ import static org.apache.commons.lang.StringUtils.isBlank;
  */
 @Path("/ml")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class MLServiceResource {
 
   MLService mlService;
 
-  @Context
-  HttpServletRequest request;
 
   private MLService getMlService() {
     if (mlService == null) {
@@ -51,52 +46,56 @@ public class MLServiceResource {
 
 
   @POST
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Path("/{algoName}/train")
-  public String train(@PathParam("algoName") String algoName) throws GrillException {
+  public String train(@PathParam("algoName") String algoName,
+                      MultivaluedMap<String, String> form) throws GrillException {
 
     // Check if trainer is valid
     if (getMlService().getTrainerForName(algoName) == null) {
       throw new NotFoundException("Trainer for algo: " + algoName + " not found");
     }
 
-    if (isBlank(request.getParameter("table"))) {
+    if (isBlank(form.getFirst("table"))) {
       throw new BadRequestException("table parameter is rquired");
     }
 
-    String table = request.getParameter("table");
+    String table = form.getFirst("table");
 
-    if (isBlank(request.getParameter("l")) &&
-        isBlank(request.getParameter("label"))) {
+    if (isBlank(form.getFirst("--label"))) {
       throw new BadRequestException("label parameter is required");
     }
 
     // Check features
-    String[] featureNames = request.getParameterValues("feature");
-    if (featureNames.length < 1) {
+    List<String> featureNames = form.get("--feature");
+    if (featureNames.size() < 1) {
       throw new BadRequestException("At least one feature is required");
     }
 
     List<String> trainerArgs = new ArrayList<String>();
-    Enumeration paramNames = request.getParameterNames();
+    Set<Map.Entry<String, List<String>>> paramSet = form.entrySet();
 
-    while (paramNames.hasMoreElements()) {
-      String p = (String) paramNames.nextElement();
+    for  (Map.Entry<String, List<String>> e : paramSet) {
+      String p = e.getKey();
+      List<String> values = e.getValue();
+      System.out.println("@@ Param " + p + " = " + values.toString());
       if ("algoName".equals(p) || "table".equals(p)) {
         continue;
-      } else if ("feature".equals(p) || "f".equals(p)) {
-        String[] features = request.getParameterValues(p);
-        for (String feature : features) {
-          trainerArgs.add("feature");
+      } else if ("--feature".equals(p)) {
+        for (String feature : values) {
+          trainerArgs.add("--feature");
           trainerArgs.add(feature);
         }
-      } else if ("label".equals(p) || "l".equals(p)) {
-        trainerArgs.add("l");
-        trainerArgs.add(request.getParameter(p));
+      } else if ("--label".equals(p)) {
+        trainerArgs.add("--label");
+        trainerArgs.add(values.get(0));
       } else {
         trainerArgs.add(p);
-        trainerArgs.add(request.getParameter(p));
+        trainerArgs.add(values.get(0));
       }
     }
+
+    System.out.println("@@ Trainer Args: " + trainerArgs.toString());
 
     String modelId = getMlService().train(table, algoName, trainerArgs.toArray(new String[]{}));
     return modelId;

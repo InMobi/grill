@@ -96,7 +96,6 @@ public class TestSparkTrainers {
 
       int records = 0;
       while ((line = br.readLine()) != null) {
-        System.out.println("@@ " + line);
         out.println(line.replace(",", " ").trim());
         records++;
       }
