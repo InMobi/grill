@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.ml.spark;
+package com.inmobi.grill.server.ml;
 
 import com.inmobi.grill.server.GrillApplicationListener;
 import com.inmobi.grill.server.ml.MLServiceResource;

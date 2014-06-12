@@ -2,7 +2,6 @@ package com.inmobi.grill.server.ml;
 
 import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.server.GrillJerseyTest;
-import com.inmobi.grill.server.ml.spark.MLApp;
 import com.inmobi.grill.server.ml.spark.trainers.LogisticRegressionTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.NaiveBayesTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.SVMTrainer;
