@@ -96,6 +96,7 @@ public class SparkMLDriver implements MLDriver {
       LOG.warn("Spark driver was not started");
       return;
     }
+    isStarted = false;
     sparkContext.stop();
     LOG.info("Stopped spark context " + this);
   }
@@ -105,10 +106,14 @@ public class SparkMLDriver implements MLDriver {
     return new ArrayList<String>(trainerClasses.keySet());
   }
 
-  private void checkStarted() throws GrillException{
+  public void checkStarted() throws GrillException{
     if (!isStarted) {
       throw new GrillException("Spark driver is not started yet");
     }
+  }
+
+  public JavaSparkContext getSparkContext() {
+    return sparkContext;
   }
 
 }

@@ -177,6 +177,11 @@
 
 </property>
 
+<property>
+    <name>grill.ml.service.impl</name>
+    <value>com.inmobi.grill.server.ml.MLServiceImpl</value>
+    <description>Implementation class for Machine Learning service</description>
+</property>
 
 <property>
     <name>grill.ml.drivers</name>

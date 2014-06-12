@@ -6,7 +6,6 @@ import com.inmobi.grill.server.ml.TestModelUDF;
 import com.inmobi.grill.server.ml.spark.trainers.LogisticRegressionTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.NaiveBayesTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.SVMTrainer;
-import com.inmobi.grill.server.ml.spark.trainers.SparkTrainerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +39,7 @@ public class TestSparkTrainers {
   private transient Map<String, String> confOverlay = new HashMap<String, String>();
   public JavaSparkContext sparkCtx;
   private transient HiveConf conf = new HiveConf();
+  private SparkMLDriver sparkMLDriver;
 
   @BeforeClass
   public void setup() throws Exception {
@@ -58,11 +58,14 @@ public class TestSparkTrainers {
       .setMaster("local");
 
     sparkCtx = new JavaSparkContext(sparkConf);
+    sparkMLDriver = new SparkMLDriver();
+    sparkMLDriver.init(conf);
+    sparkMLDriver.start();
   }
 
   @AfterClass
   public void destroy() throws Exception {
-    sparkCtx.stop();
+    sparkMLDriver.stop();
   }
 
 
@@ -145,7 +148,7 @@ public class TestSparkTrainers {
   @Test
   public void testLRTrainer() throws Exception {
     LogisticRegressionTrainer lrTrainer = (LogisticRegressionTrainer)
-      SparkTrainerFactory.getTrainer(sparkCtx, LogisticRegressionTrainer.NAME);
+      sparkMLDriver.getTrainerInstance(LogisticRegressionTrainer.NAME);
 
     testTrainer("lr", "ml_test_data/lr.data", 2, lrTrainer, getFeatureLabelArg(2) +
       " --iterations 10 --stepSize 1.0 --minBatchFraction 1.0");
@@ -153,14 +156,14 @@ public class TestSparkTrainers {
 
   @Test
   public void testNaiveBayesTrainer() throws Exception {
-    NaiveBayesTrainer naiveBayesTrainer =
-      (NaiveBayesTrainer) SparkTrainerFactory.getTrainer(sparkCtx, NaiveBayesTrainer.NAME);
+    NaiveBayesTrainer naiveBayesTrainer = (NaiveBayesTrainer)
+      sparkMLDriver.getTrainerInstance(NaiveBayesTrainer.NAME);
     testTrainer("naive_bayes", "ml_test_data/nbayes_data", 3, naiveBayesTrainer, getFeatureLabelArg(3));
   }
 
   @Test
   public void testSVMTrainer() throws Exception {
-    SVMTrainer svmTrainer = (SVMTrainer) SparkTrainerFactory.getTrainer(sparkCtx, SVMTrainer.NAME);
+    SVMTrainer svmTrainer = (SVMTrainer) sparkMLDriver.getTrainerInstance(SVMTrainer.NAME);
     testTrainer("svm", "ml_test_data/svm_data", 16, svmTrainer,
       getFeatureLabelArg(16) + " --iterations 10 --stepSize 1.0 --minBatchFraction 1.0");
   }

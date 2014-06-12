@@ -23,7 +23,7 @@ import java.util.*;
 
 public class MLServiceImpl extends GrillService implements MLService {
   public static final Log LOG = LogFactory.getLog(MLServiceImpl.class);
-  private List<MLDriver> drivers;
+  protected List<MLDriver> drivers;
   private HiveConf conf;
 
   public MLServiceImpl(String name, CLIService cliService) {
@@ -155,6 +155,7 @@ public class MLServiceImpl extends GrillService implements MLService {
     // Get all the drivers
     String[] driverClasses = hiveConf.getStrings("grill.ml.drivers");
     LOG.info("Loading drivers " + Arrays.toString(driverClasses));
+    drivers = new ArrayList<MLDriver>(driverClasses.length);
 
     for (String driverClass : driverClasses) {
       Class<?> cls;
@@ -206,6 +207,7 @@ public class MLServiceImpl extends GrillService implements MLService {
         LOG.error("Failed to stop driver " + driver, e);
       }
     }
+    drivers.clear();
     super.stop();
     LOG.info("Stopped ML service");
   }

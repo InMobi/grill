@@ -22,55 +22,62 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 <configuration>
-<property>
-  <name>grill.drivers</name>
-  <value>com.inmobi.grill.driver.hive.HiveDriver</value>
-</property>
+    <property>
+        <name>grill.drivers</name>
+        <value>com.inmobi.grill.driver.hive.HiveDriver</value>
+    </property>
 
-<property>
-  <name>grill.hive.connection.class</name>
-  <value>com.inmobi.grill.driver.hive.RemoteThriftConnection</value>
-</property>
+    <property>
+        <name>grill.hive.connection.class</name>
+        <value>com.inmobi.grill.driver.hive.RemoteThriftConnection</value>
+    </property>
 
-<property>
-  <name>hive.server2.thrift.bind.host</name>
-  <value>localhost</value>
-</property>
+    <property>
+        <name>hive.server2.thrift.bind.host</name>
+        <value>localhost</value>
+    </property>
 
-<property>
-  <name>hive.server2.thrift.port</name>
-  <value>12345</value>
-</property>
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>12345</value>
+    </property>
 
-<property>
-  <name>grill.enable.console.metrics</name>
-  <value>true</value>
-  <description>Enable metrics to be reported on console</description>
-</property>
+    <property>
+        <name>grill.enable.console.metrics</name>
+        <value>true</value>
+        <description>Enable metrics to be reported on console</description>
+    </property>
 
-<property>
-  <name>grill.server.persist.location</name>
-  <value>target/persist-dir</value>
-</property>
+    <property>
+        <name>grill.server.persist.location</name>
+        <value>target/persist-dir</value>
+    </property>
 
-<property>
-    <name>grill.ml.drivers</name>
-    <value>com.inmobi.grill.server.ml.spark.SparkMLDriver</value>
-</property>
+    <property>
+        <name>grill.ml.drivers</name>
+        <value>com.inmobi.grill.server.ml.spark.SparkMLDriver</value>
+    </property>
 
-<property>
-    <name>grill.ml.sparkdriver.spark.master</name>
-    <value>local</value>
-</property>
+    <property>
+        <name>grill.ml.sparkdriver.spark.master</name>
+        <value>local</value>
+    </property>
 
-<property>
-    <name>grill.ml.sparkdriver.spark.app.name</name>
-    <value>Grill</value>
-</property>
+    <property>
+        <name>grill.ml.sparkdriver.spark.app.name</name>
+        <value>Grill</value>
+    </property>
 
-<property>
-    <name>grill.ml.sparkdriver.spark.jars</name>
-    <value></value>
-</property>
+    <property>
+        <name>grill.ml.sparkdriver.spark.jars</name>
+        <value></value>
+    </property>
+
+    <property>
+        <name>grill.servicenames</name>
+        <value>session,query,metastore,scheduler,quota,ml</value>
+        <description>These services would be started in the specified order when grill-server starts up</description>
+    </property>
+
 
 </configuration>

@@ -21,7 +21,7 @@
         <servlet3.version>3.0.1</servlet3.version>
         <slf4j.version>1.7.6</slf4j.version>
         <metrics.version>3.0.2</metrics.version>
-        <sparkVersion>1.0.0-SNAPSHOT</sparkVersion>
+        <sparkVersion>1.0.0</sparkVersion>
     </properties>
 
     <groupId>com.inmobi.grill</groupId>
@@ -439,6 +439,11 @@
                         <groupId>hsqldb</groupId>
                         <artifactId>hsqldb</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop.thirdparty.guava</groupId>
+                        <artifactId>guava</artifactId>
+                    </exclusion>
+
                 </exclusions>
             </dependency>
             <dependency>
@@ -459,6 +464,12 @@
                 <artifactId>hive-exec</artifactId>
                 <version>${hive.version}</version>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.hive</groupId>
@@ -499,7 +510,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>13.0.1</version>
+                <version>14.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.elasticsearch</groupId>
