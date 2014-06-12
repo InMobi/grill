@@ -108,8 +108,7 @@ public class GrillServices extends CompositeService {
               GrillService.class);
           LOG.info("Adding " + sName + " service with " + serviceClass);
           Constructor<?> constructor = serviceClass.getConstructor(CLIService.class);
-          GrillService service  = (GrillService) constructor.newInstance(new Object[]
-              {cliService});
+          GrillService service  = (GrillService) constructor.newInstance(cliService);
           addService(service);
           grillServices.add(service);
         } catch (Exception e) {

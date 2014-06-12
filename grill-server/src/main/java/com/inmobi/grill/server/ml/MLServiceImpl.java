@@ -30,6 +30,10 @@ public class MLServiceImpl extends GrillService implements MLService {
     super(NAME, cliService);
   }
 
+  public MLServiceImpl(CLIService cliService) {
+    this(NAME, cliService);
+  }
+
   @Override
   public List<String> getTrainerNames() {
     List<String> trainers = new ArrayList<String>();
