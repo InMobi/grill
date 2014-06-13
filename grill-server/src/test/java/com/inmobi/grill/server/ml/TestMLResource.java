@@ -191,6 +191,7 @@ public class TestMLResource extends GrillJerseyTest {
     assertEquals(meta.getTable(), "ml_resource_test");
     assertEquals(meta.getAlgorithm(), NaiveBayesTrainer.NAME);
     assertEquals(meta.getCreatedAt(), model.getCreatedAt().toString());
+    assertTrue(meta.getParams().contains("lambda") && meta.getParams().contains("0.8"));
   }
 
   @Test
