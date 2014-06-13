@@ -5,6 +5,8 @@ import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -21,7 +23,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Path("/ml")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class MLServiceResource {
-
+  public static final Log LOG = LogFactory.getLog(MLServiceResource.class);
   MLService mlService;
 
 
@@ -78,7 +80,6 @@ public class MLServiceResource {
     for  (Map.Entry<String, List<String>> e : paramSet) {
       String p = e.getKey();
       List<String> values = e.getValue();
-      System.out.println("@@ Param " + p + " = " + values.toString());
       if ("algoName".equals(p) || "table".equals(p)) {
         continue;
       } else if ("-feature".equals(p)) {
@@ -95,10 +96,16 @@ public class MLServiceResource {
       }
     }
 
-    System.out.println("@@ Trainer Args: " + trainerArgs.toString());
-
     String modelId = getMlService().train(table, algoName, trainerArgs.toArray(new String[]{}));
+    LOG.info("Trained table " + table + " with algo " + algoName
+      + " params=" + trainerArgs.toString() + ", modelID=" + modelId);
     return modelId;
+  }
+
+  @DELETE @Path("/clearModelCache")
+  public void clearModelCache() {
+    ModelLoader.clearCache();
+    LOG.info("Cleared model cache");
   }
 
 }

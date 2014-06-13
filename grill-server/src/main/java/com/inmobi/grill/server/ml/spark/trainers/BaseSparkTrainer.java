@@ -4,6 +4,7 @@ import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLTrainer;
 import com.inmobi.grill.server.ml.spark.TableTrainingSpec;
+import com.inmobi.grill.server.ml.spark.models.BaseSparkClassificationModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +67,11 @@ public abstract class BaseSparkTrainer implements MLTrainer {
     spec.createRDDs(sparkContext);
 
     RDD<LabeledPoint> trainingRDD = spec.getTrainingRDD();
-    return trainInternal(modelId, trainingRDD);
+    MLModel model = trainInternal(modelId, trainingRDD);
+    if (model instanceof BaseSparkClassificationModel) {
+      ((BaseSparkClassificationModel) model).setTable(table);
+    }
+    return model;
   }
 
   public void parseParams(String[] args) {

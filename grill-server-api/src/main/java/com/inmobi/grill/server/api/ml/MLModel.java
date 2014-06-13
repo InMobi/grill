@@ -8,4 +8,5 @@ public interface MLModel extends Serializable {
   public String getId();
   public Date getCreatedAt();
   public String getTrainerName();
+  public String getTable();
 }

@@ -7,6 +7,7 @@ import org.apache.spark.mllib.linalg.Vectors;
 public class BaseSparkClassificationModel<MODEL extends ClassificationModel> extends BaseModel {
   private final String modelId;
   private final MODEL sparkModel;
+  private String table;
 
   public BaseSparkClassificationModel(String modelId, MODEL model) {
     this.modelId = modelId;
@@ -21,5 +22,14 @@ public class BaseSparkClassificationModel<MODEL extends ClassificationModel> ext
   @Override
   public String getId() {
     return modelId;
+  }
+
+  public void setTable(String table) {
+    this.table = table;
+  }
+
+  @Override
+  public String getTable() {
+    return table;
   }
 }

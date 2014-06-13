@@ -65,6 +65,7 @@ public class TestMLResource extends GrillJerseyTest {
 
   @AfterTest
   public void tearDown() throws Exception {
+    hiveClient.executeStatement(session, "DROP TABLE IF EXISTS ml_resource_test", confOverlay);
     super.tearDown();
   }
 
@@ -160,6 +161,13 @@ public class TestMLResource extends GrillJerseyTest {
     MLModel model = ModelLoader.loadModel(new JobConf(conf), trainer, modelID);
     assertNotNull(model);
     assertEquals(model.getId(), modelID);
+    assertEquals(model.getTable(), "ml_resource_test");
   }
 
+  @Test
+  public void testClearModelCache() throws Exception {
+    WebTarget target = target("ml").path("clearModelCache");
+    Response response = target.request().delete();
+    assertEquals(response.getStatusInfo(), Response.Status.OK);
+  }
 }

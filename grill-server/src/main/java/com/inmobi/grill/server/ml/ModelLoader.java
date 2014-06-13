@@ -4,6 +4,7 @@ import com.inmobi.grill.server.api.ml.MLModel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -24,12 +25,16 @@ public class ModelLoader {
   public static final Log LOG = LogFactory.getLog(ModelLoader.class);
   private static Map<Path, MLModel> modelCache = new HashMap<Path, MLModel>();
 
+  public static Path getModelLocation(Configuration conf, String algorithm, String modelID) {
+    String modelDataBaseDir = conf.get(MODEL_PATH_BASE_DIR, MODEL_PATH_BASE_DIR_DEFAULT);
+    // Model location format - <modelDataBaseDir>/<algorithm>/modelID
+    return new Path(new Path(new Path(modelDataBaseDir), algorithm), modelID);
+  }
+
   public static MLModel loadModel(JobConf conf, String algorithm, String modelID) throws IOException {
     LOG.info("Loading model algorithm: " + algorithm + " modelID: " + modelID);
 
-    String modelDataBaseDir = conf.get(MODEL_PATH_BASE_DIR, MODEL_PATH_BASE_DIR_DEFAULT);
-    Path modelBasePath = new Path(modelDataBaseDir);
-    Path modelPath = new Path(new Path(modelBasePath, algorithm), modelID);
+    Path modelPath = getModelLocation(conf, algorithm, modelID);
 
     if (modelCache.containsKey(modelPath)) {
       return modelCache.get(modelPath);
