@@ -1,18 +1,21 @@
 package com.inmobi.grill.server.ml;
 
+import com.codahale.metrics.MetricRegistryListener;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.StringList;
+import com.inmobi.grill.api.ml.ModelMetadata;
 import com.inmobi.grill.server.GrillServices;
+import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLService;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.util.*;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -39,17 +42,42 @@ public class MLServiceResource {
    * @return
    */
   @GET
-  @Path("/trainers")
+  @Path("trainers")
   public StringList getTrainerNames() {
     List<String> trainers = getMlService().getTrainerNames();
     StringList result = new StringList(trainers);
     return result;
   }
 
+  @GET
+  @Path("models/{algoName}")
+  public StringList getModelsForAlgo(@PathParam("algoName") String algoName) throws GrillException {
+    return new StringList(getMlService().getModels(algoName));
+  }
+
+  @GET
+  @Path("models/{algoName}/{modelID}")
+  public ModelMetadata getModelMetadata(@PathParam("algoName") String algoName,
+                                         @PathParam("modelID") String modelID) throws GrillException {
+    MLModel model = getMlService().getModel(algoName, modelID);
+    if (model == null) {
+      throw new NotFoundException("Model not found " + modelID + ", algo=" + algoName);
+    }
+
+    ModelMetadata meta = new ModelMetadata(
+      model.getId(),
+      model.getTable(),
+      model.getTrainerName(),
+      StringUtils.join(model.getParams(), ' '),
+      model.getCreatedAt().toString(),
+      getMlService().getModelPath(algoName, modelID)
+    );
+    return meta;
+  }
 
   @POST
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  @Path("/{algoName}/train")
+  @Path("{algoName}/train")
   public String train(@PathParam("algoName") String algoName,
                       MultivaluedMap<String, String> form) throws GrillException {
 
@@ -102,10 +130,12 @@ public class MLServiceResource {
     return modelId;
   }
 
-  @DELETE @Path("/clearModelCache")
-  public void clearModelCache() {
+  @DELETE @Path("clearModelCache")
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response clearModelCache() {
     ModelLoader.clearCache();
     LOG.info("Cleared model cache");
+    return Response.ok("Cleared cache", MediaType.TEXT_PLAIN_TYPE).build();
   }
 
 }

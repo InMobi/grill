@@ -11,4 +11,5 @@ public interface MLService {
   public String train(String table, String trainerName, String[] args) throws GrillException;
   public List<String> getModels(String trainer) throws GrillException;
   public MLModel getModel(String trainer, String modelId) throws GrillException;
+  String getModelPath(String algoName, String modelID);
 }

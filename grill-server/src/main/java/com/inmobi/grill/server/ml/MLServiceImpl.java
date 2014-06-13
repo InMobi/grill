@@ -226,4 +226,9 @@ public class MLServiceImpl extends GrillService implements MLService {
   public void clearModels() {
     ModelLoader.clearCache();
   }
+
+  @Override
+  public String getModelPath(String algoName, String modelID) {
+    return ModelLoader.getModelLocation(conf, algoName, modelID).toString();
+  }
 }

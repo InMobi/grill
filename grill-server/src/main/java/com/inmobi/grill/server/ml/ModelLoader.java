@@ -41,6 +41,11 @@ public class ModelLoader {
     }
 
     FileSystem fs = modelPath.getFileSystem(new HiveConf());
+
+    if (!fs.exists(modelPath)) {
+      return null;
+    }
+
     ObjectInputStream ois = null;
 
     try {
