@@ -144,16 +144,16 @@ public class TestMLResource extends GrillJerseyTest {
     WebTarget target = target("ml").path(trainer).path("train");
     Form params = new Form();
     params.param("table", "ml_resource_test");
-    params.param("--label", "label");
-    params.param("--feature", "feature_1");
-    params.param("--feature", "feature_2");
-    params.param("--feature", "feature_3");
-    params.param("--lambda", 0.8 + "");
+    params.param("-label", "label");
+    params.param("-feature", "feature_1");
+    params.param("-feature", "feature_2");
+    params.param("-feature", "feature_3");
+    params.param("-lambda", 0.8 + "");
 
     String modelID = target
       .request(MediaType.APPLICATION_JSON_TYPE)
       .post(Entity.entity(params, MediaType.APPLICATION_FORM_URLENCODED_TYPE), String.class);
-     assertNotNull(modelID);
+    assertNotNull(modelID);
     System.out.println("@@ model = " + modelID);
 
     // Check model ID exists

@@ -62,12 +62,12 @@ public class MLServiceResource {
 
     String table = form.getFirst("table");
 
-    if (isBlank(form.getFirst("--label"))) {
+    if (isBlank(form.getFirst("-label"))) {
       throw new BadRequestException("label parameter is required");
     }
 
     // Check features
-    List<String> featureNames = form.get("--feature");
+    List<String> featureNames = form.get("-feature");
     if (featureNames.size() < 1) {
       throw new BadRequestException("At least one feature is required");
     }
@@ -81,13 +81,13 @@ public class MLServiceResource {
       System.out.println("@@ Param " + p + " = " + values.toString());
       if ("algoName".equals(p) || "table".equals(p)) {
         continue;
-      } else if ("--feature".equals(p)) {
+      } else if ("-feature".equals(p)) {
         for (String feature : values) {
-          trainerArgs.add("--feature");
+          trainerArgs.add("-feature");
           trainerArgs.add(feature);
         }
-      } else if ("--label".equals(p)) {
-        trainerArgs.add("--label");
+      } else if ("-label".equals(p)) {
+        trainerArgs.add("-label");
         trainerArgs.add(values.get(0));
       } else {
         trainerArgs.add(p);

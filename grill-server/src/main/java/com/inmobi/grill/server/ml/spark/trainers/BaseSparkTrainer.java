@@ -77,12 +77,12 @@ public abstract class BaseSparkTrainer implements MLTrainer {
     params = new LinkedHashMap<String, String>();
 
     for (int i = 0; i < args.length; i+=2) {
-      if ("-f".equalsIgnoreCase(args[i]) || "--feature".equalsIgnoreCase(args[i])) {
+      if ("-f".equalsIgnoreCase(args[i]) || "-feature".equalsIgnoreCase(args[i])) {
         if (features == null) {
           features = new ArrayList<String>();
         }
         features.add(args[i+1]);
-      } else if ("-l".equalsIgnoreCase(args[i]) || "--label".equalsIgnoreCase(args[i])) {
+      } else if ("-l".equalsIgnoreCase(args[i]) || "-label".equalsIgnoreCase(args[i])) {
         label = args[i+1];
       } else {
         params.put(args[i].replaceAll("\\-+", ""), args[i + 1]);
