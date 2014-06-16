@@ -142,7 +142,7 @@ public class MLServiceResource {
   }
 
   @POST
-  @Path("/test/{table}/{algorithm}/{modelID}")
+  @Path("test/{table}/{algorithm}/{modelID}")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   public String test(@PathParam("algorithm") String algorithm,
                      @PathParam("modelID") String modelID,
@@ -152,4 +152,13 @@ public class MLServiceResource {
     return testReport.getReportID();
   }
 
+  @GET
+  @Path("reports/{algorithm}")
+  public StringList getReportsForAlgorithm(@PathParam("algorithm") String algoritm) throws GrillException {
+    List<String> reports = getMlService().getTestReports(algoritm);
+    if (reports == null || reports.isEmpty()) {
+      throw new NotFoundException("No test reports found for " + algoritm);
+    }
+    return new StringList(reports);
+  }
 }

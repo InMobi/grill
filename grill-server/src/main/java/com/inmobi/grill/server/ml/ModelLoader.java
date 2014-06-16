@@ -26,8 +26,8 @@ public class ModelLoader {
   public static final String MODEL_PATH_BASE_DIR_DEFAULT = "file:///tmp";
 
   public static final Log LOG = LogFactory.getLog(ModelLoader.class);
-  private static final String TEST_REPORT_BASE_DIR = "grill.ml.test.basedir";
-  private static final String TEST_REPORT_BASE_DIR_DEFAULT = "file:///tmp/ml_reports";
+  public static final String TEST_REPORT_BASE_DIR = "grill.ml.test.basedir";
+  public static final String TEST_REPORT_BASE_DIR_DEFAULT = "file:///tmp/ml_reports";
   private static Map<Path, MLModel> modelCache = new HashMap<Path, MLModel>();
 
   public static Path getModelLocation(Configuration conf, String algorithm, String modelID) {

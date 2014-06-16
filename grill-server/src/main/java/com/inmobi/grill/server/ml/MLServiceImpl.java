@@ -353,8 +353,30 @@ public class MLServiceImpl extends GrillService implements MLService {
   }
 
   @Override
-  public List<MLTestReport> getTestReports(String algorithm) {
-    return null;
+  public List<String> getTestReports(String algorithm) throws GrillException {
+    Path reportBaseDir = new Path(conf.get(ModelLoader.TEST_REPORT_BASE_DIR, ModelLoader.TEST_REPORT_BASE_DIR_DEFAULT));
+    FileSystem fs = null;
+
+    try {
+      fs = reportBaseDir.getFileSystem(conf);
+      if (!fs.exists(reportBaseDir)) {
+        return null;
+      }
+
+      Path algoDir = new Path(reportBaseDir, algorithm);
+      if (!fs.exists(algoDir)) {
+        return null;
+      }
+
+      List<String> reports = new ArrayList<String>();
+      for (FileStatus stat : fs.listStatus(algoDir)) {
+        reports.add(stat.getPath().getName());
+      }
+      return reports;
+    } catch (IOException e) {
+      LOG.error("Error reading report list for " + algorithm, e);
+      return null;
+    }
   }
 
   @Override

@@ -247,6 +247,10 @@ public class TestMLResource extends GrillJerseyTest {
     assertNotNull(report);
     assertEquals(report.getReportID(), testReportID);
     assertEquals(report.getAlgorithm(), NaiveBayesTrainer.NAME);
+
+    StringList reportList = target("ml").path("reports").path(NaiveBayesTrainer.NAME).request().get(StringList.class);
+    assertNotNull(reportList);
+    assertTrue(reportList.getElements().contains(testReportID));
   }
 
   @Test
