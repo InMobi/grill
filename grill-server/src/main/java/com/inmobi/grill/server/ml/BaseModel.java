@@ -1,5 +1,6 @@
 package com.inmobi.grill.server.ml;
 
+
 import com.inmobi.grill.server.api.ml.MLModel;
 
 import java.util.Date;
@@ -10,6 +11,8 @@ public abstract class BaseModel implements MLModel {
   private Date createdAt;
   private List<String> params;
   private String table;
+  private String labelColumn;
+  private List<String> featureColumns;
 
   public final double[] getFeatureVector(Object[] args) {
     double[] features = new double[args.length];
@@ -57,5 +60,23 @@ public abstract class BaseModel implements MLModel {
 
   public void setTable(String table) {
     this.table = table;
+  }
+
+  @Override
+  public List<String> getFeatureColumns() {
+    return featureColumns;
+  }
+
+  @Override
+  public String getLabelColumn() {
+    return labelColumn;
+  }
+
+  public void setLabelColumn(String labelColumn) {
+    this.labelColumn = labelColumn;
+  }
+
+  public void setFeatureColumns(List<String> featureColumns) {
+    this.featureColumns = featureColumns;
   }
 }

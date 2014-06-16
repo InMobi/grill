@@ -29,4 +29,10 @@ public class ModelMetadata {
 
   @XmlElement @Getter
   private String modelPath;
+
+  @XmlElement @Getter
+  private String labelColumn;
+
+  @XmlElement @Getter
+  private String features;
 }

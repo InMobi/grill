@@ -1,19 +1,20 @@
 package com.inmobi.grill.server.ml;
 
-import com.codahale.metrics.MetricRegistryListener;
 import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.api.ml.ModelMetadata;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLService;
+import com.inmobi.grill.server.api.ml.MLTestReport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.util.*;
@@ -44,7 +45,7 @@ public class MLServiceResource {
   @GET
   @Path("trainers")
   public StringList getTrainerNames() {
-    List<String> trainers = getMlService().getTrainerNames();
+    List<String> trainers = getMlService().getAlgorithms();
     StringList result = new StringList(trainers);
     return result;
   }
@@ -70,7 +71,9 @@ public class MLServiceResource {
       model.getTrainerName(),
       StringUtils.join(model.getParams(), ' '),
       model.getCreatedAt().toString(),
-      getMlService().getModelPath(algoName, modelID)
+      getMlService().getModelPath(algoName, modelID),
+      model.getLabelColumn(),
+      StringUtils.join(model.getFeatureColumns(), ",")
     );
     return meta;
   }
@@ -136,6 +139,17 @@ public class MLServiceResource {
     ModelLoader.clearCache();
     LOG.info("Cleared model cache");
     return Response.ok("Cleared cache", MediaType.TEXT_PLAIN_TYPE).build();
+  }
+
+  @POST
+  @Path("/test/{table}/{algorithm}/{modelID}")
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  public String test(@PathParam("algorithm") String algorithm,
+                     @PathParam("modelID") String modelID,
+                     @PathParam("table") String table,
+                     @FormDataParam("sessionid") GrillSessionHandle session) throws GrillException {
+    MLTestReport testReport = getMlService().testModel(session, table, algorithm, modelID);
+    return testReport.getReportID();
   }
 
 }

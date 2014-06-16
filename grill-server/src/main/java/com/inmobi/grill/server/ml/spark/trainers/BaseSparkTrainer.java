@@ -3,7 +3,6 @@ package com.inmobi.grill.server.ml.spark.trainers;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLTrainer;
-import com.inmobi.grill.server.ml.BaseModel;
 import com.inmobi.grill.server.ml.spark.TableTrainingSpec;
 import com.inmobi.grill.server.ml.spark.models.BaseSparkClassificationModel;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +13,6 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.rdd.RDD;
-import org.apache.tools.ant.taskdefs.Java;
 
 import java.util.*;
 
@@ -65,11 +63,11 @@ public abstract class BaseSparkTrainer implements MLTrainer {
     spec.createRDDs(sparkContext);
 
     RDD<LabeledPoint> trainingRDD = spec.getTrainingRDD();
-    MLModel model = trainInternal(modelId, trainingRDD);
-    if (model instanceof BaseModel) {
-      ((BaseModel) model).setTable(table);
-      ((BaseModel) model).setParams(Arrays.asList(params));
-    }
+    BaseSparkClassificationModel model = trainInternal(modelId, trainingRDD);
+    model.setTable(table);
+    model.setParams(Arrays.asList(params));
+    model.setLabelColumn(label);
+    model.setFeatureColumns(features);
     return model;
   }
 
@@ -140,5 +138,5 @@ public abstract class BaseSparkTrainer implements MLTrainer {
   }
 
   public abstract void parseTrainerParams(Map<String, String> params);
-  protected abstract MLModel trainInternal(String modelId, RDD<LabeledPoint> trainingRDD) throws GrillException;
+  protected abstract BaseSparkClassificationModel trainInternal(String modelId, RDD<LabeledPoint> trainingRDD) throws GrillException;
 }

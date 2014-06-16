@@ -1,6 +1,5 @@
 package com.inmobi.grill.server.ml;
 
-import com.inmobi.grill.server.GrillService;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLDriver;
 import com.inmobi.grill.server.api.ml.MLService;
@@ -52,7 +51,7 @@ public class TestMLService {
     sparkDriver.checkStarted();
     assertNotNull(sparkDriver.getSparkContext());
 
-    List<String> trainers = service.getTrainerNames();
+    List<String> trainers = service.getAlgorithms();
     assertNotNull(trainers);
     assertEquals(trainers.size(), 3);
     assertEquals(new HashSet<String>(trainers),

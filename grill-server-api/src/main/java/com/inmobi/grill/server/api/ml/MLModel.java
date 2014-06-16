@@ -11,4 +11,6 @@ public interface MLModel extends Serializable {
   public String getTrainerName();
   public String getTable();
   public List<String> getParams();
+  public List<String> getFeatureColumns();
+  public String getLabelColumn();
 }

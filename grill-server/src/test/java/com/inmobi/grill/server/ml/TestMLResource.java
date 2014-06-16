@@ -1,9 +1,12 @@
 package com.inmobi.grill.server.ml;
 
+import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.api.ml.ModelMetadata;
 import com.inmobi.grill.server.GrillJerseyTest;
+import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLModel;
+import com.inmobi.grill.server.api.ml.MLService;
 import com.inmobi.grill.server.ml.spark.TestHiveTableRDD;
 import com.inmobi.grill.server.ml.spark.trainers.LogisticRegressionTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.NaiveBayesTrainer;
@@ -12,15 +15,19 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.exec.FunctionRegistry;
+import org.apache.hadoop.hive.ql.metadata.Hive;
+import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.thrift.EmbeddedThriftBinaryCLIService;
 import org.apache.hive.service.cli.thrift.ThriftCLIServiceClient;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -39,7 +46,7 @@ import java.util.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.Assert.assertNotNull;
 
 @Test(groups = "ml")
 public class TestMLResource extends GrillJerseyTest {
@@ -48,6 +55,7 @@ public class TestMLResource extends GrillJerseyTest {
   private transient ThriftCLIServiceClient hiveClient;
   private transient SessionHandle session;
   private transient Map<String, String> confOverlay = new HashMap<String, String>();
+  private transient MLServiceImpl mlService;
 
   @BeforeTest
   public void setUp() throws Exception {
@@ -192,6 +200,40 @@ public class TestMLResource extends GrillJerseyTest {
     assertEquals(meta.getAlgorithm(), NaiveBayesTrainer.NAME);
     assertEquals(meta.getCreatedAt(), model.getCreatedAt().toString());
     assertTrue(meta.getParams().contains("lambda") && meta.getParams().contains("0.8"));
+    assertEquals(meta.getLabelColumn(), "label");
+    assertEquals(StringUtils.split(meta.getFeatures(), ","), model.getFeatureColumns().toArray());
+
+    // Run a test
+    LOG.info("@@ Begin test model " + modelID);
+    mlService = (MLServiceImpl) GrillServices.get().getService(MLService.NAME);
+    GrillSessionHandle session =  mlService.openSession("foo", "bar", confOverlay);
+
+    WebTarget modelTestTarget =
+      target("ml").path("test").path("ml_resource_test").path(NaiveBayesTrainer.NAME).path(modelID);
+
+    FormDataMultiPart mp = new FormDataMultiPart();
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
+      session, MediaType.APPLICATION_XML_TYPE));
+    String testReportID = modelTestTarget.request().post(
+      Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), String.class);
+    LOG.info("Created test report: " + testReportID);
+
+
+    // Assert table is created
+    HiveConf serviceConf = mlService.getConf();
+    Hive metastoreClient = Hive.get(serviceConf);
+    Table testOutputTable = metastoreClient.getTable("default", "ml_test_" + testReportID);
+    assertNotNull(testOutputTable);
+
+    List<FieldSchema> testColumnFieldSchema = testOutputTable.getAllCols();
+    List<String> testColumns = new ArrayList<String>(testColumnFieldSchema.size());
+    for (FieldSchema col : testColumnFieldSchema) {
+      testColumns.add(col.getName());
+    }
+
+    assertTrue(testColumns.contains("prediction_result"));
+    assertTrue(testColumns.contains(model.getLabelColumn()));
+    assertTrue(testColumns.containsAll(model.getFeatureColumns()));
   }
 
   @Test
