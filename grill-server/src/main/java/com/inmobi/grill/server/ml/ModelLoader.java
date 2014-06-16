@@ -1,10 +1,12 @@
 package com.inmobi.grill.server.ml;
 
 import com.inmobi.grill.server.api.ml.MLModel;
+import com.inmobi.grill.server.api.ml.MLTestReport;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -12,6 +14,7 @@ import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +26,8 @@ public class ModelLoader {
   public static final String MODEL_PATH_BASE_DIR_DEFAULT = "file:///tmp";
 
   public static final Log LOG = LogFactory.getLog(ModelLoader.class);
+  private static final String TEST_REPORT_BASE_DIR = "grill.ml.test.basedir";
+  private static final String TEST_REPORT_BASE_DIR_DEFAULT = "file:///tmp/ml_reports";
   private static Map<Path, MLModel> modelCache = new HashMap<Path, MLModel>();
 
   public static Path getModelLocation(Configuration conf, String algorithm, String modelID) {
@@ -63,6 +68,62 @@ public class ModelLoader {
 
   protected static void clearCache() {
     modelCache.clear();
+  }
+
+  public static Path getTestReportPath(Configuration conf, String algorithm, String report) {
+    String testReportDir = conf.get(TEST_REPORT_BASE_DIR, TEST_REPORT_BASE_DIR_DEFAULT);
+    return new Path(new Path(testReportDir, algorithm), report);
+  }
+
+  public static void saveTestReport(Configuration conf, MLTestReport report) throws IOException {
+    Path reportDir = new Path(conf.get(TEST_REPORT_BASE_DIR, TEST_REPORT_BASE_DIR_DEFAULT));
+    FileSystem fs = reportDir.getFileSystem(conf);
+
+    if (!fs.exists(reportDir)) {
+      LOG.info("Creating test report dir " + reportDir.toUri().toString());
+      fs.mkdirs(reportDir);
+    }
+
+    Path algoDir = new Path(reportDir, report.getAlgorithm());
+
+    if (!fs.exists(algoDir)) {
+      LOG.info("Creating algorithm report dir " + algoDir.toUri().toString());
+      fs.mkdirs(algoDir);
+    }
+
+    ObjectOutputStream reportOutputStream = null;
+    Path reportSaveLocation;
+    try {
+      reportSaveLocation = new Path(algoDir, report.getReportID());
+      reportOutputStream = new ObjectOutputStream(fs.create(reportSaveLocation));
+      reportOutputStream.writeObject(report);
+      reportOutputStream.flush();
+    } catch (IOException ioexc) {
+      LOG.error("Error saving test report " + report.getReportID(), ioexc);
+      throw ioexc;
+    } finally {
+      IOUtils.closeQuietly(reportOutputStream);
+    }
+    LOG.info("Saved report " + report.getReportID() + " at location " + reportSaveLocation.toUri());
+  }
+
+  public static MLTestReport loadReport(Configuration conf, String algorithm, String reportID) throws IOException {
+    Path reportLocation = getTestReportPath(conf, algorithm, reportID);
+    FileSystem fs = reportLocation.getFileSystem(conf);
+    ObjectInputStream reportStream = null;
+    MLTestReport report = null;
+
+    try {
+      reportStream = new ObjectInputStream(fs.open(reportLocation));
+      report = (MLTestReport) reportStream.readObject();
+    } catch (IOException ioex) {
+      LOG.error("Error reading report " + reportLocation, ioex);
+    } catch (ClassNotFoundException e) {
+      throw new IOException(e);
+    } finally {
+      IOUtils.closeQuietly(reportStream);
+    }
+    return report;
   }
 
 }

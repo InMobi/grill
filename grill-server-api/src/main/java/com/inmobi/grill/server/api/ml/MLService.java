@@ -15,6 +15,6 @@ public interface MLService {
   String getModelPath(String algorithm, String modelID);
   public MLTestReport testModel(GrillSessionHandle session, String table, String algorithm, String modelID) throws GrillException;
   public List<MLTestReport> getTestReports(String algorithm);
-  public MLTestReport getTestReport(String reportID);
+  public MLTestReport getTestReport(String algorithm, String reportID) throws GrillException;
   public Prediction predict(String algorithm, String modelID, Object[] features) throws GrillException;
 }

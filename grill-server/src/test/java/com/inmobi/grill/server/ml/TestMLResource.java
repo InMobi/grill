@@ -7,6 +7,7 @@ import com.inmobi.grill.server.GrillJerseyTest;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLService;
+import com.inmobi.grill.server.api.ml.MLTestReport;
 import com.inmobi.grill.server.ml.spark.TestHiveTableRDD;
 import com.inmobi.grill.server.ml.spark.trainers.LogisticRegressionTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.NaiveBayesTrainer;
@@ -15,6 +16,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.exec.FunctionRegistry;
@@ -234,6 +237,16 @@ public class TestMLResource extends GrillJerseyTest {
     assertTrue(testColumns.contains("prediction_result"));
     assertTrue(testColumns.contains(model.getLabelColumn()));
     assertTrue(testColumns.containsAll(model.getFeatureColumns()));
+
+    // Test if the report was saved
+    Path reportPath = ModelLoader.getTestReportPath(mlService.getConf(), NaiveBayesTrainer.NAME, testReportID);
+    FileSystem fs = reportPath.getFileSystem(mlService.getConf());
+    assertTrue(fs.exists(reportPath));
+
+    MLTestReport report = ModelLoader.loadReport(mlService.getConf(), NaiveBayesTrainer.NAME, testReportID);
+    assertNotNull(report);
+    assertEquals(report.getReportID(), testReportID);
+    assertEquals(report.getAlgorithm(), NaiveBayesTrainer.NAME);
   }
 
   @Test

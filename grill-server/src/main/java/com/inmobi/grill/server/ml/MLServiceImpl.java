@@ -344,6 +344,12 @@ public class MLServiceImpl extends GrillService implements MLService {
 
   private void persistTestReport(BaseTestReport testReport) throws GrillException {
     LOG.info("saving test report " + testReport.getReportID());
+    try {
+      ModelLoader.saveTestReport(conf, testReport);
+      LOG.info("Saved report " + testReport.getReportID());
+    } catch (IOException e) {
+      LOG.error("Error saving report " + testReport.getReportID() + " reason: " + e.getMessage());
+    }
   }
 
   @Override
@@ -352,8 +358,12 @@ public class MLServiceImpl extends GrillService implements MLService {
   }
 
   @Override
-  public MLTestReport getTestReport(String reportID) {
-    return null;
+  public MLTestReport getTestReport(String algorithm, String reportID) throws GrillException {
+    try {
+      return ModelLoader.loadReport(conf, algorithm, reportID);
+    } catch (IOException e) {
+      throw new GrillException(e);
+    }
   }
 
   @Override

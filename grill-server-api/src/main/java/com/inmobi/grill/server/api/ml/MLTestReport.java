@@ -1,8 +1,9 @@
 package com.inmobi.grill.server.api.ml;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface MLTestReport {
+public interface MLTestReport extends Serializable {
   public String getReportID();
   public String getModelID();
   public String getTestOutputPath();
