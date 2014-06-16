@@ -1,6 +1,5 @@
-package com.inmobi.grill.server.ml.spark;
+package com.inmobi.grill.server.ml;
 
-import com.inmobi.grill.api.GrillException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

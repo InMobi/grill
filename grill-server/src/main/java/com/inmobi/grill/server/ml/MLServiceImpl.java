@@ -11,7 +11,6 @@ import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.ml.*;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
-import com.inmobi.grill.server.ml.spark.TableTestingSpec;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
