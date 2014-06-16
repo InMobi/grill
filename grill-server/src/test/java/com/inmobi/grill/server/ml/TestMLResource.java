@@ -3,6 +3,7 @@ package com.inmobi.grill.server.ml;
 import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.api.ml.ModelMetadata;
+import com.inmobi.grill.api.ml.TestReport;
 import com.inmobi.grill.server.GrillJerseyTest;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLModel;
@@ -251,6 +252,17 @@ public class TestMLResource extends GrillJerseyTest {
     StringList reportList = target("ml").path("reports").path(NaiveBayesTrainer.NAME).request().get(StringList.class);
     assertNotNull(reportList);
     assertTrue(reportList.getElements().contains(testReportID));
+
+
+    TestReport jaxbReport = target("ml").path("reports").path(NaiveBayesTrainer.NAME).path(testReportID)
+      .request().get(TestReport.class);
+    assertEquals(jaxbReport.getReportID(), testReportID);
+    assertEquals(jaxbReport.getOutputTable(), "ml_test_" + testReportID);
+    assertEquals(jaxbReport.getAlgorithm(), NaiveBayesTrainer.NAME);
+    assertEquals(jaxbReport.getLabelColumn(), report.getLabelColumn());
+    assertEquals(jaxbReport.getOutputColumn(), "prediction_result");
+    assertEquals(jaxbReport.getModelID(), modelID);
+    assertEquals(jaxbReport.getTestTable(), "ml_resource_test");
   }
 
   @Test

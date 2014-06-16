@@ -9,6 +9,7 @@ public interface MLTestReport extends Serializable {
   public String getTestOutputPath();
   public String getLabelColumn();
   public String getPredictionResultColumn();
+  public String getTestTable();
   public String getAlgorithm();
   public List<String> getFeatureColumns();
   public String getGrillQueryID();

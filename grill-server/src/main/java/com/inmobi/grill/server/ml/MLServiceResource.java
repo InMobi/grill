@@ -4,6 +4,7 @@ import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.api.ml.ModelMetadata;
+import com.inmobi.grill.api.ml.TestReport;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLService;
@@ -161,4 +162,30 @@ public class MLServiceResource {
     }
     return new StringList(reports);
   }
+
+
+  @GET
+  @Path("reports/{algorithm}/{reportID}")
+  public TestReport getTestReport(@PathParam("algorithm") String algorithm,
+                                  @PathParam("reportID") String reportID) throws GrillException {
+    MLTestReport report = getMlService().getTestReport(algorithm, reportID);
+
+    if (report == null) {
+      throw new NotFoundException("Test report: " + reportID + " not found for algorithm " + algorithm);
+    }
+
+    TestReport result = new TestReport(
+      report.getTestTable(),
+      report.getTestOutputPath(),
+      report.getPredictionResultColumn(),
+      report.getLabelColumn(),
+      StringUtils.join(report.getFeatureColumns(), ","),
+      report.getAlgorithm(),
+      report.getModelID(),
+      report.getReportID(),
+      report.getGrillQueryID()
+    );
+    return result;
+  }
+
 }

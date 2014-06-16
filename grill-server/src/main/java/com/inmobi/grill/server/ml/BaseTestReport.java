@@ -28,7 +28,7 @@ public class BaseTestReport implements MLTestReport {
 
   @Override
   public String getTestOutputPath() {
-    return testTable;
+    return outputTable;
   }
 
   @Override
@@ -39,6 +39,11 @@ public class BaseTestReport implements MLTestReport {
   @Override
   public String getPredictionResultColumn() {
     return outputColumn;
+  }
+
+  @Override
+  public String getTestTable() {
+    return testTable;
   }
 
   @Override
