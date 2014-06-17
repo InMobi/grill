@@ -135,7 +135,7 @@ public class MLServiceImpl extends GrillService implements MLService {
       Path trainerDir = getTrainerDir(algorithm);
       FileSystem fs = trainerDir.getFileSystem(conf);
       if (!fs.exists(trainerDir)) {
-        throw new GrillException("Models not found for trainer: " + algorithm);
+        return null;
       }
 
       List<String> models = new ArrayList<String>();
@@ -145,7 +145,7 @@ public class MLServiceImpl extends GrillService implements MLService {
       }
 
       if (models.isEmpty()) {
-        throw new GrillException("No models found for trainer " + algorithm);
+        return null;
       }
 
       return models;
@@ -390,5 +390,27 @@ public class MLServiceImpl extends GrillService implements MLService {
   @Override
   public Prediction predict(String algorithm, String modelID, Object[] features) throws GrillException {
     return null;
+  }
+
+  @Override
+  public void deleteModel(String algorithm, String modelID) throws GrillException {
+    try {
+      ModelLoader.deleteModel(conf, algorithm, modelID);
+      LOG.info("DELETED model " + modelID + " algorithm=" + algorithm);
+    } catch (IOException e) {
+      LOG.error("Error deleting model file. algorithm=" + algorithm + " model=" + modelID + " reason: " + e.getMessage(), e);
+      throw new GrillException("Unable to delete model " + modelID +" for algorithm " + algorithm, e);
+    }
+  }
+
+  @Override
+  public void deleteTestReport(String algorithm, String reportID) throws GrillException {
+    try {
+      ModelLoader.deleteTestReport(conf, algorithm, reportID);
+      LOG.info("DELETED report=" + reportID + " algorithm=" + algorithm);
+    } catch (IOException e) {
+      LOG.error("Error deleting report " + reportID + " algorithm=" + algorithm + " reason: " + e.getMessage(), e);
+      throw new GrillException("Unable to delete report " + reportID + " for algorithm " + algorithm, e);
+    }
   }
 }

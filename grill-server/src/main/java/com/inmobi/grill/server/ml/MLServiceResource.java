@@ -52,18 +52,18 @@ public class MLServiceResource {
   }
 
   @GET
-  @Path("models/{algoName}")
-  public StringList getModelsForAlgo(@PathParam("algoName") String algoName) throws GrillException {
-    return new StringList(getMlService().getModels(algoName));
+  @Path("models/{algorithm}")
+  public StringList getModelsForAlgo(@PathParam("algorithm") String algorithm) throws GrillException {
+    return new StringList(getMlService().getModels(algorithm));
   }
 
   @GET
-  @Path("models/{algoName}/{modelID}")
-  public ModelMetadata getModelMetadata(@PathParam("algoName") String algoName,
+  @Path("models/{algorithm}/{modelID}")
+  public ModelMetadata getModelMetadata(@PathParam("algorithm") String algorithm,
                                          @PathParam("modelID") String modelID) throws GrillException {
-    MLModel model = getMlService().getModel(algoName, modelID);
+    MLModel model = getMlService().getModel(algorithm, modelID);
     if (model == null) {
-      throw new NotFoundException("Model not found " + modelID + ", algo=" + algoName);
+      throw new NotFoundException("Model not found " + modelID + ", algo=" + algorithm);
     }
 
     ModelMetadata meta = new ModelMetadata(
@@ -72,11 +72,20 @@ public class MLServiceResource {
       model.getTrainerName(),
       StringUtils.join(model.getParams(), ' '),
       model.getCreatedAt().toString(),
-      getMlService().getModelPath(algoName, modelID),
+      getMlService().getModelPath(algorithm, modelID),
       model.getLabelColumn(),
       StringUtils.join(model.getFeatureColumns(), ",")
     );
     return meta;
+  }
+
+  @DELETE
+  @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Path("models/{algorithm}/{modelID}")
+  public String deleteModel(@PathParam("algorithm") String algorithm,
+                              @PathParam("modelID") String modelID) throws GrillException {
+    getMlService().deleteModel(algorithm, modelID);
+    return "DELETED model=" + modelID + " algorithm=" + algorithm;
   }
 
   @POST
@@ -188,4 +197,12 @@ public class MLServiceResource {
     return result;
   }
 
+  @DELETE
+  @Path("reports/{algorithm}/{reportID}")
+  @Consumes( {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  public String deleteTestReport(@PathParam("algorithm") String algorithm,
+                                  @PathParam("reportID") String reportID) throws GrillException {
+    getMlService().deleteTestReport(algorithm, reportID);
+    return "DELETED report="+ reportID +  " algorithm=" + algorithm;
+  }
 }

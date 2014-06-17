@@ -17,4 +17,6 @@ public interface MLService {
   public List<String> getTestReports(String algorithm) throws GrillException;
   public MLTestReport getTestReport(String algorithm, String reportID) throws GrillException;
   public Prediction predict(String algorithm, String modelID, Object[] features) throws GrillException;
+  public void deleteModel(String algorithm, String modelID) throws GrillException;
+  public void deleteTestReport(String algorithm, String reportID) throws GrillException;
 }

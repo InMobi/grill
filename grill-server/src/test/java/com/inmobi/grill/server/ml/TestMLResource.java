@@ -37,6 +37,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.*;
@@ -47,10 +48,7 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.*;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 @Test(groups = "ml")
 public class TestMLResource extends GrillJerseyTest {
@@ -201,7 +199,7 @@ public class TestMLResource extends GrillJerseyTest {
 
     assertEquals(meta.getModelID(), modelID);
     assertEquals(meta.getTable(), "ml_resource_test");
-    assertEquals(meta.getAlgorithm(), NaiveBayesTrainer.NAME);
+    assertEquals(meta.getAlgorithm(), algo);
     assertEquals(meta.getCreatedAt(), model.getCreatedAt().toString());
     assertTrue(meta.getParams().contains("lambda") && meta.getParams().contains("0.8"));
     assertEquals(meta.getLabelColumn(), "label");
@@ -213,7 +211,7 @@ public class TestMLResource extends GrillJerseyTest {
     GrillSessionHandle session =  mlService.openSession("foo", "bar", confOverlay);
 
     WebTarget modelTestTarget =
-      target("ml").path("test").path("ml_resource_test").path(NaiveBayesTrainer.NAME).path(modelID);
+      target("ml").path("test").path("ml_resource_test").path(algo).path(modelID);
 
     FormDataMultiPart mp = new FormDataMultiPart();
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
@@ -240,29 +238,54 @@ public class TestMLResource extends GrillJerseyTest {
     assertTrue(testColumns.containsAll(model.getFeatureColumns()));
 
     // Test if the report was saved
-    Path reportPath = ModelLoader.getTestReportPath(mlService.getConf(), NaiveBayesTrainer.NAME, testReportID);
+    Path reportPath = ModelLoader.getTestReportPath(mlService.getConf(), algo, testReportID);
     FileSystem fs = reportPath.getFileSystem(mlService.getConf());
     assertTrue(fs.exists(reportPath));
 
-    MLTestReport report = ModelLoader.loadReport(mlService.getConf(), NaiveBayesTrainer.NAME, testReportID);
+    MLTestReport report = ModelLoader.loadReport(mlService.getConf(), algo, testReportID);
     assertNotNull(report);
     assertEquals(report.getReportID(), testReportID);
-    assertEquals(report.getAlgorithm(), NaiveBayesTrainer.NAME);
+    assertEquals(report.getAlgorithm(), algo);
 
-    StringList reportList = target("ml").path("reports").path(NaiveBayesTrainer.NAME).request().get(StringList.class);
+    StringList reportList = target("ml").path("reports").path(algo).request().get(StringList.class);
     assertNotNull(reportList);
     assertTrue(reportList.getElements().contains(testReportID));
 
 
-    TestReport jaxbReport = target("ml").path("reports").path(NaiveBayesTrainer.NAME).path(testReportID)
+    TestReport jaxbReport = target("ml").path("reports").path(algo).path(testReportID)
       .request().get(TestReport.class);
     assertEquals(jaxbReport.getReportID(), testReportID);
     assertEquals(jaxbReport.getOutputTable(), "ml_test_" + testReportID);
-    assertEquals(jaxbReport.getAlgorithm(), NaiveBayesTrainer.NAME);
+    assertEquals(jaxbReport.getAlgorithm(), algo);
     assertEquals(jaxbReport.getLabelColumn(), report.getLabelColumn());
     assertEquals(jaxbReport.getOutputColumn(), "prediction_result");
     assertEquals(jaxbReport.getModelID(), modelID);
     assertEquals(jaxbReport.getTestTable(), "ml_resource_test");
+
+    // Delete a model
+    String deleted = target("ml").path("models").path(algo).path(modelID)
+      .request(MediaType.APPLICATION_XML).delete(String.class);
+    assertEquals(deleted, "DELETED model=" + modelID + " algorithm=" + algo);
+
+    // Now model list should not contain model
+    try {
+      models = target("ml").path("models").path(algo).request().get(StringList.class);
+      assertFalse(models.getElements().contains(modelID));
+    } catch (NotFoundException notFound) {
+      // could be because there are no reports now
+    }
+
+    // Delete a report
+    String reportDeleted = target("ml").path("reports").path(algo).path(testReportID).request().delete(String.class);
+    assertEquals(reportDeleted, "DELETED report=" + testReportID + " algorithm=" + algo);
+
+    // Now report list should not contain deleted report
+    try {
+      reportList = target("ml").path("reports").path(algo).request().get(StringList.class);
+      assertFalse(reportList.getElements().contains(testReportID));
+    } catch (NotFoundException notFound) {
+      // Exception is expected if there are no other reports
+    }
   }
 
   @Test

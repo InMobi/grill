@@ -126,4 +126,14 @@ public class ModelLoader {
     return report;
   }
 
+  public static void deleteModel(HiveConf conf, String algorithm, String modelID) throws IOException {
+    Path modelLocation = getModelLocation(conf, algorithm, modelID);
+    FileSystem fs = modelLocation.getFileSystem(conf);
+    fs.delete(modelLocation, false);
+  }
+
+  public static void deleteTestReport(HiveConf conf, String algorithm, String reportID) throws IOException {
+    Path reportPath = getTestReportPath(conf, algorithm, reportID);
+    reportPath.getFileSystem(conf).delete(reportPath, false);
+  }
 }
