@@ -113,9 +113,9 @@ public class TestSparkTrainers {
   }
 
   private String getFeatureLabelArg(int numFeatures) {
-    StringBuilder builder = new StringBuilder("-label label ");
+    StringBuilder builder = new StringBuilder("label label ");
     for (int i = 1; i <= numFeatures; i++) {
-      builder.append("-feature feature_").append(i).append(" ");
+      builder.append("feature feature_").append(i).append(" ");
     }
     return builder.toString();
   }
@@ -150,7 +150,7 @@ public class TestSparkTrainers {
       sparkMLDriver.getTrainerInstance(LogisticRegressionTrainer.NAME);
 
     testTrainer("lr", "ml_test_data/lr.data", 2, lrTrainer, getFeatureLabelArg(2) +
-      " -iterations 10 -stepSize 1.0 -minBatchFraction 1.0");
+      " iterations 10 stepSize 1.0 minBatchFraction 1.0");
   }
 
   @Test
@@ -164,6 +164,6 @@ public class TestSparkTrainers {
   public void testSVMTrainer() throws Exception {
     SVMTrainer svmTrainer = (SVMTrainer) sparkMLDriver.getTrainerInstance(SVMTrainer.NAME);
     testTrainer("svm", "ml_test_data/svm_data", 16, svmTrainer,
-      getFeatureLabelArg(16) + " -iterations 10 -stepSize 1.0 -minBatchFraction 1.0");
+      getFeatureLabelArg(16) + " iterations 10 stepSize 1.0 minBatchFraction 1.0");
   }
 }
