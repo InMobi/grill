@@ -26,7 +26,8 @@ import java.io.IOException;
  */
 @Description(
   name = "predict",
-  value = "_FUNC_(str, str, ...) - Call Yoda UDF that returns value of String type")
+  value = "_FUNC_(algorithm, modelID, features...) - Run prediction algorithm with given " +
+    "algorithm name, model ID and input feature columns")
 public class HiveMLUDF extends GenericUDF {
 
   public static final String UDF_NAME = "predict";
