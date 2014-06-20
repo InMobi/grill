@@ -105,22 +105,8 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;queryPlan&gt;
-  &lt;numJoins&gt;...&lt;/numJoins&gt;
-  &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
-  &lt;filterWeight&gt;...&lt;/filterWeight&gt;
-  &lt;joinWeight&gt;...&lt;/joinWeight&gt;
-  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
-  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
   &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
-  &lt;numSels&gt;...&lt;/numSels&gt;
-  &lt;planString&gt;...&lt;/planString&gt;
-  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
-  &lt;numHaving&gt;...&lt;/numHaving&gt;
-  &lt;tablesQueried&gt;
-    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
-    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
-    &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
-  &lt;/tablesQueried&gt;
+  &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
   &lt;prepareHandle&gt;
     &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
   &lt;/prepareHandle&gt;
@@ -139,32 +125,36 @@
     &lt;/entry&gt;
     &lt;!--...more entries...--&gt;
   &lt;/tableWeights&gt;
-  &lt;numObys&gt;...&lt;/numObys&gt;
-  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
+  &lt;planString&gt;...&lt;/planString&gt;
   &lt;queryCost&gt;
     &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
     &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
   &lt;/queryCost&gt;
-  &lt;numGbys&gt;...&lt;/numGbys&gt;
-  &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
+  &lt;tablesQueried&gt;
+    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
+    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
+    &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
+  &lt;/tablesQueried&gt;
+  &lt;numObys&gt;...&lt;/numObys&gt;
+  &lt;joinWeight&gt;...&lt;/joinWeight&gt;
+  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
   &lt;scanMode&gt;...&lt;/scanMode&gt;
-  &lt;numFilters&gt;...&lt;/numFilters&gt;
+  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
+  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
+  &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
+  &lt;filterWeight&gt;...&lt;/filterWeight&gt;
   &lt;execMode&gt;...&lt;/execMode&gt;
+  &lt;numFilters&gt;...&lt;/numFilters&gt;
+  &lt;numSels&gt;...&lt;/numSels&gt;
+  &lt;numGbys&gt;...&lt;/numGbys&gt;
+  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
+  &lt;numJoins&gt;...&lt;/numJoins&gt;
+  &lt;numHaving&gt;...&lt;/numHaving&gt;
 &lt;/queryPlan&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;numJoins&quot; : ...,
-  &quot;numAggrExprs&quot; : ...,
-  &quot;filterWeight&quot; : ...,
-  &quot;joinWeight&quot; : ...,
-  &quot;obyWeight&quot; : ...,
-  &quot;numSelDi&quot; : ...,
   &quot;gbyWeight&quot; : ...,
-  &quot;numSels&quot; : ...,
-  &quot;planString&quot; : &quot;...&quot;,
-  &quot;havingWeight&quot; : ...,
-  &quot;numHaving&quot; : ...,
-  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
+  &quot;hasSubQuery&quot; : false,
   &quot;prepareHandle&quot; : {
     &quot;prepareHandleId&quot; : &quot;...&quot;
   },
@@ -172,17 +162,27 @@
     &quot;...&quot; : ...
   }, {
   } ],
-  &quot;numObys&quot; : ...,
-  &quot;selectWeight&quot; : ...,
+  &quot;planString&quot; : &quot;...&quot;,
   &quot;queryCost&quot; : {
     &quot;estimatedResourceUsage&quot; : ...,
     &quot;estimatedExecTimeMillis&quot; : ...
   },
-  &quot;numGbys&quot; : ...,
-  &quot;hasSubQuery&quot; : false,
+  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
+  &quot;numObys&quot; : ...,
+  &quot;joinWeight&quot; : ...,
+  &quot;numSelDi&quot; : ...,
   &quot;scanMode&quot; : &quot;...&quot;,
+  &quot;havingWeight&quot; : ...,
+  &quot;selectWeight&quot; : ...,
+  &quot;numAggrExprs&quot; : ...,
+  &quot;filterWeight&quot; : ...,
+  &quot;execMode&quot; : &quot;...&quot;,
   &quot;numFilters&quot; : ...,
-  &quot;execMode&quot; : &quot;...&quot;
+  &quot;numSels&quot; : ...,
+  &quot;numGbys&quot; : ...,
+  &quot;obyWeight&quot; : ...,
+  &quot;numJoins&quot; : ...,
+  &quot;numHaving&quot; : ...
 }</code>
 
       <div class="clear" />
