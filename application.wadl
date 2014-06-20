@@ -958,44 +958,6 @@ APIResult with state Status#FAILED, if drop has failed]]>
           <![CDATA[The prepare handle]]>
         </wadl:doc>
       </wadl:param>
-      <wadl:method name="PUT">
-        <wadl:doc>
-          <![CDATA[Modify prepared query's configuration. This would be picked up for subsequent runs
-of the prepared queries. The query wont be re-prepared with new configuration.]]>
-        </wadl:doc>
-        <wadl:request/>
-        <wadl:response>
-          <wadl:doc>
-            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful update.
-APIResult with state Status#FAILED in case of udpate failure.]]>
-          </wadl:doc>
-          <wadl:representation mediaType="application/xml" element="result"/>
-          <wadl:representation mediaType="text/plain"/>
-          <wadl:representation mediaType="application/json"/>
-        </wadl:response>
-      </wadl:method>
-      <wadl:method name="POST">
-        <wadl:doc>
-          <![CDATA[Submit prepared query for execution]]>
-        </wadl:doc>
-        <wadl:request/>
-        <wadl:response>
-          <wadl:doc>
-            <![CDATA[QueryHandle in case of SubmitOp#EXECUTE operation.
-QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
-          </wadl:doc>
-          <wadl:representation mediaType="application/xml" element="querySubmitResult"/>
-          <wadl:representation mediaType="text/plain"/>
-          <wadl:representation mediaType="application/json"/>
-        </wadl:response>
-      </wadl:method>
-    </wadl:resource>
-    <wadl:resource path="/queryapi/preparedqueries/{preparehandle}">
-      <wadl:param name="preparehandle" style="template">
-        <wadl:doc>
-          <![CDATA[The prepare handle]]>
-        </wadl:doc>
-      </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
           <![CDATA[Get a prepared query specified by handle]]>
@@ -1037,9 +999,40 @@ APIResult with state Status#FAILED in case of destroy failure.]]>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Modify prepared query's configuration. This would be picked up for subsequent runs
+of the prepared queries. The query wont be re-prepared with new configuration.]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful update.
+APIResult with state Status#FAILED in case of udpate failure.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Submit prepared query for execution]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[QueryHandle in case of SubmitOp#EXECUTE operation.
+QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="querySubmitResult"/>
+          <wadl:representation mediaType="text/plain"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/queryapi/queries/{queryhandle}">
-      <wadl:param name="queryhandle" style="template">
+    <wadl:resource path="/queryapi/queries/{queryHandle}">
+      <wadl:param name="queryHandle" style="template">
         <wadl:doc>
           <![CDATA[The query handle]]>
         </wadl:doc>
@@ -1313,8 +1306,8 @@ APIResult with state Status#FAILED, if add has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/queryapi/queries/{queryhandle}/resultset">
-      <wadl:param name="queryhandle" style="template">
+    <wadl:resource path="/queryapi/queries/{queryHandle}/resultset">
+      <wadl:param name="queryHandle" style="template">
         <wadl:doc>
           <![CDATA[The query handle]]>
         </wadl:doc>
@@ -1371,8 +1364,8 @@ APIResult with state Status#FAILED in case of close failure.]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/queryapi/queries/{queryhandle}/resultsetmetadata">
-      <wadl:param name="queryhandle" style="template">
+    <wadl:resource path="/queryapi/queries/{queryHandle}/resultsetmetadata">
+      <wadl:param name="queryHandle" style="template">
         <wadl:doc>
           <![CDATA[The query handle]]>
         </wadl:doc>

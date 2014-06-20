@@ -74,10 +74,9 @@
         <li><a href="#path__queryapi_preparedqueries.html">/queryapi/preparedqueries</a></li>
         <li><a href="#path__queryapi_queries.html">/queryapi/queries</a></li>
         <li><a href="#path__queryapi_preparedqueries_-prepareHandle-.html">/queryapi/preparedqueries/{prepareHandle}</a></li>
-        <li><a href="#path__queryapi_preparedqueries_-preparehandle-.html">/queryapi/preparedqueries/{preparehandle}</a></li>
-        <li><a href="#path__queryapi_queries_-queryhandle-.html">/queryapi/queries/{queryhandle}</a></li>
-        <li><a href="#path__queryapi_queries_-queryhandle-_resultset.html">/queryapi/queries/{queryhandle}/resultset</a></li>
-        <li><a href="#path__queryapi_queries_-queryhandle-_resultsetmetadata.html">/queryapi/queries/{queryhandle}/resultsetmetadata</a></li>
+        <li><a href="#path__queryapi_queries_-queryHandle-.html">/queryapi/queries/{queryHandle}</a></li>
+        <li><a href="#path__queryapi_queries_-queryHandle-_resultset.html">/queryapi/queries/{queryHandle}/resultset</a></li>
+        <li><a href="#path__queryapi_queries_-queryHandle-_resultsetmetadata.html">/queryapi/queries/{queryHandle}/resultsetmetadata</a></li>
       </ul>
       <a name="path__queryapi.html"></a>
       <h1>/queryapi</h1>
@@ -412,6 +411,92 @@ APIResult with state Status#PARTIAL in case of partial cancellation.</p>
       <a name="path__queryapi_preparedqueries_-prepareHandle-.html"></a>
       <h1>/queryapi/preparedqueries/{prepareHandle}</h1>
       <p class="note">Mount Point: <a href="../queryapi/preparedqueries/{prepareHandle}">/queryapi/preparedqueries/{prepareHandle}</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+        <li><a href="#PUT">PUT</a></li>
+        <li><a href="#POST">POST</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get a prepared query specified by handle
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>prepareHandle</td>
+          <td>
+            The prepare handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery</a></td>
+        </tr>
+      </table>
+      <p>GrillPreparedQuery</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Destroy the prepared query specified by handle
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>prepareHandle</td>
+          <td>
+            The prepare handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful destroy.
+APIResult with state Status#FAILED in case of destroy failure.</p>
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
@@ -523,89 +608,9 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
       </table>
       <p>QueryHandle in case of SubmitOp#EXECUTE operation.
 QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
-      <a name="path__queryapi_preparedqueries_-preparehandle-.html"></a>
-      <h1>/queryapi/preparedqueries/{preparehandle}</h1>
-      <p class="note">Mount Point: <a href="../queryapi/preparedqueries/{preparehandle}">/queryapi/preparedqueries/{preparehandle}</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get a prepared query specified by handle
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The user session handle
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>preparehandle</td>
-          <td>
-            The prepare handle
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery</a></td>
-        </tr>
-      </table>
-      <p>GrillPreparedQuery</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Destroy the prepared query specified by handle
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The user session handle
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>preparehandle</td>
-          <td>
-            The prepare handle
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED in case of successful destroy.
-APIResult with state Status#FAILED in case of destroy failure.</p>
-      <a name="path__queryapi_queries_-queryhandle-.html"></a>
-      <h1>/queryapi/queries/{queryhandle}</h1>
-      <p class="note">Mount Point: <a href="../queryapi/queries/{queryhandle}">/queryapi/queries/{queryhandle}</a></p>
+      <a name="path__queryapi_queries_-queryHandle-.html"></a>
+      <h1>/queryapi/queries/{queryHandle}</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}">/queryapi/queries/{queryHandle}</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -636,7 +641,7 @@ APIResult with state Status#FAILED in case of destroy failure.</p>
           <td></td>
         </tr>
         <tr>
-          <td>queryhandle</td>
+          <td>queryHandle</td>
           <td>
             The query handle
           </td>
@@ -674,7 +679,7 @@ APIResult with state Status#FAILED in case of destroy failure.</p>
           <td></td>
         </tr>
         <tr>
-          <td>queryhandle</td>
+          <td>queryHandle</td>
           <td>
             The query handle
           </td>
@@ -713,7 +718,7 @@ APIResult with state Status#FAILED in case of cancellation failure.</p>
           <td></td>
         </tr>
         <tr>
-          <td>queryhandle</td>
+          <td>queryHandle</td>
           <td>
             The query handle
           </td>
@@ -738,9 +743,9 @@ APIResult with state Status#FAILED in case of cancellation failure.</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful update.
 APIResult with state Status#FAILED in case of udpate failure.</p>
-      <a name="path__queryapi_queries_-queryhandle-_resultset.html"></a>
-      <h1>/queryapi/queries/{queryhandle}/resultset</h1>
-      <p class="note">Mount Point: <a href="../queryapi/queries/{queryhandle}/resultset">/queryapi/queries/{queryhandle}/resultset</a></p>
+      <a name="path__queryapi_queries_-queryHandle-_resultset.html"></a>
+      <h1>/queryapi/queries/{queryHandle}/resultset</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/resultset">/queryapi/queries/{queryHandle}/resultset</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
@@ -763,7 +768,7 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
           <td></td>
         </tr>
         <tr>
-          <td>queryhandle</td>
+          <td>queryHandle</td>
           <td>
             The query handle
           </td>
@@ -817,7 +822,7 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
           <td></td>
         </tr>
         <tr>
-          <td>queryhandle</td>
+          <td>queryHandle</td>
           <td>
             The query handle
           </td>
@@ -834,9 +839,9 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful close.
 APIResult with state Status#FAILED in case of close failure.</p>
-      <a name="path__queryapi_queries_-queryhandle-_resultsetmetadata.html"></a>
-      <h1>/queryapi/queries/{queryhandle}/resultsetmetadata</h1>
-      <p class="note">Mount Point: <a href="../queryapi/queries/{queryhandle}/resultsetmetadata">/queryapi/queries/{queryhandle}/resultsetmetadata</a></p>
+      <a name="path__queryapi_queries_-queryHandle-_resultsetmetadata.html"></a>
+      <h1>/queryapi/queries/{queryHandle}/resultsetmetadata</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/resultsetmetadata">/queryapi/queries/{queryHandle}/resultsetmetadata</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
@@ -859,7 +864,7 @@ APIResult with state Status#FAILED in case of close failure.</p>
           <td></td>
         </tr>
         <tr>
-          <td>queryhandle</td>
+          <td>queryHandle</td>
           <td>
             The query handle
           </td>
