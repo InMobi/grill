@@ -6,11 +6,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +34,7 @@ public class ModelLoader {
     return new Path(new Path(new Path(modelDataBaseDir), algorithm), modelID);
   }
 
-  public static MLModel loadModel(JobConf conf, String algorithm, String modelID) throws IOException {
+  public static MLModel loadModel(Configuration conf, String algorithm, String modelID) throws IOException {
     LOG.info("Loading model algorithm: " + algorithm + " modelID: " + modelID);
 
     Path modelPath = getModelLocation(conf, algorithm, modelID);

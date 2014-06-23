@@ -24,6 +24,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+          <groupId>com.inmobi.grill</groupId>
+          <artifactId>grill-spark-lib</artifactId>
+          <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.inmobi.grill</groupId>
       <artifactId>grill-driver-hive</artifactId>
       <version>${project.version}</version>

@@ -19,7 +19,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.session.SessionState;
-import org.apache.hadoop.mapred.JobConf;
 import org.apache.hive.service.cli.CLIService;
 
 import java.io.IOException;
@@ -157,7 +156,7 @@ public class MLServiceImpl extends GrillService implements MLService {
   @Override
   public MLModel getModel(String algorithm, String modelId) throws GrillException {
     try {
-      return ModelLoader.loadModel(new JobConf(conf), algorithm, modelId);
+      return ModelLoader.loadModel(conf, algorithm, modelId);
     } catch (IOException e) {
       throw new GrillException(e);
     }
@@ -253,7 +252,7 @@ public class MLServiceImpl extends GrillService implements MLService {
 
     MLModel model;
     try {
-      model = ModelLoader.loadModel(new JobConf(conf), algorithm, modelID);
+      model = ModelLoader.loadModel(conf, algorithm, modelID);
     } catch (IOException e) {
       throw new GrillException(e);
     }

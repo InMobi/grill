@@ -89,15 +89,28 @@ start() {
     echo "Hadoop is installed, using the installed hadoop for execution"
   elif [ "$HADOOP_HOME" != "" ]; then    
     echo "Hadoop home is set, using the configured hadoop for execution"
+    #GRILLCPPATH="${GRILLCPPATH}:${HADOOP_HOME}/share/hadoop/common/*"
+    #GRILLCPPATH="${GRILLCPPATH}:${HADOOP_HOME}/share/hadoop/common/lib/*"
+    #GRILLCPPATH="${GRILLCPPATH}:${HADOOP_HOME}/share/hadoop/mapreduce/*"
+    #GRILLCPPATH="${GRILLCPPATH}:${HADOOP_HOME}/share/hadoop/mapreduce/lib/*"
   else
     echo "WARNING : Could not find installed hadoop and HADOOP_HOME is not set. If Hadoop is used execution of queries. Set HADOOP_HOME and proceed"
   fi
 
   if [ "$HIVE_HOME" != "" ]; then    
     echo "HIVE_HOME is set, adding ${HIVE_HOME}/lib/* into grill classpath"
-    GRILLCPPATH="${GRILLCPPATH}:${HIVE_HOME}/lib/*"
+    GRILLCPPATH="${GRILLCPPATH}:${HIVE_HOME}/lib/*:${HIVE_HOME}/hcatalog/share/hcatalog/*"
   else
     echo "HIVE_HOME is not set. Set HIVE_HOME and try again"
+    exit 1
+  fi
+
+  if [ "$SPARK_HOME" != "" ]; then
+    echo "SPARK_HOME is set, adding ${SPARK_HOME}/lib/* into grill classpath"
+    GRILLCPPATH="${GRILLCPPATH}:${SPARK_HOME}/lib/*"
+    GRILLCPPATH="${YARN_CONF_DIR}:${GRILLCPPATH}"
+  else
+    echo "SPARK_HOME is not set. Set SPARK_HOME and try again"
     exit 1
   fi
   
@@ -117,6 +130,7 @@ start() {
   
   if [ -n "$opt_verbose" ] ; then
     JAVA_PROPERTIES="-Dgrillserver.root.logger=INFO,CONSOLE -Dgrillserver.request.logger=INFO,CONSOLE ${JAVA_PROPERTIES}"
+    echo $GRILLCPPATH
     ${JAVA_BIN} ${JAVA_PROPERTIES} -cp ${GRILLCPPATH} com.inmobi.grill.server.GrillServer $*
   else 
   pushd ${BASEDIR} > /dev/null

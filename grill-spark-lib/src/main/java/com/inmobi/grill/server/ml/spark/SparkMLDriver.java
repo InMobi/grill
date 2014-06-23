@@ -14,6 +14,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,11 +82,54 @@ public class SparkMLDriver implements MLDriver {
     if (StringUtils.isBlank(sparkConf.get("spark.home"))) {
       throw new GrillException("Spark home is not set");
     }
+    LOG.info("Spark home is set to " + sparkConf.get("spark.home"));
   }
 
   @Override
   public void start() throws GrillException {
     sparkContext = new JavaSparkContext(sparkConf);
+
+    // Add hcatalog and hive jars
+    String hiveLocation = System.getenv("HIVE_HOME");
+
+    if (StringUtils.isBlank(hiveLocation)) {
+      throw new GrillException("HIVE_HOME is not set");
+    }
+
+    LOG.info("HIVE_HOME at " + hiveLocation);
+
+    File hiveLibDir = new File(hiveLocation, "lib");
+    FilenameFilter jarFileFilter = new FilenameFilter() {
+      @Override
+      public boolean accept(File file, String s) {
+        return s.endsWith(".jar");
+      }
+    };
+
+    List<String> jarFiles = new ArrayList<String>();
+
+    // Add hive jars
+    for (File jarFile : hiveLibDir.listFiles(jarFileFilter)) {
+      jarFiles.add(jarFile.getAbsolutePath());
+      LOG.info("Adding HIVE jar " + jarFile.getAbsolutePath());
+      sparkContext.addJar(jarFile.getAbsolutePath());
+    }
+
+    // Add hcatalog jars
+    File hcatalogDir = new File(hiveLocation + "/hcatalog/share/hcatalog");
+    for (File jarFile : hcatalogDir.listFiles(jarFileFilter)) {
+      jarFiles.add(jarFile.getAbsolutePath());
+      LOG.info("Adding HCATALOG jar " + jarFile.getAbsolutePath());
+      sparkContext.addJar(jarFile.getAbsolutePath());
+    }
+
+    // Add the current jar
+    String[] grillSparkLibJars = JavaSparkContext.jarOfClass(SparkMLDriver.class);
+    for (String grillSparkJar : grillSparkLibJars) {
+      LOG.info("Adding GRILL JAR " + grillSparkJar);
+      sparkContext.addJar(grillSparkJar);
+    }
+
     isStarted = true;
     LOG.info("Created Spark context for app: '" + sparkContext.appName()
       + "', Spark master: " + sparkContext.master());

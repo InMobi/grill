@@ -25,7 +25,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 /**
  * Machine Learning service
  */
-@Path("/ml")
+  @Path("/ml")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class MLServiceResource {
   public static final Log LOG = LogFactory.getLog(MLServiceResource.class);

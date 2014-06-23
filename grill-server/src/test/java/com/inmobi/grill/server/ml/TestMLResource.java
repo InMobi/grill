@@ -9,7 +9,6 @@ import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.ml.MLModel;
 import com.inmobi.grill.server.api.ml.MLService;
 import com.inmobi.grill.server.api.ml.MLTestReport;
-import com.inmobi.grill.server.ml.spark.TestHiveTableRDD;
 import com.inmobi.grill.server.ml.spark.trainers.LogisticRegressionTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.NaiveBayesTrainer;
 import com.inmobi.grill.server.ml.spark.trainers.SVMTrainer;
@@ -24,7 +23,6 @@ import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.exec.FunctionRegistry;
 import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.hadoop.hive.ql.metadata.Table;
-import org.apache.hadoop.mapred.JobConf;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.thrift.EmbeddedThriftBinaryCLIService;
 import org.apache.hive.service.cli.thrift.ThriftCLIServiceClient;
@@ -52,7 +50,7 @@ import static org.testng.Assert.*;
 
 @Test(groups = "ml")
 public class TestMLResource extends GrillJerseyTest {
-  public static final Log LOG = LogFactory.getLog(TestHiveTableRDD.class);
+  public static final Log LOG = LogFactory.getLog(TestMLResource.class);
   private transient HiveConf conf;
   private transient ThriftCLIServiceClient hiveClient;
   private transient SessionHandle session;
@@ -66,7 +64,7 @@ public class TestMLResource extends GrillJerseyTest {
       fail("SPARK_HOME is not set");
     }
 
-    conf = new HiveConf(TestModelUDF.class);
+    conf = new HiveConf(TestMLResource.class);
     conf.set("hive.lock.manager", "org.apache.hadoop.hive.ql.lockmgr.EmbeddedLockManager");
     hiveClient = new ThriftCLIServiceClient(new EmbeddedThriftBinaryCLIService());
     session = hiveClient.openSession("anonymous", "anonymous", confOverlay);
@@ -169,7 +167,7 @@ public class TestMLResource extends GrillJerseyTest {
     System.out.println("@@ model = " + modelID);
 
     // Check model ID exists
-    MLModel model = ModelLoader.loadModel(new JobConf(conf), algo, modelID);
+    MLModel model = ModelLoader.loadModel(conf, algo, modelID);
     assertNotNull(model);
     assertEquals(model.getId(), modelID);
     assertEquals(model.getTable(), "ml_resource_test");

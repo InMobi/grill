@@ -2,7 +2,6 @@ package com.inmobi.grill.server.ml.spark;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.mapred.JobConf;
 import org.apache.hive.hcatalog.data.HCatRecord;
 import org.apache.hive.hcatalog.mapreduce.HCatInputFormat;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -22,12 +21,9 @@ public class HiveTableRDD {
     String table,
     String partitionFilter) throws IOException {
 
-    JobConf job = new JobConf(conf);
-
-    HCatInputFormat.setInput(job, db, table, partitionFilter);
-
+    HCatInputFormat.setInput(conf, db, table, partitionFilter);
     JavaPairRDD<WritableComparable, HCatRecord> rdd =
-      javaSparkContext.newAPIHadoopRDD(job,
+      javaSparkContext.newAPIHadoopRDD(conf,
         HCatInputFormat.class, // Input format class
         WritableComparable.class, // input key class
         HCatRecord.class); // input value class

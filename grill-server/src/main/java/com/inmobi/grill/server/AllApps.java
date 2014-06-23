@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import com.inmobi.grill.server.ml.MLServiceResource;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -46,6 +47,7 @@ public class AllApps extends Application {
     classes.add(QueryServiceResource.class);
     classes.add(QuotaResource.class);
     classes.add(ScheduleResource.class);
+    classes.add(MLServiceResource.class);
     classes.add(IndexResource.class);
     classes.add(MultiPartFeature.class);
     classes.add(AuthenticationFilter.class);
