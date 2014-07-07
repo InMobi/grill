@@ -94,12 +94,17 @@
     <wadl:resource path="/metastore/cubes">
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Get all cubes in the metastores]]>
+          <![CDATA[Get all cubes in the metastores, of the specified type]]>
         </wadl:doc>
         <wadl:request>
           <wadl:param name="sessionid" style="query">
             <wadl:doc>
               <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="type" style="query">
+            <wadl:doc>
+              <![CDATA[The type of cubes. Accepted values are 'all' or 'base' or 'derived' or 'queryable']]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -1141,7 +1146,7 @@ APIResult with state Status#FAILED, if delete has failed]]>
     <wadl:resource path="/metastore/cubes/{cubeName}/facts">
       <wadl:param name="cubeName" style="template">
         <wadl:doc>
-          <![CDATA[name of the cube]]>
+          <![CDATA[name of the base cube or derived cube]]>
         </wadl:doc>
       </wadl:param>
       <wadl:method name="GET">
@@ -1303,6 +1308,31 @@ APIResult with state Status#FAILED, if add has failed]]>
           </wadl:doc>
           <wadl:representation mediaType="application/xml" element="result"/>
           <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/queryapi/queries/{queryHandle}/httpresultset">
+      <wadl:param name="queryHandle" style="template">
+        <wadl:doc>
+          <![CDATA[The query handle]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the http endpoint for result set]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The user session handle]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[Response with result as octet stream]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/octet-stream"/>
         </wadl:response>
       </wadl:method>
     </wadl:resource>

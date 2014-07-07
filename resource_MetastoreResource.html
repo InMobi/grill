@@ -123,7 +123,7 @@
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get all cubes in the metastores
+            Get all cubes in the metastores, of the specified type
           </p>
       <h3>Parameters</h3>
       <table>
@@ -140,6 +140,14 @@
           </td>
           <td>query</td>
           <td></td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>
+            The type of cubes. Accepted values are 'all' or 'base' or 'derived' or 'queryable'
+          </td>
+          <td>query</td>
+          <td>all</td>
         </tr>
       </table>
       <h3>Response Body</h3>
@@ -1322,7 +1330,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
         <tr>
           <td>cubeName</td>
           <td>
-            name of the cube
+            name of the base cube or derived cube
           </td>
           <td>path</td>
           <td></td>

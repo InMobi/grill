@@ -10,6 +10,7 @@ com.inmobi.grill.driver.hive
 com.inmobi.grill.driver.impala
 com.inmobi.grill.driver.jdbc
 com.inmobi.grill.examples
+com.inmobi.grill.lib.query
 com.inmobi.grill.server
 com.inmobi.grill.server.api
 com.inmobi.grill.server.api.driver

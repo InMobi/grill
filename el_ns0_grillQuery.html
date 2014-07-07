@@ -105,22 +105,8 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;grillQuery&gt;
-  &lt;status&gt;
-    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
-    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
-    &lt;status&gt;...&lt;/status&gt;
-    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
-    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
-    &lt;progress&gt;...&lt;/progress&gt;
-  &lt;/status&gt;
-  &lt;launchTime&gt;...&lt;/launchTime&gt;
-  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
-  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
-  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
-  &lt;priority&gt;...&lt;/priority&gt;
-  &lt;queryHandle&gt;
-    &lt;handleId&gt;...&lt;/handleId&gt;
-  &lt;/queryHandle&gt;
+  &lt;userQuery&gt;...&lt;/userQuery&gt;
+  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
   &lt;queryConf&gt;
     &lt;properties&gt;
       &lt;entry&gt;
@@ -138,49 +124,63 @@
       &lt;!--...more entries...--&gt;
     &lt;/properties&gt;
   &lt;/queryConf&gt;
-  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
-  &lt;userQuery&gt;...&lt;/userQuery&gt;
-  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
   &lt;submissionTime&gt;...&lt;/submissionTime&gt;
-  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
-  &lt;finishTime&gt;...&lt;/finishTime&gt;
-  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
+  &lt;priority&gt;...&lt;/priority&gt;
+  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
+  &lt;queryHandle&gt;
+    &lt;handleId&gt;...&lt;/handleId&gt;
+  &lt;/queryHandle&gt;
   &lt;closedTime&gt;...&lt;/closedTime&gt;
-  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
+  &lt;launchTime&gt;...&lt;/launchTime&gt;
+  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
+  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
+  &lt;status&gt;
+    &lt;status&gt;...&lt;/status&gt;
+    &lt;progress&gt;...&lt;/progress&gt;
+    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
+    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
+    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
+    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+  &lt;/status&gt;
+  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
+  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
+  &lt;finishTime&gt;...&lt;/finishTime&gt;
+  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
 &lt;/grillQuery&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;status&quot; : {
-    &quot;statusMessage&quot; : &quot;...&quot;,
-    &quot;errorMessage&quot; : &quot;...&quot;,
-    &quot;status&quot; : &quot;NEW&quot;,
-    &quot;progressMessage&quot; : &quot;...&quot;,
-    &quot;isResultSetAvailable&quot; : false,
-    &quot;progress&quot; : ...
-  },
-  &quot;launchTime&quot; : ...,
-  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
-  &quot;driverOpHandle&quot; : &quot;...&quot;,
-  &quot;resultSetPath&quot; : &quot;...&quot;,
-  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
-  &quot;queryHandle&quot; : {
-    &quot;handleId&quot; : &quot;...&quot;
-  },
+  &quot;userQuery&quot; : &quot;...&quot;,
+  &quot;submittedUser&quot; : &quot;...&quot;,
   &quot;queryConf&quot; : {
     &quot;properties&quot; : [ {
       &quot;...&quot; : ...
     }, {
     } ]
   },
-  &quot;driverFinishTime&quot; : ...,
-  &quot;userQuery&quot; : &quot;...&quot;,
-  &quot;isPersistent&quot; : false,
   &quot;submissionTime&quot; : ...,
-  &quot;driverQuery&quot; : &quot;...&quot;,
-  &quot;finishTime&quot; : ...,
-  &quot;driverStartTime&quot; : ...,
+  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
+  &quot;driverFinishTime&quot; : ...,
+  &quot;queryHandle&quot; : {
+    &quot;handleId&quot; : &quot;...&quot;
+  },
   &quot;closedTime&quot; : ...,
-  &quot;submittedUser&quot; : &quot;...&quot;
+  &quot;launchTime&quot; : ...,
+  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
+  &quot;resultSetPath&quot; : &quot;...&quot;,
+  &quot;status&quot; : {
+    &quot;status&quot; : &quot;NEW&quot;,
+    &quot;progress&quot; : ...,
+    &quot;isResultSetAvailable&quot; : false,
+    &quot;progressMessage&quot; : &quot;...&quot;,
+    &quot;errorMessage&quot; : &quot;...&quot;,
+    &quot;statusMessage&quot; : &quot;...&quot;
+  },
+  &quot;isPersistent&quot; : false,
+  &quot;driverStartTime&quot; : ...,
+  &quot;finishTime&quot; : ...,
+  &quot;driverOpHandle&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />

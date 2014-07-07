@@ -75,6 +75,7 @@
         <li><a href="#path__queryapi_queries.html">/queryapi/queries</a></li>
         <li><a href="#path__queryapi_preparedqueries_-prepareHandle-.html">/queryapi/preparedqueries/{prepareHandle}</a></li>
         <li><a href="#path__queryapi_queries_-queryHandle-.html">/queryapi/queries/{queryHandle}</a></li>
+        <li><a href="#path__queryapi_queries_-queryHandle-_httpresultset.html">/queryapi/queries/{queryHandle}/httpresultset</a></li>
         <li><a href="#path__queryapi_queries_-queryHandle-_resultset.html">/queryapi/queries/{queryHandle}/resultset</a></li>
         <li><a href="#path__queryapi_queries_-queryHandle-_resultsetmetadata.html">/queryapi/queries/{queryHandle}/resultsetmetadata</a></li>
       </ul>
@@ -743,6 +744,47 @@ APIResult with state Status#FAILED in case of cancellation failure.</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful update.
 APIResult with state Status#FAILED in case of udpate failure.</p>
+      <a name="path__queryapi_queries_-queryHandle-_httpresultset.html"></a>
+      <h1>/queryapi/queries/{queryHandle}/httpresultset</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/httpresultset">/queryapi/queries/{queryHandle}/httpresultset</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the http endpoint for result set
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The user session handle
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryHandle</td>
+          <td>
+            The query handle
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>Response with result as octet stream</p>
       <a name="path__queryapi_queries_-queryHandle-_resultset.html"></a>
       <h1>/queryapi/queries/{queryHandle}/resultset</h1>
       <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/resultset">/queryapi/queries/{queryHandle}/resultset</a></p>
