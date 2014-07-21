@@ -205,6 +205,7 @@ public class RewriteUtil {
             CubeGrillDriver.LOG.info("Final rewritten query for driver:" + driver + " is: " + finalQuery);
             driverQueries.put(driver, finalQuery);
           } catch (SemanticException e) {
+            e.printStackTrace();
             CubeGrillDriver.LOG.warn("Driver : " + driver.getClass().getName() +
                 " Skipped for the query rewriting due to " + e.getMessage());
             rewriteFailure.append(" Driver :").append(driver.getClass().getName());

@@ -125,7 +125,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       "PrepareQueryPurger");
   private boolean stopped = false;
   private List<QueryAcceptor> queryAcceptors = new ArrayList<QueryAcceptor>();
-  private final Map<String, GrillDriver> drivers = new HashMap<String, GrillDriver>();
+  protected final Map<String, GrillDriver> drivers = new HashMap<String, GrillDriver>();
   private DriverSelector driverSelector;
   private Map<QueryHandle, GrillResultSet> resultSets = new HashMap<QueryHandle, GrillResultSet>();
   private GrillEventService eventService;

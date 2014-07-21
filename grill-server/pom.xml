@@ -61,6 +61,12 @@
         <artifactId>grill-query-lib</artifactId>
         <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-driver-jdbc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <dependency>
         <groupId>com.inmobi.grill</groupId>
@@ -196,7 +202,7 @@
                     <environmentVariables>
                         <MVN_CLASSPATH_FILE>${mvn.classpath.file}</MVN_CLASSPATH_FILE>
                     </environmentVariables>
-                   <argLine>-Xms256m -Xmx512m</argLine>
+                   <argLine>-Xms256m -Xmx1024m -XX:MaxPermSize=256m -XX:PermSize=256m</argLine>
                 </configuration>
             </plugin>
             <plugin>
