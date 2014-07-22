@@ -20,42 +20,27 @@ package com.inmobi.grill.server.query;
  * #L%
  */
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
-import com.inmobi.grill.api.*;
+import com.inmobi.grill.api.APIResult;
+import com.inmobi.grill.api.GrillConf;
+import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.query.*;
 import com.inmobi.grill.api.query.QueryStatus.Status;
 import com.inmobi.grill.driver.hive.HiveDriver;
 import com.inmobi.grill.driver.hive.TestHiveDriver.FailHook;
 import com.inmobi.grill.driver.hive.TestRemoteHiveDriver;
-import com.inmobi.grill.driver.jdbc.JDBCDriver;
 import com.inmobi.grill.server.GrillJerseyTest;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.driver.GrillDriver;
 import com.inmobi.grill.server.api.metrics.MetricsService;
-import com.inmobi.grill.server.query.QueryApp;
-import com.inmobi.grill.server.query.QueryExecutionServiceImpl;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hive.service.Service;
@@ -64,22 +49,28 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.testng.Assert.*;
 
 @Test(groups="unit-test", suiteName = "queryServiceUnitTests")
 public class TestQueryService extends GrillJerseyTest {
   public static final Log LOG = LogFactory.getLog(TestQueryService.class);
-
   QueryExecutionServiceImpl queryService;
   MetricsService metricsSvc;
   GrillSessionHandle grillSessionId;
@@ -673,6 +664,7 @@ public class TestQueryService extends GrillJerseyTest {
   // test cancel query
   @Test(groups = "unit" )
   public void testExecuteAsync() throws InterruptedException, IOException {
+    System.out.println("TEST_EXECUTE_ASYNC");
     // test post execute op
     final WebTarget target = target().path("queryapi/queries");
     
@@ -1004,10 +996,10 @@ public class TestQueryService extends GrillJerseyTest {
     Assert.assertEquals(metadata.getColumns().size(), 2);
     assertTrue(metadata.getColumns().get(0).getName().toLowerCase().equals((outputTablePfx + "ID").toLowerCase()) ||
         metadata.getColumns().get(0).getName().toLowerCase().equals("ID".toLowerCase()));
-    assertEquals("INT".toLowerCase(), metadata.getColumns().get(0).getType().name().toLowerCase());
+    assertEquals(metadata.getColumns().get(0).getType().name().toLowerCase(), "INT".toLowerCase());
     assertTrue(metadata.getColumns().get(1).getName().toLowerCase().equals((outputTablePfx + "IDSTR").toLowerCase()) ||
         metadata.getColumns().get(0).getName().toLowerCase().equals("IDSTR".toLowerCase()));
-    assertEquals("VARCHAR".toLowerCase(), metadata.getColumns().get(1).getType().name().toLowerCase());
+    assertEquals(metadata.getColumns().get(1).getType().name().toLowerCase(), "VARCHAR".toLowerCase());
   }
 
   void validateInmemoryResult(InMemoryQueryResult resultset) {

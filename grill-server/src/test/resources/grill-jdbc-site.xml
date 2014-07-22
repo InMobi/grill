@@ -4,11 +4,11 @@
 <configuration>
   <property>
     <name>grill.driver.jdbc.driver.class</name>
-    <value>org.hsqldb.jdbcDriver</value>
+    <value>org.hsqldb.jdbc.JDBCDriver</value>
   </property>
   <property>
     <name>grill.driver.jdbc.db.uri</name>
-    <value>jdbc:hsqldb:/tmp/db-storage.db;MODE=MYSQL</value>
+    <value>jdbc:hsqldb:mem:jdbcTestDB</value>
   </property>
   <property>
     <name>grill.driver.jdbc.db.user</name>

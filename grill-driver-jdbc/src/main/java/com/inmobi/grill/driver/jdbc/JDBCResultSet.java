@@ -49,7 +49,7 @@ public class JDBCResultSet extends InMemoryResultSet {
   public JDBCResultSet(QueryResult queryResult, ResultSet resultSet,
       boolean closeAfterFetch) {
     this.queryResult = queryResult;
-    this.resultSet = resultSet;;
+    this.resultSet = resultSet;
     this.closeAfterFetch = closeAfterFetch;
   }
   
@@ -105,13 +105,15 @@ public class JDBCResultSet extends InMemoryResultSet {
               case Types.DATALINK:
               case Types.CHAR:
               case Types.CLOB:
-              case Types.VARCHAR:
               case Types.NCLOB:
               case Types.NCHAR:
               case Types.LONGNVARCHAR:
               case Types.NVARCHAR:
               case Types.SQLXML:
                 colType = ResultColumnType.STRING; break;
+
+              case Types.VARCHAR:
+                colType = ResultColumnType.VARCHAR; break;
                 
               case Types.DATE:
                 colType = ResultColumnType.DATE; break;
