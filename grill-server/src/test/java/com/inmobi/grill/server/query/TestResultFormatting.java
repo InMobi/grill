@@ -163,7 +163,8 @@ public class TestResultFormatting extends GrillJerseyTest {
       stat = ctx.getStatus();
       Thread.sleep(1000);
     }
-    Assert.assertEquals(ctx.getStatus().getStatus(), status);
+    Assert.assertEquals(ctx.getStatus().getStatus(), status, "Status mismatch for query"
+      + ctx.getQueryHandle().getHandleId());
 
     if (status.equals(QueryStatus.Status.SUCCESSFUL)) {
       // fetch results

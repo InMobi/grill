@@ -2,18 +2,15 @@ package com.inmobi.grill.server.query;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.query.InMemoryQueryResult;
-import com.inmobi.grill.api.query.QueryHandle;
-import com.inmobi.grill.api.query.QueryResult;
-import com.inmobi.grill.api.query.ResultRow;
+import com.inmobi.grill.api.query.*;
 import com.inmobi.grill.driver.hive.HiveDriver;
 import com.inmobi.grill.driver.jdbc.JDBCDriver;
 import com.inmobi.grill.server.GrillServices;
-import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.metrics.MetricsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.testng.Assert;
 import org.testng.annotations.*;
 
 import javax.ws.rs.client.WebTarget;
@@ -26,60 +23,55 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 
-@Test(groups = "integration", suiteName = "queryServiceTestsWithJDBCDriver")
-public class TestJDBCDriverIntegration{}/* extends TestQueryService {
+@Test(groups = "integration")
+public class TestJDBCDriverIntegration extends TestQueryService {
   public static final Log LOG = LogFactory.getLog(TestJDBCDriverIntegration.class);
-  private HiveConf conf;
+  private HiveConf conf = new HiveConf();
   private JDBCDriver driver;
+  private HiveDriver hiveDriver;
   final int NUM_RECORDS = 10;
 
+  @BeforeClass
   @Override
-  protected int getTestPort() {
-    return 8084;
-  }
-
-  @BeforeSuite
-  @Override
-  public void startAll() throws Exception {
-    conf = new HiveConf();
-    conf.set(GrillConfConstants.ENGINE_DRIVER_CLASSES, JDBCDriver.class.getName());
-    GrillServices.get().init(conf);
-    GrillServices.get().start();
-    LOG.info("@@@@ STARTED SERVICES");
-  }
-
-  @AfterSuite
-  @Override
-  public void stopAll() throws Exception {
-    GrillServices.get().stop();
-  }
-
-  @BeforeTest
-  public void setUpServicesJDBCDriver() throws Exception {
-    queryService = (QueryExecutionServiceImpl) GrillServices.get().getService("query");
-    // Remove the Hive driver for this test
-    queryService.drivers.remove(HiveDriver.class.getName());
-    metricsSvc = (MetricsService)GrillServices.get().getService(MetricsService.NAME);
-    grillSessionId = queryService.openSession("foo", "bar", new HashMap<String, String>());
-    driver = (JDBCDriver) queryService.drivers.get(JDBCDriver.class.getName());
-  }
-
-  @AfterTest
-  public void tearDownServicesJDBCDriver() throws Exception {
+  public void createTables() throws InterruptedException {
     try {
-      queryService.closeSession(grillSessionId);
+      super.setUp();
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-    super.tearDown();
+    driver = new JDBCDriver();
+    queryService = (QueryExecutionServiceImpl) GrillServices.get().getService("query");
+    metricsSvc = (MetricsService)GrillServices.get().getService(MetricsService.NAME);
+    try {
+      driver.configure(conf);
+      grillSessionId = queryService.openSession("foo", "bar", new HashMap<String, String>());
+    } catch (GrillException e) {
+      e.printStackTrace();
+    }
+    createTable(testTable, target(), grillSessionId);
+    loadData(testTable, TEST_DATA_FILE);
   }
 
   @Override
-  public void tearDownServices() throws Exception {
-    // Remove implementation so that tear down doesn't get called twice
+  protected int getTestPort() {
+    return 9988;
+  }
+
+  @BeforeMethod
+  public void addJDBCDriver() throws Exception{
+    if (!queryService.drivers.containsKey(JDBCDriver.class.getName())) {
+      queryService.drivers.put(JDBCDriver.class.getName(), driver);
+      hiveDriver = (HiveDriver) queryService.drivers.remove(HiveDriver.class.getName());
+    }
+  }
+
+  @AfterMethod
+  public void resetDrivers() throws Exception {
+    queryService.drivers.remove(JDBCDriver.class.getName());
+    queryService.drivers.put(HiveDriver.class.getName(), hiveDriver);
   }
 
   @Override
@@ -184,6 +176,21 @@ public class TestJDBCDriverIntegration{}/* extends TestQueryService {
   }
 
   @Override
+  void validateResultSetMetadata(QueryHandle handle, String outputTablePfx, WebTarget parent, GrillSessionHandle grillSessionId) {
+    final WebTarget target = parent.path("queryapi/queries");
+
+    QueryResultSetMetadata metadata = target.path(handle.toString()).path(
+      "resultsetmetadata").queryParam("sessionid", grillSessionId).request().get(QueryResultSetMetadata.class);
+    Assert.assertEquals(metadata.getColumns().size(), 2);
+    assertTrue(metadata.getColumns().get(0).getName().toLowerCase().equals((outputTablePfx + "ID").toLowerCase()) ||
+      metadata.getColumns().get(0).getName().toLowerCase().equals("ID".toLowerCase()));
+    assertEquals(metadata.getColumns().get(0).getType().name().toLowerCase(), "INT".toLowerCase());
+    assertTrue(metadata.getColumns().get(1).getName().toLowerCase().equals((outputTablePfx + "IDSTR").toLowerCase()) ||
+      metadata.getColumns().get(0).getName().toLowerCase().equals("IDSTR".toLowerCase()));
+    assertEquals(metadata.getColumns().get(1).getType().name().toLowerCase(), "VARCHAR".toLowerCase());
+  }
+
+  @Override
   public void testGrillServerRestart() throws InterruptedException, IOException, GrillException {
     // Not required - if Grill server goes down while DB is up, there is no way to recover lost query
   }
@@ -214,5 +221,3 @@ public class TestJDBCDriverIntegration{}/* extends TestQueryService {
     // Need to change implementation to validate in case of JDBC driver.
   }
 }
-
-**/

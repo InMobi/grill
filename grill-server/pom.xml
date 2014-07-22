@@ -66,6 +66,7 @@
             <groupId>com.inmobi.grill</groupId>
             <artifactId>grill-driver-jdbc</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         
         <dependency>

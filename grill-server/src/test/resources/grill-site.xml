@@ -44,7 +44,7 @@
 
 <property>
   <name>grill.enable.console.metrics</name>
-  <value>false</value>
+  <value>true</value>
   <description>Enable metrics to be reported on console</description>
 </property>
 

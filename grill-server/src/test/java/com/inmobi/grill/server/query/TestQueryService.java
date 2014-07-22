@@ -68,7 +68,7 @@ import java.util.List;
 
 import static org.testng.Assert.*;
 
-@Test(groups="unit-test", suiteName = "queryServiceUnitTests")
+@Test(groups="unit-test")
 public class TestQueryService extends GrillJerseyTest {
   public static final Log LOG = LogFactory.getLog(TestQueryService.class);
   QueryExecutionServiceImpl queryService;
@@ -78,7 +78,7 @@ public class TestQueryService extends GrillJerseyTest {
   boolean fileCreated;
 
   @BeforeTest
-  public void setUpServices() throws Exception {
+  public void setUpSvc() throws Exception {
     super.setUp();
     queryService = (QueryExecutionServiceImpl)GrillServices.get().getService("query");
     metricsSvc = (MetricsService)GrillServices.get().getService(MetricsService.NAME);
@@ -86,7 +86,7 @@ public class TestQueryService extends GrillJerseyTest {
   }
 
   @AfterTest
-  public void tearDownServices() throws Exception {
+  public void tearDown() throws Exception {
     queryService.closeSession(grillSessionId);
     for (GrillDriver driver : queryService.getDrivers()) {
       if (driver instanceof HiveDriver) {
@@ -120,7 +120,7 @@ public class TestQueryService extends GrillJerseyTest {
   protected static String testTable = "TEST_TABLE";
   public static final String TEST_DATA_FILE = "../grill-driver-hive/testdata/testdata2.txt";
 
-  private void createTable(String tblName) throws InterruptedException {
+  protected void createTable(String tblName) throws InterruptedException {
     createTable(tblName, target(), grillSessionId);
   }
 
@@ -131,7 +131,7 @@ public class TestQueryService extends GrillJerseyTest {
     final WebTarget target = parent.path("queryapi/queries");
 
     final FormDataMultiPart mp = new FormDataMultiPart();
-    String createTable = "CREATE TABLE IF NOT EXISTS " + tblName  +"(ID INT, IDSTR VARCHAR(100))";
+    String createTable = "CREATE TABLE IF NOT EXISTS " + tblName  +"(ID INT, IDSTR STRING)";
 
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
         grillSessionId, MediaType.APPLICATION_XML_TYPE));
@@ -999,7 +999,7 @@ public class TestQueryService extends GrillJerseyTest {
     assertEquals(metadata.getColumns().get(0).getType().name().toLowerCase(), "INT".toLowerCase());
     assertTrue(metadata.getColumns().get(1).getName().toLowerCase().equals((outputTablePfx + "IDSTR").toLowerCase()) ||
         metadata.getColumns().get(0).getName().toLowerCase().equals("IDSTR".toLowerCase()));
-    assertEquals(metadata.getColumns().get(1).getType().name().toLowerCase(), "VARCHAR".toLowerCase());
+    assertEquals(metadata.getColumns().get(1).getType().name().toLowerCase(), "STRING".toLowerCase());
   }
 
   void validateInmemoryResult(InMemoryQueryResult resultset) {
