@@ -91,7 +91,11 @@ public class TestJDBCDriverIntegration extends TestQueryService {
       stmt = conn.prepareStatement("INSERT INTO " + tblName + " VALUES(?, ?)");
       for (int i = 0; i < NUM_RECORDS; i++) {
         stmt.setInt(1, i);
-        stmt.setString(2, "" + i);
+        if (i % 2 == 0) {
+          stmt.setString(2, "" + i);
+        } else {
+          stmt.setString(2, null);
+        }
         stmt.executeUpdate();
       }
       conn.commit();
@@ -150,7 +154,11 @@ public class TestJDBCDriverIntegration extends TestQueryService {
       assertNotNull(values);
       assertEquals(values.size(), 2);
       assertEquals(values.get(0), i);
-      assertEquals(values.get(1), "" + i);
+      if (i % 2 == 0) {
+        assertEquals(values.get(1), "" + i);
+      } else {
+        assertNull(values.get(1));
+      }
       i++;
     }
   }

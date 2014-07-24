@@ -14,8 +14,4 @@
     <name>grill.driver.jdbc.db.user</name>
     <value>SA</value>
   </property>
-  <property>
-    <name>cube.query.driver.supported.storages</name>
-    <value>mydb</value>
-  </property>
 </configuration>
