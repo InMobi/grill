@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -27,228 +27,110 @@
     <![endif]-->
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Grill</a>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">New<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Query</a></li>
-                        <li><a href="#">Model</a></li>
-                        <li><a href="#">Test</a></li>
-                        <li><a href="#">Schdule</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <ul class="nav navbar-nav">
-                <li><a href="#">Queries</a></li>
-            </ul>
-
-            <ul class="nav navbar-nav">
-                <li><a href="#">Models</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a href="#">Tests</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a href="#">Schedules</a></li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-
-    </div>
-</nav>
-
-<div id="page">
-<div class="container-fluid">
-
-	<!-- Template for metastore cube, dim and table list -->
-	 <script id="metastoreContainerTemplate" type="text/html">
-			<div id="metastoreContainer" class="col-md-2">
-					<form role="form" class="form-inline">
-							<div class="form-group">
-									<div class="input-group">
-											<input id="searchMetastore" class="form-control" type="email" placeholder="Search for fields">
-											<div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-									</div>
-							</div>
-					</form>
-					<ul class="list-group">
-						// Loop over tables
-					</ul>
+	<div class="container">
+		<nav class="navbar navbar-inverse" role="navigation">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Grill UI</a>
 				</div>
-		</script>
 
-		<!-- Template for query form and result set -->
-		<script id="queryContainerTemplate" type="text/html">
-			<div id="queryContainer" class="col-md-10">
-					<div class="panel panel-default">
-							<div class="panel-heading">
-									<h3 class="panel-title">Query</h3>
-							</div>
-							<div class="panel-body">
-									<form role="form">
-											<textarea class="form-control" rows="3" placeholder="Type your query here ..."></textarea><br>
-											<input id="querySubmitBtn" type="submit" class="btn btn-primary" value="Submit Query"/>
-									</form>
-							</div>
-					</div>
-
-					<div class="container">
-							<h4 class="col-md-2">Results</h4>
-							<div class="col-md-8">
-									<span id="createTableFromQueryBtn" class="label label-default">Save As Table</span>
-									<span id="exportQueryBtn" class="label label-default">Export</span>
-							</div>
-					</div>
-
-					<table class="table table-hover table-bordered table-striped">
-						// Header - Loop columns
-
-						// Body - Loop rows
-					</table>
-
-					<ul class="pagination pagination-sm">
-							<li class="disabled"><a href="#">&laquo;</a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">&raquo;</a></li>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Query</a></li>
+						<li><a href="#">Query History</a></li>
 					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+
+		<!-- Main Content -->
+		<div class="row">
+			<!-- Sidebar -->
+			<div class="col-md-3">
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Filter..">
+					<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
 				</div>
-		</script>
+				<ul class="list-group">
+					<li class="list-group-item list-group-item-info">Cube</li>
+					<li class="list-group-item list-group-item-info">Cube</li>
+					<li class="list-group-item list-group-item-success">Dimension</li>
+					<li class="list-group-item list-group-item-success">Dimension</li>
+				</ul>
+			</div>
 
-		<!-- Query list template -->
-		<script id = "queryListTemplate" type="text/html">
+			<!-- Query content -->
+			<div class="col-md-9">
+				<!-- Query Submit Form -->
+				<form role="form" id="query-form">
+					<h3>Query</h3>
+					<div class="form-group">
+						<label>Enter your SQL query below</label>
+						<textarea id="query" class="form-control" rows="3"></textarea>
+					</div>
+					<button type="submit" class="btn btn-success">Submit Query</button>
+				</form>
 
-		</script>
-
+				<!-- Results -->
+				<h3>Results</h3>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Column 1</th>
+							<th>Column 2</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td>Something</td>
+							<td>Something else</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>Another Row</td>
+							<td>Another Value</td>
+						</tr>
+					</tbody>
+				</table>
+				<ul class="pagination">
+					<li><a href="#">&laquo;</a></li>
+					<li><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li><a href="#">3</a></li>
+					<li><a href="#">4</a></li>
+					<li><a href="#">5</a></li>
+					<li><a href="#">&raquo;</a></li>
+				</ul>
+			</div>
+		</div>
 	</div>
 
-</div> <!--page div-->
+	<!-- Additional stylsheets -->
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.4.0/codemirror.min.css">
+	<style type="text/css">
+	.CodeMirror {
+		border: 1px solid #ccc;
+		height: 150px;
+	}
+	</style>
 
-<script type="text/javascript">
-var currentPage = "query";
-var sessionId;
-var userName;
-
-$(document).ready(function() {
-			createGrillSession("anonymous", "anonymous");
-});
-
-var resetPage = function(newHtml) {
-	$("page").html(newHtml);
-}
-
-/*** Event handlers ***/
-var querySubmitListener = function() {
-}
-
-var queryExportListener = function() {
-}
-
-var queryCreateTableListener = function() {
-}
-
-var newQueryListener = function() {
-}
-
-var queryStatusListener = function() {
-}
-
-var queryCancelListener = function() {
-}
-
-var queryNextPageListener = function() {
-}
-
-var queryPrevPageListener = function() {
-}
-
-var queryFirstPageListener = function() {
-}
-
-var queryListListener = function() {
-}
-
-
-/*** GRILL JS LIB ****/
-var getGrillBaseURI = function() {
-	return window.location.origin + "/grill-api/";
-}
-
-var endpoint = function(path) {
-	return getGrillBaseURI() + "/" + path;
-}
-
-
-var createGrillSession = function(user, password) {
-	userName = user;
-	$.ajax({
-		url:endpoint("session"),
-		type:"POST",
-		data:{"user": user, "password": password},
-		contentType:"application/json; charset=utf-8",
-		dataType:"json",
-		success: function( data ){
-			console.log("Got response from server");
-			sessionId = data;
-			console.dir(sessionId);
-		}
-	});
-}
-
-var submitNewQuery = function(query) {
-		$.ajax({
-		url:endpoint("queryapi/queries"),
-		type:"POST",
-		data:{"sessionid": sessionId, 
-					"query": query, 
-					"operation": "execute"},
-		contentType:"multipart/form-data; charset=utf-8",
-		dataType:"json",
-		success: function( data ){
-			console.log("Submitted query: " + query);
-			console.dir(data);
-		}
-	});
-}
-
-
-var updateQueryStatus = function(queryHandle) {
-
-}
-
-var getQueries = function() {
-
-}
-
-var cancelQuery = function(queryHandle) {
-
-}
-
-var getResults = function(queryHanle) {
-}
-
-var export = function(queryHandle) {
-
-}
-
-var createTableFromQuery = function(queryHandle) {
-}
-
-</script>
+	<!-- Additional Scripts -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.4.0/codemirror.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.4.0/mode/sql/sql.js"></script>
+	<script type="text/javascript" src="cookie.js"></script>
+	<script type="text/javascript" src="util.js"></script>
+	<script type="text/javascript" src="session.js"></script>
+	<script type="text/javascript" src="index.js"></script>
 </body>
 
 </html>
