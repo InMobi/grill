@@ -7,6 +7,7 @@ import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.query.*;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
+import com.inmobi.grill.server.session.SessionUIResource;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import java.util.UUID;
@@ -73,17 +74,15 @@ public class QueryServiceUIResource{
     @Path("queries")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public QuerySubmitResult query(@FormDataParam("sessionid") GrillSessionHandle sessionid,
-                                   @FormDataParam("query") String query) {/*,
-                                   @FormDataParam("operation") String operation,
-                                   @FormDataParam("conf") GrillConf conf,
-                                   @DefaultValue("30000") @FormDataParam("timeoutmillis") Long timeoutmillis) {*/
+    public QuerySubmitResult query(@FormDataParam("publicId") UUID publicId,
+                                   @FormDataParam("query") String query) {
+        GrillSessionHandle handle = SessionUIResource.openSessions.get(publicId);
         GrillConf conf;
         checkQuery(query);
-        checkSessionId(sessionid);
+        checkSessionId(handle);
         try {
             conf = new GrillConf();
-            return queryServer.executeAsync(sessionid, query, conf);
+            return queryServer.executeAsync(handle, query, conf);
         } catch (GrillException e) {
             throw new WebApplicationException(e);
         }

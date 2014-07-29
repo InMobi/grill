@@ -20,11 +20,7 @@ package com.inmobi.grill.server.session;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -63,6 +59,7 @@ import com.inmobi.grill.server.GrillServices;
 @Path("/session")
 public class SessionUIResource {
     public static final Log LOG = LogFactory.getLog(SessionResource.class);
+    public static HashMap<UUID, GrillSessionHandle> openSessions = new HashMap<UUID, GrillSessionHandle>();
     private HiveSessionService sessionService;
 
     /**
@@ -104,7 +101,9 @@ public class SessionUIResource {
             } else{
                 conf = new HashMap<String, String>();
             }
-            return sessionService.openSession(username, password, conf);
+            GrillSessionHandle handle = sessionService.openSession(username, password, conf);
+            openSessions.put(handle.getPublicId(), handle);
+            return handle;
         } catch (GrillException e) {
             throw new WebApplicationException(e);
         }
@@ -123,14 +122,16 @@ public class SessionUIResource {
      */
     @DELETE
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public APIResult closeSession(@QueryParam("sessionid") GrillSessionHandle sessionid) {
+    public APIResult closeSession(@QueryParam("publicId") UUID publicId) {
+        GrillSessionHandle handle = openSessions.get(publicId);
+        openSessions.remove(publicId);
         try {
-            sessionService.closeSession(sessionid);
+            sessionService.closeSession(handle);
         } catch (GrillException e) {
             return new APIResult(Status.FAILED, e.getMessage());
         }
         return new APIResult(Status.SUCCEEDED,
-                "Close session with id" + sessionid + "succeeded");
+                "Close session with id" + handle + "succeeded");
     }
 
     /**
