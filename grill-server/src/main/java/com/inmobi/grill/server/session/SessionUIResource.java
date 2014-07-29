@@ -22,17 +22,7 @@ package com.inmobi.grill.server.session;
 
 import java.util.*;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.logging.Log;
@@ -77,6 +67,11 @@ public class SessionUIResource {
         sessionService = (HiveSessionService)GrillServices.get().getService("session");
     }
 
+    private void checkSessionHandle(GrillSessionHandle sessionHandle) {
+        if (sessionHandle == null) {
+            throw new BadRequestException("Invalid session handle");
+        }
+    }
     /**
      * Create a new session with Grill server
      *
@@ -112,7 +107,7 @@ public class SessionUIResource {
     /**
      * Close a Grill server session
      *
-     * @param sessionid Session handle object of the session to be closed
+     * @param publicId Session's public id of the session to be closed
      *
      * @return APIResult object indicating if the operation was successful (check result.getStatus())
      *
@@ -123,15 +118,16 @@ public class SessionUIResource {
     @DELETE
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     public APIResult closeSession(@QueryParam("publicId") UUID publicId) {
-        GrillSessionHandle handle = openSessions.get(publicId);
+        GrillSessionHandle sessionHandle = openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
         openSessions.remove(publicId);
         try {
-            sessionService.closeSession(handle);
+            sessionService.closeSession(sessionHandle);
         } catch (GrillException e) {
             return new APIResult(Status.FAILED, e.getMessage());
         }
         return new APIResult(Status.SUCCEEDED,
-                "Close session with id" + handle + "succeeded");
+                "Close session with id" + sessionHandle + "succeeded");
     }
 
     /**
@@ -142,7 +138,7 @@ public class SessionUIResource {
      * was successful for all services running in this Grill server.
      * </p>
      *
-     * @param sessionid session handle object
+     * @param publicId session's public id
      * @param type The type of resource. Valid types are 'jar', 'file' and 'archive'
      * @param path path of the resource
      * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if add was successful.
@@ -153,12 +149,14 @@ public class SessionUIResource {
     @Path("resources/add")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public APIResult addResource(@FormDataParam("sessionid") GrillSessionHandle sessionid,
+    public APIResult addResource(@FormDataParam("publicId") UUID publicId,
                                  @FormDataParam("type") String type, @FormDataParam("path") String path) {
         int numAdded = 0;
+        GrillSessionHandle sessionHandle = openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
         for (GrillService service : GrillServices.get().getGrillServices()) {
             try {
-                service.addResource(sessionid,  type, path);
+                service.addResource(sessionHandle, type, path);
                 numAdded++;
             } catch (GrillException e) {
                 LOG.error("Failed to add resource in service:" + service, e);
@@ -181,7 +179,7 @@ public class SessionUIResource {
      * Similar to addResource, this call is successful only if resource was deleted from all services.
      * </p>
      *
-     * @param sessionid session handle object
+     * @param publicId session's public id
      * @param type The type of resource. Valid types are 'jar', 'file' and 'archive'
      * @param path path of the resource to be deleted
      *
@@ -193,12 +191,14 @@ public class SessionUIResource {
     @Path("resources/delete")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public APIResult deleteResource(@FormDataParam("sessionid") GrillSessionHandle sessionid,
+    public APIResult deleteResource(@FormDataParam("publicId") UUID publicId,
                                     @FormDataParam("type") String type, @FormDataParam("path") String path) {
         int numDeleted = 0;
+        GrillSessionHandle sessionHandle = openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
         for (GrillService service : GrillServices.get().getGrillServices()) {
             try {
-                service.deleteResource(sessionid,  type, path);
+                service.deleteResource(sessionHandle,  type, path);
                 numDeleted++;
             } catch (GrillException e) {
                 LOG.error("Failed to delete resource in service:" + service, e);
@@ -218,7 +218,7 @@ public class SessionUIResource {
     /**
      * Get a list of key=value parameters set for this session
      *
-     * @param sessionid session handle object
+     * @param publicId session's public id
      * @param verbose If true, all the parameters will be returned.
      *  If false, configuration parameters will be returned
      * @param key if this is empty, output will contain all parameters and their values,
@@ -230,13 +230,15 @@ public class SessionUIResource {
     @GET
     @Path("params")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public StringList getParams(@QueryParam("sessionid") GrillSessionHandle sessionid,
+    public StringList getParams(@QueryParam("publicId") UUID publicId,
                                 @DefaultValue("false") @QueryParam("verbose") boolean verbose,
                                 @DefaultValue("") @QueryParam("key") String key) {
         RowSet rows = null;
         List<String> result = new ArrayList<String>();
+        GrillSessionHandle sessionHandle = openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
         try {
-            OperationHandle handle = sessionService.getAllSessionParameters(sessionid, verbose, key);
+            OperationHandle handle = sessionService.getAllSessionParameters(sessionHandle, verbose, key);
             rows = sessionService.getCliService().fetchResults(handle);
         } catch (HiveSQLException e) {
             if (e.getMessage().contains(key + " is undefined")) {
@@ -266,7 +268,7 @@ public class SessionUIResource {
      *
      * System properties are not restricted to the session, they would be set globally
      *
-     * @param sessionid session handle object
+     * @param publicId session's public id
      * @param key parameter key
      * @param value parameter value
      *
@@ -276,9 +278,11 @@ public class SessionUIResource {
     @PUT
     @Path("params")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public APIResult setParam(@FormDataParam("sessionid") GrillSessionHandle sessionid,
+    public APIResult setParam(@FormDataParam("publicId") UUID publicId,
                               @FormDataParam("key") String key, @FormDataParam("value") String value) {
-        sessionService.setSessionParameter(sessionid, key, value);
+        GrillSessionHandle sessionHandle = openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
+        sessionService.setSessionParameter(sessionHandle, key, value);
         return new APIResult(Status.SUCCEEDED, "Set param succeeded");
     }
     */
