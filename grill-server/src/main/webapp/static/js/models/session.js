@@ -25,6 +25,7 @@ var Session = function() {
 			cache: false,
 			data: util.createMultipart({username: username, password: password}),
 			success: function(data) {
+				console.log(data);
 				if(data.hasOwnProperty("publicId") && data.hasOwnProperty("secretId")) {
 					sessionHandle = data;
 					docCookies.setItem("publicId", sessionHandle["publicId"]);
@@ -51,4 +52,8 @@ var Session = function() {
 	this.searchMeta = function() {
 
 	};
+
+	this.getSessionHandle = function() {
+		return sessionHandle;
+	}
 };
