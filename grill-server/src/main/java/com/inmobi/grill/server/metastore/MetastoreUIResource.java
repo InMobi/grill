@@ -175,6 +175,7 @@ public class MetastoreUIResource {
         JSONArray tableList= null;
         JSONArray searchResults = new JSONArray();
         try {
+
              tableList = new JSONArray(showAllTables(publicId));
         }catch(JSONException j)
         {
@@ -208,6 +209,7 @@ public class MetastoreUIResource {
                 }
                 List<String> cubeList = cube.getDimAttrNames().getDimAttrNames();
                 LOG.info(" DIMATTRNAMES ");
+
                 if ((checkAttributeMatching(cube.getDimAttrNames().getDimAttrNames(), keyword)) || (checkAttributeMatching(cube.getMeasureNames().getMeasures(), keyword))) {
                     try{
                         searchResults.put(new JSONObject().put("name", name).put("type", type));
