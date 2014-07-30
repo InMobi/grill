@@ -9,6 +9,7 @@ import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.driver.GrillResultSetMetadata;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
 import com.inmobi.grill.server.session.SessionUIResource;
+import org.apache.commons.io.IOExceptionWithCause;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import java.util.UUID;
@@ -22,6 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.LineNumberReader;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by arun on 25/7/14.
@@ -152,13 +158,15 @@ public class QueryServiceUIResource{
 
     @GET
     @Path("queries/{queryHandle}/resultset")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public QueryResult getResultSet(
+    @Produces({MediaType.APPLICATION_OCTET_STREAM})
+    public ArrayList getResultSet(
             @QueryParam("publicId") UUID publicId,
             @PathParam("queryHandle") String queryHandle,
             @QueryParam("pageNumber") int pageNumber,
             @QueryParam("fetchsize") int fetchSize) {
         GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+        ArrayList<ArrayList<String>> resultRows = new ArrayList<ArrayList<String>>();
+        ArrayList<String> resultColumns = new ArrayList<String>();
         checkSessionHandle(sessionHandle);
         try {
             LOG.info("FetchResultSet:" + sessionHandle.toString() + " query:" + queryHandle);
@@ -167,19 +175,57 @@ public class QueryServiceUIResource{
             for(ResultColumn column : columns)
             {
                 LOG.info("Column : " + column.getName());
+                resultColumns.add(column.getName());
             }
-            InMemoryQueryResult result = (InMemoryQueryResult)(queryServer.fetchResultSet(sessionHandle, getQueryHandle(queryHandle), pageNumber * (fetchSize - 1),
-                    fetchSize));
-            List<ResultRow> rows = result.getRows();
-            for(ResultRow row : rows)
+            resultRows.add(resultColumns);
+            resultColumns.clear();
+            QueryResult result = queryServer.fetchResultSet(sessionHandle, getQueryHandle(queryHandle), (pageNumber - 1) * fetchSize,
+                    fetchSize);
+            if(result instanceof InMemoryQueryResult) {
+                InMemoryQueryResult inMemoryQueryResult = (InMemoryQueryResult) result;
+                List<ResultRow> rows = inMemoryQueryResult.getRows();
+                for (ResultRow row : rows) {
+                    for(Object column : row.getValues())
+                    {
+                        resultColumns.add(column.toString());
+                    }
+                    resultRows.add(resultColumns);
+                    resultColumns.clear();
+                    LOG.info("Row : " + row.toString());
+                }
+            }
+            else
             {
-                LOG.info("Row : " + row.toString());
+                PersistentQueryResult persistentQueryResult = (PersistentQueryResult) result;
+                LOG.info("Persisted File URI: " + persistentQueryResult.getPersistedURI());
+                try {
+                    LineNumberReader resultFile = null;
+                    try {
+                        resultFile = new LineNumberReader(new FileReader(persistentQueryResult.getPersistedURI()));
+                        String str;
+                        while ((str = resultFile.readLine()) != null) {
+                            //resultColumns = new ArrayList<String>(Arrays.asList(str.split("[\u0001]")));
+                            resultColumns.addAll(new ArrayList<String>(Arrays.asList(str.split('\u0001'))));
+                            resultRows.add(resultColumns);
+                            resultColumns.clear();
+                            LOG.info("Read from FILE : " + str);
+                        }
+                    } catch (Exception e) {
+                        throw new WebApplicationException(e);
+                    } finally {
+
+                        // closes the stream and releases system resources
+                        if (resultFile != null)
+                            resultFile.close();
+                    }
+                } catch (IOException e) {
+                    throw new WebApplicationException(e);
+                }
             }
-            Response response = queryServer.getHttpResultSet(sessionHandle, getQueryHandle(queryHandle));
-            return result;
+            //Response response = queryServer.getHttpResultSet(sessionHandle, getQueryHandle(queryHandle));
+            return resultRows;
         } catch (GrillException e) {
             throw new WebApplicationException(e);
         }
     }
-
 }
