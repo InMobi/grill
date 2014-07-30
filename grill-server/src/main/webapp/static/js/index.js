@@ -4,16 +4,19 @@ var codeMirror = CodeMirror.fromTextArea(document.getElementById("query"), {
 
 var util = new Util;
 var session = new Session;
-session.logIn("foo", "bar", null);
-if(!session.isLoggedIn()) {
-	//Show login UI
-}
-else {
-	//Show normal UI
-}
 
 //Hidden by default
 $("#query-form .loading").hide();
+$("#queryui, #loginui").hide();
+
+if(!session.isLoggedIn()) {
+	//Show login UI
+	$("#loginui").show();
+}
+else {
+	//Show normal UI
+	$("#queryui").show();
+}
 
 var setEnableForm = function(enable) {
 	codeMirror.setOption("readOnly", !enable);
@@ -76,4 +79,29 @@ $("#query-form").submit(function(event) {
 		//No query. Reset UI
 		setEnableForm(true);
 	}
+});
+
+$("#login-form").submit(function(event){
+	event.preventDefault();
+
+	var email = $("#email").val();
+	var password = $("#password").val();
+
+	if(!email) {
+		$("#email").addClass("error");
+		return;
+	}
+	$("#email").removeClass("error");
+
+	if(!password) {
+		$("#password").addClass("error");
+		return;
+	}
+	$("#password").removeClass("error");
+
+	$("#email, #password, #login-btn").attr("disabled", true);
+
+	session.logIn(email, password, function() {
+		window.location.reload();
+	});
 });
