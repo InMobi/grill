@@ -1,24 +1,46 @@
 package com.inmobi.grill.server.metastore;
 
-/**
- * Created by inmobi on 25/07/14.
+/*
+ * #%L
+ * Grill Server
+ * %%
+ * Copyright (C) 2014 Inmobi
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
  */
-//-----
+
+/**
+ * Created by vikash pandey on 25/7/14.
+ */
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.api.metastore.ObjectFactory;
 import com.inmobi.grill.api.metastore.XCube;
-import com.inmobi.grill.api.metastore.XDimAttrNames;
-import com.inmobi.grill.api.metastore.XDimension;
-import com.inmobi.grill.api.metastore.XStorage;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.metastore.CubeMetastoreService;
-import org.apache.commons.collections.MultiHashMap;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import com.inmobi.grill.server.session.SessionUIResource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBElement;
 import java.util.*;
 
 /**
@@ -27,23 +49,32 @@ import java.util.*;
  * This provides api for all things metastore UI.
  */
 
-@Path("metaquery")
+@Path("metastoreapi")
 public class MetastoreUIResource {
 
-    //private GrillClient client;
-
-    /*public void setClient(GrillClient client) {
-        this.client = client;
-    }*/
-
+    public static final Log LOG = LogFactory.getLog(MetastoreUIResource.class);
     public CubeMetastoreService getSvc() { return (CubeMetastoreService)GrillServices.get().getService("metastore");}
 
-    private void checkSessionId(GrillSessionHandle sessionHandle) {
+    private void checkSessionHandle(GrillSessionHandle sessionHandle) {
         if (sessionHandle == null) {
             throw new BadRequestException("Invalid session handle");
         }
     }
 
+    /**
+     * API to know if metastore service is up and running
+     *
+     * @return Simple text saying it up
+     */
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getMessage() {
+        return "Metastore is up";
+    }
+
+    /*
+     * Checks if a list of Strings contains a search word
+     */
     private boolean checkAttributeMatching(List<String> attribList, String search)
     {
         Iterator<String> it = attribList.iterator();
@@ -54,134 +85,140 @@ public class MetastoreUIResource {
         return false;
     }
 
+
+    /**
+     * Get all Cube names, Dimension Table names and Storage names
+     *
+     * @param publicId The publicId for the session in which user is working
+     *
+     * @return JSON string consisting of different table names and types
+     *
+     * @throws GrillException, JSONException
+     */
     @GET @Path("tables")
     @Produces ({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public MultiHashMap showAllTables(@QueryParam("sessionid") GrillSessionHandle sessionid)
-    //public String showAllTables()
+    public String showAllTables(@QueryParam("publicId") UUID publicId)
     {
-        checkSessionId(sessionid);
-        MultiHashMap tableList = new MultiHashMap();
+        GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
+        JSONArray tableList = new JSONArray();
         List<String> cubes;
         try{
-            cubes = getSvc().getAllCubeNames(sessionid);
+            cubes = getSvc().getAllCubeNames(sessionHandle);
         }
         catch(GrillException e){
             throw new WebApplicationException(e);
         }
         for(String cube : cubes)
         {
-            tableList.put("Cube",cube);
+            try {
+                tableList.put(new JSONObject().put("name", cube).put("type", "Cube"));
+            }
+            catch(JSONException j){
+                LOG.error(j);
+            }
         }
         List<String> dimTables;
         try{
-            dimTables = getSvc().getAllDimTableNames(sessionid);
+            dimTables = getSvc().getAllDimTableNames(sessionHandle);
         }
         catch(GrillException e){
             throw new WebApplicationException(e);
         }
         for(String dimTable : dimTables)
         {
-            tableList.put("DimensionTable",dimTable);
+            try {
+                tableList.put(new JSONObject().put("name", dimTable).put("type", "DimensionTable"));
+            }
+            catch(JSONException j){
+                LOG.error(j);
+            }
         }
         List<String> storageTables;
         try{
-            storageTables = getSvc().getAllStorageNames(sessionid);
+            storageTables = getSvc().getAllStorageNames(sessionHandle);
         }
         catch(GrillException e){
             throw new WebApplicationException(e);
         }
         for(String storageTable : storageTables)
         {
-            tableList.put("StorageTable",storageTable);
-        }
-        return tableList;
-        //return "Reached";
-    }
-
-   /* @GET @Path("tables/{searchNameOnly}")
-    public MultiHashMap showFilterResultsNameOnly(MultiHashMap tableList, @QueryParam("sessionid") GrillSessionHandle sessionid, @PathParam("searchNameOnly") String search)
-    {
-        checkSessionId(sessionid);
-        MultiHashMap searchResults = new MultiHashMap();
-        Set set = tableList.entrySet();
-        Iterator iterate = set.iterator();
-        Map.Entry<String, List<String>> me;
-        while(iterate.hasNext())
-        {
-            me = (Map.Entry) iterate.next();
-            for(int item =0; item < me.getValue().size(); item++)
-            {
-                if(me.getValue().get(item).contains(search))
-                {
-                    searchResults.put(me.getKey(),me.getValue().get(item));
-                }
+            try {
+                tableList.put(new JSONObject().put("name", storageTable).put("type", "StorageTable"));
+            }
+            catch(JSONException j){
+                LOG.error(j);
             }
         }
-        return searchResults;
-    }*/
+        return tableList.toString();
+    }
 
-    @GET @Path("tables/{search}")
-    public MultiHashMap showFilterResults(@QueryParam("sessionid") GrillSessionHandle sessionid, @PathParam("search") String search)
+
+
+    /**
+     * Get all Table names and types which contain the search word
+     *
+     * @param publicId The publicId for the session in which user is working
+     *
+     * @param keyword keyword to search
+     *
+     * @return JSON string consisting of different table names and types
+     *
+     * @throws GrillException, JSONException
+     */
+    @GET @Path("tables/{keyword}")
+    @Produces ({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public String showFilterResults(@QueryParam("publicId") UUID publicId, @PathParam("keyword") String keyword)
     {
-        checkSessionId(sessionid);
-        MultiHashMap tableList = showAllTables(sessionid);
-        MultiHashMap searchResults = new MultiHashMap();
-        Set set = tableList.entrySet();
-        Iterator iterate = set.iterator();
-        Map.Entry<String, List<String>> me;
-        while(iterate.hasNext())
+        GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
+        JSONArray tableList= null;
+        JSONArray searchResults = new JSONArray();
+        try {
+            tableList = new JSONArray(showAllTables(publicId));
+        }catch(JSONException j)
         {
-            me = (Map.Entry) iterate.next();
-            for(int item =0; item < me.getValue().size(); item++)
+            LOG.error(j);
+        }
+        for(int item = 0; item < tableList.length(); item++)
+        {
+            String name =null, type=null;
+            try {
+                name = tableList.getJSONObject(item).getString("name");
+                type = tableList.getJSONObject(item).getString("type");
+            }catch(JSONException j)
             {
-                String itemName = me.getValue().get(item);
-                if(me.getKey().equals("Cube"))
+                LOG.error(j);
+            }
+            if(name.contains(keyword)) {
+                try{
+                    searchResults.put(new JSONObject().put("name", name).put("type", type));
+                }catch(JSONException j)
                 {
-                    if(itemName.contains(search))
-                        searchResults.put("Cube", itemName);
-                    else
+                    LOG.error(j);
+                }
+            }
+            /*else if (type.equals("Cube")) {
+                XCube cube;
+                try {
+                    cube = getSvc().getCube(sessionHandle, name);
+                    LOG.info("GOT THE CUBE");
+                } catch (GrillException e) {
+                    throw new WebApplicationException(e);
+                }
+                List<String> cubeList = cube.getDimAttrNames().getDimAttrNames();
+                LOG.info(" DIMATTRNAMES ");
+                /*if ((checkAttributeMatching(cube.getDimAttrNames().getDimAttrNames(), keyword)) || (checkAttributeMatching(cube.getMeasureNames().getMeasures(), keyword))) {
+                    try{
+                        searchResults.put(new JSONObject().put("name", name).put("type", type));
+                    }catch(JSONException j)
                     {
-                        XCube cube;
-                        try {
-                            cube = getSvc().getCube(sessionid, itemName);
-                        } catch (GrillException e) {
-                            throw new WebApplicationException(e);
-                        }
-                        if (checkAttributeMatching(cube.getDimAttrNames().getDimAttrNames(), search))
-                            searchResults.put("Cube", itemName);
-                        else if (checkAttributeMatching(cube.getMeasureNames().getMeasures(), search))
-                            searchResults.put("Cube", itemName);
+                    LOG.info(j);
                     }
                 }
-                else if(me.getKey().equals("DimensionTable"))
-                {
-                    if(itemName.contains(search))
-                        searchResults.put("DimensionTable", itemName);
-                    /*else {
-                        XDimension dimension;
-                        try {
-                            dimension = getSvc().getDimension(sessionid, itemName);
-                        } catch (GrillException e) {
-                            throw new WebApplicationException(e);
-                        }
-                    }*/
-                }
-                else if(me.getKey().equals("StorageTable"))
-                {
-                    if(itemName.contains(search))
-                        searchResults.put("StorageTable", itemName);
-                    /*else {
-                        XStorage storage;
-                        try {
-                            storage = getSvc().getStorage(sessionid, itemName);
-                        } catch (GrillException e) {
-                            throw new WebApplicationException(e);
-                        }
-                    }*/
-                }
-            }
+            }*/
         }
-        return searchResults;
+        return searchResults.toString();
     }
-
 }
+
