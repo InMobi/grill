@@ -44,6 +44,40 @@ var QueryStatusView = function(query) {
 };
 QueryStatusView.instanceNo = 0;
 
+var TableResultView = function() {
+	var id = "table-result-view-" + TableResultView.instanceNo++;
+	var rows = [];
+
+	this.updateView = function(rows) {
+		$("#" + id).empty();
+
+		if(rows && rows.length <= 0)
+			return;
+
+		//Add header
+		$("#" + id).append($("<thead>").append($("<tr>")));
+		for(var i = 0; i < rows[0].getColumns().length; i++) {
+			$("#" + id + " thead tr").append($("<th>", {text: rows[0].getColumns()[i]}));
+		};
+
+		//Add body
+		$("#" + id).append($("<tbody>"));
+		for(var i = 1; i < rows.length; i++) {
+			var tRow = $("<tr>");
+			var columns = rows[i].getColumns();
+			for(var j = 0; j < columns.length; j++) {
+				tRow.append($("<td>", {text: columns[j]}));
+			};
+			$("#" + id + " tbody").append(tRow);
+		};
+	}
+
+	this.getView = function() {
+		return $("<table>", {id: id, class: "table table-bordered"});
+	}
+};
+TableResultView.instanceNo = 0;
+
 $("#query-form").submit(function(event) {
 	event.preventDefault(); 
 
@@ -66,7 +100,16 @@ $("#query-form").submit(function(event) {
 					setEnableForm(true);
 					//Display results
 					console.log("Completed");
-					queryObj.getResultSet();
+					if(queryObj.getQueryStatus() === "SUCCESSFUL") {
+						var resultView = new TableResultView;
+						$("#query-form").next().after(resultView.getView());
+
+						var rs = queryObj.getResultSet();
+						rs.getNextRows(function(rows) {
+							console.log("Got next rows");
+							resultView.updateView(rows);
+						});
+					}
 				});
 			}
 			else {

@@ -16,6 +16,7 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import java.io.UnsupportedEncodingException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -158,56 +159,51 @@ public class QueryServiceUIResource{
 
     @GET
     @Path("queries/{queryHandle}/resultset")
-    @Produces({MediaType.APPLICATION_OCTET_STREAM})
-    public ArrayList getResultSet(
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+    public ResultRow getResultSet(
             @QueryParam("publicId") UUID publicId,
             @PathParam("queryHandle") String queryHandle,
             @QueryParam("pageNumber") int pageNumber,
             @QueryParam("fetchsize") int fetchSize) {
         GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
-        ArrayList<ArrayList<String>> resultRows = new ArrayList<ArrayList<String>>();
-        ArrayList<String> resultColumns = new ArrayList<String>();
+        List<Object> rows = new ArrayList<Object>();
         checkSessionHandle(sessionHandle);
+
         try {
             LOG.info("FetchResultSet:" + sessionHandle.toString() + " query:" + queryHandle);
             QueryResultSetMetadata resultSetMetadata = queryServer.getResultSetMetadata(sessionHandle, getQueryHandle(queryHandle));
-            List<ResultColumn> columns = resultSetMetadata.getColumns();
-            for(ResultColumn column : columns)
-            {
-                LOG.info("Column : " + column.getName());
-                resultColumns.add(column.getName());
+            List<ResultColumn> metaColumns = resultSetMetadata.getColumns();
+            List<Object> metaResultColumns = new ArrayList<Object>();
+            for(ResultColumn column : metaColumns) {
+                metaResultColumns.add(column.getName());
             }
-            resultRows.add(resultColumns);
-            resultColumns.clear();
+            rows.add(new ResultRow(metaResultColumns));
+
+
             QueryResult result = queryServer.fetchResultSet(sessionHandle, getQueryHandle(queryHandle), (pageNumber - 1) * fetchSize,
                     fetchSize);
             if(result instanceof InMemoryQueryResult) {
                 InMemoryQueryResult inMemoryQueryResult = (InMemoryQueryResult) result;
-                List<ResultRow> rows = inMemoryQueryResult.getRows();
-                for (ResultRow row : rows) {
-                    for(Object column : row.getValues())
-                    {
-                        resultColumns.add(column.toString());
-                    }
-                    resultRows.add(resultColumns);
-                    resultColumns.clear();
-                    LOG.info("Row : " + row.toString());
-                }
+                List<ResultRow> tableRows = inMemoryQueryResult.getRows();
+                rows.addAll(tableRows);
             }
-            else
+            else if(result instanceof PersistentQueryResult)
             {
                 PersistentQueryResult persistentQueryResult = (PersistentQueryResult) result;
                 LOG.info("Persisted File URI: " + persistentQueryResult.getPersistedURI());
                 try {
                     LineNumberReader resultFile = null;
                     try {
-                        resultFile = new LineNumberReader(new FileReader(persistentQueryResult.getPersistedURI()));
+                        resultFile = new LineNumberReader(new FileReader(persistentQueryResult.getPersistedURI().substring(5) + "/000000_0"));
                         String str;
                         while ((str = resultFile.readLine()) != null) {
                             //resultColumns = new ArrayList<String>(Arrays.asList(str.split("[\u0001]")));
-                            resultColumns.addAll(new ArrayList<String>(Arrays.asList(str.split('\u0001'))));
-                            resultRows.add(resultColumns);
-                            resultColumns.clear();
+                            List<Object> columns = new ArrayList<Object>();
+                            String[] strArray = str.split('\u0001' + "");
+                            for(String strColumn:strArray)
+                                columns.add(strColumn);
+
+                            rows.add(new ResultRow(columns));
                             LOG.info("Read from FILE : " + str);
                         }
                     } catch (Exception e) {
@@ -223,7 +219,8 @@ public class QueryServiceUIResource{
                 }
             }
             //Response response = queryServer.getHttpResultSet(sessionHandle, getQueryHandle(queryHandle));
-            return resultRows;
+
+            return new ResultRow(rows);
         } catch (GrillException e) {
             throw new WebApplicationException(e);
         }
