@@ -26,8 +26,7 @@ package com.inmobi.grill.server.metastore;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.metastore.ObjectFactory;
-import com.inmobi.grill.api.metastore.XCube;
+import com.inmobi.grill.api.metastore.*;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.metastore.CubeMetastoreService;
 import com.inmobi.grill.server.session.SessionUIResource;
@@ -73,18 +72,31 @@ public class MetastoreUIResource {
     }
 
     /*
-     * Checks if a list of Strings contains a search word
+     * Checks if any Measure Name in a cube contains a keyword
      */
-    private boolean checkAttributeMatching(List<String> attribList, String search)
+    private boolean measureNameMatched(XCube cube, String keyword)
     {
-        Iterator<String> it = attribList.iterator();
-        while(it.hasNext())
-        {
-            if(it.next().contains(search)) return true;
+        if(cube.getMeasures()!=null) {
+            for (XMeasure measure : cube.getMeasures().getMeasures()) {
+                if (measure.getName().contains(keyword)) return true;
+            }
         }
         return false;
     }
 
+
+    /*
+    * Checks if any Dimension Attribute Name in a cube contains a keyword
+    */
+    private boolean dimAttrNameMatched(XCube cube, String keyword)
+    {
+        if(cube.getDimAttributes()!=null) {
+            for (XDimAttribute dim : cube.getDimAttributes().getDimAttributes()) {
+                if (dim.getName().contains(keyword)) return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Get all Cube names, Dimension Table names and Storage names
@@ -199,26 +211,32 @@ public class MetastoreUIResource {
                     LOG.error(j);
                 }
             }
-            /*else if (type.equals("Cube")) {
+            else if (type.equals("Cube")) {
                 XCube cube;
                 try {
-                    cube = getSvc().getCube(sessionHandle, name);
-                    LOG.info("GOT THE CUBE");
+                   cube = getSvc().getCube(sessionHandle, name);
                 } catch (GrillException e) {
                     throw new WebApplicationException(e);
                 }
-                List<String> cubeList = cube.getDimAttrNames().getDimAttrNames();
-                LOG.info(" DIMATTRNAMES ");
-
-                if ((checkAttributeMatching(cube.getDimAttrNames().getDimAttrNames(), keyword)) || (checkAttributeMatching(cube.getMeasureNames().getMeasures(), keyword))) {
+                if(measureNameMatched(cube, keyword))
+                {
                     try{
                         searchResults.put(new JSONObject().put("name", name).put("type", type));
                     }catch(JSONException j)
                     {
-                    LOG.info(j);
+                        LOG.error(j);
                     }
                 }
-            }*/
+                else if(dimAttrNameMatched(cube, keyword))
+                {
+                    try{
+                        searchResults.put(new JSONObject().put("name", name).put("type", type));
+                    }catch(JSONException j)
+                    {
+                        LOG.error(j);
+                    }
+                }
+            }
         }
         return searchResults.toString();
     }
