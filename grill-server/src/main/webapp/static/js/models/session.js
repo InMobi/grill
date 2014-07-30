@@ -33,10 +33,13 @@ var Session = function() {
 				}
 				else
 					console.log("Error authenticating user: " + data);
-				callback();
+				if(util.isFunction(callback))
+					callback();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log("Error authenticating user: " + textStatus);
+				if(util.isFunction(callback))
+					callback();
 			}
 		});
 	};
@@ -56,4 +59,44 @@ var Session = function() {
 	this.getSessionHandle = function() {
 		return sessionHandle;
 	}
+
+	this.submitQuery = function(query, callback) {
+		if(this.isLoggedIn()) {
+			//Submit query using ajax
+			$.ajax({
+				url: util.QUERY_URL,
+				type: 'POST',
+				dataType: 'json',
+				contentType: false,
+				processData: false,
+				cache: false,
+				data: util.createMultipart({ 
+					publicId: session.getSessionHandle()["publicId"], 
+					query: query
+				}),
+				success: function(data) {
+					console.log("Request success");
+					var myQuery = null;
+
+					if(data.hasOwnProperty("type") && data.hasOwnProperty("handleId") && data["type"] === "queryHandle") {
+						console.log("Query submitted successfuly");
+						queryHandle = data["handleId"];
+						myQuery = new Query(queryHandle);
+					}
+					else
+						console.log("Error sending query request: " + data);
+					
+					if(util.isFunction(callback))
+						callback(myQuery);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log("Error sending query request: " + data);
+					if(util.isFunction(callback))
+						callback(null);
+				}
+			});
+		}
+		else
+			callback("User not logged in");
+	};
 };
