@@ -4,16 +4,19 @@ var codeMirror = CodeMirror.fromTextArea(document.getElementById("query"), {
 
 var util = new Util;
 var session = new Session;
-session.logIn("foo", "bar", null);
-if(!session.isLoggedIn()) {
-	//Show login UI
-}
-else {
-	//Show normal UI
-}
 
 //Hidden by default
 $("#query-form .loading").hide();
+$("#queryui, #loginui").hide();
+
+if(!session.isLoggedIn()) {
+	//Show login UI
+	$("#loginui").show();
+}
+else {
+	//Show normal UI
+	$("#queryui").show();
+}
 
 var setEnableForm = function(enable) {
 	codeMirror.setOption("readOnly", !enable);
@@ -41,6 +44,40 @@ var QueryStatusView = function(query) {
 };
 QueryStatusView.instanceNo = 0;
 
+var TableResultView = function() {
+	var id = "table-result-view-" + TableResultView.instanceNo++;
+	var rows = [];
+
+	this.updateView = function(rows) {
+		$("#" + id).empty();
+
+		if(rows && rows.length <= 0)
+			return;
+
+		//Add header
+		$("#" + id).append($("<thead>").append($("<tr>")));
+		for(var i = 0; i < rows[0].getColumns().length; i++) {
+			$("#" + id + " thead tr").append($("<th>", {text: rows[0].getColumns()[i]}));
+		};
+
+		//Add body
+		$("#" + id).append($("<tbody>"));
+		for(var i = 1; i < rows.length; i++) {
+			var tRow = $("<tr>");
+			var columns = rows[i].getColumns();
+			for(var j = 0; j < columns.length; j++) {
+				tRow.append($("<td>", {text: columns[j]}));
+			};
+			$("#" + id + " tbody").append(tRow);
+		};
+	}
+
+	this.getView = function() {
+		return $("<table>", {id: id, class: "table table-bordered"});
+	}
+};
+TableResultView.instanceNo = 0;
+
 $("#query-form").submit(function(event) {
 	event.preventDefault(); 
 
@@ -63,7 +100,16 @@ $("#query-form").submit(function(event) {
 					setEnableForm(true);
 					//Display results
 					console.log("Completed");
-					queryObj.getResultSet();
+					if(queryObj.getQueryStatus() === "SUCCESSFUL") {
+						var resultView = new TableResultView;
+						$("#query-form").next().after(resultView.getView());
+
+						var rs = queryObj.getResultSet();
+						rs.getNextRows(function(rows) {
+							console.log("Got next rows");
+							resultView.updateView(rows);
+						});
+					}
 				});
 			}
 			else {
@@ -76,4 +122,29 @@ $("#query-form").submit(function(event) {
 		//No query. Reset UI
 		setEnableForm(true);
 	}
+});
+
+$("#login-form").submit(function(event){
+	event.preventDefault();
+
+	var email = $("#email").val();
+	var password = $("#password").val();
+
+	if(!email) {
+		$("#email").addClass("error");
+		return;
+	}
+	$("#email").removeClass("error");
+
+	if(!password) {
+		$("#password").addClass("error");
+		return;
+	}
+	$("#password").removeClass("error");
+
+	$("#email, #password, #login-btn").attr("disabled", true);
+
+	session.logIn(email, password, function() {
+		window.location.reload();
+	});
 });

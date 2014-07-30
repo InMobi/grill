@@ -10,6 +10,7 @@ var Query = function(handle) {
 	var priority = "";
 	var onCompletedListener = null;
 	var onUpdatedListener = null;
+	var resultSet = null;
 
 	this.getQueryStatus = function() {
 		return queryStatus;
@@ -32,20 +33,9 @@ var Query = function(handle) {
 	}
 
 	this.getResultSet = function() {
-		$.ajax({
-			url: queryURL + "/resultset",
-			type: 'GET', 
-			data: {
-				publicId: session.getSessionHandle()["publicId"],
-				queryHandle: queryHandle,
-				pageNumber: 1,
-				fetchSize: 10
-			},
-			dataType: 'json',
-			success: function(data) {
-				console.log(data);
-			}
-		});
+		if(!resultSet)
+			resultSet = new ResultSet(queryHandle);
+		return resultSet;
 	};
 
 	this.setOnCompletedListener = function(listener) {
