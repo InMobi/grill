@@ -7,13 +7,17 @@ var MetaView = function(meta) {
 			text: model.getName()
 		});
 	}
-
+	
 	var getClass = function() {
 		if(model.getType() === "Cube") {
 			return "info";
 		}
-		else if(model.getType() == "Dimension") {
+		else if(model.getType() === "DimensionTable") {
 			return "success";
 		}
+		else if(model.getType() === "StorageTable") {
+			return "warning";
+		}
+		return "default";
 	}
 }

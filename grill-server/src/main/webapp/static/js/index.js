@@ -36,6 +36,18 @@ var loadPage = function() {
 		$("#queryui").show();
 		$("#query-ui-content").show();
 		$("#navlinks li").first().addClass("active");
+		$("#meta-views").empty();
+		session.getAvailableMeta(function(data) {
+			for(var i = 0; i < data.length; i++) {
+				var metaView = new MetaView(data[i]);
+				$("#meta-views").append(metaView.getView());
+			}
+			$("#meta-views li").click(function(event) {
+				var text = $(this).text();
+				var old = codeMirror.getDoc().getValue();
+				codeMirror.getDoc().setValue(old + text);
+			});
+		});
 	}
 }
 loadPage();
@@ -177,4 +189,36 @@ $("#navlinks li a").click(function(event) {
 	event.preventDefault();
 	window.location.hash = this.hash;
 	loadPage();
+});
+
+$("#meta-input").keyup(function() {
+	var searchTerm = $(this).val();
+	if(searchTerm === null || searchTerm === "") {
+		$("#meta-views").empty();
+		session.getAvailableMeta(function(data) {
+			for(var i = 0; i < data.length; i++) {
+				var metaView = new MetaView(data[i]);
+				$("#meta-views").append(metaView.getView());
+			}
+			$("#meta-views li").click(function(event) {
+				var text = $(this).text();
+				var old = codeMirror.getDoc().getValue();
+				codeMirror.getDoc().setValue(old + text);
+			});
+		});
+	}
+	else {
+		session.searchMeta(searchTerm, function(data) {
+			$("#meta-views").empty();
+			for(var i = 0; i < data.length; i++) {
+				var metaView = new MetaView(data[i]);
+				$("#meta-views").append(metaView.getView());
+			}
+			$("#meta-views li").click(function(event) {
+				var text = $(this).text();
+				var old = codeMirror.getDoc().getValue();
+				codeMirror.getDoc().setValue(old + text);
+			});
+		});
+	}
 });
