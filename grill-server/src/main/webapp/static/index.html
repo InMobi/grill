@@ -77,7 +77,7 @@
 						<label>Enter your SQL query below</label>
 						<textarea id="query" class="form-control" rows="3"></textarea>
 					</div>
-					<button type="submit" class="btn btn-success">Submit Query</button>
+					<button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-play-circle"></span> Submit Query</button>
 					<img class="loading" src="http://preloaders.net/preloaders/335/Thin%20broken%20ring.gif">
 				</form>
 
@@ -165,6 +165,15 @@
 		height: 50px;
 	}
 	#historyui div table th:nth-child(1), #historyui div table th:nth-child(3) {
+		cursor: pointer;
+	}
+	#historyui div table th span {
+		margin-left: 10px;
+	}
+	#historyui div table td:nth-child(4) .btn {
+		margin-right: 10px;
+	}
+	.pagination li {
 		cursor: pointer;
 	}
 	</style>

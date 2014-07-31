@@ -13,7 +13,7 @@ var HistoryTableView = function() {
 			historyRowViews.push(historyRowView);
 			$("#" + id + " tbody").append(historyRowView.getView());
 			historyRowView.attachedToView();
-			$("#" + id + " th:nth-child(1)").trigger("click");
+			$("#" + id + " th:nth-child(1)").data("sort-dir", "asc").trigger("click"); //Sort
 		});
 	};
 
@@ -27,16 +27,30 @@ var HistoryTableView = function() {
 		tableHead.append(
 			$("<tr>").append(
 				$("<th>", {
-					text: "Time"
-				}).attr("data-sort", "int")
+					text: "Time",
+					class: "col-md-1"
+				})
+				.attr("data-sort", "int")
+				.attr("data-sort-default", "desc")
+				.append(
+					$("<span>", {
+						class: "glyphicon glyphicon-sort"
+					})
+				)
 			).append(
 				$("<th>", {
-					text: "Query"
+					text: "Query",
+					class: "col-md-8"
 				})
 			).append(
 				$("<th>", {
 					text: "Status"
 				}).attr("data-sort", "string")
+				.append(
+					$("<span>", {
+						class: "glyphicon glyphicon-sort"
+					})
+				)
 			).append(
 				$("<th>", {
 					text: "Actions"

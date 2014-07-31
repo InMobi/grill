@@ -12,7 +12,8 @@ var HistoryRowView = function(query) {
 		});
 
 		var submissionTime = $("<td>", {
-			text: moment(model.getSubmissionTime()).format('MMMM Do YYYY, h:mm:ss a')
+			text: moment(model.getSubmissionTime()).fromNow(),
+			title: moment(model.getSubmissionTime()).format('MMMM Do YYYY, h:mm:ss a')
 		}).attr("data-sort-value", model.getSubmissionTime());
 
 		var userQuery = $("<td>", {
@@ -27,6 +28,43 @@ var HistoryRowView = function(query) {
 		);
 
 		var actions = $("<td>");
+		var editButton = $("<button>", {
+			class: "btn btn-info",
+			title: "Edit/Re-run Query"
+		})
+		.prepend($("<span>", {
+			class: "glyphicon glyphicon-pencil"
+		}))
+		.click(editFunction);
+		if(model.getQueryStatus() === "SUCCESSFUL") {
+			var resultButton = $("<button>", {
+				class: "btn btn-success",
+				title: "View Results"
+			})
+			.prepend($("<span>", {
+				class: "glyphicon glyphicon-eye-open"
+			}))
+			.click(showResultFunction);
+
+			actions.append(editButton);
+			actions.append(resultButton);
+		}
+		else if(model.getQueryStatus() !== "FAILED" && model.getQueryStatus() !== "CANCELLED") {
+			var cancelButton = $("<button>", {
+				class: "btn btn-danger",
+				title: "Cancel Query"
+			})
+			.prepend($("<span>", {
+				class: "glyphicon glyphicon-trash"
+			}))
+			.click(function() {
+				model.cancelQuery(null);
+			});
+			actions.append(cancelButton);
+		}
+		else {
+			actions.append(editButton);
+		}
 
 		return historyRow
 			.append(submissionTime)
@@ -45,7 +83,7 @@ var HistoryRowView = function(query) {
     		readOnly: true,
     		value: model.getUserQuery()
  		});
-	}
+	};
 
 	var getStatusClass = function() {
 		if(model.getQueryStatus() === "SUCCESSFUL")
@@ -59,5 +97,18 @@ var HistoryRowView = function(query) {
 
 		return "primary";
 	};
+
+	var editFunction = function() {
+		window.location.hash = "#query";
+		window.loadPage();
+		window.codeMirror.getDoc().setValue(model.getUserQuery());
+	};
+
+	var showResultFunction = function() {
+		window.location.hash = "#query";
+		window.loadPage();
+		window.codeMirror.getDoc().setValue(model.getUserQuery());
+		window.showQueryResults(model);
+	}
 };
 HistoryRowView.instanceNo = 0;
