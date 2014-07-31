@@ -5,7 +5,9 @@ var codeMirror = CodeMirror.fromTextArea(document.getElementById("query"), {
 
 var util = new Util;
 var session = new Session;
-var historyView = new HistoryView;
+var historyTableView = new HistoryTableView;
+$("#historyui div").append(historyTableView.getView());
+$("#historyui div table").stupidtable();
 
 var loadPage = function() {
 	//Hidden by default
@@ -19,16 +21,14 @@ var loadPage = function() {
 		$("#loginui").show();
 	}
 	else if(page === "history") {
-		$("#queryui").show();
+		$("#queryui, #historyui").show();
 		$("#query-ui-content").hide();
-		$("#historyui").show();
 		$("#navlinks li").last().addClass("active");
 		session.getAllQueries(function(data) {
 			for(var i = 0; i < data.length; i++) {
 				var query = new Query(data[i]["handleId"]);
-				var queryView = new QueryListView(query);
-				historyView.addQueryListView(queryView);
-				// query.setOnUpdatedListener(historyView.refreshView);
+				var historyRowView = new HistoryRowView(query);
+				historyTableView.addRow(historyRowView);
 			}
 		});
 	}
