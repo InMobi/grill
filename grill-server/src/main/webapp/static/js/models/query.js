@@ -38,12 +38,41 @@ var Query = function(handle) {
 		return resultSet;
 	};
 
+	this.getUserQuery = function() {
+		return userQuery;
+	}
+
+	this.getSubmissionTime = function() {
+		return submissionTime;
+	}
+
 	this.setOnCompletedListener = function(listener) {
 		onCompletedListener = listener;
 	}
 
 	this.setOnUpdatedListener = function(listener) {
 		onUpdatedListener = listener;
+	}
+
+	this.isCompleted = function() {
+		return queryStatus === "SUCCESSFUL" || queryStatus === "FAILED" || queryStatus === "CANCELLED";
+	}
+
+	this.getHandle = function() {
+		return queryHandle;
+	}
+
+	this.cancelQuery = function(callback) {
+		$.ajax({
+			url: queryURL,
+			type: 'DELETE',
+			data: {publicId: session.getSessionHandle()["publicId"]},
+			dataType: 'json',
+			success: function(data) {
+				if(util.isFunction(callback))
+					callback(data);
+			}
+		})
 	}
 
 	var update = function(callback) {
@@ -53,7 +82,6 @@ var Query = function(handle) {
 			data: {publicId: session.getSessionHandle()["publicId"]},
 			dataType: 'json',
 			success: function(data) {
-				console.log(data);
 				if(data.hasOwnProperty("queryHandle") && data["queryHandle"].hasOwnProperty("handleId") && data["queryHandle"]["handleId"] === queryHandle) {
 					queryStatus = data["status"]["status"];
 					userQuery = data["userQuery"];

@@ -43,23 +43,23 @@
 
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Query</a></li>
-						<li><a href="#">Query History</a></li>
+					<ul id="navlinks" class="nav navbar-nav">
+						<li><a href="#query">Query</a></li>
+						<li><a href="#history">Query History</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
 
 		<!-- Main Content -->
-		<div class="row">
+		<div id="query-ui-content" class="row">
 			<!-- Sidebar -->
 			<div class="col-md-3">
 				<div class="input-group">
 					<input type="text" class="form-control" placeholder="Filter..">
 					<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
 				</div>
-				<ul class="list-group">
+				<ul id="meta-views" class="list-group">
 					<li class="list-group-item list-group-item-info">Cube</li>
 					<li class="list-group-item list-group-item-info">Cube</li>
 					<li class="list-group-item list-group-item-success">Dimension</li>
@@ -82,28 +82,8 @@
 
 				<!-- Results -->
 				<h3>Results</h3>
-				<!-- <table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Column 1</th>
-							<th>Column 2</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>1</td>
-							<td>Something</td>
-							<td>Something else</td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td>Another Row</td>
-							<td>Another Value</td>
-						</tr>
-					</tbody>
-				</table> -->
-				<ul class="pagination">
+				
+				<!--<ul class="pagination">
 					<li><a href="#">&laquo;</a></li>
 					<li><a href="#">1</a></li>
 					<li><a href="#">2</a></li>
@@ -111,8 +91,12 @@
 					<li><a href="#">4</a></li>
 					<li><a href="#">5</a></li>
 					<li><a href="#">&raquo;</a></li>
-				</ul>
+				</ul>-->
 			</div>
+		</div>
+
+		<div id="historyui" class="row">
+			
 		</div>
 	</div>
 
@@ -162,12 +146,24 @@
 	#loginui {
 		margin-top: 50px;
 	}
+	.panel-body .CodeMirror {
+		height: auto;
+	}
+	.panel-body .CodeMirror-scroll {
+		height: auto;
+		overflow-y: hidden;
+		overflow-x: auto;
+	}
+	.panel-footer button {
+		margin-left: 20px;
+	}
 	</style>
 
 	<!-- Additional Scripts -->
 	<script src="js/libs/codemirror.min.js"></script>
 	<script src="js/libs/sql.js"></script>
 	<script type="text/javascript" src="js/libs/cookie.js"></script>
+	<script type="text/javascript" src="js/libs/moment.js"></script>
 
 	<script type="text/javascript" src="js/util.js"></script>
 
@@ -175,7 +171,11 @@
 	<script type="text/javascript" src="js/models/session.js"></script>
 	<script type="text/javascript" src="js/models/query.js"></script>
 	<script type="text/javascript" src="js/models/row.js"></script>
-	<script type="text/javascript" src="js/models/resultset.js"></script>
+	<script type="text/javascript" src="js/models/resultset.js"></script>	
+
+	<script type="text/javascript" src="js/querylistview.js"></script>
+	<script type="text/javascript" src="js/historyview.js"></script>
+	<script type="text/javascript" src="js/metaview.js"></script>
 	
 	<script type="text/javascript" src="js/index.js"></script>
 </body>
