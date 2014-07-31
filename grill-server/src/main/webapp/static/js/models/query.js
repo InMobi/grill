@@ -38,12 +38,28 @@ var Query = function(handle) {
 		return resultSet;
 	};
 
+	this.getUserQuery = function() {
+		return userQuery;
+	}
+
+	this.getSubmissionTime = function() {
+		return submissionTime;
+	}
+
 	this.setOnCompletedListener = function(listener) {
 		onCompletedListener = listener;
 	}
 
 	this.setOnUpdatedListener = function(listener) {
 		onUpdatedListener = listener;
+	}
+
+	this.isCompleted = function() {
+		return queryStatus === "SUCCESSFUL" || queryStatus === "FAILED" || queryStatus === "CANCELLED";
+	}
+
+	this.getHandle = function() {
+		return queryHandle;
 	}
 
 	var update = function(callback) {

@@ -1,22 +1,44 @@
 var codeMirror = CodeMirror.fromTextArea(document.getElementById("query"), {
-    mode: "text/x-sql"
+    mode: "text/x-sql",
+    lineWrapping: true
  });
 
 var util = new Util;
 var session = new Session;
+var historyView = new HistoryView;
 
-//Hidden by default
-$("#query-form .loading").hide();
-$("#queryui, #loginui").hide();
-
-if(!session.isLoggedIn()) {
-	//Show login UI
-	$("#loginui").show();
+var loadPage = function() {
+	//Hidden by default
+	$("#query-form .loading").hide();
+	$("#queryui, #loginui, #historyui").hide();
+	$("#navlinks .active").removeClass("active");
+	
+	var page = window.location.hash.substr(1);
+	if(!session.isLoggedIn()) {
+		//Show login UI
+		$("#loginui").show();
+	}
+	else if(page === "history") {
+		$("#queryui").show();
+		$("#query-ui-content").hide();
+		$("#historyui").show();
+		$("#navlinks li").last().addClass("active");
+		session.getAllQueries(function(data) {
+			for(var i = 0; i < data.length; i++) {
+				var query = new Query(data[i]["handleId"]);
+				var queryView = new QueryListView(query);
+				historyView.addQueryListView(queryView);
+				// query.setOnUpdatedListener(historyView.refreshView);
+			}
+		});
+	}
+	else {
+		$("#queryui").show();
+		$("#query-ui-content").show();
+		$("#navlinks li").first().addClass("active");
+	}
 }
-else {
-	//Show normal UI
-	$("#queryui").show();
-}
+loadPage();
 
 var setEnableForm = function(enable) {
 	codeMirror.setOption("readOnly", !enable);
@@ -147,4 +169,10 @@ $("#login-form").submit(function(event){
 	session.logIn(email, password, function() {
 		window.location.reload();
 	});
+});
+
+$("#navlinks li a").click(function(event) {
+	event.preventDefault();
+	window.location.hash = this.hash;
+	loadPage();
 });
