@@ -49,11 +49,54 @@ var Session = function() {
 	};
 
 	this.getAvailableMeta = function() {
-
+        $.ajax({
+            url: util.META_URL,
+            type: 'GET',
+            dataType: 'json',
+            data: {publicId: session.getSessionHandle()["publicId"]},
+            success: function(tableList){
+                var metaArr = [];
+                for(var item in tableList)
+                {
+                    console.log(tableList[item]);
+                    var name = tableList[item].name;
+                    var type = tableList[item].type;
+                    var metaObj = new Meta(name,type);
+                    metaArr.push(metaObj);
+                }
+                if(util.isFunction(callback))
+                    callback(metaArr);
+            }
+        });
 	};
 
-	this.searchMeta = function() {
-
+	this.searchMeta = function(keyword, callback) {
+        $.ajax({
+            url: util.META_URL+"/"+keyword,
+            type: 'GET',
+            dataType: 'json',
+            data: {publicId: session.getSessionHandle()["publicId"]},
+            success: function(tableList){
+                var metaArr = [];
+                for(var item in tableList)
+                {
+                    console.log(tableList[item]);
+                    var name = tableList[item].name;
+                    var type = tableList[item].type;
+                    var metaObj = new Meta(name,type);
+                    metaArr.push(metaObj);
+                    /*if(type == "Cube"){
+                        console.log(name);
+                    }
+                    else if(type == "DimensionTable"){
+                    }
+                    else if(type == "StorageTable"){
+                    }*/
+                }
+                if(util.isFunction(callback))
+                    callback(metaArr);
+            }
+        });
 	};
 
 	this.getSessionHandle = function() {

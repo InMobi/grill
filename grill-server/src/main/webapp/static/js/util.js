@@ -7,6 +7,7 @@ var Util = function() {
 
 	this.SESSION_URL =  "http://localhost:19999/session/";
 	this.QUERY_URL = "http://localhost:19999/queryuiapi/queries";
+	this.META_URL = "http://localhost:19999/metastoreapi/tables";
 
 	this.createMultipart = function(data) {
 		var multiData = new FormData();
