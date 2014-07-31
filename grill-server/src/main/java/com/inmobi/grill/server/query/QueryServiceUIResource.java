@@ -1,6 +1,7 @@
 package com.inmobi.grill.server.query;
 
 import com.google.common.base.Joiner;
+import com.inmobi.grill.api.APIResult;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
@@ -40,12 +41,14 @@ public class QueryServiceUIResource{
 
     private QueryExecutionService queryServer;
 
+    //assert: query is not empty
     private void checkQuery(String query) {
         if (StringUtils.isBlank(query)) {
             throw new BadRequestException("Invalid query");
         }
     }
 
+    //assert: sessionHandle is not null
     private void checkSessionHandle(GrillSessionHandle sessionHandle) {
         if (sessionHandle == null) {
             throw new BadRequestException("Invalid session handle");
@@ -141,22 +144,16 @@ public class QueryServiceUIResource{
         }
     }
 
-
-    @GET
-    @Path("queries/{queryHandle}/resultsetmetadata")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    public QueryResultSetMetadata getResultSetMetadata(
-            @QueryParam("publicId") UUID publicId,
-            @PathParam("queryHandle") String queryHandle) {
-        GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
-        checkSessionHandle(sessionHandle);
-        try {
-            return queryServer.getResultSetMetadata(sessionHandle, getQueryHandle(queryHandle));
-        } catch (GrillException e) {
-            throw new WebApplicationException(e);
-        }
-    }
-
+    /**
+     * Fetch the result set
+     *
+     * @param publicId The public id of user's session handle
+     * @param queryHandle The query handle
+     * @param pageNumber page number of the query result set to be read
+     * @param fetchSize fetch size
+     *
+     * @return {@link ResultRow}
+     */
     @GET
     @Path("queries/{queryHandle}/resultset")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
@@ -166,11 +163,10 @@ public class QueryServiceUIResource{
             @QueryParam("pageNumber") int pageNumber,
             @QueryParam("fetchsize") int fetchSize) {
         GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
-        List<Object> rows = new ArrayList<Object>();
         checkSessionHandle(sessionHandle);
-
+        List<Object> rows = new ArrayList<Object>();
+        LOG.info("FetchResultSet for queryHandle:" + queryHandle);
         try {
-            LOG.info("FetchResultSet:" + sessionHandle.toString() + " query:" + queryHandle);
             QueryResultSetMetadata resultSetMetadata = queryServer.getResultSetMetadata(sessionHandle, getQueryHandle(queryHandle));
             List<ResultColumn> metaColumns = resultSetMetadata.getColumns();
             List<Object> metaResultColumns = new ArrayList<Object>();
@@ -178,8 +174,6 @@ public class QueryServiceUIResource{
                 metaResultColumns.add(column.getName());
             }
             rows.add(new ResultRow(metaResultColumns));
-
-
             QueryResult result = queryServer.fetchResultSet(sessionHandle, getQueryHandle(queryHandle), (pageNumber - 1) * fetchSize,
                     fetchSize);
             if(result instanceof InMemoryQueryResult) {
@@ -190,26 +184,21 @@ public class QueryServiceUIResource{
             else if(result instanceof PersistentQueryResult)
             {
                 PersistentQueryResult persistentQueryResult = (PersistentQueryResult) result;
-                LOG.info("Persisted File URI: " + persistentQueryResult.getPersistedURI());
                 try {
                     LineNumberReader resultFile = null;
                     try {
                         resultFile = new LineNumberReader(new FileReader(persistentQueryResult.getPersistedURI().substring(5) + "/000000_0"));
                         String str;
                         while ((str = resultFile.readLine()) != null) {
-                            //resultColumns = new ArrayList<String>(Arrays.asList(str.split("[\u0001]")));
                             List<Object> columns = new ArrayList<Object>();
                             String[] strArray = str.split('\u0001' + "");
                             for(String strColumn:strArray)
                                 columns.add(strColumn);
-
                             rows.add(new ResultRow(columns));
-                            LOG.info("Read from FILE : " + str);
                         }
                     } catch (Exception e) {
                         throw new WebApplicationException(e);
                     } finally {
-
                         // closes the stream and releases system resources
                         if (resultFile != null)
                             resultFile.close();
@@ -218,9 +207,37 @@ public class QueryServiceUIResource{
                     throw new WebApplicationException(e);
                 }
             }
-            //Response response = queryServer.getHttpResultSet(sessionHandle, getQueryHandle(queryHandle));
-
             return new ResultRow(rows);
+        } catch (GrillException e) {
+            throw new WebApplicationException(e);
+        }
+    }
+
+    /**
+     * Cancel the query specified by the handle
+     *
+     * @param publicId The user session handle
+     * @param queryHandle The query handle
+     *
+     * @return APIResult with state {@value com.inmobi.grill.api.APIResult.Status#SUCCEEDED} in case of successful cancellation.
+     * APIResult with state {@value com.inmobi.grill.api.APIResult.Status#FAILED} in case of cancellation failure.
+     */
+    @DELETE
+    @Path("queries/{queryHandle}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+    public APIResult cancelQuery(@QueryParam("sessionid") UUID publicId,
+                                 @PathParam("queryHandle") String queryHandle) {
+        GrillSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+        checkSessionHandle(sessionHandle);
+        try {
+            boolean ret = queryServer.cancelQuery(sessionHandle, getQueryHandle(queryHandle));
+            if (ret) {
+                return new APIResult(APIResult.Status.SUCCEEDED, "Cancel on the query "
+                        + queryHandle + " is successful");
+            } else {
+                return new APIResult(APIResult.Status.FAILED, "Cancel on the query "
+                        + queryHandle + " failed");
+            }
         } catch (GrillException e) {
             throw new WebApplicationException(e);
         }
