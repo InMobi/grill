@@ -1,12 +1,14 @@
 var Session = function() {
 	//Check if the cookie exists
 	var sessionHandle = null;
+	var userName = "";
 	
-	if(docCookies.hasItem("publicId") && docCookies.hasItem("secretId")) {
+	if(docCookies.hasItem("publicId") && docCookies.hasItem("secretId") && docCookies.hasItem("userName")) {
 		sessionHandle = {
 			publicId: docCookies.getItem("publicId"),
 			secretId: docCookies.getItem("secretId")
 		}
+		userName = docCookies.getItem("userName");
 	}
 
 	//Checks if the user has logged in
@@ -16,6 +18,7 @@ var Session = function() {
 
 	//Authenticates the user and generates a session handle
 	this.logIn = function(username, password, callback) {
+		userName = username;
 		$.ajax({
 			url: util.SESSION_URL,
 			type: 'POST',
@@ -30,6 +33,7 @@ var Session = function() {
 					sessionHandle = data;
 					docCookies.setItem("publicId", sessionHandle["publicId"]);
 					docCookies.setItem("secretId", sessionHandle["secretId"]);
+					docCookies.setItem("userName", userName);
 				}
 				else
 					console.log("Error authenticating user: " + data);
@@ -44,8 +48,22 @@ var Session = function() {
 		});
 	};
 
-	this.getAllQueries = function() {
-
+	this.getAllQueries = function(callback) {
+		$.ajax({
+			url: util.QUERY_URL,
+			type: 'GET',
+			dataType: 'json',
+			data: {
+				publicId: session.getSessionHandle()["publicId"],
+				user: userName
+			},
+			success: function(data) {
+				if(data !== null && data.length > 0) {
+					if(util.isFunction(callback))
+						callback(data);
+				}
+			}
+		});
 	};
 
 	this.getAvailableMeta = function() {
@@ -90,7 +108,7 @@ var Session = function() {
 						callback(myQuery);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
-					console.log("Error sending query request: " + data);
+					console.log("Error sending query request: " + textStatus);
 					if(util.isFunction(callback))
 						callback(null);
 				}
