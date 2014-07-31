@@ -59,7 +59,7 @@
 					<input type="text" class="form-control" placeholder="Filter..">
 					<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
 				</div>
-				<ul class="list-group">
+				<ul id="meta-views" class="list-group">
 					<li class="list-group-item list-group-item-info">Cube</li>
 					<li class="list-group-item list-group-item-info">Cube</li>
 					<li class="list-group-item list-group-item-success">Dimension</li>
@@ -154,6 +154,9 @@
 		overflow-y: hidden;
 		overflow-x: auto;
 	}
+	.panel-footer button {
+		margin-left: 20px;
+	}
 	</style>
 
 	<!-- Additional Scripts -->
@@ -168,9 +171,11 @@
 	<script type="text/javascript" src="js/models/query.js"></script>
 	<script type="text/javascript" src="js/models/row.js"></script>
 	<script type="text/javascript" src="js/models/resultset.js"></script>
+	<script type="text/javascript" src="js/models/meta.js"></script>
 
 	<script type="text/javascript" src="js/querylistview.js"></script>
 	<script type="text/javascript" src="js/historyview.js"></script>
+	<script type="text/javascript" src="js/metaview.js"></script>
 	
 	<script type="text/javascript" src="js/index.js"></script>
 </body>

@@ -124,6 +124,8 @@ $("#query-form").submit(function(event) {
 					console.log("Completed");
 					if(queryObj.getQueryStatus() === "SUCCESSFUL") {
 						var resultView = new TableResultView;
+						if($("#query-form").next().next().length > 0)
+							$("#query-form").next().next().remove();
 						$("#query-form").next().after(resultView.getView());
 
 						var rs = queryObj.getResultSet();

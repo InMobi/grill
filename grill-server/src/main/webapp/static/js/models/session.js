@@ -67,7 +67,6 @@ var Session = function() {
 	};
 
 	this.getAvailableMeta = function() {
-
 	};
 
 	this.searchMeta = function() {

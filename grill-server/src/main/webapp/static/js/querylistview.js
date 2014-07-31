@@ -18,7 +18,32 @@ var QueryListView = function(query) {
 	var onCancelClick = function(event) {
 		event.preventDefault();
 
-		//Ajax call
+		$(this).attr("disabled", true);
+		model.cancelQuery(null);
+	}
+
+	var onViewResultClick = function(event) {
+		event.preventDefault();
+
+		$(this).attr("disabled", true);
+		if($(this).html() === "Close Results") {
+			$("#" + id).next().remove();
+			$(this).html("View Results");
+			$(this).attr("disabled", false);
+			return; 
+		}
+
+		var resultView = new TableResultView;
+		$("#" + id).after(resultView.getView());
+
+		var rs = model.getResultSet();
+		rs.getNextRows(function(rows) {
+			console.log("Got next rows");
+			resultView.updateView(rows);
+		});
+
+		$(this).html("Close Results");
+		$(this).attr("disabled", false);
 	}
 
 	this.updateView = function() {
@@ -35,9 +60,16 @@ var QueryListView = function(query) {
 		$("#" + id + " .panel-footer").text(model.getStatusMessage());
 
 		if(!model.isCompleted()) {
-			$("#" + id + " .panel-footer").append($("<a>", {
-				text: "Cancel Query"
+			$("#" + id + " .panel-footer").append($("<button>", {
+				text: "Cancel Query",
+				class: "btn btn-danger"
 			}).click(onCancelClick));
+		}
+		else if(model.getQueryStatus() === "SUCCESSFUL") {
+			$("#" + id + " .panel-footer").append($("<button>", {
+				text: "View Results",
+				class: "btn btn-success"
+			}).click(onViewResultClick));
 		}
 
 		$("#" + id + " .panel").removeClass().addClass("panel panel-" + getStatusClass());
@@ -61,9 +93,16 @@ var QueryListView = function(query) {
 		});
 
 		if(!model.isCompleted()) {
-			panelFooter.append($("<a>", {
-				text: "Cancel Query" 
+			panelFooter.append($("<button>", {
+				text: "Cancel Query",
+				class: "btn btn-danger" 
 			}).click(onCancelClick));
+		}
+		else if(model.getQueryStatus === "SUCCESSFUL") {
+			panelFooter.append($("<button>", {
+				text: "View Results",
+				class: "btn btn-success"
+			}).click(onViewResultClick));
 		}
 
 		var panel = $("<div>", {

@@ -62,6 +62,19 @@ var Query = function(handle) {
 		return queryHandle;
 	}
 
+	this.cancelQuery = function(callback) {
+		$.ajax({
+			url: queryURL,
+			type: 'DELETE',
+			data: {publicId: session.getSessionHandle()["publicId"]},
+			dataType: 'json',
+			success: function(data) {
+				if(util.isFunction(callback))
+					callback(data);
+			}
+		})
+	}
+
 	var update = function(callback) {
 		$.ajax({
 			url: queryURL,
@@ -69,7 +82,6 @@ var Query = function(handle) {
 			data: {publicId: session.getSessionHandle()["publicId"]},
 			dataType: 'json',
 			success: function(data) {
-				console.log(data);
 				if(data.hasOwnProperty("queryHandle") && data["queryHandle"].hasOwnProperty("handleId") && data["queryHandle"]["handleId"] === queryHandle) {
 					queryStatus = data["status"]["status"];
 					userQuery = data["userQuery"];
