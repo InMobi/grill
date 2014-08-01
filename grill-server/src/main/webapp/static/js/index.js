@@ -12,8 +12,9 @@ var dblclickFunction = function(e) {
     $(this).data('double', 2);
     console.log($(this).get(0));
 	var text = $(this).data("disp-value");
-	var old = codeMirror.getDoc().getValue();
-	codeMirror.getDoc().setValue(old + text);
+	// var old = codeMirror.getDoc().getValue();
+	// codeMirror.getDoc().setValue(old + text);
+	codeMirror.getDoc().replaceSelection(text);
 };
 
 var expandFunction = function(cubedata, oldElement) {
@@ -144,7 +145,7 @@ var QueryStatusView = function(query) {
 	var text = model.getStatusMessage();
 
 	this.updateView = function() {
-		text = model.getStatusMessage();
+		text = model.getStatusMessage() + ((model.getQueryStatus() === "FAILED")? ". Reason: " + model.getErrorMessage() : "");
 		$("#" + id).text(text);
 	}
 	
@@ -288,11 +289,16 @@ var showQueryResults = function(queryObj) {
 	var resultView = new TableResultView;
 	while($("#query-form").next().next().length > 0)
 		$("#query-form").next().next().remove();
-	$("#query-form").next().after(resultView.getView());
 
 	var rs = queryObj.getResultSet();
 	rs.getNextRows(function(rows) {
 		console.log("Got next rows");
+		if(rows === null) {
+			//No results
+			$("#query-form").next().after($("<p>", {text: "No results found"}));
+			return;
+		}
+		$("#query-form").next().after(resultView.getView());
 		resultView.updateView(rows);
         resultView.addClickFunction();//to add histogram to a column
 		window.paginate();
@@ -374,20 +380,57 @@ $("#meta-input").keyup(function() {
 	if(searchTerm === null || searchTerm === "") {
 		$("#meta-views").empty();
 		session.getAvailableMeta(function(data) {
-			for(var i = 0; i < data.length; i++) {
-				var metaView = new MetaView(data[i]);
-				$("#meta-views").append(metaView.getView());
-			}
-			$("#meta-views li").click(function(event) {
-   				console.log($(this));
-            });
-			$("#meta-views li").dblclick(function(event) {
-			    console.log("copy");
-				var text = $(this).text();
-				var old = codeMirror.getDoc().getValue();
-				codeMirror.getDoc().setValue(old + text);
-			});
-		});
+        			for(var i = 0; i < data.length; i++) {
+        				var metaView = new MetaView(data[i]);
+        				$("#meta-views").append(metaView.getView());
+        			}
+        			$("#meta-views li").click(function(e) {
+        			    //$(this).children().removeAttr('onclick');
+        			    if( e.target !== this && e.target !== $(this).get(0).firstChild)
+                               return;
+        			    e.stopPropagation();
+                        var that = this;
+                        setTimeout(function() {
+                            var dblclick = parseInt($(that).data('double'), 10);
+                            if (dblclick > 0) {
+                                $(that).data('double', dblclick-1);
+                            } else {
+                                var insertIndex = $(that).parent().children().index(that);
+                			    console.log($(that)[0].lastChild instanceof Text);
+                                if($(that)[0].lastChild instanceof Text)
+                                {
+                                console.log("First Click");
+
+                			    var currentElement = $(that);
+
+                			        //console.log(newElement);
+                			    if($(that)[0].type === "cube") {
+                			        $(that).get(0).firstChild.className = "glyphicon glyphicon-chevron-down";
+                			        session.getCubeMeta($(that).text(), function(cubedata){
+                			            window.expandFunction(cubedata, currentElement);
+                                    });
+                                }
+                                else if($(that)[0].type === "dimtable") {
+                                    $(that).get(0).firstChild.className = "glyphicon glyphicon-chevron-down";
+                                    session.getDimtableMeta($(that).text(), function(cubedata){
+                			            window.expandFunction(cubedata, currentElement);
+                           	        });
+                                }
+
+                                }
+                                else
+                                {
+                                    $(that).get(0).firstChild.className = "glyphicon glyphicon-chevron-right";
+                                    console.log("Second Click");
+                                    while(!($(that)[0].lastChild instanceof Text))
+                                    {
+                                        $(that)[0].removeChild($(that)[0].lastChild);
+                                    }
+                                }
+                            }
+                        }, 300);
+                    }).dblclick(dblclickFunction);
+        		});
 	}
 	else {
 		session.searchMeta(searchTerm, function(data) {
@@ -406,8 +449,9 @@ $("#meta-input").keyup(function() {
 
 			$("#meta-views li").dblclick(function(event) {
 				var text = $(this).data("disp-value");
-				var old = codeMirror.getDoc().getValue();
-				codeMirror.getDoc().setValue(old + text);
+				// var old = codeMirror.getDoc().getValue();
+				// codeMirror.getDoc().setValue(old + text);
+				codeMirror.getDoc().replaceSelection(text);
 			});
 		});
 	}
