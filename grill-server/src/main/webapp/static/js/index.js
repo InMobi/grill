@@ -12,8 +12,9 @@ var dblclickFunction = function(e) {
     $(this).data('double', 2);
     console.log($(this).get(0));
 	var text = $(this).data("disp-value");
-	var old = codeMirror.getDoc().getValue();
-	codeMirror.getDoc().setValue(old + text);
+	// var old = codeMirror.getDoc().getValue();
+	// codeMirror.getDoc().setValue(old + text);
+	codeMirror.getDoc().replaceSelection(text);
 };
 
 var expandFunction = function(cubedata, oldElement) {
@@ -408,8 +409,9 @@ $("#meta-input").keyup(function() {
 
 			$("#meta-views li").dblclick(function(event) {
 				var text = $(this).data("disp-value");
-				var old = codeMirror.getDoc().getValue();
-				codeMirror.getDoc().setValue(old + text);
+				// var old = codeMirror.getDoc().getValue();
+				// codeMirror.getDoc().setValue(old + text);
+				codeMirror.getDoc().replaceSelection(text);
 			});
 		});
 	}
