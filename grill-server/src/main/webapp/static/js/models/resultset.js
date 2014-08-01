@@ -33,6 +33,7 @@ var ResultSet = function(queryHandle) {
 			},
 			error: function() {
 				//TODO
+				callback(null);
 			}
 		});
 	};

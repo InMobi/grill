@@ -11,6 +11,7 @@ var Query = function(handle) {
 	var onCompletedListener = null;
 	var onUpdatedListener = null;
 	var resultSet = null;
+	var errorMessage = null;
 
 	this.getQueryStatus = function() {
 		return queryStatus;
@@ -62,6 +63,10 @@ var Query = function(handle) {
 		return queryHandle;
 	}
 
+	this.getErrorMessage = function() {
+		return errorMessage;
+	}
+
 	this.cancelQuery = function(callback) {
 		$.ajax({
 			url: queryURL,
@@ -90,6 +95,7 @@ var Query = function(handle) {
 					progress = data["status"]["progress"];
 					resultSetAvailable = data["status"]["isResultSetAvailable"];
 					priority = data["priority"];
+					errorMessage = data["status"]["errorMessage"];
 				}
 				else
 					console.log("Error updating query data: " + data);

@@ -145,7 +145,7 @@ var QueryStatusView = function(query) {
 	var text = model.getStatusMessage();
 
 	this.updateView = function() {
-		text = model.getStatusMessage();
+		text = model.getStatusMessage() + ((model.getQueryStatus() === "FAILED")? ". Reason: " + model.getErrorMessage() : "");
 		$("#" + id).text(text);
 	}
 	
@@ -292,11 +292,16 @@ var showQueryResults = function(queryObj) {
 	var resultView = new TableResultView;
 	while($("#query-form").next().next().length > 0)
 		$("#query-form").next().next().remove();
-	$("#query-form").next().after(resultView.getView());
 
 	var rs = queryObj.getResultSet();
 	rs.getNextRows(function(rows) {
 		console.log("Got next rows");
+		if(rows === null) {
+			//No results
+			$("#query-form").next().after($("<p>", {text: "No results found"}));
+			return;
+		}
+		$("#query-form").next().after(resultView.getView());
 		resultView.updateView(rows);
 		window.paginate();
 	});
