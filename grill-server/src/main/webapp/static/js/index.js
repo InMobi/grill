@@ -47,7 +47,6 @@ var loadPage = function() {
 				var old = codeMirror.getDoc().getValue();
 				codeMirror.getDoc().setValue(old + text);
 			});
-		});
 	}
 }
 loadPage();
@@ -213,8 +212,15 @@ $("#meta-input").keyup(function() {
 			for(var i = 0; i < data.length; i++) {
 				var metaView = new MetaView(data[i]);
 				$("#meta-views").append(metaView.getView());
+				   var newElement = $("<ul>", {});
+				   var subdata = data[i].getColumns();
+				   for(var j=0; j< subdata.length; j++) {
+				      var submetaView = new MetaView(subdata[j]);
+				        newElement.append(submetaView.getView());
+				}
+				$("#meta-views").append(newElement);
 			}
-			$("#meta-views li").click(function(event) {
+			$("#meta-views li").dblclick(function(event) {
 				var text = $(this).text();
 				var old = codeMirror.getDoc().getValue();
 				codeMirror.getDoc().setValue(old + text);
