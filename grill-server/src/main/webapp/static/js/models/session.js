@@ -66,56 +66,107 @@ var Session = function() {
 		});
 	};
 
-	this.getAvailableMeta = function(callback) {
-        $.ajax({
-            url: util.META_URL,
-            type: 'GET',
-            dataType: 'json',
-            data: {publicId: session.getSessionHandle()["publicId"]},
-            success: function(tableList){
-                var metaArr = [];
-                for(var item in tableList)
-                {
-                    console.log(tableList[item]);
-                    var name = tableList[item].name;
-                    var type = tableList[item].type;
-                    var metaObj = new Meta(name,type);
-                    metaArr.push(metaObj);
+		this.getAvailableMeta = function(callback) {
+            $.ajax({
+                url: util.META_URL,
+                type: 'GET',
+                dataType: 'json',
+                data: {publicId: session.getSessionHandle()["publicId"]},
+                success: function(tableList){
+                    var metaArr = [];
+                    for(var item in tableList)
+                    {
+                        console.log(tableList[item]);
+                        var name = tableList[item].name;
+                        var type = tableList[item].type;
+                        var metaObj = new Meta(name,type);
+                        metaArr.push(metaObj);
+                    }
+                    if(util.isFunction(callback))
+                        callback(metaArr);
                 }
-                if(util.isFunction(callback))
-                    callback(metaArr);
-            }
-        });
-	};
+            });
+    	};
 
-	this.searchMeta = function(keyword, callback) {
-        $.ajax({
-            url: util.META_URL+"/"+keyword,
-            type: 'GET',
-            dataType: 'json',
-            data: {publicId: session.getSessionHandle()["publicId"]},
-            success: function(tableList){
-                var metaArr = [];
-                for(var item in tableList)
-                {
-                    console.log(tableList[item]);
-                    var name = tableList[item].name;
-                    var type = tableList[item].type;
-                    var metaObj = new Meta(name,type);
-                    metaArr.push(metaObj);
-                    /*if(type == "Cube"){
-                        console.log(name);
-                    }
-                    else if(type == "DimensionTable"){
-                    }
-                    else if(type == "StorageTable"){
-                    }*/
+    	this.getCubeMeta = function(cubeName, callback)
+    	{
+    	    $.ajax({
+    	        url: util.META_URL+"/"+cubeName+"/cube",
+                type: 'GET',
+                dataType: 'json',
+                data: {publicId: session.getSessionHandle()["publicId"]},
+                success: function(tableList){
+                 var cubeArr = [];
+                 for(var item in tableList)
+                 {
+                     console.log(tableList[item]);
+                     var name = tableList[item].name;
+                     var type = tableList[item].type;
+                     var metaObj = new Meta(name,type);
+                     cubeArr.push(metaObj);
+                 }
+                 if(util.isFunction(callback))
+                     callback(cubeArr);
                 }
-                if(util.isFunction(callback))
-                    callback(metaArr);
-            }
-        });
-	};
+    	    });
+    	};
+
+
+    	this.getDimtableMeta = function(dimtableName, callback)
+        	{
+        	    $.ajax({
+        	        url: util.META_URL+"/"+dimtableName+"/dimtable",
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {publicId: session.getSessionHandle()["publicId"]},
+                    success: function(tableList){
+                     var dimArr = [];
+                     for(var item in tableList)
+                     {
+                         console.log(tableList[item]);
+                         var name = tableList[item].name;
+                         var type = tableList[item].type;
+                         var metaObj = new Meta(name,type);
+                         dimArr.push(metaObj);
+                     }
+                     if(util.isFunction(callback))
+                         callback(dimArr);
+                    }
+        	    });
+        	};
+
+
+
+    	this.searchMeta = function(keyword, callback) {
+            $.ajax({
+                url: util.META_URL+"/"+keyword,
+                type: 'GET',
+                dataType: 'json',
+                data: {publicId: session.getSessionHandle()["publicId"]},
+                success: function(tableList){
+                    var metaArr = [];
+                    for(var item in tableList)
+                    {
+                        console.log(tableList[item]);
+                        var name = tableList[item].name;
+                        var type = tableList[item].type;
+                        var childArr = [];
+                        childArr = tableList[item].columns;
+                        var metaObj = new Meta(name,type);
+                        for (var col in childArr)
+                        {
+                            var childName = childArr[col].name;
+                            var childType = childArr[col].type;
+                            var metaChildObj = new Meta(childName,childType);
+                            metaObj.addChild(metaChildObj);
+                        }
+                        metaArr.push(metaObj);
+                    }
+                    if(util.isFunction(callback))
+                        callback(metaArr);
+                }
+            });
+    	};
 
 	this.getSessionHandle = function() {
 		return sessionHandle;

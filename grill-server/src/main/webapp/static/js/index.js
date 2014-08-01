@@ -3,6 +3,29 @@ var codeMirror = CodeMirror.fromTextArea(document.getElementById("query"), {
     lineWrapping: true
  });
 
+var dblclickFunction = function(e) {
+    e.stopPropagation();
+    console.log(e.target);
+    if( e.target !== this)
+        return;
+    //$(this).children().removeAttr('onclick');
+    $(this).data('double', 2);
+    console.log($(this).get(0));
+	var text = $(this).data("disp-value");
+	var old = codeMirror.getDoc().getValue();
+	codeMirror.getDoc().setValue(old + text);
+};
+
+var expandFunction = function(cubedata, oldElement) {
+    var newElement = $("<ul>", {});
+    for(var i = 0; i < cubedata.length; i++) {
+        var metaView = new MetaView(cubedata[i]);
+        newElement.append(metaView.getView().dblclick(dblclickFunction));
+        //Array.prototype.slice.call($("#meta-views")[0].children).splice(insertIndex + i, 0, metaView.getView());
+    }
+    oldElement.append(newElement);
+};
+
 var util = new Util;
 var session = new Session;
 var historyTableView = new HistoryTableView;
@@ -14,7 +37,7 @@ var loadPage = function() {
 	$("#query-form .loading").hide();
 	$("#queryui, #loginui, #historyui").hide();
 	$("#navlinks .active").removeClass("active");
-	
+
 	var page = window.location.hash.substr(1);
 	if(!session.isLoggedIn()) {
 		//Show login UI
@@ -42,11 +65,53 @@ var loadPage = function() {
 				var metaView = new MetaView(data[i]);
 				$("#meta-views").append(metaView.getView());
 			}
-			$("#meta-views li").click(function(event) {
-				var text = $(this).text();
-				var old = codeMirror.getDoc().getValue();
-				codeMirror.getDoc().setValue(old + text);
-			});
+
+			$("#meta-views li").click(function(e) {
+			    //$(this).children().removeAttr('onclick');
+			    if( e.target !== this && e.target !== $(this).get(0).firstChild)
+                       return;
+			    e.stopPropagation();
+                var that = this;
+                setTimeout(function() {
+                    var dblclick = parseInt($(that).data('double'), 10);
+                    if (dblclick > 0) {
+                        $(that).data('double', dblclick-1);
+                    } else {
+                        var insertIndex = $(that).parent().children().index(that);
+        			    console.log($(that)[0].lastChild instanceof Text);
+                        if($(that)[0].lastChild instanceof Text)
+                        {
+                        console.log("First Click");
+
+        			    var currentElement = $(that);
+
+        			        //console.log(newElement);
+        			    if($(that)[0].type === "cube") {
+        			        $(that).get(0).firstChild.className = "glyphicon glyphicon-chevron-down";
+        			        session.getCubeMeta($(that).text(), function(cubedata){
+        			            window.expandFunction(cubedata, currentElement);
+                            });
+                        }
+                        else if($(that)[0].type === "dimtable") {
+                            $(that).get(0).firstChild.className = "glyphicon glyphicon-chevron-down";
+                            session.getDimtableMeta($(that).text(), function(cubedata){
+        			            window.expandFunction(cubedata, currentElement);
+                   	        });
+                        }
+
+                        }
+                        else
+                        {
+                            $(that).get(0).firstChild.className = "glyphicon glyphicon-chevron-right";
+                            console.log("Second Click");
+                            while(!($(that)[0].lastChild instanceof Text))
+                            {
+                                $(that)[0].removeChild($(that)[0].lastChild);
+                            }
+                        }
+                    }
+                }, 300);
+            }).dblclick(dblclickFunction);
 		});
 	}
 }
@@ -78,6 +143,81 @@ var QueryStatusView = function(query) {
 };
 QueryStatusView.instanceNo = 0;
 
+//for histogram
+    function modalFunction(data, title) {
+	var chartData = [];
+	var chartTitle = ""+title;
+	for (var i = 0; i < data.length; i++)
+	{
+    	    chartData[i] = data[i].slice();
+	}
+	alert("Hit Modal Function"+data+title);
+	this.getData = function(){
+            return chartData;
+    	};
+
+    	this.setData = function(data){
+    	    for (var i = 0; i < data.length; i++)
+	    {
+    	    	chartData[i] = data[i].slice();
+	    }
+    	};
+	    this.getTitle = function(){
+            return chartTitle;
+    	};
+
+    	this.setTitle = function(title){
+    	    chartTitle = ""+title;
+    	};
+    }
+
+
+    function show_tooltip(x, y, contents) {
+    	$('<div id="bar_tooltip">' + contents + '</div>').css({
+        	top: y - 120,
+        	left: x - 350,
+    	}).appendTo($("#myModalCanvas")).fadeIn();
+    }
+
+	var previous_point = null;
+
+    function hoverOverGrid(event, pos, item) {
+	if (item) {
+
+	        if (previous_point != item.dataIndex) {
+	            previous_point = item.dataIndex;
+
+	            $("#bar_tooltip").remove();
+
+	            var y = item.datapoint[1];
+
+	            show_tooltip(item.pageX, item.pageY,
+	                "<div style='text-align: center;'><b> Value: " + y + "</div>");
+	        }
+	    } else {
+	        $("#bar_tooltip").remove();
+	        previous_point = null;
+	    }
+    }
+
+     function displayChart(modal) {
+	alert("Hit Display Chart" + modal.getData() );
+	$.plot($("#myModalCanvas"), [modal.getData()], {
+		grid: {
+		        hoverable: true
+		},
+        	series: {
+            	   bars: { show: true }
+		}
+	});
+	$('#myModal').modal('toggle');
+    $('#myModal').modal('show');
+    //$('#myModal').modal('hide');
+	document.getElementById('myModalLabel').innerHTML = modal.getTitle();
+	$("#myModalCanvas").bind("plothover", hoverOverGrid);
+    }
+
+
 var TableResultView = function() {
 	var id = "table-result-view-" + TableResultView.instanceNo++;
 	var rows = [];
@@ -105,6 +245,30 @@ var TableResultView = function() {
 			$("#" + id + " tbody").append(tRow);
 		};
 	}
+
+	this.addClickFunction = function() {
+    		console.log("Trying to access column: " + id);
+    		var table = $("#" + id);
+            $("#" + id + " thead tr th").click(function(){
+                alert("Click");
+                var index = $(this)[0].cellIndex;
+                console.log(" column: " + index);
+                //console.log($("#" + id + " tbody tr"));
+                var data = [];
+                $("#" + id + " tbody tr").each( function(){
+                   //add item to array
+                   console.log($(this)[0].cells[index].firstChild.data);
+                   data.push([$(this)[0].rowIndex, parseInt($(this)[0].cells[index].firstChild.data, 10)] );
+
+                });
+                displayChart(new modalFunction(data, 'Title'));
+                console.log(data);
+            });
+    	}
+
+    	this.getId = function() {
+    	    return id;
+    	}
 
 	this.getView = function() {
 		return $("<table>", {id: id, class: "table table-bordered"});
@@ -144,6 +308,7 @@ $("#query-form").submit(function(event) {
 						rs.getNextRows(function(rows) {
 							console.log("Got next rows");
 							resultView.updateView(rows);
+							resultView.addClickFunction();
 						});
 					}
 				});
@@ -201,6 +366,10 @@ $("#meta-input").keyup(function() {
 				$("#meta-views").append(metaView.getView());
 			}
 			$("#meta-views li").click(function(event) {
+   				console.log($(this));
+            });
+			$("#meta-views li").dblclick(function(event) {
+			    console.log("copy");
 				var text = $(this).text();
 				var old = codeMirror.getDoc().getValue();
 				codeMirror.getDoc().setValue(old + text);
@@ -215,10 +384,15 @@ $("#meta-input").keyup(function() {
 				$("#meta-views").append(metaView.getView());
 			}
 			$("#meta-views li").click(function(event) {
+               				console.log($(this));
+                        });
+			$("#meta-views li").dblclick(function(event) {
+			    console.log("copy");
 				var text = $(this).text();
 				var old = codeMirror.getDoc().getValue();
 				codeMirror.getDoc().setValue(old + text);
 			});
 		});
 	}
+
 });

@@ -25,6 +25,7 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
     <![endif]-->
 </head>
 <body>
@@ -131,6 +132,24 @@
 		</div>
 	</div>
 
+    <!-- Modal for Histogram-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body" id="myModalCanvas">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	<!-- Additional stylsheets -->
 	<link rel="stylesheet" href="css/codemirror.min.css">
 	<style type="text/css">
@@ -160,6 +179,7 @@
 	}
 	#meta-views li {
 		cursor: pointer;
+        visibility : visible;
 	}
 	#historyui .CodeMirror {
 		height: 50px;
@@ -167,6 +187,33 @@
 	#historyui div table th:nth-child(1), #historyui div table th:nth-child(3) {
 		cursor: pointer;
 	}
+    #myModalCanvas {
+        width: 450px;
+        height: 400px;
+        position: relative;
+    }
+    #bar_tooltip {
+        font-size: 13px;
+        position: absolute;
+        display: none;
+        padding: 2px;
+        border: 2px solid;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        background-color: #FFF;
+        opacity: 0.8;
+    }
+    #meta-views li {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    #meta-views li > span {
+        margin-right: 10px;
+    }
 	</style>
 
 	<!-- Additional Scripts -->
@@ -189,6 +236,7 @@
 	<script type="text/javascript" src="js/metaview.js"></script>
 	
 	<script type="text/javascript" src="js/index.js"></script>
+
 </body>
 
 </html>
