@@ -162,7 +162,6 @@ QueryStatusView.instanceNo = 0;
 	{
     	    chartData[i] = data[i].slice();
 	}
-	alert("Hit Modal Function"+data+title);
 	this.getData = function(){
             return chartData;
     	};
@@ -212,7 +211,6 @@ QueryStatusView.instanceNo = 0;
     }
 
      function displayChart(modal) {
-	alert("Hit Display Chart" + modal.getData() );
 	$.plot($("#myModalCanvas"), [modal.getData()], {
 		grid: {
 		        hoverable: true
@@ -261,7 +259,6 @@ var TableResultView = function() {
     		console.log("Trying to access column: " + id);
     		var table = $("#" + id);
             $("#" + id + " thead tr th").click(function(){
-                alert("Click");
                 var index = $(this)[0].cellIndex;
                 console.log(" column: " + index);
                 //console.log($("#" + id + " tbody tr"));
@@ -297,6 +294,7 @@ var showQueryResults = function(queryObj) {
 	rs.getNextRows(function(rows) {
 		console.log("Got next rows");
 		resultView.updateView(rows);
+        resultView.addClickFunction();//to add histogram to a column
 		window.paginate();
 	});
 }
