@@ -68,7 +68,8 @@ var loadPage = function() {
 				var old = codeMirror.getDoc().getValue();
 				codeMirror.getDoc().setValue(old + text);
 			});
-	}
+	    });
+    }
 }
 loadPage();
 
