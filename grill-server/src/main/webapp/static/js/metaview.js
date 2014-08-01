@@ -4,7 +4,7 @@ var MetaView = function(meta) {
 	this.getView = function() {
 		return $("<li>", {
 			class: "list-group-item list-group-item-" + getClass(),
-			text: model.getName(),
+            text: model.getName() + ((model.getType() !== "cube" && model.getType() !== "dimtable")? " (" + model.getType() + ")":""),
 			type: model.getType(),
 		}).prepend(
 		    $("<span>", {

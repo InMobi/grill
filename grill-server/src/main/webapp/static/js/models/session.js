@@ -76,7 +76,6 @@ var Session = function() {
                     var metaArr = [];
                     for(var item in tableList)
                     {
-                        console.log(tableList[item]);
                         var name = tableList[item].name;
                         var type = tableList[item].type;
                         var metaObj = new Meta(name,type);
@@ -99,7 +98,6 @@ var Session = function() {
                  var cubeArr = [];
                  for(var item in tableList)
                  {
-                     console.log(tableList[item]);
                      var name = tableList[item].name;
                      var type = tableList[item].type;
                      var metaObj = new Meta(name,type);
@@ -123,7 +121,6 @@ var Session = function() {
                      var dimArr = [];
                      for(var item in tableList)
                      {
-                         console.log(tableList[item]);
                          var name = tableList[item].name;
                          var type = tableList[item].type;
                          var metaObj = new Meta(name,type);
@@ -147,7 +144,6 @@ var Session = function() {
                     var metaArr = [];
                     for(var item in tableList)
                     {
-                        console.log(tableList[item]);
                         var name = tableList[item].name;
                         var type = tableList[item].type;
                         var childArr = [];

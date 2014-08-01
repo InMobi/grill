@@ -30,13 +30,35 @@ var util = new Util;
 var session = new Session;
 var historyTableView = new HistoryTableView;
 $("#historyui div").append(historyTableView.getView());
-$("#historyui div table").stupidtable();
+$("#historyui div table").stupidtable().bind("aftertablesort", function(event, data) {
+	var el = $("#historyui div table th:nth-child(" + (data.column + 1) + ") span");
+	$("#historyui div table th span.glyphicon").attr("class", "glyphicon glyphicon-sort");
+
+	if(data.direction === "asc")
+		el.attr("class", "glyphicon glyphicon-sort-by-attributes");
+	else if(data.direction === "desc")
+		el.attr("class", "glyphicon glyphicon-sort-by-attributes-alt");
+});
+
+var setEnableForm = function(enable) {
+	codeMirror.setOption("readOnly", !enable);
+	codeMirror.setOption("nocursor", !enable);
+	$("#query-form button").attr("disabled", !enable);
+	if(enable)
+		$("#query-form .loading").hide();
+	else
+		$("#query-form .loading").show();
+}
 
 var loadPage = function() {
 	//Hidden by default
 	$("#query-form .loading").hide();
 	$("#queryui, #loginui, #historyui").hide();
 	$("#navlinks .active").removeClass("active");
+
+	window.setEnableForm(true);
+	while($("#query-form").next().next().length > 0) //Remove results table and pagination
+		$("#query-form").next().next().remove();
 
 	var page = window.location.hash.substr(1);
 	if(!session.isLoggedIn()) {
@@ -65,7 +87,6 @@ var loadPage = function() {
 				var metaView = new MetaView(data[i]);
 				$("#meta-views").append(metaView.getView());
 			}
-
 			$("#meta-views li").click(function(e) {
 			    //$(this).children().removeAttr('onclick');
 			    if( e.target !== this && e.target !== $(this).get(0).firstChild)
@@ -116,16 +137,6 @@ var loadPage = function() {
 	}
 }
 loadPage();
-
-var setEnableForm = function(enable) {
-	codeMirror.setOption("readOnly", !enable);
-	codeMirror.setOption("nocursor", !enable);
-	$("#query-form button").attr("disabled", !enable);
-	if(enable)
-		$("#query-form .loading").hide();
-	else
-		$("#query-form .loading").show();
-}
 
 var QueryStatusView = function(query) {
 	var id = "query-status-view-" + QueryStatusView.instanceNo++;
@@ -271,10 +282,24 @@ var TableResultView = function() {
     	}
 
 	this.getView = function() {
-		return $("<table>", {id: id, class: "table table-bordered"});
+		return $("<table>", {id: id, class: "table table-bordered paginated"});
 	}
 };
 TableResultView.instanceNo = 0;
+
+var showQueryResults = function(queryObj) {
+	var resultView = new TableResultView;
+	while($("#query-form").next().next().length > 0)
+		$("#query-form").next().next().remove();
+	$("#query-form").next().after(resultView.getView());
+
+	var rs = queryObj.getResultSet();
+	rs.getNextRows(function(rows) {
+		console.log("Got next rows");
+		resultView.updateView(rows);
+		window.paginate();
+	});
+}
 
 $("#query-form").submit(function(event) {
 	event.preventDefault(); 
@@ -299,17 +324,7 @@ $("#query-form").submit(function(event) {
 					//Display results
 					console.log("Completed");
 					if(queryObj.getQueryStatus() === "SUCCESSFUL") {
-						var resultView = new TableResultView;
-						if($("#query-form").next().next().length > 0)
-							$("#query-form").next().next().remove();
-						$("#query-form").next().after(resultView.getView());
-
-						var rs = queryObj.getResultSet();
-						rs.getNextRows(function(rows) {
-							console.log("Got next rows");
-							resultView.updateView(rows);
-							resultView.addClickFunction();
-						});
+						window.showQueryResults(queryObj);
 					}
 				});
 			}
@@ -382,13 +397,17 @@ $("#meta-input").keyup(function() {
 			for(var i = 0; i < data.length; i++) {
 				var metaView = new MetaView(data[i]);
 				$("#meta-views").append(metaView.getView());
+				   var newElement = $("<ul>", {});
+				   var subdata = data[i].getColumns();
+				   for(var j=0; j< subdata.length; j++) {
+				      var submetaView = new MetaView(subdata[j]);
+				        newElement.append(submetaView.getView());
+				}
+				$("#meta-views").append(newElement);
 			}
-			$("#meta-views li").click(function(event) {
-               				console.log($(this));
-                        });
+
 			$("#meta-views li").dblclick(function(event) {
-			    console.log("copy");
-				var text = $(this).text();
+				var text = $(this).data("disp-value");
 				var old = codeMirror.getDoc().getValue();
 				codeMirror.getDoc().setValue(old + text);
 			});
@@ -396,3 +415,28 @@ $("#meta-input").keyup(function() {
 	}
 
 });
+
+var paginate = function() {
+	$('table.paginated').each(function() {
+	    var currentPage = 0;
+	    var numPerPage = 10;
+	    var $table = $(this);
+	    $table.bind('repaginate', function() {
+	        $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).show();
+	    });
+	    $table.trigger('repaginate');
+	    var numRows = $table.find('tbody tr').length;
+	    var numPages = Math.ceil(numRows / numPerPage);
+	    var $pager = $('<ul class="pagination"></ul>');
+	    for (var page = 0; page < numPages; page++) {
+	        $('<li class="page-number"></li>').append($("<a>", {text:page + 1})).bind('click', {
+	            newPage: page
+	        }, function(event) {
+	            currentPage = event.data['newPage'];
+	            $table.trigger('repaginate');
+	            $(this).addClass('active').siblings().removeClass('active');
+	        }).appendTo($pager).addClass('clickable');
+	    }
+	    $pager.insertAfter($table).find('li.page-number:first').addClass('active');
+	});
+}
