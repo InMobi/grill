@@ -261,17 +261,13 @@ var TableResultView = function() {
     		var table = $("#" + id);
             $("#" + id + " thead tr th").click(function(){
                 var index = $(this)[0].cellIndex;
-                console.log(" column: " + index);
-                //console.log($("#" + id + " tbody tr"));
                 var data = [];
                 $("#" + id + " tbody tr").each( function(){
                    //add item to array
-                   console.log($(this)[0].cells[index].firstChild.data);
                    data.push([$(this)[0].rowIndex, parseInt($(this)[0].cells[index].firstChild.data, 10)] );
 
                 });
-                displayChart(new modalFunction(data, 'Title'));
-                console.log(data);
+                displayChart(new modalFunction(data,  $(this)[0].textContent));
             });
     	}
 
