@@ -42,6 +42,7 @@ import com.inmobi.grill.server.metastore.JAXBUtils;
 import com.inmobi.grill.server.metastore.MetastoreApp;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.hive.metastore.TableType;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.cube.metadata.AbstractCubeTable;
 import org.apache.hadoop.hive.ql.cube.metadata.Cube;
@@ -53,6 +54,10 @@ import org.apache.hadoop.hive.ql.cube.metadata.Dimension;
 import org.apache.hadoop.hive.ql.cube.metadata.HDFSStorage;
 import org.apache.hadoop.hive.ql.cube.metadata.MetastoreConstants;
 import org.apache.hadoop.hive.ql.cube.metadata.UpdatePeriod;
+import org.apache.hadoop.hive.ql.metadata.Hive;
+import org.apache.hadoop.hive.ql.metadata.HiveException;
+import org.apache.hadoop.hive.ql.metadata.Table;
+import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -273,6 +278,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XDimAttribute xd1 = cubeObjectFactory.createXDimAttribute();
     xd1.setName("dim1");
     xd1.setType("string");
+    xd1.setDescription("first dimension");
+    xd1.setDisplayString("Dimension1");
     xd1.setStartTime(startDate);
     // Don't set endtime on this dim to validate null handling on server side
     xd1.setCost(10.0);
@@ -280,6 +287,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XDimAttribute xd2 = cubeObjectFactory.createXDimAttribute();
     xd2.setName("dim2");
     xd2.setType("int");
+    xd2.setDescription("second dimension");
+    xd2.setDisplayString("Dimension2");
     // Don't set start time on this dim to validate null handling on server side
     xd2.setEndTime(endDate);
     xd2.setCost(5.0);
@@ -294,6 +303,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XMeasure xm1 = new XMeasure();
     xm1.setName("msr1");
     xm1.setType("double");
+    xm1.setDescription("first measure");
+    xm1.setDisplayString("Measure1");
     xm1.setCost(10.0);
     // Don't set start time and end time to validate null handling on server side.
     //xm1.setStarttime(startDate);
@@ -303,6 +314,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XMeasure xm2 = new XMeasure();
     xm2.setName("msr2");
     xm2.setType("int");
+    xm2.setDescription("second measure");
+    xm2.setDisplayString("Measure2");
     xm2.setCost(10.0);
     xm2.setStartTime(startDate);
     xm2.setEndTime(endDate);
@@ -317,6 +330,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XExprColumn xe1 = new XExprColumn();
     xe1.setName("expr1");
     xe1.setType("double");
+    xe1.setDescription("first expression");
+    xe1.setDisplayString("Expression1");
     xe1.setExpr("msr1/1000");
 
     expressions.getExpressions().add(xe1);
@@ -537,6 +552,16 @@ public class TestMetastoreService extends GrillJerseyTest {
       assertEquals(actual.getWeight(), 100.0d);
       assertFalse(actual.isDerived());
       assertNull(actual.getParent());
+      Cube hcube = (Cube) JAXBUtils.hiveCubeFromXCube(actual, null);
+      assertNotNull(hcube.getDimAttributeByName("dim1"));
+      assertEquals(hcube.getDimAttributeByName("dim1").getDescription(), "first dimension");
+      assertEquals(hcube.getDimAttributeByName("dim1").getDisplayString(), "Dimension1");
+      assertNotNull(hcube.getMeasureByName("msr1"));
+      assertEquals(hcube.getMeasureByName("msr1").getDescription(), "first measure");
+      assertEquals(hcube.getMeasureByName("msr1").getDisplayString(), "Measure1");
+      assertNotNull(hcube.getExpressionByName("expr1"));
+      assertEquals(hcube.getExpressionByName("expr1").getDescription(), "first expression");
+      assertEquals(hcube.getExpressionByName("expr1").getDisplayString(), "Expression1");
 
       final XCube dcube = createDerivedCube("testGetDerivedCube", "testGetCube");
       target = target().path("metastore").path("cubes");
@@ -887,6 +912,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XDimAttribute xd1 = cubeObjectFactory.createXDimAttribute();
     xd1.setName("col1");
     xd1.setType("string");
+    xd1.setDescription("first column");
+    xd1.setDisplayString("Column1");
     xd1.setStartTime(startDate);
     // Don't set endtime on this dim to validate null handling on server side
     xd1.setCost(10.0);
@@ -894,6 +921,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XDimAttribute xd2 = cubeObjectFactory.createXDimAttribute();
     xd2.setName("col2");
     xd2.setType("int");
+    xd2.setDescription("second column");
+    xd2.setDisplayString("Column2");
     // Don't set start time on this dim to validate null handling on server side
     xd2.setEndTime(endDate);
     xd2.setCost(5.0);
@@ -907,6 +936,8 @@ public class TestMetastoreService extends GrillJerseyTest {
     XExprColumn xe1 = new XExprColumn();
     xe1.setName("dimexpr");
     xe1.setType("string");
+    xe1.setDescription("dimension expression");
+    xe1.setDisplayString("Dim Expression");
     xe1.setExpr("substr(col1, 3)");
 
     expressions.getExpressions().add(xe1);
@@ -962,8 +993,14 @@ public class TestMetastoreService extends GrillJerseyTest {
 
       Dimension dim = JAXBUtils.dimensionFromXDimension(dimension);
       assertNotNull(dim.getAttributeByName("col1"));
+      assertEquals(dim.getAttributeByName("col1").getDescription(), "first column");
+      assertEquals(dim.getAttributeByName("col1").getDisplayString(), "Column1");
       assertNotNull(dim.getAttributeByName("col2"));
+      assertEquals(dim.getAttributeByName("col2").getDescription(), "second column");
+      assertEquals(dim.getAttributeByName("col2").getDisplayString(), "Column2");
       assertNotNull(dim.getExpressionByName("dimexpr"));
+      assertEquals(dim.getExpressionByName("dimexpr").getDescription(), "dimension expression");
+      assertEquals(dim.getExpressionByName("dimexpr").getDisplayString(), "Dim Expression");
 
       // alter dimension
       XProperty prop = cubeObjectFactory.createXProperty();
@@ -1723,6 +1760,123 @@ public class TestMetastoreService extends GrillJerseyTest {
     } finally {
       setCurrentDatabase(prevDb);
       dropDatabase(DB);
+    }
+  }
+
+  public static void createHiveTable(String tableName) throws HiveException {
+    List<FieldSchema> columns = new ArrayList<FieldSchema>();
+    columns.add(new FieldSchema("col1", "string", ""));
+    List<FieldSchema> partCols = new ArrayList<FieldSchema>();
+    partCols.add(new FieldSchema("pcol1", "string", ""));
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("test.hive.table.prop", "tvalue");
+    Table tbl = Hive.get().newTable(tableName);
+    tbl.setTableType(TableType.MANAGED_TABLE);
+    tbl.getTTable().getSd().setCols(columns);
+    tbl.setPartCols(partCols);
+    tbl.getTTable().getParameters().putAll(params);
+    Hive.get().createTable(tbl);
+  }
+
+  public static void dropHiveTable(String tableName) throws HiveException {
+    Hive.get().dropTable(tableName);
+  }
+
+  @Test
+  public void testNativeTables() throws Exception {
+    final String DB = dbPFX + "test_native_tables";
+    String prevDb = getCurrentDatabase();
+    createDatabase(DB);
+    setCurrentDatabase(DB);
+
+    try {
+      // create hive table
+      String tableName = "test_simple_table";
+      SessionState.get().setCurrentDatabase(DB);
+      createHiveTable(tableName);
+
+      WebTarget target = target().path("metastore").path("nativetables");
+      // get all native tables
+      StringList nativetables = target.queryParam("sessionid", grillSessionId).request(mediaType).get(StringList.class);
+      assertEquals(nativetables.getElements().size(), 1);
+      assertEquals(nativetables.getElements().get(0), tableName);
+
+      // test current option
+      nativetables = target.queryParam("sessionid", grillSessionId)
+          .queryParam("dbOption", "current").request(mediaType).get(StringList.class);
+      assertEquals(nativetables.getElements().size(), 1);
+      assertEquals(nativetables.getElements().get(0), tableName);
+
+      // test all option
+      nativetables = target.queryParam("sessionid", grillSessionId)
+          .queryParam("dbOption", "all").request(mediaType).get(StringList.class);
+      assertTrue(nativetables.getElements().size()>= 1);
+      assertTrue(nativetables.getElements().contains(DB.toLowerCase() + "." + tableName));
+
+      // test dbname option
+      nativetables = target.queryParam("sessionid", grillSessionId)
+          .queryParam("dbName", DB).request(mediaType).get(StringList.class);
+      assertEquals(nativetables.getElements().size(), 1);
+      assertEquals(nativetables.getElements().get(0), tableName);
+
+      // test dbname option with dboption
+      nativetables = target.queryParam("sessionid", grillSessionId).queryParam("dbName", DB)
+          .queryParam("dbOption", "current").request(mediaType).get(StringList.class);
+      assertEquals(nativetables.getElements().size(), 1);
+      assertEquals(nativetables.getElements().get(0), tableName);
+
+      // Now get the table
+      JAXBElement<NativeTable> actualElement = target.path(tableName).queryParam(
+          "sessionid", grillSessionId).request(mediaType).get(new GenericType<JAXBElement<NativeTable>>() {});
+      NativeTable actual = actualElement.getValue();
+      assertNotNull(actual);
+
+      assertTrue(tableName.equalsIgnoreCase(actual.getName()));
+      assertEquals(actual.getColumns().getColumns().size(), 1);
+      assertEquals(actual.getColumns().getColumns().get(0).getName(), "col1");
+      assertEquals(actual.getStorageDescriptor().getPartCols().getColumns().size(), 1);
+      assertEquals(actual.getStorageDescriptor().getPartCols().getColumns().get(0).getName(), "pcol1");
+      assertEquals(actual.getType(), TableType.MANAGED_TABLE.name());
+      assertFalse(actual.getStorageDescriptor().isExternal());
+      boolean foundProp = false;
+      for (XProperty prop : actual.getStorageDescriptor().getTableParameters().getProperties()) {
+        if (prop.getName().equals("test.hive.table.prop")) {
+          assertTrue(prop.getValue().equals("tvalue"));
+          foundProp = true;
+        }
+      }
+      assertTrue(foundProp);
+
+      final XCube cube = createTestCube("testhiveCube");
+      // Create a cube
+      JAXBElement<XCube> element = cubeObjectFactory.createXCube(cube);
+      APIResult result =
+          target().path("metastore").path("cubes").queryParam("sessionid",
+              grillSessionId).request(mediaType).post(Entity.xml(element), APIResult.class);
+      assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
+
+      // get a cube table
+      Response response = target.path("testhiveCube").queryParam(
+          "sessionid", grillSessionId).request(mediaType).get(Response.class);
+      assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+
+      // get a non existing table
+      response = target.path("nonexisting").queryParam(
+          "sessionid", grillSessionId).request(mediaType).get(Response.class);
+      assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+
+      // get all tables in default db
+      nativetables = target.queryParam("sessionid", grillSessionId)
+          .queryParam("dbName", "default").request(mediaType).get(StringList.class);
+      assertNotNull(nativetables);
+
+      // get all tables in non existing db
+      response = target.queryParam("sessionid", grillSessionId)
+          .queryParam("dbName", "nonexisting").request(mediaType).get(Response.class);
+      assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+    } finally {
+      dropDatabase(DB);
+      setCurrentDatabase(prevDb);
     }
   }
 

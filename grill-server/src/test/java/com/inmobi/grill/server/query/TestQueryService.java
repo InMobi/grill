@@ -20,15 +20,40 @@ package com.inmobi.grill.server.query;
  * #L%
  */
 
-import com.inmobi.grill.api.APIResult;
-import com.inmobi.grill.api.GrillConf;
-import com.inmobi.grill.api.GrillException;
-import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.query.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
+import com.inmobi.grill.api.*;
+import com.inmobi.grill.api.query.GrillPreparedQuery;
+import com.inmobi.grill.api.query.GrillQuery;
+import com.inmobi.grill.api.query.InMemoryQueryResult;
+import com.inmobi.grill.api.query.PersistentQueryResult;
+import com.inmobi.grill.api.query.QueryHandle;
+import com.inmobi.grill.api.query.QueryHandleWithResultSet;
+import com.inmobi.grill.api.query.QueryPlan;
+import com.inmobi.grill.api.query.QueryPrepareHandle;
+import com.inmobi.grill.api.query.QueryResultSetMetadata;
+import com.inmobi.grill.api.query.QueryStatus;
 import com.inmobi.grill.api.query.QueryStatus.Status;
 import com.inmobi.grill.driver.hive.HiveDriver;
 import com.inmobi.grill.driver.hive.TestHiveDriver.FailHook;
-import com.inmobi.grill.driver.hive.TestRemoteHiveDriver;
 import com.inmobi.grill.server.GrillJerseyTest;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
@@ -36,37 +61,16 @@ import com.inmobi.grill.server.api.driver.GrillDriver;
 import com.inmobi.grill.server.api.metrics.MetricsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.io.IOUtils;
-import org.apache.hive.service.Service;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.testng.Assert;
-import org.testng.annotations.*;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.testng.Assert.*;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 @Test(groups="unit-test")
 public class TestQueryService extends GrillJerseyTest {
@@ -82,11 +86,16 @@ public class TestQueryService extends GrillJerseyTest {
     super.setUp();
     queryService = (QueryExecutionServiceImpl)GrillServices.get().getService("query");
     metricsSvc = (MetricsService)GrillServices.get().getService(MetricsService.NAME);
-    grillSessionId = queryService.openSession("foo", "bar", new HashMap<String, String>());
+    Map<String, String> sessionconf = new HashMap<String, String>();
+    sessionconf.put("test.session.key", "svalue");
+    grillSessionId = queryService.openSession("foo", "bar", sessionconf);
+    createTable(testTable);
+    loadData(testTable, TEST_DATA_FILE);
   }
 
   @AfterTest
   public void tearDown() throws Exception {
+    dropTable(testTable);
     queryService.closeSession(grillSessionId);
     for (GrillDriver driver : queryService.getDrivers()) {
       if (driver instanceof HiveDriver) {
@@ -94,17 +103,6 @@ public class TestQueryService extends GrillJerseyTest {
       }
     }
     super.tearDown();
-  }
-
-  @BeforeClass
-  public void createTables() throws InterruptedException {
-    createTable(testTable);
-    loadData(testTable, TEST_DATA_FILE);
-  }
-
-  @AfterClass
-  public void dropTables() throws InterruptedException {
-    dropTable(testTable);
   }
 
   @Override
@@ -124,7 +122,7 @@ public class TestQueryService extends GrillJerseyTest {
     createTable(tblName, target(), grillSessionId);
   }
 
-  void createTable(String tblName, WebTarget parent,
+  public static void createTable(String tblName, WebTarget parent,
       GrillSessionHandle grillSessionId) throws InterruptedException {
     GrillConf conf = new GrillConf();
     conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
@@ -167,8 +165,7 @@ public class TestQueryService extends GrillJerseyTest {
       throws InterruptedException {
     loadData(tblName, TEST_DATA_FILE, target(), grillSessionId);
   }
-
-  void loadData(String tblName, final String TEST_DATA_FILE,
+  public static void loadData(String tblName, final String TEST_DATA_FILE,
       WebTarget parent, GrillSessionHandle grillSessionId) throws InterruptedException {
     GrillConf conf = new GrillConf();
     conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
@@ -208,7 +205,7 @@ public class TestQueryService extends GrillJerseyTest {
     dropTable(tblName, target(), grillSessionId);
   }
 
-  void dropTable(String tblName, WebTarget parent,
+  public static void dropTable(String tblName, WebTarget parent,
       GrillSessionHandle grillSessionId) throws InterruptedException {
     GrillConf conf = new GrillConf();
     conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
@@ -243,7 +240,7 @@ public class TestQueryService extends GrillJerseyTest {
   }
 
   // test get a random query, should return 400
-  @Test(groups = "unit" )
+  @Test
   public void testGetRandomQuery() {
     final WebTarget target = target().path("queryapi/queries");
 
@@ -251,7 +248,7 @@ public class TestQueryService extends GrillJerseyTest {
     Assert.assertEquals(rs.getStatus(), 400);
   }
 
-  @Test(groups = "unit" )
+  @Test
   public void testLaunchFail() throws InterruptedException {
     final WebTarget target = target().path("queryapi/queries");
     long failedQueries = metricsSvc.getTotalFailedQueries();
@@ -296,7 +293,7 @@ public class TestQueryService extends GrillJerseyTest {
 
   // test with execute async post, get all queries, get query context,
   // get wrong uuid query
-  @Test(groups = "unit" )
+  @Test
   public void testQueriesAPI() throws InterruptedException {
     // test post execute op
     final WebTarget target = target().path("queryapi/queries");
@@ -397,7 +394,7 @@ public class TestQueryService extends GrillJerseyTest {
   }
 
 
-  @Test(groups = "unit" )
+  @Test
   public void testExecuteWithoutSessionId() throws Exception {
     // test post execute op
     final WebTarget target = target().path("queryapi/queries");
@@ -459,7 +456,7 @@ public class TestQueryService extends GrillJerseyTest {
   // update a prepared query
   // post to prepared query multiple times
   // delete a prepared query
-  @Test(groups = "unit" )
+  @Test
   public void testPrepareQuery() throws InterruptedException {    
     final WebTarget target = target().path("queryapi/preparedqueries");
 
@@ -559,7 +556,7 @@ public class TestQueryService extends GrillJerseyTest {
     Assert.assertEquals(response.getStatus(), 404);
   }
 
-  @Test(groups = "unit" )
+  @Test
   public void testExplainAndPrepareQuery() throws InterruptedException {    
     final WebTarget target = target().path("queryapi/preparedqueries");
 
@@ -662,7 +659,7 @@ public class TestQueryService extends GrillJerseyTest {
 
   // test with execute async post, get query, get results
   // test cancel query
-  @Test(groups = "unit" )
+  @Test
   public void testExecuteAsync() throws InterruptedException, IOException {
     System.out.println("TEST_EXECUTE_ASYNC");
     // test post execute op
@@ -759,7 +756,8 @@ public class TestQueryService extends GrillJerseyTest {
     }
   }
 
-  List<String> readResultSet(PersistentQueryResult resultset, QueryHandle handle, boolean isDir) throws  IOException {
+  public static List<String> readResultSet(PersistentQueryResult resultset,
+      QueryHandle handle, boolean isDir) throws  IOException {
     Assert.assertTrue(resultset.getPersistedURI().contains(handle.toString()));
     Path actualPath = new Path(resultset.getPersistedURI());
     FileSystem fs = actualPath.getFileSystem(new Configuration());
@@ -853,7 +851,7 @@ public class TestQueryService extends GrillJerseyTest {
   }
   // test with execute async post, get query, get results
   // test cancel query
-  @Test(groups = "unit" )
+  @Test
   public void testExecuteAsyncInMemoryResult() throws InterruptedException, IOException {
     // test post execute op
     final WebTarget target = target().path("queryapi/queries");
@@ -903,7 +901,7 @@ public class TestQueryService extends GrillJerseyTest {
     validNotFoundForHttpResult(target(), grillSessionId, handle);
   }
 
-  @Test(groups = "unit" )
+  @Test
   public void testExecuteAsyncTempTable() throws InterruptedException, IOException {
     // test post execute op
     final WebTarget target = target().path("queryapi/queries");
@@ -1021,7 +1019,7 @@ public class TestQueryService extends GrillJerseyTest {
 
   // test execute with timeout, fetch results
   // cancel the query with execute_with_timeout
-  @Test(groups = "unit" )
+  @Test
   public void testExecuteWithTimeoutQuery() throws IOException {
     final WebTarget target = target().path("queryapi/queries");
 
@@ -1066,216 +1064,26 @@ public class TestQueryService extends GrillJerseyTest {
 
   }
 
-  private void createRestartTestDataFile() throws FileNotFoundException {
-    if (fileCreated) {
-      return;
-    }
+  @Test
+  public void testDefaultConfig() throws GrillException {
+    GrillConf queryConf = new GrillConf();
+    queryConf.addProperty("test.query.conf", "qvalue");
+    Configuration conf = queryService.getGrillConf(grillSessionId, queryConf);
 
-    File dataFile = new File("target/testdata.txt");
-    dataFile.deleteOnExit();
-
-    PrintWriter dataFileOut = new PrintWriter(dataFile);
-    for (int i = 0; i < NROWS; i++) {
-      dataFileOut.println(i);
-    }
-    dataFileOut.flush();
-    dataFileOut.close();
-    fileCreated = true;
-  }
-
-  @Test(groups = "query-server-restart", dependsOnGroups = "unit")
-  public void testGrillServerRestart() throws InterruptedException, IOException, GrillException {
-    LOG.info("Server restart test");
-
-    // Create data file
-    createRestartTestDataFile();
-
-    // Create a test table
-    createTable("test_server_restart");
-    loadData("test_server_restart", "target/testdata.txt");
-    LOG.info("Loaded data");
-
-    // test post execute op
-    final WebTarget target = target().path("queryapi/queries");
-
-    List<QueryHandle> launchedQueries = new ArrayList<QueryHandle>();
-    final int NUM_QUERIES = 10;
-
-    boolean killed = false;
-    for (int i = 0; i < NUM_QUERIES; i++) {
-      if (!killed && i > NUM_QUERIES / 3) {
-        // Kill the query submitter thread to make sure some queries stay in accepted queue
-        try {
-          queryService.querySubmitter.interrupt();
-          LOG.info("Stopped query submitter");
-        } catch (Exception exc) {
-          LOG.error("Could not kill query submitter", exc);
-        }
-        killed = true;
-      }
-
-      final FormDataMultiPart mp = new FormDataMultiPart();
-      mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
-          grillSessionId, MediaType.APPLICATION_XML_TYPE));
-      mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("query").build(),
-        "select COUNT(ID) from test_server_restart"));
-      mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name(
-         "operation").build(),
-        "execute"
-      ));
-      mp.bodyPart(new FormDataBodyPart(
-          FormDataContentDisposition.name("conf").fileName("conf").build(),
-          new GrillConf(),
-          MediaType.APPLICATION_XML_TYPE));
-      final QueryHandle handle = target.request().post(
-          Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), QueryHandle.class);
-
-      Assert.assertNotNull(handle);
-      GrillQuery ctx = target.path(handle.toString())
-        .queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-      QueryStatus stat = ctx.getStatus();
-      LOG.info(i + " submitted query " + handle + " state: " + ctx.getStatus().getStatus());
-      launchedQueries.add(handle);
-    }
-
-    // Restart the server
-    LOG.info("Restarting grill server!");
-    HiveConf conf = new HiveConf();
-    conf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_CLIENT_CONNECTION_RETRY_LIMIT, 3);
-    conf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_CLIENT_RETRY_LIMIT, 3);
-    conf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_CLIENT_RETRY_DELAY_SECONDS, 10);
-    restartGrillServer(conf);
-    queryService = (QueryExecutionServiceImpl)GrillServices.get().getService("query");
-
-    // All queries should complete after server restart
-    for (QueryHandle handle : launchedQueries) {
-      LOG.info("Polling query " + handle);
-      try {
-        GrillQuery ctx = target.path(handle.toString())
-          .queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-        QueryStatus stat = ctx.getStatus();
-        while (!stat.isFinished()) {
-          LOG.info("Polling query " + handle + " Status:" + stat);
-          ctx = target.path(handle.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-          stat = ctx.getStatus();
-          Thread.sleep(1000);
-        }
-        Assert.assertEquals(ctx.getStatus().getStatus(), QueryStatus.Status.SUCCESSFUL,
-          "Expected to be successful " + handle);
-        PersistentQueryResult resultset = target.path(handle.toString()).path(
-          "resultset").queryParam("sessionid", grillSessionId).request().get(PersistentQueryResult.class);
-        List<String> rows = readResultSet(resultset, handle, true);
-        Assert.assertEquals(rows.size(), 1);
-        Assert.assertEquals(rows.get(0), "" + NROWS);
-        LOG.info("Completed " + handle);
-      } catch (Exception exc) {
-        LOG.error("Failed query "  + handle, exc);
-        Assert.fail(exc.getMessage());
-      }
-    }
-    LOG.info("End server restart test");
-  }
-
-  @Test(groups = "hive-server-restart", dependsOnGroups = "query-server-restart")
-  public void testHiveServerRestart() throws Exception {
-    // Create data file
-    createRestartTestDataFile();
-    // Create a test table
-    createTable("test_hive_server_restart");
-    loadData("test_hive_server_restart", "target/testdata.txt");
-    LOG.info("Loaded data");
-
-    LOG.info("Hive Server restart test");
-    // test post execute op
-    final WebTarget target = target().path("queryapi/queries");
-
-    // Submit query, restart HS2, submit another query
-    FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
-      grillSessionId, MediaType.APPLICATION_XML_TYPE));
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("query").build(),
-      "select COUNT(ID) from test_hive_server_restart"));
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name(
-      "operation").build(),
-      "execute"
-    ));
-    mp.bodyPart(new FormDataBodyPart(
-      FormDataContentDisposition.name("conf").fileName("conf").build(),
-      new GrillConf(),
-      MediaType.APPLICATION_XML_TYPE));
-    QueryHandle handle = target.request().post(
-      Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), QueryHandle.class);
-
-    Assert.assertNotNull(handle);
-
-    // Restart hive server
-    TestRemoteHiveDriver.stopHS2Service();
-
-    // Wait for server to stop
-    while (TestRemoteHiveDriver.server.getServiceState() != Service.STATE.STOPPED) {
-      LOG.info("Waiting for HS2 to stop. Current state " + TestRemoteHiveDriver.server.getServiceState());
-      Thread.sleep(1000);
-    }
-
-    TestRemoteHiveDriver.createHS2Service();
-    // Wait for server to come up
-    while (Service.STATE.STARTED != TestRemoteHiveDriver.server.getServiceState()) {
-      LOG.info("Waiting for HS2 to start " + TestRemoteHiveDriver.server.getServiceState());
-      Thread.sleep(1000);
-    }
-    Thread.sleep(10000);
-    LOG.info("Server restarted");
-
-    // Poll for first query, we should not get any exception
-    GrillQuery ctx = target.path(handle.toString())
-      .queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-    QueryStatus stat = ctx.getStatus();
-    while (!stat.isFinished()) {
-      LOG.info("Polling query " + handle + " Status:" + stat);
-      ctx = target.path(handle.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-      stat = ctx.getStatus();
-      Thread.sleep(1000);
-    }
-
-    Assert.assertTrue(stat.isFinished());
-    LOG.info("Previous query status: " + stat.getStatusMessage());
-
-    for (int i = 0; i < 5; i++) {
-      // Submit another query, again no exception expected
-      mp = new FormDataMultiPart();
-      mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
-        grillSessionId, MediaType.APPLICATION_XML_TYPE));
-      mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("query").build(),
-        "select COUNT(ID) from test_hive_server_restart"));
-      mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name(
-        "operation").build(),
-        "execute"
-      ));
-      mp.bodyPart(new FormDataBodyPart(
-        FormDataContentDisposition.name("conf").fileName("conf").build(),
-        new GrillConf(),
-        MediaType.APPLICATION_XML_TYPE));
-      handle = target.request().post(
-        Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), QueryHandle.class);
-      Assert.assertNotNull(handle);
-
-      // Poll for second query, this should finish successfully
-      ctx = target.path(handle.toString())
-        .queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-      stat = ctx.getStatus();
-      while (!stat.isFinished()) {
-        LOG.info("Post restart polling query " + handle + " Status:" + stat);
-        ctx = target.path(handle.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
-        stat = ctx.getStatus();
-        Thread.sleep(1000);
-      }
-      LOG.info("@@ "+ i + " Final status for " + handle + " " + stat.getStatus());
-    }
-
-    //Assert.assertEquals(stat.getStatus(), QueryStatus.Status.SUCCESSFUL,
-    //    "Expected to be successful " + handle);
-
-    LOG.info("End hive server restart test");
+    // session specific conf
+    Assert.assertEquals(conf.get("test.session.key"), "svalue");
+    // query specific conf
+    Assert.assertEquals(conf.get("test.query.conf"), "qvalue");
+    // grillsession default should be loaded
+    Assert.assertNotNull(conf.get("grill.persistent.resultset"));
+    // grill site should be loaded
+    Assert.assertEquals(conf.get("test.grill.site.key"), "gsvalue");
+    // hive default variables should not be set
+    Assert.assertNull(conf.get("hive.exec.local.scratchdir"));
+    // hive site variables should not be set
+    Assert.assertNull(conf.get("hive.metastore.warehouse.dir"));
+    // core default should not be loaded
+    Assert.assertNull(conf.get("fs.default.name"));
   }
 
   @Override

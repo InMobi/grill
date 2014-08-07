@@ -24,6 +24,7 @@ import com.inmobi.grill.api.metastore.*;
 
 import org.apache.hadoop.hive.metastore.TableType;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
+import org.apache.hadoop.hive.metastore.api.Order;
 import org.apache.hadoop.hive.ql.cube.metadata.*;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Partition;
@@ -160,14 +161,16 @@ public class JAXBUtils {
         dimRefs.add(new TableReference(xRef.getDestTable(), xRef.getDestColumn()));
       }
 
-      hiveDim = new ReferencedDimAtrribute(new FieldSchema(xd.getName(), xd.getType(), ""),
+      hiveDim = new ReferencedDimAtrribute(new FieldSchema(xd.getName(), xd.getType(), xd.getDescription()),
+          xd.getDisplayString(),
           dimRefs,
           startDate,
           endDate,
           xd.getCost()
           );
     } else {
-      hiveDim = new BaseDimAttribute(new FieldSchema(xd.getName(), xd.getType(), ""),
+      hiveDim = new BaseDimAttribute(new FieldSchema(xd.getName(), xd.getType(), xd.getDescription()),
+          xd.getDisplayString(),
           startDate,
           endDate,
           xd.getCost()
@@ -205,6 +208,8 @@ public class JAXBUtils {
 
     XMeasure xm = XCF.createXMeasure();
     xm.setName(cm.getName());
+    xm.setDescription(cm.getDescription());
+    xm.setDisplayString(cm.getDisplayString());
     xm.setDefaultAggr(cm.getAggregate());
     xm.setFormatString(cm.getFormatString());
     xm.setType(cm.getType());
@@ -224,6 +229,8 @@ public class JAXBUtils {
     XExprColumn xe = XCF.createXExprColumn();
     xe.setName(ec.getName());
     xe.setType(ec.getType());
+    xe.setDescription(ec.getDescription());
+    xe.setDisplayString(ec.getDisplayString());
     xe.setExpr(ec.getExpr());
     return xe;
   }
@@ -234,6 +241,8 @@ public class JAXBUtils {
   public static XDimAttribute xDimAttrFromHiveDimAttr(CubeDimAttribute cd) {
     XDimAttribute xd = XCF.createXDimAttribute();
     xd.setName(cd.getName());
+    xd.setDescription(cd.getDescription());
+    xd.setDisplayString(cd.getDisplayString());
 
     if (cd instanceof ReferencedDimAtrribute) {
       ReferencedDimAtrribute rd = (ReferencedDimAtrribute) cd;
@@ -272,7 +281,8 @@ public class JAXBUtils {
   public static CubeMeasure hiveMeasureFromXMeasure(XMeasure xm) {
     Date startDate = xm.getStartTime() == null ? null : xm.getStartTime().toGregorianCalendar().getTime();
     Date endDate = xm.getEndTime() == null ? null : xm.getEndTime().toGregorianCalendar().getTime();
-    CubeMeasure cm = new ColumnMeasure(new FieldSchema(xm.getName(), xm.getType(), ""),
+    CubeMeasure cm = new ColumnMeasure(new FieldSchema(xm.getName(), xm.getType(), xm.getDescription()),
+        xm.getDisplayString(),
         xm.getFormatString(),
         xm.getDefaultAggr(),
         "unit",
@@ -284,7 +294,8 @@ public class JAXBUtils {
   }
 
   public static ExprColumn hiveExprColumnFromXExprColumn(XExprColumn xe) throws ParseException {
-    ExprColumn ec = new ExprColumn(new FieldSchema(xe.getName(), xe.getType(), ""),
+    ExprColumn ec = new ExprColumn(new FieldSchema(xe.getName(), xe.getType(), xe.getDescription()),
+        xe.getDisplayString(),
         xe.getExpr());
     return ec;
   }
@@ -414,7 +425,8 @@ public class JAXBUtils {
       storage.addProperties(mapFromXProperties(xs.getProperties()));
       return storage;
     } catch (Exception e) {
-      throw new WebApplicationException("Could not create storage class" + xs.getClassname() + "with name:" + xs.getName(), e);
+      LOG.error("Could not create storage class" + xs.getClassname() + "with name:" + xs.getName());
+      throw new WebApplicationException(e);
     }
   }
 
@@ -560,15 +572,46 @@ public class JAXBUtils {
 
   public static XStorageTableElement getXStorageTableFromHiveTable(Table tbl) {
     XStorageTableElement tblElement = new XStorageTableElement();
+    tblElement.setTableDesc(getStorageTableDescFromHiveTable(tbl));
+    return tblElement;
+  }
+
+  public static XStorageTableDesc getStorageTableDescFromHiveTable(Table tbl) {
     XStorageTableDesc tblDesc = new XStorageTableDesc();
     tblDesc.setPartCols(columnsFromFieldSchemaList(tbl.getPartCols()));
     String timePartCols = tbl.getParameters().get(MetastoreConstants.TIME_PART_COLUMNS);
     if (timePartCols != null) {
       tblDesc.getTimePartCols().addAll(Arrays.asList(org.apache.commons.lang.StringUtils.split(timePartCols, ",")));
     }
+    tblDesc.setNumBuckets(tbl.getNumBuckets());
+    tblDesc.getBucketCols().addAll(tbl.getBucketCols());
+    List<String> sortCols = new ArrayList<String>();
+    List<Integer> sortOrders = new ArrayList<Integer>();
+    for (Order order : tbl.getSortCols()) {
+      sortCols.add(order.getCol());
+      sortOrders.add(order.getOrder());
+    }
+    tblDesc.getSortCols().addAll(sortCols);
+    tblDesc.getSortColOrder().addAll(sortOrders);
+
+    XSkewedInfo xskewinfo = new XSkewedInfo();
+    xskewinfo.getColNames().addAll(tbl.getSkewedColNames());
+    for (List<String> value : tbl.getSkewedColValues()) {
+      XStringList slist = new XStringList();
+      slist.getElements().addAll(value);
+      xskewinfo.getColValues().add(slist);
+      XSkewedValueLocation valueLocation = new XSkewedValueLocation();
+      if (tbl.getSkewedColValueLocationMaps().get(value) != null) {
+        valueLocation.setValue(slist);
+        valueLocation.setLocation(tbl.getSkewedColValueLocationMaps().get(value));
+        xskewinfo.getValueLocationMap().add(valueLocation);
+      }
+    }
+
     tblDesc.setTableParameters(xPropertiesFromMap(tbl.getParameters()));
     tblDesc.setSerdeParameters(xPropertiesFromMap(tbl.getTTable().getSd().getSerdeInfo().getParameters()));
     tblDesc.setExternal(tbl.getTableType().equals(TableType.EXTERNAL_TABLE));
+    tblDesc.setCompressed(tbl.getTTable().getSd().isCompressed());
     tblDesc.setTableLocation(tbl.getDataLocation().toString());
     tblDesc.setInputFormat(tbl.getInputFormatClass().getCanonicalName());
     tblDesc.setOutputFormat(tbl.getOutputFormatClass().getCanonicalName());
@@ -580,9 +623,9 @@ public class JAXBUtils {
     tblDesc.setSerdeClassName(tbl.getSerializationLib());
     tblDesc.setStorageHandlerName(tbl.getStorageHandler()!= null?
         tbl.getStorageHandler().getClass().getCanonicalName():"");
-    tblElement.setTableDesc(tblDesc);
-    return tblElement;
+    return tblDesc;
   }
+
   public static Map<String, StorageTableDesc> storageTableMapFromXStorageTables(XStorageTables storageTables) {
     Map<String, StorageTableDesc> storageTableMap = new HashMap<String, StorageTableDesc>();
     for (XStorageTableElement sTbl : storageTables.getStorageTables()) {
@@ -691,5 +734,18 @@ public class JAXBUtils {
     xd.setExpressions(xexprs);
 
     return xd;
+  }
+
+  public static NativeTable nativeTableFromMetaTable(Table table) {
+    NativeTable xtable = XCF.createNativeTable();
+    xtable.setName(table.getTableName());
+    xtable.setDbname(table.getDbName());
+    xtable.setOwner(table.getOwner());
+    xtable.setCreatetime(table.getTTable().getCreateTime());
+    xtable.setLastAccessTime(table.getTTable().getLastAccessTime());
+    xtable.setColumns(columnsFromFieldSchemaList(table.getCols()));
+    xtable.setStorageDescriptor(getStorageTableDescFromHiveTable(table));
+    xtable.setType(table.getTableType().name());
+    return xtable;
   }
 }
