@@ -25,4 +25,5 @@ com.inmobi.grill.server.query
 com.inmobi.grill.server.quota
 com.inmobi.grill.server.scheduler
 com.inmobi.grill.server.session
+com.inmobi.grill.server.ui
 com.inmobi.grill.storage.db

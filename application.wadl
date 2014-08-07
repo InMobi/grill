@@ -217,6 +217,73 @@ APIResult with state Status#FAILED, if create has failed]]>
     <wadl:resource path="/metastore/dimensions">
       <wadl:method name="GET">
         <wadl:doc>
+          <![CDATA[Get all dimensions in the metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all the dimension names]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Create new dimension]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The XDimension representation of dimension]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Delete all dimensions in metastore]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimtables">
+      <wadl:method name="GET">
+        <wadl:doc>
           <![CDATA[Get all dimension tables in the metastore]]>
         </wadl:doc>
         <wadl:request>
@@ -306,6 +373,37 @@ APIResult with state Status#PARTIAL in case of partial delete.]]>
 APIResult with state Status#FAILED, if create has failed]]>
           </wadl:doc>
           <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/nativetables">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get all native tables.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="dbOption" style="query">
+            <wadl:doc>
+              <![CDATA[The options available are 'current' and 'all'. If option is current, gives all tables from current db. If option is all, gives all tables from all databases. If dbname is passed, dbOption is ignored. If no dbOption or dbname are passed, then default is to get tables from current db.]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="dbName" style="query">
+            <wadl:doc>
+              <![CDATA[The db name. If not empty, the tables in the db will be returned]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[StringList consisting of all table names.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="stringList"/>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
@@ -562,13 +660,10 @@ APIResult with state Status#PARTIAL in case of partial cancellation.]]>
         <wadl:doc>
           <![CDATA[Set value for a parameter specified by key
 
-The parameters can be a system property or a hive variable or a configuration.
-To set key as system property, the key should be prefixed with 'system:'.
+The parameters can be a hive variable or a configuration.
 To set key as a hive variable, the key should be prefixed with 'hivevar:'.
-To set key as configuration parameter, the key should be prefixed with 'hiveconf:'.
-If no prefix is attached, the parameter is set as configuration.
-
-System properties are not restricted to the session, they would be set globally]]>
+To set key as configuration parameter, the key should be prefixed with 'hiveconf:'
+If no prefix is attached, the parameter is set as configuration.]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
@@ -732,7 +827,78 @@ APIResult with state Status#FAILED, if delete has failed]]>
       </wadl:method>
     </wadl:resource>
     <wadl:resource path="/metastore/dimensions/{dimName}">
-      <wadl:param name="dimName" style="template"/>
+      <wadl:param name="dimName" style="template">
+        <wadl:doc>
+          <![CDATA[The dimension name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="PUT">
+        <wadl:doc>
+          <![CDATA[Update dimension definition]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The XDimension representation of the updated dimension definition]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if update has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the dimension specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of XDimension]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="DELETE">
+        <wadl:doc>
+          <![CDATA[Drop the dimension, specified by name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/dimtables/{dimTableName}">
+      <wadl:param name="dimTableName" style="template"/>
       <wadl:method name="PUT">
         <wadl:doc>
           <![CDATA[Update dimension table definition]]>
@@ -875,6 +1041,32 @@ APIResult with state Status#FAILED, if udpate has failed]]>
 APIResult with state Status#FAILED, if drop has failed]]>
           </wadl:doc>
           <wadl:representation mediaType="application/xml" element="result"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/metastore/nativetables/{tableName}">
+      <wadl:param name="tableName" style="template">
+        <wadl:doc>
+          <![CDATA[The native table name]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the native table passed in name]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[JAXB representation of NativeTable]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
@@ -1169,8 +1361,8 @@ APIResult with state Status#FAILED, if delete has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimName}/storages">
-      <wadl:param name="dimName" style="template">
+    <wadl:resource path="/metastore/dimtables/{dimTableName}/storages">
+      <wadl:param name="dimTableName" style="template">
         <wadl:doc>
           <![CDATA[The dimension table name]]>
         </wadl:doc>
@@ -1421,8 +1613,8 @@ APIResult with state Status#FAILED in case of close failure.]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimName}/storages/{storage}">
-      <wadl:param name="dimName" style="template">
+    <wadl:resource path="/metastore/dimtables/{dimTableName}/storages/{storage}">
+      <wadl:param name="dimTableName" style="template">
         <wadl:doc>
           <![CDATA[The fact table name]]>
         </wadl:doc>
@@ -1523,8 +1715,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimName}/storages/{storage}/partition">
-      <wadl:param name="dimName" style="template">
+    <wadl:resource path="/metastore/dimtables/{dimTableName}/storages/{storage}/partition">
+      <wadl:param name="dimTableName" style="template">
         <wadl:doc>
           <![CDATA[The dimension table name]]>
         </wadl:doc>
@@ -1560,8 +1752,8 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/metastore/dimensions/{dimName}/storages/{storage}/partitions">
-      <wadl:param name="dimName" style="template">
+    <wadl:resource path="/metastore/dimtables/{dimTableName}/storages/{storage}/partitions">
+      <wadl:param name="dimTableName" style="template">
         <wadl:doc>
           <![CDATA[The dimension table name]]>
         </wadl:doc>

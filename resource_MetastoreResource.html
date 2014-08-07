@@ -74,22 +74,26 @@
         <li><a href="#path__metastore_cubes.html">/metastore/cubes</a></li>
         <li><a href="#path__metastore_databases.html">/metastore/databases</a></li>
         <li><a href="#path__metastore_dimensions.html">/metastore/dimensions</a></li>
+        <li><a href="#path__metastore_dimtables.html">/metastore/dimtables</a></li>
         <li><a href="#path__metastore_facts.html">/metastore/facts</a></li>
+        <li><a href="#path__metastore_nativetables.html">/metastore/nativetables</a></li>
         <li><a href="#path__metastore_storages.html">/metastore/storages</a></li>
         <li><a href="#path__metastore_cubes_-cubeName-.html">/metastore/cubes/{cubeName}</a></li>
         <li><a href="#path__metastore_databases_current.html">/metastore/databases/current</a></li>
         <li><a href="#path__metastore_databases_-dbName-.html">/metastore/databases/{dbName}</a></li>
         <li><a href="#path__metastore_dimensions_-dimName-.html">/metastore/dimensions/{dimName}</a></li>
+        <li><a href="#path__metastore_dimtables_-dimTableName-.html">/metastore/dimtables/{dimTableName}</a></li>
         <li><a href="#path__metastore_facts_-factName-.html">/metastore/facts/{factName}</a></li>
+        <li><a href="#path__metastore_nativetables_-tableName-.html">/metastore/nativetables/{tableName}</a></li>
         <li><a href="#path__metastore_storages_-storageName-.html">/metastore/storages/{storageName}</a></li>
         <li><a href="#path__metastore_storages_-storage-.html">/metastore/storages/{storage}</a></li>
         <li><a href="#path__metastore_cubes_-cubeName-_facts.html">/metastore/cubes/{cubeName}/facts</a></li>
-        <li><a href="#path__metastore_dimensions_-dimName-_storages.html">/metastore/dimensions/{dimName}/storages</a></li>
+        <li><a href="#path__metastore_dimtables_-dimTableName-_storages.html">/metastore/dimtables/{dimTableName}/storages</a></li>
         <li><a href="#path__metastore_facts_-factName-_storages.html">/metastore/facts/{factName}/storages</a></li>
-        <li><a href="#path__metastore_dimensions_-dimName-_storages_-storage-.html">/metastore/dimensions/{dimName}/storages/{storage}</a></li>
+        <li><a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-.html">/metastore/dimtables/{dimTableName}/storages/{storage}</a></li>
         <li><a href="#path__metastore_facts_-factName-_storages_-storage-.html">/metastore/facts/{factName}/storages/{storage}</a></li>
-        <li><a href="#path__metastore_dimensions_-dimName-_storages_-storage-_partition.html">/metastore/dimensions/{dimName}/storages/{storage}/partition</a></li>
-        <li><a href="#path__metastore_dimensions_-dimName-_storages_-storage-_partitions.html">/metastore/dimensions/{dimName}/storages/{storage}/partitions</a></li>
+        <li><a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-_partition.html">/metastore/dimtables/{dimTableName}/storages/{storage}/partition</a></li>
+        <li><a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-_partitions.html">/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</a></li>
         <li><a href="#path__metastore_facts_-factName-_storages_-storage-_partition.html">/metastore/facts/{factName}/storages/{storage}/partition</a></li>
         <li><a href="#path__metastore_facts_-factName-_storages_-storage-_partitions.html">/metastore/facts/{factName}/storages/{storage}/partitions</a></li>
       </ul>
@@ -312,6 +316,118 @@ APIResult with state Status#FAILED, if create has failed</p>
       <a name="path__metastore_dimensions.html"></a>
       <h1>/metastore/dimensions</h1>
       <p class="note">Mount Point: <a href="../metastore/dimensions">/metastore/dimensions</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#POST">POST</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all dimensions in the metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+      </table>
+      <p>StringList consisting of all the dimension names</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Create new dimension
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>The XDimension representation of dimension</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Delete all dimensions in metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.</p>
+      <a name="path__metastore_dimtables.html"></a>
+      <h1>/metastore/dimtables</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables">/metastore/dimtables</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
@@ -517,6 +633,55 @@ APIResult with state Status#PARTIAL in case of partial delete.</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if create was successful.
 APIResult with state Status#FAILED, if create has failed</p>
+      <a name="path__metastore_nativetables.html"></a>
+      <h1>/metastore/nativetables</h1>
+      <p class="note">Mount Point: <a href="../metastore/nativetables">/metastore/nativetables</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all native tables.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dbOption</td>
+          <td>
+            The options available are 'current' and 'all'. If option is current, gives all tables from current db. If option is all, gives all tables from all databases. If dbname is passed, dbOption is ignored. If no dbOption or dbname are passed, then default is to get tables from current db.
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dbName</td>
+          <td>
+            The db name. If not empty, the tables in the db will be returned
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+      </table>
+      <p>StringList consisting of all table names.</p>
       <a name="path__metastore_storages.html"></a>
       <h1>/metastore/storages</h1>
       <p class="note">Mount Point: <a href="../metastore/storages">/metastore/storages</a></p>
@@ -895,6 +1060,141 @@ APIResult with state Status#FAILED, if delete has failed</p>
       </p>
       <ul>
         <li><a href="#PUT">PUT</a></li>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Update dimension definition
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dimName</td>
+          <td>
+            The dimension name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>The XDimension representation of the updated dimension definition</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if update has failed</p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the dimension specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dimName</td>
+          <td>
+            The dimension name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>JAXB representation of XDimension</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Drop the dimension, specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dimName</td>
+          <td>
+            The dimension name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed</p>
+      <a name="path__metastore_dimtables_-dimTableName-.html"></a>
+      <h1>/metastore/dimtables/{dimTableName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}">/metastore/dimtables/{dimTableName}</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#PUT">PUT</a></li>
         <li><a href="#DELETE">DELETE</a></li>
         <li><a href="#GET">GET</a></li>
       </ul>
@@ -920,7 +1220,7 @@ APIResult with state Status#FAILED, if delete has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             (no documentation provided)
           </td>
@@ -967,7 +1267,7 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1014,7 +1314,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The cube name
           </td>
@@ -1173,6 +1473,47 @@ APIResult with state Status#FAILED, if udpate has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
+      <a name="path__metastore_nativetables_-tableName-.html"></a>
+      <h1>/metastore/nativetables/{tableName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/nativetables/{tableName}">/metastore/nativetables/{tableName}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the native table passed in name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>tableName</td>
+          <td>
+            The native table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+      </table>
+      <p>JAXB representation of NativeTable</p>
       <a name="path__metastore_storages_-storageName-.html"></a>
       <h1>/metastore/storages/{storageName}</h1>
       <p class="note">Mount Point: <a href="../metastore/storages/{storageName}">/metastore/storages/{storageName}</a></p>
@@ -1344,9 +1685,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>List of FactTable objects</p>
-      <a name="path__metastore_dimensions_-dimName-_storages.html"></a>
-      <h1>/metastore/dimensions/{dimName}/storages</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages">/metastore/dimensions/{dimName}/storages</a></p>
+      <a name="path__metastore_dimtables_-dimTableName-_storages.html"></a>
+      <h1>/metastore/dimtables/{dimTableName}/storages</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages">/metastore/dimtables/{dimTableName}/storages</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -1377,7 +1718,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1415,7 +1756,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1462,7 +1803,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1614,9 +1955,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#FAILED, if add has failed</p>
-      <a name="path__metastore_dimensions_-dimName-_storages_-storage-.html"></a>
-      <h1>/metastore/dimensions/{dimName}/storages/{storage}</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages/{storage}">/metastore/dimensions/{dimName}/storages/{storage}</a></p>
+      <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-.html"></a>
+      <h1>/metastore/dimtables/{dimTableName}/storages/{storage}</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages/{storage}">/metastore/dimtables/{dimTableName}/storages/{storage}</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
@@ -1639,7 +1980,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The fact table name
           </td>
@@ -1685,7 +2026,7 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1806,9 +2147,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>JAXB representation of XStorageTableElement</p>
-      <a name="path__metastore_dimensions_-dimName-_storages_-storage-_partition.html"></a>
-      <h1>/metastore/dimensions/{dimName}/storages/{storage}/partition</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages/{storage}/partition">/metastore/dimensions/{dimName}/storages/{storage}/partition</a></p>
+      <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-_partition.html"></a>
+      <h1>/metastore/dimtables/{dimTableName}/storages/{storage}/partition</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages/{storage}/partition">/metastore/dimtables/{dimTableName}/storages/{storage}/partition</a></p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
@@ -1831,7 +2172,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1864,9 +2205,9 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_dimensions_-dimName-_storages_-storage-_partitions.html"></a>
-      <h1>/metastore/dimensions/{dimName}/storages/{storage}/partitions</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}/storages/{storage}/partitions">/metastore/dimensions/{dimName}/storages/{storage}/partitions</a></p>
+      <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-_partitions.html"></a>
+      <h1>/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages/{storage}/partitions">/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</a></p>
       <p>
         The following operations are supported on this resource:
       </p>
@@ -1898,7 +2239,7 @@ can be filtered
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -1952,7 +2293,7 @@ can be filtered
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             The dimension table name
           </td>
@@ -2007,7 +2348,7 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td></td>
         </tr>
         <tr>
-          <td>dimName</td>
+          <td>dimTableName</td>
           <td>
             dimension table name
           </td>
