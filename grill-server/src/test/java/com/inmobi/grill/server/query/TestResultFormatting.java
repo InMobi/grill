@@ -53,19 +53,20 @@ public class TestResultFormatting extends GrillJerseyTest {
 
   QueryExecutionServiceImpl queryService;
   GrillSessionHandle grillSessionId;
+  TestQueryService testQueryService = new TestQueryService();
 
   @BeforeTest
   public void setUp() throws Exception {
     super.setUp();
     queryService = (QueryExecutionServiceImpl)GrillServices.get().getService("query");
     grillSessionId = queryService.openSession("foo", "bar", new HashMap<String, String>());
-    TestQueryService.createTable(testTable, target(), grillSessionId);
-    TestQueryService.loadData(testTable, TestQueryService.TEST_DATA_FILE, target(), grillSessionId);
+    testQueryService.createTable(testTable, target(), grillSessionId);
+    testQueryService.loadData(testTable, TestQueryService.TEST_DATA_FILE, target(), grillSessionId);
   }
 
   @AfterTest
   public void tearDown() throws Exception {
-    TestQueryService.dropTable(testTable, target(), grillSessionId);
+    testQueryService.dropTable(testTable, target(), grillSessionId);
     queryService.closeSession(grillSessionId);
     super.tearDown();
   }
@@ -162,14 +163,15 @@ public class TestResultFormatting extends GrillJerseyTest {
       stat = ctx.getStatus();
       Thread.sleep(1000);
     }
-    Assert.assertEquals(ctx.getStatus().getStatus(), status);
+    Assert.assertEquals(ctx.getStatus().getStatus(), status, "Status mismatch for query"
+      + ctx.getQueryHandle().getHandleId());
 
     if (status.equals(QueryStatus.Status.SUCCESSFUL)) {
       // fetch results
-      TestQueryService.validatePersistedResult(handle, target(),
+      testQueryService.validatePersistedResult(handle, target(),
           grillSessionId, isDir);
       if (!isDir) {
-        TestQueryService.validateHttpEndPoint(target(), grillSessionId, handle, reDirectUrl);
+        testQueryService.validateHttpEndPoint(target(), grillSessionId, handle, reDirectUrl);
       }
 
     }

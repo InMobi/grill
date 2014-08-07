@@ -57,6 +57,13 @@
         <artifactId>grill-query-lib</artifactId>
         <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-driver-jdbc</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         
         <dependency>
         <groupId>com.inmobi.grill</groupId>

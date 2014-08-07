@@ -56,7 +56,7 @@ public class JDBCResultSet extends InMemoryResultSet {
   public JDBCResultSet(QueryResult queryResult, ResultSet resultSet,
       boolean closeAfterFetch) {
     this.queryResult = queryResult;
-    this.resultSet = resultSet;;
+    this.resultSet = resultSet;
     this.closeAfterFetch = closeAfterFetch;
   }
   

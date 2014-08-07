@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <property>
+    <name>grill.driver.jdbc.driver.class</name>
+    <value>org.hsqldb.jdbc.JDBCDriver</value>
+  </property>
+  <property>
+    <name>grill.driver.jdbc.db.uri</name>
+    <value>jdbc:hsqldb:mem:jdbcTestDB</value>
+  </property>
+  <property>
+    <name>grill.driver.jdbc.db.user</name>
+    <value>SA</value>
+  </property>
+</configuration>
