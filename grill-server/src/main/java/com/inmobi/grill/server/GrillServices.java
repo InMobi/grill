@@ -88,6 +88,9 @@ public class GrillServices extends CompositeService {
   public synchronized void init(HiveConf hiveConf) {
     if (getServiceState() == STATE.NOTINITED) {
       conf = hiveConf;
+      conf.addResource("grillserver-default.xml");
+      conf.addResource("grill-site.xml");
+
       conf.setVar(HiveConf.ConfVars.HIVE_SESSION_IMPL_CLASSNAME, GrillSessionImpl.class.getCanonicalName());
       serviceMode = conf.getEnum(GrillConfConstants.GRILL_SERVER_MODE,
           SERVICE_MODE.valueOf(GrillConfConstants.DEFAULT_GRILL_SERVER_MODE));

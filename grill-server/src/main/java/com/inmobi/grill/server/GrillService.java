@@ -23,6 +23,7 @@ package com.inmobi.grill.server;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.session.GrillSessionImpl;
 
 import org.apache.commons.logging.Log;
@@ -124,7 +125,6 @@ public abstract class GrillService extends CompositeService implements Externali
     HandleIdentifier handleIdentifier = new HandleIdentifier(sessionHandle.getPublicId(), sessionHandle.getSecretId());
     SessionHandle hiveSessionHandle = new SessionHandle(new TSessionHandle(handleIdentifier.toTHandleIdentifier()));
     try {
-      doPasswdAuth(userName, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
       SessionHandle restoredHandle =
         cliService.restoreSession(hiveSessionHandle, userName, password, new HashMap<String, String>());
       GrillSessionHandle restoredSession = new GrillSessionHandle(
@@ -133,13 +133,12 @@ public abstract class GrillService extends CompositeService implements Externali
       sessionMap.put(restoredSession.getPublicId().toString(), restoredSession);
     } catch (HiveSQLException e) {
       throw new GrillException("Error restoring session " + sessionHandle, e);
-    } catch (HttpAuthenticationException e) {
-      throw new GrillException("Couldn't authenticate user", e);
     }
   }
 
   private void doPasswdAuth(String userName, String password, String authType)
     throws HttpAuthenticationException {
+
     // No-op when authType is NOSASL
     if (!authType.equalsIgnoreCase(HiveAuthFactory.AuthTypes.NOSASL.toString())) {
       try {
