@@ -740,7 +740,7 @@ public class CubeMetastoreServiceImpl extends GrillService implements CubeMetast
       acquire(sessionid);
       CubeDimensionTable dim = checkDimensionStorage(sessionid, dimTblName, storageName);
       getClient(sessionid).addPartition(
-          JAXBUtils.storagePartSpecFromXPartition(partition),
+            JAXBUtils.storagePartSpecFromXPartition(partition),
           storageName);
       LOG.info("Added partition for dimension: " + dimTblName + " storage: " + storageName);
     } catch (HiveException exc) {

@@ -124,6 +124,7 @@ public abstract class GrillService extends CompositeService implements Externali
     HandleIdentifier handleIdentifier = new HandleIdentifier(sessionHandle.getPublicId(), sessionHandle.getSecretId());
     SessionHandle hiveSessionHandle = new SessionHandle(new TSessionHandle(handleIdentifier.toTHandleIdentifier()));
     try {
+      doPasswdAuth(userName, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
       SessionHandle restoredHandle =
         cliService.restoreSession(hiveSessionHandle, userName, password, new HashMap<String, String>());
       GrillSessionHandle restoredSession = new GrillSessionHandle(
@@ -132,6 +133,8 @@ public abstract class GrillService extends CompositeService implements Externali
       sessionMap.put(restoredSession.getPublicId().toString(), restoredSession);
     } catch (HiveSQLException e) {
       throw new GrillException("Error restoring session " + sessionHandle, e);
+    } catch (HttpAuthenticationException e) {
+      throw new GrillException("Couldn't authenticate user", e);
     }
   }
 
