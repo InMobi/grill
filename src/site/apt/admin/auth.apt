@@ -18,3 +18,8 @@
 ~~ #L%
 ~~~
 Authentication and Authorization guide
+
+Some configurations need to be added to hive-site.xml. The following links are helpful:
+https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2
+http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.3.0/CDH4-Security-Guide/cdh4sg_topic_9_1.html
+
