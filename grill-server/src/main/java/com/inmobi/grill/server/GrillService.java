@@ -30,26 +30,36 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf.ConfVars;
 import org.apache.hive.service.CompositeService;
+import org.apache.hive.service.auth.AuthenticationProviderFactory;
 import org.apache.hive.service.auth.HiveAuthFactory;
+import org.apache.hive.service.auth.HttpAuthenticationException;
+import org.apache.hive.service.auth.PasswdAuthenticationProvider;
 import org.apache.hive.service.cli.CLIService;
 import org.apache.hive.service.cli.HandleIdentifier;
 import org.apache.hive.service.cli.HiveSQLException;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.session.SessionManager;
 import org.apache.hive.service.cli.thrift.TSessionHandle;
+import org.apache.hive.service.cli.thrift.ThriftHttpCLIService;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.InitialDirContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotFoundException;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class GrillService extends CompositeService implements Externalizable {
   public static final Log LOG = LogFactory.getLog(GrillService.class);
   private final CLIService cliService;
+
   protected boolean stopped = false;
 
   //Static session map which is used by query submission thread to get the
@@ -71,8 +81,10 @@ public abstract class GrillService extends CompositeService implements Externali
 
   public GrillSessionHandle openSession(String username, String password, Map<String, String> configuration)
       throws GrillException {
-    SessionHandle sessionHandle = null;
+    SessionHandle sessionHandle;
+
     try {
+      doPasswdAuth(username, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
       if (
           cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION)
           .equals(HiveAuthFactory.AuthTypes.KERBEROS.toString())
@@ -120,6 +132,21 @@ public abstract class GrillService extends CompositeService implements Externali
       sessionMap.put(restoredSession.getPublicId().toString(), restoredSession);
     } catch (HiveSQLException e) {
       throw new GrillException("Error restoring session " + sessionHandle, e);
+    }
+  }
+
+  private void doPasswdAuth(String userName, String password, String authType)
+    throws HttpAuthenticationException {
+    // No-op when authType is NOSASL
+    if (!authType.equalsIgnoreCase(HiveAuthFactory.AuthTypes.NOSASL.toString())) {
+      try {
+        AuthenticationProviderFactory.AuthMethods authMethod = AuthenticationProviderFactory.AuthMethods.getValidAuthMethod(authType);
+        PasswdAuthenticationProvider provider =
+          AuthenticationProviderFactory.getAuthenticationProvider(authMethod);
+        provider.Authenticate(userName, password);
+      } catch (Exception e) {
+        throw new HttpAuthenticationException(e);
+      }
     }
   }
 
