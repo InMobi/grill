@@ -96,9 +96,14 @@ public class SessionUIResource {
       } else {
         conf = new HashMap<String, String>();
       }
-      GrillSessionHandle handle = sessionService.openSession(username, password, conf);
-      openSessions.put(handle.getPublicId(), handle);
-      return handle;
+      if(ldapAuth(username,password)){
+        GrillSessionHandle handle = sessionService.openSession(username, password, conf);
+        openSessions.put(handle.getPublicId(), handle);
+        return handle;
+      } else{
+        return null;
+      }
+
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
@@ -125,5 +130,36 @@ public class SessionUIResource {
     }
     return new APIResult(Status.SUCCEEDED,
         "Close session with id" + sessionHandle + "succeeded");
+  }
+
+  private boolean ldapAuth(String username, String passwd) {
+    Hashtable<String, String> env = new Hashtable<String, String>();
+    username = username.replace("@inmobi.com", "");
+    username = username.replace("@mkhoj.com", "");
+    username = username + "@mkhoj.com";
+    env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+    env.put(Context.PROVIDER_URL, "ldap://MK-AD-1.MKHOJ.COM:636/");
+    env.put(Context.SECURITY_AUTHENTICATION, "simple");
+    env.put(Context.SECURITY_PROTOCOL, "ssl");
+    env.put(Context.SECURITY_PRINCIPAL, username);
+    env.put(Context.SECURITY_CREDENTIALS, passwd);
+    boolean isCorrect = false;
+    try {
+      new InitialDirContext(env);
+      isCorrect = true;
+    } catch (NamingException e) {
+      e.printStackTrace();
+    }
+    if (!isCorrect) {
+      username = username.replace("@mkhoj.com", "");
+      username = username + "@inmobi.com";
+      try {
+        new InitialDirContext(env);
+        isCorrect = true;
+      } catch (NamingException e) {
+        e.printStackTrace();
+      }
+    }
+    return isCorrect;
   }
 }
