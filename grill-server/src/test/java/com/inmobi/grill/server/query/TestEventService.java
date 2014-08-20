@@ -103,7 +103,7 @@ public class TestEventService {
 
   @Test
   public void testAddListener() {
-    int listenersBefore = ((EventServiceImpl) service).getEventListeners().keySet().size();
+    int listenersBefore = service.getEventListeners().keySet().size();
     genericEventListener = new GenericEventListener();
     service.addListener(genericEventListener);
     endedListener = new MockEndedListener();
@@ -113,7 +113,7 @@ public class TestEventService {
     queuePositionChangeListener = new MockQueuePositionChange();
     service.addListener(queuePositionChangeListener);
 
-    assertEquals(((EventServiceImpl) service).getEventListeners().keySet().size() - listenersBefore, 4);
+    assertTrue(service.getEventListeners().keySet().size() >= 4);
     assertEquals(service.getListeners(QueryFailed.class).size(), 1);
     assertEquals(service.getListeners(QueryEnded.class).size(), 1);
     assertEquals(service.getListeners(QueuePositionChange.class).size(), 1);
