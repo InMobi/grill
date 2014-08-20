@@ -83,7 +83,7 @@ public abstract class GrillService extends CompositeService implements Externali
   public GrillSessionHandle openSession(String username, String password, Map<String, String> configuration)
       throws GrillException {
     SessionHandle sessionHandle;
-
+    LOG.info("authType1="+cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
     try {
       doPasswdAuth(username, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
       if (
@@ -144,7 +144,7 @@ public abstract class GrillService extends CompositeService implements Externali
       try {
         AuthenticationProviderFactory.AuthMethods authMethod = AuthenticationProviderFactory.AuthMethods.getValidAuthMethod(authType);
         PasswdAuthenticationProvider provider =
-          AuthenticationProviderFactory.getAuthenticationProvider(authMethod);
+          AuthenticationProviderFactory.getAuthenticationProvider(authMethod, cliService.getHiveConf());
         provider.Authenticate(userName, password);
       } catch (Exception e) {
         throw new HttpAuthenticationException(e);
