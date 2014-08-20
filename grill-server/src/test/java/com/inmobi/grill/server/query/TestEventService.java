@@ -115,7 +115,7 @@ public class TestEventService {
 
     assertTrue(service.getEventListeners().keySet().size() >= 4);
     assertEquals(service.getListeners(QueryFailed.class).size(), 1);
-    assertEquals(service.getListeners(QueryEnded.class).size(), 1);
+    assertEquals(service.getListeners(QueryEnded.class).size(), 2);
     assertEquals(service.getListeners(QueuePositionChange.class).size(), 1);
   }
 
