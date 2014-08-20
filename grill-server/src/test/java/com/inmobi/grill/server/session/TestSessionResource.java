@@ -254,7 +254,7 @@ public class TestSessionResource extends GrillJerseyTest {
     Assert.assertNotNull(handle);
 
     // verify aux jars are loaded
-    HiveSessionService service = (HiveSessionService)GrillServices.get().getService(HiveSessionService.NAME);
+    HiveSessionService service = GrillServices.get().getService(HiveSessionService.NAME);
     ClassLoader loader = service.getSession(handle).getSessionState().getConf().getClassLoader();
     boolean found = false;
     for (URL path : ((URLClassLoader)loader).getURLs()) {
