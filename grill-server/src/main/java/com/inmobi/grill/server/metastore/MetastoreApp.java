@@ -17,20 +17,16 @@ package com.inmobi.grill.server.metastore;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
- */
+m */
 
-
+import com.inmobi.grill.server.GrillApplicationListener;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
-import com.inmobi.grill.server.GrillApplicationListener;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
 
 @ApplicationPath("/")
 public class MetastoreApp extends Application {

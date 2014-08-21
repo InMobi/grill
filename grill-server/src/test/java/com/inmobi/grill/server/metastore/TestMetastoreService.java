@@ -86,7 +86,7 @@ public class TestMetastoreService extends GrillJerseyTest {
     super.setUp();
     BasicConfigurator.configure();
     cubeObjectFactory = new ObjectFactory();
-    metastoreService = (CubeMetastoreServiceImpl)GrillServices.get().getService("metastore");
+    metastoreService = GrillServices.get().getService("metastore");
     grillSessionId = metastoreService.openSession("foo", "bar", new HashMap<String, String>());
 
   }

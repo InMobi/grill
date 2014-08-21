@@ -25,6 +25,7 @@ import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.ui.UIApp;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.servlet.ServletRegistration;
