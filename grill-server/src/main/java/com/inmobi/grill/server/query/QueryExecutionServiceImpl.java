@@ -44,6 +44,8 @@ import javax.ws.rs.core.StreamingOutput;
 
 import com.inmobi.grill.server.GrillService;
 import com.inmobi.grill.server.GrillServices;
+import com.inmobi.grill.server.api.query.*;
+import com.inmobi.grill.server.stats.StatisticsService;
 import com.inmobi.grill.server.api.driver.*;
 import com.inmobi.grill.server.api.events.GrillEventListener;
 import com.inmobi.grill.server.api.events.GrillEventService;
@@ -128,6 +130,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   private Map<QueryHandle, GrillResultSet> resultSets = new HashMap<QueryHandle, GrillResultSet>();
   private GrillEventService eventService;
   private MetricsService metricsService;
+  private StatisticsService statisticsService;
 
   public QueryExecutionServiceImpl(CLIService cliService) throws GrillException {
     super(NAME, cliService);
@@ -140,6 +143,10 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
     }
     // Add result formatter
     getEventService().addListenerForType(new ResultFormatter(this), QueryExecuted.class);
+    getEventService().addListenerForType(
+        new QueryExecutionStatisticsGenerator(this,getEventService()), QueryEnded.class);
+    getEventService().addListenerForType(
+      new QueryEndNotifier(this, getEventService(), getCliService().getHiveConf()), QueryEnded.class);
     LOG.info("Registered query result formatter");
   }
 
@@ -184,6 +191,16 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       }
     }
     return metricsService;
+  }
+
+  private synchronized StatisticsService getStatisticsService() {
+    if (statisticsService == null) {
+      statisticsService = (StatisticsService) GrillServices.get().getService(StatisticsService.STATS_SVC_NAME);
+      if (statisticsService == null) {
+        throw new NullPointerException("Could not get statistics service");
+      }
+    }
+    return statisticsService;
   }
 
   private void incrCounter(String counter) {

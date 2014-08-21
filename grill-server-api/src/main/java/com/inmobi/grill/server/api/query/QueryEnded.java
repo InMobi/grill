@@ -49,4 +49,8 @@ public class QueryEnded extends StatusChange {
       throw new IllegalStateException("Not a valid end state: " + current + " query: " + handle);
     }
   }
+
+  public String getMailSubject(){
+    return "Query " + currentValue.toString();
+  }
 }
