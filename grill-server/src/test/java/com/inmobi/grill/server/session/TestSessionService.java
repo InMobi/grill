@@ -1,5 +1,25 @@
 package com.inmobi.grill.server.session;
 
+/*
+ * #%L
+ * Grill Server
+ * %%
+ * Copyright (C) 2014 Inmobi
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.GrillJerseyTest;
 import com.inmobi.grill.server.GrillServices;
@@ -13,10 +33,6 @@ import org.testng.annotations.Test;
 import javax.ws.rs.core.Application;
 import java.util.HashMap;
 
-/**
- * User: rajat.khandelwal
- * Date: 20/08/14
- */
 @Test(groups="unit-test")
 public class TestSessionService  extends GrillJerseyTest {
   private HiveSessionService sessionService;
@@ -29,6 +45,7 @@ public class TestSessionService  extends GrillJerseyTest {
   public void testWrongAuth() {
     try{
       sessionService.openSession("a","b", new HashMap<String, String>());
+      Assert.fail("open session shouldn't have been succeeded");
     } catch (GrillException e) {
       Assert.assertEquals(e.getCause().getCause().getMessage(), FooBarAuthenticationProvider.MSG);
     }
@@ -45,7 +62,7 @@ public class TestSessionService  extends GrillJerseyTest {
 
   @Override
   protected int getTestPort() {
-    return 8082;
+    return 8084;
   }
 
   @Override
