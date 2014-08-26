@@ -23,11 +23,13 @@ package com.inmobi.grill.server;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.session.GrillSessionImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.conf.HiveConf.ConfVars;
 import org.apache.hive.service.CompositeService;
 import org.apache.hive.service.auth.AuthenticationProviderFactory;
@@ -40,13 +42,20 @@ import org.apache.hive.service.cli.HiveSQLException;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.session.SessionManager;
 import org.apache.hive.service.cli.thrift.TSessionHandle;
+import org.apache.hive.service.cli.thrift.ThriftHttpCLIService;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.InitialDirContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,14 +85,14 @@ public abstract class GrillService extends CompositeService implements Externali
   public GrillSessionHandle openSession(String username, String password, Map<String, String> configuration)
       throws GrillException {
     SessionHandle sessionHandle;
+    doPasswdAuth(username, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
+    String clusterUser = getClusterUser(username, configuration, cliService.getHiveConf());
     try {
-      doPasswdAuth(username, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
       Map<String, String> sessionConf = new HashMap<String, String>();
       sessionConf.putAll(GrillSessionImpl.DEFAULT_HIVE_SESSION_CONF);
       if (configuration != null) {
         sessionConf.putAll(configuration);
       }
-
       if (
           cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION)
           .equals(HiveAuthFactory.AuthTypes.KERBEROS.toString())
@@ -98,10 +107,10 @@ public abstract class GrillService extends CompositeService implements Externali
         } catch (UnsupportedOperationException e) {
           // The delegation token is not applicable in the given deployment mode
         }
-        sessionHandle = cliService.openSessionWithImpersonation(username, password,
+        sessionHandle = cliService.openSessionWithImpersonation(clusterUser, password,
             sessionConf, delegationTokenStr);
       } else {
-        sessionHandle = cliService.openSession(username, password,
+        sessionHandle = cliService.openSession(clusterUser, password,
             sessionConf);
       }
     } catch (Exception e) {
@@ -112,6 +121,17 @@ public abstract class GrillService extends CompositeService implements Externali
         sessionHandle.getHandleIdentifier().getSecretId());
     sessionMap.put(grillSession.getPublicId().toString(), grillSession);
     return grillSession;
+  }
+
+  public String getClusterUser(String username, Map<String, String> queryConf, HiveConf hiveConf) {
+    String clusterUser = username;
+    if(queryConf.containsKey(GrillConfConstants.GRILL_QUERY_CLUSTER_USER)) {
+      clusterUser = queryConf.get(GrillConfConstants.GRILL_QUERY_CLUSTER_USER);
+    } else if(Boolean.parseBoolean(hiveConf.get(GrillConfConstants.GRILL_QUERY_USE_DEFAULT_CLUSTER_USER,
+      "false"))) {
+      clusterUser = hiveConf.get(GrillConfConstants.GRILL_QUERY_CLUSTER_DEFAULT_USER, "grill");
+    }
+    return clusterUser;
   }
 
   /**
@@ -134,9 +154,7 @@ public abstract class GrillService extends CompositeService implements Externali
     }
   }
 
-  private void doPasswdAuth(String userName, String password, String authType)
-    throws HttpAuthenticationException {
-
+  private void doPasswdAuth(String userName, String password, String authType){
     // No-op when authType is NOSASL
     if (!authType.equalsIgnoreCase(HiveAuthFactory.AuthTypes.NOSASL.toString())) {
       try {
@@ -145,7 +163,7 @@ public abstract class GrillService extends CompositeService implements Externali
           AuthenticationProviderFactory.getAuthenticationProvider(authMethod, cliService.getHiveConf());
         provider.Authenticate(userName, password);
       } catch (Exception e) {
-        throw new HttpAuthenticationException(e);
+        throw new NotAuthorizedException(e);
       }
     }
   }
