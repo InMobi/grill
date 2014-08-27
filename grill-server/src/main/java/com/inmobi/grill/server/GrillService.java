@@ -86,7 +86,6 @@ public abstract class GrillService extends CompositeService implements Externali
       throws GrillException {
     SessionHandle sessionHandle;
     doPasswdAuth(username, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
-    String clusterUser = getClusterUser(username, configuration, cliService.getHiveConf());
     try {
       Map<String, String> sessionConf = new HashMap<String, String>();
       sessionConf.putAll(GrillSessionImpl.DEFAULT_HIVE_SESSION_CONF);
