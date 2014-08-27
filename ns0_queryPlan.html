@@ -47,8 +47,8 @@
               <a href="model.html">Data Model</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li>
@@ -60,28 +60,28 @@
             <li class="current">
               <a href="ns0_queryPlan.html">queryPlan</a>
               <ul>
-                <li><a href="ns0_inMemoryQueryResult.html">inMemoryQueryResult</a></li>
-                <li><a href="ns0_grillConf.html">grillConf</a></li>
                 <li><a href="ns0_APIResult.html">APIResult</a></li>
-                <li><a href="ns0_status.html">status</a></li>
-                <li><a href="ns0_persistentQueryResult.html">persistentQueryResult</a></li>
-                <li><a href="ns0_queryResultSetMetadata.html">queryResultSetMetadata</a></li>
-                <li><a href="ns0_resultColumnType.html">resultColumnType</a></li>
-                <li><a href="ns0_querySubmitResult.html">querySubmitResult</a></li>
+                <li><a href="ns0_grillConf.html">grillConf</a></li>
                 <li><a href="ns0_grillPreparedQuery.html">grillPreparedQuery</a></li>
-                <li><a href="ns0_queryPlan.html">queryPlan</a></li>
-                <li><a href="ns0_queryStatus.html">queryStatus</a></li>
                 <li><a href="ns0_grillQuery.html">grillQuery</a></li>
-                <li><a href="ns0_queryHandleWithResultSet.html">queryHandleWithResultSet</a></li>
-                <li><a href="ns0_resultRow.html">resultRow</a></li>
-                <li><a href="ns0_priority.html">priority</a></li>
-                <li><a href="ns0_queryHandle.html">queryHandle</a></li>
-                <li><a href="ns0_stringList.html">stringList</a></li>
-                <li><a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a></li>
-                <li><a href="ns0_queryCost.html">queryCost</a></li>
                 <li><a href="ns0_grillSessionHandle.html">grillSessionHandle</a></li>
+                <li><a href="ns0_inMemoryQueryResult.html">inMemoryQueryResult</a></li>
+                <li><a href="ns0_persistentQueryResult.html">persistentQueryResult</a></li>
+                <li><a href="ns0_priority.html">priority</a></li>
+                <li><a href="ns0_queryCost.html">queryCost</a></li>
+                <li><a href="ns0_queryHandle.html">queryHandle</a></li>
+                <li><a href="ns0_queryHandleWithResultSet.html">queryHandleWithResultSet</a></li>
+                <li><a href="ns0_queryPlan.html">queryPlan</a></li>
+                <li><a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a></li>
                 <li><a href="ns0_queryResult.html">queryResult</a></li>
+                <li><a href="ns0_queryResultSetMetadata.html">queryResultSetMetadata</a></li>
+                <li><a href="ns0_queryStatus.html">queryStatus</a></li>
+                <li><a href="ns0_querySubmitResult.html">querySubmitResult</a></li>
                 <li><a href="ns0_resultColumn.html">resultColumn</a></li>
+                <li><a href="ns0_resultColumnType.html">resultColumnType</a></li>
+                <li><a href="ns0_resultRow.html">resultRow</a></li>
+                <li><a href="ns0_status.html">status</a></li>
+                <li><a href="ns0_stringList.html">stringList</a></li>
               </ul>
             </li>
           </ul>
@@ -115,71 +115,7 @@
         </tr>
         <tr>
           <td>
-            numJoins (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numSelDi (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            gbyWeight (double)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            filterWeight (double)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            tableWeights (<a href="ns0_(anonymous).html">(anonymous)</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numFilters (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numObys (int)
+            numGbys (int)
           </td>
           <td>1/1</td>
           <td>
@@ -195,9 +131,97 @@
         </tr>
         <tr>
           <td>
+            selectWeight (double)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numFilters (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            filterWeight (double)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numObys (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numAggrExprs (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            tableWeights (<a href="ns0_(anonymous).html">(anonymous)</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             hasSubQuery (boolean)
           </td>
           <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numSels (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numHaving (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numJoins (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            gbyWeight (double)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            obyWeight (double)
+          </td>
+          <td>0/1</td>
           <td>
           </td>
         </tr>
@@ -211,6 +235,38 @@
         </tr>
         <tr>
           <td>
+            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            numSelDi (int)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            havingWeight (double)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             joinWeight (double)
           </td>
           <td>0/1</td>
@@ -230,62 +286,6 @@
             scanMode (string)
           </td>
           <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            obyWeight (double)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numSels (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            havingWeight (double)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            selectWeight (double)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numAggrExprs (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numHaving (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            numGbys (int)
-          </td>
-          <td>1/1</td>
           <td>
           </td>
         </tr>
@@ -299,73 +299,9 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>numJoins</td>
+          <td>numGbys</td>
           <td>
-            numJoins (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>numSelDi</td>
-          <td>
-            numSelDi (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>gbyWeight</td>
-          <td>
-            gbyWeight (double)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>queryCost</td>
-          <td>
-            queryCost (<a href="ns0_queryCost.html">queryCost</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>filterWeight</td>
-          <td>
-            filterWeight (double)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>tableWeights</td>
-          <td>
-            tableWeights (<a href="ns0_(anonymous).html">(anonymous)</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>prepareHandle</td>
-          <td>
-            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>numFilters</td>
-          <td>
-            numFilters (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>numObys</td>
-          <td>
-            numObys (int)
+              numGbys (int)
           </td>
           <td>
           </td>
@@ -373,71 +309,7 @@
         <tr>
           <td>planString</td>
           <td>
-            planString (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>hasSubQuery</td>
-          <td>
-            hasSubQuery (boolean)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>tablesQueried</td>
-          <td>
-            array of tablesQueried/tablesQueried (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>joinWeight</td>
-          <td>
-            joinWeight (double)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>execMode</td>
-          <td>
-            execMode (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>scanMode</td>
-          <td>
-            scanMode (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>obyWeight</td>
-          <td>
-            obyWeight (double)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>numSels</td>
-          <td>
-            numSels (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>havingWeight</td>
-          <td>
-            havingWeight (double)
+              planString (string)
           </td>
           <td>
           </td>
@@ -445,7 +317,31 @@
         <tr>
           <td>selectWeight</td>
           <td>
-            selectWeight (double)
+              selectWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>numFilters</td>
+          <td>
+              numFilters (int)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>filterWeight</td>
+          <td>
+              filterWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>numObys</td>
+          <td>
+              numObys (int)
           </td>
           <td>
           </td>
@@ -453,7 +349,31 @@
         <tr>
           <td>numAggrExprs</td>
           <td>
-            numAggrExprs (int)
+              numAggrExprs (int)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>tableWeights</td>
+          <td>
+              tableWeights (<a href="ns0_(anonymous).html">(anonymous)</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>hasSubQuery</td>
+          <td>
+              hasSubQuery (boolean)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>numSels</td>
+          <td>
+              numSels (int)
           </td>
           <td>
           </td>
@@ -461,15 +381,95 @@
         <tr>
           <td>numHaving</td>
           <td>
-            numHaving (int)
+              numHaving (int)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>numGbys</td>
+          <td>numJoins</td>
           <td>
-            numGbys (int)
+              numJoins (int)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>gbyWeight</td>
+          <td>
+              gbyWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>obyWeight</td>
+          <td>
+              obyWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>tablesQueried</td>
+          <td>
+              array of tablesQueried/tablesQueried (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>queryCost</td>
+          <td>
+              queryCost (<a href="ns0_queryCost.html">queryCost</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>prepareHandle</td>
+          <td>
+              prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>numSelDi</td>
+          <td>
+              numSelDi (int)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>havingWeight</td>
+          <td>
+              havingWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>joinWeight</td>
+          <td>
+              joinWeight (double)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>execMode</td>
+          <td>
+              execMode (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>scanMode</td>
+          <td>
+              scanMode (string)
           </td>
           <td>
           </td>

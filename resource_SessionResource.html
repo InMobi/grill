@@ -47,18 +47,18 @@
               <a href="rest.html">REST</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li class="current">
               <a href="resource_SessionResource.html">SessionResource</a>
               <ul>
-                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
                 <li><a href="resource_MetastoreResource.html">MetastoreResource</a></li>
-                <li><a href="resource_SessionResource.html">SessionResource</a></li>
-                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
                 <li><a href="resource_QueryServiceResource.html">QueryServiceResource</a></li>
+                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
+                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
+                <li><a href="resource_SessionResource.html">SessionResource</a></li>
               </ul>
             </li>
           </ul>
@@ -68,14 +68,25 @@
     <div id="main" class="column first last span-20">
       <h1>SessionResource</h1>
 
-      <p>The following resources are part of this group:</p>
+      <p>Session resource api
+
+This provides api for all things in session.</p>
+      <p>The following resources are applicable:</p>
       <ul>
-        <li><a href="#path__session.html">/session</a></li>
-        <li><a href="#path__session_params.html">/session/params</a></li>
-        <li><a href="#path__session_resources_add.html">/session/resources/add</a></li>
-        <li><a href="#path__session_resources_delete.html">/session/resources/delete</a></li>
+        <li>
+        <a href="#path__session.html">/session</a>
+        </li>
+        <li>
+        <a href="#path__session_params.html">/session/params</a>
+        </li>
+        <li>
+        <a href="#path__session_resources_add.html">/session/resources/add</a>
+        </li>
+        <li>
+        <a href="#path__session_resources_delete.html">/session/resources/delete</a>
+        </li>
       </ul>
-      <a name="path__session.html"></a>
+        <a name="path__session.html"></a>
       <h1>/session</h1>
       <p class="note">Mount Point: <a href="../session">/session</a></p>
       <p>
@@ -96,6 +107,10 @@
         <tr>
           <td align="right">element:</td>
           <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>text/plain</td>
         </tr>
       </table>
       <p>Simple text saying it up</p>
@@ -143,6 +158,10 @@
           <td align="right">element:</td>
           <td><a href="el_ns0_grillSessionHandle.html">grillSessionHandle</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>A Session handle unique to this session</p>
       <a name="DELETE"></a>
@@ -173,9 +192,13 @@
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult object indicating if the operation was successful (check result.getStatus())</p>
-      <a name="path__session_params.html"></a>
+        <a name="path__session_params.html"></a>
       <h1>/session/params</h1>
       <p class="note">Mount Point: <a href="../session/params">/session/params</a></p>
       <a name="GET"></a>
@@ -202,7 +225,8 @@
         <tr>
           <td>verbose</td>
           <td>
-            If true, all the parameters will be returned. If false, configuration parameters will be returned
+            If true, all the parameters will be returned.
+If false, configuration parameters will be returned
           </td>
           <td>query</td>
           <td>false</td>
@@ -210,7 +234,8 @@
         <tr>
           <td>key</td>
           <td>
-            if this is empty, output will contain all parameters and their values, if it is non empty parameters will be filtered by key
+            if this is empty, output will contain all parameters and their values,
+if it is non empty parameters will be filtered by key
           </td>
           <td>query</td>
           <td></td>
@@ -221,6 +246,10 @@
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
       <p>List of Strings, one entry per key-value pair</p>
@@ -273,9 +302,13 @@ If no prefix is attached, the parameter is set as configuration.
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult object indicating if set operation was successful</p>
-      <a name="path__session_resources_add.html"></a>
+        <a name="path__session_resources_add.html"></a>
       <h1>/session/resources/add</h1>
       <p class="note">Mount Point: <a href="../session/resources/add">/session/resources/add</a></p>
       <a name="PUT"></a>
@@ -327,11 +360,15 @@ was successful for all services running in this Grill server.
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#PARTIAL, if add succeeded only for some services.
 APIResult with state Status#FAILED, if add has failed</p>
-      <a name="path__session_resources_delete.html"></a>
+        <a name="path__session_resources_delete.html"></a>
       <h1>/session/resources/delete</h1>
       <p class="note">Mount Point: <a href="../session/resources/delete">/session/resources/delete</a></p>
       <a name="PUT"></a>
@@ -381,6 +418,10 @@ Similar to addResource, this call is successful only if resource was deleted fro
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if delete was successful.
 APIResult with state Status#PARTIAL, if delete succeeded only for some services.
@@ -406,6 +447,15 @@ APIResult with state Status#FAILED, if delete has failed</p>
   <script>
     $(function() {
       $('#breadcrumbs').xBreadcrumbs();
+    });
+  </script>
+
+
+  <!-- prettify code blocks. see http://code.google.com/p/google-code-prettify/ -->
+  <script src="js/libs/prettify/prettify.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
     });
   </script>
 

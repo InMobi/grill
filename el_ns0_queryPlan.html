@@ -47,8 +47,8 @@
               <a href="model.html">Data Model</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li>
@@ -60,26 +60,26 @@
             <li class="current">
               <a href="el_ns0_queryPlan.html">queryPlan element</a>
               <ul>
-                <li><a href="el_ns0_resultRow.html">resultRow element</a></li>
-                <li><a href="el_ns0_result.html">result element</a></li>
                 <li><a href="el_ns0_conf.html">conf element</a></li>
+                <li><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery element</a></li>
+                <li><a href="el_ns0_grillQuery.html">grillQuery element</a></li>
+                <li><a href="el_ns0_grillSessionHandle.html">grillSessionHandle element</a></li>
                 <li><a href="el_ns0_inMemoryQueryResult.html">inMemoryQueryResult element</a></li>
-                <li><a href="el_ns0_queryPrepareHandle.html">queryPrepareHandle element</a></li>
-                <li><a href="el_ns0_queryHandleWithResultSet.html">queryHandleWithResultSet element</a></li>
-                <li><a href="el_ns0_stringList.html">stringList element</a></li>
-                <li><a href="el_ns0_querySubmitResult.html">querySubmitResult element</a></li>
-                <li><a href="el_ns0_queryPlan.html">queryPlan element</a></li>
-                <li><a href="el_ns0_queryStatus.html">queryStatus element</a></li>
-                <li><a href="el_ns0_resultColumnType.html">resultColumnType element</a></li>
-                <li><a href="el_ns0_queryResultSetMetadata.html">queryResultSetMetadata element</a></li>
                 <li><a href="el_ns0_persistentQueryResult.html">persistentQueryResult element</a></li>
                 <li><a href="el_ns0_queryCost.html">queryCost element</a></li>
-                <li><a href="el_ns0_resultColumn.html">resultColumn element</a></li>
-                <li><a href="el_ns0_grillQuery.html">grillQuery element</a></li>
                 <li><a href="el_ns0_queryHandle.html">queryHandle element</a></li>
-                <li><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery element</a></li>
-                <li><a href="el_ns0_grillSessionHandle.html">grillSessionHandle element</a></li>
+                <li><a href="el_ns0_queryHandleWithResultSet.html">queryHandleWithResultSet element</a></li>
+                <li><a href="el_ns0_queryPlan.html">queryPlan element</a></li>
+                <li><a href="el_ns0_queryPrepareHandle.html">queryPrepareHandle element</a></li>
                 <li><a href="el_ns0_queryResult.html">queryResult element</a></li>
+                <li><a href="el_ns0_queryResultSetMetadata.html">queryResultSetMetadata element</a></li>
+                <li><a href="el_ns0_queryStatus.html">queryStatus element</a></li>
+                <li><a href="el_ns0_querySubmitResult.html">querySubmitResult element</a></li>
+                <li><a href="el_ns0_result.html">result element</a></li>
+                <li><a href="el_ns0_resultColumn.html">resultColumn element</a></li>
+                <li><a href="el_ns0_resultColumnType.html">resultColumnType element</a></li>
+                <li><a href="el_ns0_resultRow.html">resultRow element</a></li>
+                <li><a href="el_ns0_stringList.html">stringList element</a></li>
               </ul>
             </li>
           </ul>
@@ -105,14 +105,13 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;queryPlan&gt;
-  &lt;numJoins&gt;...&lt;/numJoins&gt;
-  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
-  &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
-  &lt;queryCost&gt;
-    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
-    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
-  &lt;/queryCost&gt;
+  &lt;numGbys&gt;...&lt;/numGbys&gt;
+  &lt;planString&gt;...&lt;/planString&gt;
+  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
+  &lt;numFilters&gt;...&lt;/numFilters&gt;
   &lt;filterWeight&gt;...&lt;/filterWeight&gt;
+  &lt;numObys&gt;...&lt;/numObys&gt;
+  &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
   &lt;tableWeights&gt;
     &lt;entry&gt;
       &lt;key&gt;...&lt;/key&gt;
@@ -128,61 +127,62 @@
     &lt;/entry&gt;
     &lt;!--...more entries...--&gt;
   &lt;/tableWeights&gt;
-  &lt;prepareHandle&gt;
-    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
-  &lt;/prepareHandle&gt;
-  &lt;numFilters&gt;...&lt;/numFilters&gt;
-  &lt;numObys&gt;...&lt;/numObys&gt;
-  &lt;planString&gt;...&lt;/planString&gt;
   &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
+  &lt;numSels&gt;...&lt;/numSels&gt;
+  &lt;numHaving&gt;...&lt;/numHaving&gt;
+  &lt;numJoins&gt;...&lt;/numJoins&gt;
+  &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
+  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
   &lt;tablesQueried&gt;
     &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
     &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
     &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
   &lt;/tablesQueried&gt;
+  &lt;queryCost&gt;
+    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
+    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
+  &lt;/queryCost&gt;
+  &lt;prepareHandle&gt;
+    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
+  &lt;/prepareHandle&gt;
+  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
+  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
   &lt;joinWeight&gt;...&lt;/joinWeight&gt;
   &lt;execMode&gt;...&lt;/execMode&gt;
   &lt;scanMode&gt;...&lt;/scanMode&gt;
-  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
-  &lt;numSels&gt;...&lt;/numSels&gt;
-  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
-  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
-  &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
-  &lt;numHaving&gt;...&lt;/numHaving&gt;
-  &lt;numGbys&gt;...&lt;/numGbys&gt;
 &lt;/queryPlan&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;numJoins&quot; : ...,
-  &quot;numSelDi&quot; : ...,
-  &quot;gbyWeight&quot; : ...,
-  &quot;queryCost&quot; : {
-    &quot;estimatedResourceUsage&quot; : ...,
-    &quot;estimatedExecTimeMillis&quot; : ...
-  },
+  &quot;numGbys&quot; : ...,
+  &quot;planString&quot; : &quot;...&quot;,
+  &quot;selectWeight&quot; : ...,
+  &quot;numFilters&quot; : ...,
   &quot;filterWeight&quot; : ...,
-  &quot;tableWeights&quot; : [ {
-    &quot;...&quot; : ...
-  }, {
-  } ],
+  &quot;numObys&quot; : ...,
+  &quot;numAggrExprs&quot; : ...,
+  &quot;tableWeights&quot; : {
+    &quot;...&quot; : ...,
+    &quot;---&quot; : ...
+  },
+  &quot;hasSubQuery&quot; : false,
+  &quot;numSels&quot; : ...,
+  &quot;numHaving&quot; : ...,
+  &quot;numJoins&quot; : ...,
+  &quot;gbyWeight&quot; : ...,
+  &quot;obyWeight&quot; : ...,
+  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
+  &quot;queryCost&quot; : {
+    &quot;estimatedExecTimeMillis&quot; : ...,
+    &quot;estimatedResourceUsage&quot; : ...
+  },
   &quot;prepareHandle&quot; : {
     &quot;prepareHandleId&quot; : &quot;...&quot;
   },
-  &quot;numFilters&quot; : ...,
-  &quot;numObys&quot; : ...,
-  &quot;planString&quot; : &quot;...&quot;,
-  &quot;hasSubQuery&quot; : false,
-  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
+  &quot;numSelDi&quot; : ...,
+  &quot;havingWeight&quot; : ...,
   &quot;joinWeight&quot; : ...,
   &quot;execMode&quot; : &quot;...&quot;,
-  &quot;scanMode&quot; : &quot;...&quot;,
-  &quot;obyWeight&quot; : ...,
-  &quot;numSels&quot; : ...,
-  &quot;havingWeight&quot; : ...,
-  &quot;selectWeight&quot; : ...,
-  &quot;numAggrExprs&quot; : ...,
-  &quot;numHaving&quot; : ...,
-  &quot;numGbys&quot; : ...
+  &quot;scanMode&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />

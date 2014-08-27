@@ -47,18 +47,18 @@
               <a href="rest.html">REST</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li class="current">
               <a href="resource_QueryServiceResource.html">QueryServiceResource</a>
               <ul>
-                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
                 <li><a href="resource_MetastoreResource.html">MetastoreResource</a></li>
-                <li><a href="resource_SessionResource.html">SessionResource</a></li>
-                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
                 <li><a href="resource_QueryServiceResource.html">QueryServiceResource</a></li>
+                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
+                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
+                <li><a href="resource_SessionResource.html">SessionResource</a></li>
               </ul>
             </li>
           </ul>
@@ -68,18 +68,37 @@
     <div id="main" class="column first last span-20">
       <h1>QueryServiceResource</h1>
 
-      <p>The following resources are part of this group:</p>
+      <p>queryapi resource
+
+This provides api for all things query.</p>
+      <p>The following resources are applicable:</p>
       <ul>
-        <li><a href="#path__queryapi.html">/queryapi</a></li>
-        <li><a href="#path__queryapi_preparedqueries.html">/queryapi/preparedqueries</a></li>
-        <li><a href="#path__queryapi_queries.html">/queryapi/queries</a></li>
-        <li><a href="#path__queryapi_preparedqueries_-prepareHandle-.html">/queryapi/preparedqueries/{prepareHandle}</a></li>
-        <li><a href="#path__queryapi_queries_-queryHandle-.html">/queryapi/queries/{queryHandle}</a></li>
-        <li><a href="#path__queryapi_queries_-queryHandle-_httpresultset.html">/queryapi/queries/{queryHandle}/httpresultset</a></li>
-        <li><a href="#path__queryapi_queries_-queryHandle-_resultset.html">/queryapi/queries/{queryHandle}/resultset</a></li>
-        <li><a href="#path__queryapi_queries_-queryHandle-_resultsetmetadata.html">/queryapi/queries/{queryHandle}/resultsetmetadata</a></li>
+        <li>
+        <a href="#path__queryapi.html">/queryapi</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_preparedqueries.html">/queryapi/preparedqueries</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_preparedqueries_-prepareHandle-.html">/queryapi/preparedqueries/{prepareHandle}</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_queries.html">/queryapi/queries</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_queries_-queryHandle-.html">/queryapi/queries/{queryHandle}</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_queries_-queryHandle-_httpresultset.html">/queryapi/queries/{queryHandle}/httpresultset</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_queries_-queryHandle-_resultset.html">/queryapi/queries/{queryHandle}/resultset</a>
+        </li>
+        <li>
+        <a href="#path__queryapi_queries_-queryHandle-_resultsetmetadata.html">/queryapi/queries/{queryHandle}/resultsetmetadata</a>
+        </li>
       </ul>
-      <a name="path__queryapi.html"></a>
+        <a name="path__queryapi.html"></a>
       <h1>/queryapi</h1>
       <p class="note">Mount Point: <a href="../queryapi">/queryapi</a></p>
       <a name="GET"></a>
@@ -93,9 +112,13 @@
           <td align="right">element:</td>
           <td>(custom)</td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>text/plain</td>
+        </tr>
       </table>
       <p>Simple text saying it up</p>
-      <a name="path__queryapi_preparedqueries.html"></a>
+        <a name="path__queryapi_preparedqueries.html"></a>
       <h1>/queryapi/preparedqueries</h1>
       <p class="note">Mount Point: <a href="../queryapi/preparedqueries">/queryapi/preparedqueries</a></p>
       <p>
@@ -130,7 +153,8 @@
         <tr>
           <td>user</td>
           <td>
-            If any user is passed, all the queries prepared by the user will be returned, otherwise all the queries will be returned
+            If any user is passed, all the queries prepared by the user will be returned,
+otherwise all the queries will be returned
           </td>
           <td>query</td>
           <td></td>
@@ -141,6 +165,10 @@
         <tr>
           <td align="right">element:</td>
           <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
       <p>List of QueryPrepareHandle objects</p>
@@ -160,7 +188,8 @@
         <tr>
           <td>sessionid</td>
           <td>
-            The session in which user is preparing the query. Any configuration set in the session will be picked up.
+            The session in which user is preparing the query. Any
+configuration set in the session will be picked up.
           </td>
           <td>formdata</td>
           <td></td>
@@ -176,7 +205,8 @@
         <tr>
           <td>operation</td>
           <td>
-            The operation on the query. Supported operations are SubmitOp#EXPLAIN_AND_PREPARE or SubmitOp#PREPARE
+            The operation on the query. Supported operations are
+SubmitOp#EXPLAIN_AND_PREPARE or SubmitOp#PREPARE
           </td>
           <td>formdata</td>
           <td></td>
@@ -195,6 +225,10 @@
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
       <p>QueryPrepareHandle incase of SubmitOp#PREPARE operation.
@@ -224,7 +258,8 @@ query plan will contain the prepare handle as well.</p>
         <tr>
           <td>user</td>
           <td>
-            If any user is passed, all the queries prepared by the user will be destroyed, otherwise all the queries will be destroyed
+            If any user is passed, all the queries prepared by the user will be destroyed,
+otherwise all the queries will be destroyed
           </td>
           <td>query</td>
           <td></td>
@@ -235,181 +270,16 @@ query plan will contain the prepare handle as well.</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful destroy.
 APIResult with state Status#FAILED in case of destroy failure.
 APIResult with state Status#PARTIAL in case of partial destroy.</p>
-      <a name="path__queryapi_queries.html"></a>
-      <h1>/queryapi/queries</h1>
-      <p class="note">Mount Point: <a href="../queryapi/queries">/queryapi/queries</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#POST">POST</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-      </ul>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all the queries in the query server; can be filtered with state and user.
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>state</td>
-          <td>
-            If any state is passed, all the queries in that state will be returned, otherwise all queries will be returned. Possible states are QueryStatus.Status#values()
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>user</td>
-          <td>
-            If any user is passed, all the queries submitted by the user will be returned, otherwise all the queries will be returned
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>List of QueryHandle objects</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Submit the query for explain or execute or execute with a timeout
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The session in which user is submitting the query. Any configuration set in the session will be picked up.
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>query</td>
-          <td>
-            The query to run
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>operation</td>
-          <td>
-            The operation on the query. Supported operations are SubmitOp#EXPLAIN, SubmitOp#EXECUTE and SubmitOp#EXECUTE_WITH_TIMEOUT
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>conf</td>
-          <td>
-            The configuration for the query
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>timeoutmillis</td>
-          <td>
-            The timeout for the query, honored only in case of SubmitOp#EXECUTE_WITH_TIMEOUT operation
-          </td>
-          <td>formdata</td>
-          <td>30000</td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
-        </tr>
-      </table>
-      <p>QueryHandle in case of SubmitOp#EXECUTE operation.
-QueryPlan in case of SubmitOp#EXPLAIN operation.
-QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Cancel all the queries in query server; can be filtered with state and user
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The session in which cancel is issued
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>state</td>
-          <td>
-            If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be cancelled. Possible states are QueryStatus.Status#values() The queries in QueryStatus.Status#FAILED,QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>user</td>
-          <td>
-            If any user is passed, all the queries submitted by the user will be cancelled, otherwise all the queries will be cancelled
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED in case of successful cancellation.
-APIResult with state Status#FAILED in case of cancellation failure.
-APIResult with state Status#PARTIAL in case of partial cancellation.</p>
-      <a name="path__queryapi_preparedqueries_-prepareHandle-.html"></a>
+        <a name="path__queryapi_preparedqueries_-prepareHandle-.html"></a>
       <h1>/queryapi/preparedqueries/{prepareHandle}</h1>
       <p class="note">Mount Point: <a href="../queryapi/preparedqueries/{prepareHandle}">/queryapi/preparedqueries/{prepareHandle}</a></p>
       <p>
@@ -457,6 +327,10 @@ APIResult with state Status#PARTIAL in case of partial cancellation.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>GrillPreparedQuery</p>
       <a name="DELETE"></a>
@@ -494,6 +368,10 @@ APIResult with state Status#PARTIAL in case of partial cancellation.</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful destroy.
@@ -543,6 +421,10 @@ of the prepared queries. The query wont be re-prepared with new configuration.
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful update.
 APIResult with state Status#FAILED in case of udpate failure.</p>
@@ -562,7 +444,8 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
         <tr>
           <td>sessionid</td>
           <td>
-            The session in which user is submitting the query. Any configuration set in the session will be picked up.
+            The session in which user is submitting the query. Any
+configuration set in the session will be picked up.
           </td>
           <td>formdata</td>
           <td></td>
@@ -578,7 +461,8 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
         <tr>
           <td>operation</td>
           <td>
-            The operation on the query. Supported operations are SubmitOp#EXECUTE and SubmitOp#EXECUTE_WITH_TIMEOUT
+            The operation on the query. Supported operations are
+SubmitOp#EXECUTE and SubmitOp#EXECUTE_WITH_TIMEOUT
           </td>
           <td>formdata</td>
           <td>EXECUTE</td>
@@ -594,7 +478,8 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
         <tr>
           <td>timeoutmillis</td>
           <td>
-            The timeout for the query, honored only in case of SubmitOp#EXECUTE_WITH_TIMEOUT operation
+            The timeout for the query, honored only in case of
+SubmitOp#EXECUTE_WITH_TIMEOUT operation
           </td>
           <td>formdata</td>
           <td>30000</td>
@@ -606,10 +491,204 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>QueryHandle in case of SubmitOp#EXECUTE operation.
 QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
-      <a name="path__queryapi_queries_-queryHandle-.html"></a>
+        <a name="path__queryapi_queries.html"></a>
+      <h1>/queryapi/queries</h1>
+      <p class="note">Mount Point: <a href="../queryapi/queries">/queryapi/queries</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#POST">POST</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all the queries in the query server; can be filtered with state and user.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>state</td>
+          <td>
+            If any state is passed, all the queries in that state will be returned,
+otherwise all queries will be returned. Possible states are QueryStatus.Status#values()
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            If any user is passed, all the queries submitted by the user will be returned,
+otherwise all the queries will be returned
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
+      </table>
+      <p>List of QueryHandle objects</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Submit the query for explain or execute or execute with a timeout
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which user is submitting the query. Any
+configuration set in the session will be picked up.
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>query</td>
+          <td>
+            The query to run
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>operation</td>
+          <td>
+            The operation on the query. Supported operations are
+SubmitOp#EXPLAIN, SubmitOp#EXECUTE and SubmitOp#EXECUTE_WITH_TIMEOUT
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>conf</td>
+          <td>
+            The configuration for the query
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>timeoutmillis</td>
+          <td>
+            The timeout for the query, honored only in case of
+SubmitOp#EXECUTE_WITH_TIMEOUT operation
+          </td>
+          <td>formdata</td>
+          <td>30000</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_querySubmitResult.html">querySubmitResult</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
+      </table>
+      <p>QueryHandle in case of SubmitOp#EXECUTE operation.
+QueryPlan in case of SubmitOp#EXPLAIN operation.
+QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Cancel all the queries in query server; can be filtered with state and user
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The session in which cancel is issued
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>state</td>
+          <td>
+            If any state is passed, all the queries in that state will be cancelled,
+otherwise all queries will be cancelled. Possible states are QueryStatus.Status#values()
+The queries in QueryStatus.Status#FAILED,QueryStatus.Status#FAILED,
+QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            If any user is passed, all the queries submitted by the user will be cancelled,
+otherwise all the queries will be cancelled
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful cancellation.
+APIResult with state Status#FAILED in case of cancellation failure.
+APIResult with state Status#PARTIAL in case of partial cancellation.</p>
+        <a name="path__queryapi_queries_-queryHandle-.html"></a>
       <h1>/queryapi/queries/{queryHandle}</h1>
       <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}">/queryapi/queries/{queryHandle}</a></p>
       <p>
@@ -656,6 +735,10 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_grillQuery.html">grillQuery</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>GrillQuery</p>
       <a name="DELETE"></a>
@@ -693,6 +776,10 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful cancellation.
@@ -741,10 +828,14 @@ APIResult with state Status#FAILED in case of cancellation failure.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful update.
 APIResult with state Status#FAILED in case of udpate failure.</p>
-      <a name="path__queryapi_queries_-queryHandle-_httpresultset.html"></a>
+        <a name="path__queryapi_queries_-queryHandle-_httpresultset.html"></a>
       <h1>/queryapi/queries/{queryHandle}/httpresultset</h1>
       <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/httpresultset">/queryapi/queries/{queryHandle}/httpresultset</a></p>
       <a name="GET"></a>
@@ -783,9 +874,13 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
           <td align="right">element:</td>
           <td>(custom)</td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/octet-stream</td>
+        </tr>
       </table>
       <p>Response with result as octet stream</p>
-      <a name="path__queryapi_queries_-queryHandle-_resultset.html"></a>
+        <a name="path__queryapi_queries_-queryHandle-_resultset.html"></a>
       <h1>/queryapi/queries/{queryHandle}/resultset</h1>
       <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/resultset">/queryapi/queries/{queryHandle}/resultset</a></p>
       <a name="GET"></a>
@@ -840,6 +935,10 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_queryResult.html">queryResult</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>QueryResult</p>
       <a name="DELETE"></a>
@@ -878,10 +977,14 @@ APIResult with state Status#FAILED in case of udpate failure.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful close.
 APIResult with state Status#FAILED in case of close failure.</p>
-      <a name="path__queryapi_queries_-queryHandle-_resultsetmetadata.html"></a>
+        <a name="path__queryapi_queries_-queryHandle-_resultsetmetadata.html"></a>
       <h1>/queryapi/queries/{queryHandle}/resultsetmetadata</h1>
       <p class="note">Mount Point: <a href="../queryapi/queries/{queryHandle}/resultsetmetadata">/queryapi/queries/{queryHandle}/resultsetmetadata</a></p>
       <a name="GET"></a>
@@ -920,6 +1023,10 @@ APIResult with state Status#FAILED in case of close failure.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_queryResultSetMetadata.html">queryResultSetMetadata</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>text/plain<br/>application/json</td>
+        </tr>
       </table>
       <p>QueryResultSetMetadata</p>
 
@@ -943,6 +1050,15 @@ APIResult with state Status#FAILED in case of close failure.</p>
   <script>
     $(function() {
       $('#breadcrumbs').xBreadcrumbs();
+    });
+  </script>
+
+
+  <!-- prettify code blocks. see http://code.google.com/p/google-code-prettify/ -->
+  <script src="js/libs/prettify/prettify.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
     });
   </script>
 

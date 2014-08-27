@@ -47,18 +47,18 @@
               <a href="rest.html">REST</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li class="current">
               <a href="resource_QuotaResource.html">QuotaResource</a>
               <ul>
-                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
                 <li><a href="resource_MetastoreResource.html">MetastoreResource</a></li>
-                <li><a href="resource_SessionResource.html">SessionResource</a></li>
-                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
                 <li><a href="resource_QueryServiceResource.html">QueryServiceResource</a></li>
+                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
+                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
+                <li><a href="resource_SessionResource.html">SessionResource</a></li>
               </ul>
             </li>
           </ul>
@@ -68,11 +68,14 @@
     <div id="main" class="column first last span-20">
       <h1>QuotaResource</h1>
 
-      <p>The following resources are part of this group:</p>
+      <p></p>
+      <p>The following resources are applicable:</p>
       <ul>
-        <li><a href="#path__quota.html">/quota</a></li>
+        <li>
+        <a href="#path__quota.html">/quota</a>
+        </li>
       </ul>
-      <a name="path__quota.html"></a>
+        <a name="path__quota.html"></a>
       <h1>/quota</h1>
       <p class="note">Mount Point: <a href="../quota">/quota</a></p>
       <a name="GET"></a>
@@ -82,6 +85,10 @@
         <tr>
           <td align="right">element:</td>
           <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>text/plain</td>
         </tr>
       </table>
       <p>(no documentation provided)</p>
@@ -106,6 +113,15 @@
   <script>
     $(function() {
       $('#breadcrumbs').xBreadcrumbs();
+    });
+  </script>
+
+
+  <!-- prettify code blocks. see http://code.google.com/p/google-code-prettify/ -->
+  <script src="js/libs/prettify/prettify.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
     });
   </script>
 

@@ -47,8 +47,8 @@
               <a href="model.html">Data Model</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li>
@@ -60,28 +60,28 @@
             <li class="current">
               <a href="ns0_grillPreparedQuery.html">grillPreparedQuery</a>
               <ul>
-                <li><a href="ns0_inMemoryQueryResult.html">inMemoryQueryResult</a></li>
-                <li><a href="ns0_grillConf.html">grillConf</a></li>
                 <li><a href="ns0_APIResult.html">APIResult</a></li>
-                <li><a href="ns0_status.html">status</a></li>
-                <li><a href="ns0_persistentQueryResult.html">persistentQueryResult</a></li>
-                <li><a href="ns0_queryResultSetMetadata.html">queryResultSetMetadata</a></li>
-                <li><a href="ns0_resultColumnType.html">resultColumnType</a></li>
-                <li><a href="ns0_querySubmitResult.html">querySubmitResult</a></li>
+                <li><a href="ns0_grillConf.html">grillConf</a></li>
                 <li><a href="ns0_grillPreparedQuery.html">grillPreparedQuery</a></li>
-                <li><a href="ns0_queryPlan.html">queryPlan</a></li>
-                <li><a href="ns0_queryStatus.html">queryStatus</a></li>
                 <li><a href="ns0_grillQuery.html">grillQuery</a></li>
-                <li><a href="ns0_queryHandleWithResultSet.html">queryHandleWithResultSet</a></li>
-                <li><a href="ns0_resultRow.html">resultRow</a></li>
-                <li><a href="ns0_priority.html">priority</a></li>
-                <li><a href="ns0_queryHandle.html">queryHandle</a></li>
-                <li><a href="ns0_stringList.html">stringList</a></li>
-                <li><a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a></li>
-                <li><a href="ns0_queryCost.html">queryCost</a></li>
                 <li><a href="ns0_grillSessionHandle.html">grillSessionHandle</a></li>
+                <li><a href="ns0_inMemoryQueryResult.html">inMemoryQueryResult</a></li>
+                <li><a href="ns0_persistentQueryResult.html">persistentQueryResult</a></li>
+                <li><a href="ns0_priority.html">priority</a></li>
+                <li><a href="ns0_queryCost.html">queryCost</a></li>
+                <li><a href="ns0_queryHandle.html">queryHandle</a></li>
+                <li><a href="ns0_queryHandleWithResultSet.html">queryHandleWithResultSet</a></li>
+                <li><a href="ns0_queryPlan.html">queryPlan</a></li>
+                <li><a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a></li>
                 <li><a href="ns0_queryResult.html">queryResult</a></li>
+                <li><a href="ns0_queryResultSetMetadata.html">queryResultSetMetadata</a></li>
+                <li><a href="ns0_queryStatus.html">queryStatus</a></li>
+                <li><a href="ns0_querySubmitResult.html">querySubmitResult</a></li>
                 <li><a href="ns0_resultColumn.html">resultColumn</a></li>
+                <li><a href="ns0_resultColumnType.html">resultColumnType</a></li>
+                <li><a href="ns0_resultRow.html">resultRow</a></li>
+                <li><a href="ns0_status.html">status</a></li>
+                <li><a href="ns0_stringList.html">stringList</a></li>
               </ul>
             </li>
           </ul>
@@ -111,39 +111,15 @@
         </tr>
         <tr>
           <td>
+            driverQuery (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             preparedUser (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            preparedTime (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            selectedDriverClassName (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            userQuery (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            conf (<a href="ns0_grillConf.html">grillConf</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -159,7 +135,31 @@
         </tr>
         <tr>
           <td>
-            driverQuery (string)
+            conf (<a href="ns0_grillConf.html">grillConf</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            selectedDriverClassName (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            preparedTime (dateTime)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            userQuery (string)
           </td>
           <td>0/1</td>
           <td>
@@ -175,41 +175,17 @@
           <th>description</th>
         </tr>
         <tr>
+          <td>driverQuery</td>
+          <td>
+              driverQuery (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
           <td>preparedUser</td>
           <td>
-            preparedUser (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>preparedTime</td>
-          <td>
-            preparedTime (dateTime)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>selectedDriverClassName</td>
-          <td>
-            selectedDriverClassName (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>userQuery</td>
-          <td>
-            userQuery (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>conf</td>
-          <td>
-            conf (<a href="ns0_grillConf.html">grillConf</a>)
+              preparedUser (string)
           </td>
           <td>
           </td>
@@ -217,15 +193,39 @@
         <tr>
           <td>prepareHandle</td>
           <td>
-            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+              prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>driverQuery</td>
+          <td>conf</td>
           <td>
-            driverQuery (string)
+              conf (<a href="ns0_grillConf.html">grillConf</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>selectedDriverClassName</td>
+          <td>
+              selectedDriverClassName (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>preparedTime</td>
+          <td>
+              preparedTime (dateTime)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>userQuery</td>
+          <td>
+              userQuery (string)
           </td>
           <td>
           </td>

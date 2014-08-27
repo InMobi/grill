@@ -47,18 +47,18 @@
               <a href="rest.html">REST</a> &gt;
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
             <li class="current">
               <a href="resource_MetastoreResource.html">MetastoreResource</a>
               <ul>
-                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
                 <li><a href="resource_MetastoreResource.html">MetastoreResource</a></li>
-                <li><a href="resource_SessionResource.html">SessionResource</a></li>
-                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
                 <li><a href="resource_QueryServiceResource.html">QueryServiceResource</a></li>
+                <li><a href="resource_QuotaResource.html">QuotaResource</a></li>
+                <li><a href="resource_ScheduleResource.html">ScheduleResource</a></li>
+                <li><a href="resource_SessionResource.html">SessionResource</a></li>
               </ul>
             </li>
           </ul>
@@ -68,36 +68,91 @@
     <div id="main" class="column first last span-20">
       <h1>MetastoreResource</h1>
 
-      <p>The following resources are part of this group:</p>
+      <p>metastore resource api
+
+This provides api for all things metastore.</p>
+      <p>The following resources are applicable:</p>
       <ul>
-        <li><a href="#path__metastore.html">/metastore</a></li>
-        <li><a href="#path__metastore_cubes.html">/metastore/cubes</a></li>
-        <li><a href="#path__metastore_databases.html">/metastore/databases</a></li>
-        <li><a href="#path__metastore_dimensions.html">/metastore/dimensions</a></li>
-        <li><a href="#path__metastore_dimtables.html">/metastore/dimtables</a></li>
-        <li><a href="#path__metastore_facts.html">/metastore/facts</a></li>
-        <li><a href="#path__metastore_nativetables.html">/metastore/nativetables</a></li>
-        <li><a href="#path__metastore_storages.html">/metastore/storages</a></li>
-        <li><a href="#path__metastore_cubes_-cubeName-.html">/metastore/cubes/{cubeName}</a></li>
-        <li><a href="#path__metastore_databases_current.html">/metastore/databases/current</a></li>
-        <li><a href="#path__metastore_databases_-dbName-.html">/metastore/databases/{dbName}</a></li>
-        <li><a href="#path__metastore_dimensions_-dimName-.html">/metastore/dimensions/{dimName}</a></li>
-        <li><a href="#path__metastore_dimtables_-dimTableName-.html">/metastore/dimtables/{dimTableName}</a></li>
-        <li><a href="#path__metastore_facts_-factName-.html">/metastore/facts/{factName}</a></li>
-        <li><a href="#path__metastore_nativetables_-tableName-.html">/metastore/nativetables/{tableName}</a></li>
-        <li><a href="#path__metastore_storages_-storageName-.html">/metastore/storages/{storageName}</a></li>
-        <li><a href="#path__metastore_storages_-storage-.html">/metastore/storages/{storage}</a></li>
-        <li><a href="#path__metastore_cubes_-cubeName-_facts.html">/metastore/cubes/{cubeName}/facts</a></li>
-        <li><a href="#path__metastore_dimtables_-dimTableName-_storages.html">/metastore/dimtables/{dimTableName}/storages</a></li>
-        <li><a href="#path__metastore_facts_-factName-_storages.html">/metastore/facts/{factName}/storages</a></li>
-        <li><a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-.html">/metastore/dimtables/{dimTableName}/storages/{storage}</a></li>
-        <li><a href="#path__metastore_facts_-factName-_storages_-storage-.html">/metastore/facts/{factName}/storages/{storage}</a></li>
-        <li><a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-_partition.html">/metastore/dimtables/{dimTableName}/storages/{storage}/partition</a></li>
-        <li><a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-_partitions.html">/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</a></li>
-        <li><a href="#path__metastore_facts_-factName-_storages_-storage-_partition.html">/metastore/facts/{factName}/storages/{storage}/partition</a></li>
-        <li><a href="#path__metastore_facts_-factName-_storages_-storage-_partitions.html">/metastore/facts/{factName}/storages/{storage}/partitions</a></li>
+        <li>
+        <a href="#path__metastore.html">/metastore</a>
+        </li>
+        <li>
+        <a href="#path__metastore_cubes.html">/metastore/cubes</a>
+        </li>
+        <li>
+        <a href="#path__metastore_cubes_-cubeName-.html">/metastore/cubes/{cubeName}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_cubes_-cubeName-_facts.html">/metastore/cubes/{cubeName}/facts</a>
+        </li>
+        <li>
+        <a href="#path__metastore_databases.html">/metastore/databases</a>
+        </li>
+        <li>
+        <a href="#path__metastore_databases_-dbName-.html">/metastore/databases/{dbName}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_databases_current.html">/metastore/databases/current</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimensions.html">/metastore/dimensions</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimensions_-dimName-.html">/metastore/dimensions/{dimName}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimtables.html">/metastore/dimtables</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimtables_-dimTableName-.html">/metastore/dimtables/{dimTableName}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimtables_-dimTableName-_storages.html">/metastore/dimtables/{dimTableName}/storages</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-.html">/metastore/dimtables/{dimTableName}/storages/{storage}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-_partition.html">/metastore/dimtables/{dimTableName}/storages/{storage}/partition</a>
+        </li>
+        <li>
+        <a href="#path__metastore_dimtables_-dimTableName-_storages_-storage-_partitions.html">/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</a>
+        </li>
+        <li>
+        <a href="#path__metastore_facts.html">/metastore/facts</a>
+        </li>
+        <li>
+        <a href="#path__metastore_facts_-factName-.html">/metastore/facts/{factName}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_facts_-factName-_storages.html">/metastore/facts/{factName}/storages</a>
+        </li>
+        <li>
+        <a href="#path__metastore_facts_-factName-_storages_-storage-.html">/metastore/facts/{factName}/storages/{storage}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_facts_-factName-_storages_-storage-_partition.html">/metastore/facts/{factName}/storages/{storage}/partition</a>
+        </li>
+        <li>
+        <a href="#path__metastore_facts_-factName-_storages_-storage-_partitions.html">/metastore/facts/{factName}/storages/{storage}/partitions</a>
+        </li>
+        <li>
+        <a href="#path__metastore_nativetables.html">/metastore/nativetables</a>
+        </li>
+        <li>
+        <a href="#path__metastore_nativetables_-tableName-.html">/metastore/nativetables/{tableName}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_storages.html">/metastore/storages</a>
+        </li>
+        <li>
+        <a href="#path__metastore_storages_-storage-.html">/metastore/storages/{storage}</a>
+        </li>
+        <li>
+        <a href="#path__metastore_storages_-storageName-.html">/metastore/storages/{storageName}</a>
+        </li>
       </ul>
-      <a name="path__metastore.html"></a>
+        <a name="path__metastore.html"></a>
       <h1>/metastore</h1>
       <p class="note">Mount Point: <a href="../metastore">/metastore</a></p>
       <a name="GET"></a>
@@ -111,9 +166,13 @@
           <td align="right">element:</td>
           <td>(custom)</td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>text/plain</td>
+        </tr>
       </table>
       <p>Simple text saying it up</p>
-      <a name="path__metastore_cubes.html"></a>
+        <a name="path__metastore_cubes.html"></a>
       <h1>/metastore/cubes</h1>
       <p class="note">Mount Point: <a href="../metastore/cubes">/metastore/cubes</a></p>
       <p>
@@ -148,7 +207,8 @@
         <tr>
           <td>type</td>
           <td>
-            The type of cubes. Accepted values are 'all' or 'base' or 'derived' or 'queryable'
+            The type of cubes. Accepted values are
+'all' or 'base' or 'derived' or 'queryable'
           </td>
           <td>query</td>
           <td>all</td>
@@ -159,6 +219,10 @@
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>StringList consisting of all cubes names</p>
@@ -190,6 +254,10 @@
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED in case of successful delete.
 APIResult with state Status#FAILED in case of delete failure.
@@ -220,7 +288,11 @@ APIResult with state Status#PARTIAL in case of partial delete.</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>cube</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>The XCube representation of the cube definition</p>
@@ -230,571 +302,14 @@ APIResult with state Status#PARTIAL in case of partial delete.</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if create was successful.
-APIResult with state Status#FAILED, if create has failed</p>
-      <a name="path__metastore_databases.html"></a>
-      <h1>/metastore/databases</h1>
-      <p class="note">Mount Point: <a href="../metastore/databases">/metastore/databases</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all databases in the metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
         <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all database names.</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Create a new database
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>ignoreIfExisting</td>
-          <td>
-            If true, create will be ignored if db already exists, otherwise it fails.
-          </td>
-          <td>query</td>
-          <td>true</td>
-        </tr>
-      </table>
-      <h3>Request Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>The db name</p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if create was successful.
 APIResult with state Status#FAILED, if create has failed</p>
-      <a name="path__metastore_dimensions.html"></a>
-      <h1>/metastore/dimensions</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimensions">/metastore/dimensions</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#POST">POST</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-      </ul>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all dimensions in the metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all the dimension names</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Create new dimension
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Request Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>The XDimension representation of dimension</p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if create was successful.
-APIResult with state Status#FAILED, if create has failed</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Delete all dimensions in metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
-APIResult with state Status#FAILED in case of delete failure.
-APIResult with state Status#PARTIAL in case of partial delete.</p>
-      <a name="path__metastore_dimtables.html"></a>
-      <h1>/metastore/dimtables</h1>
-      <p class="note">Mount Point: <a href="../metastore/dimtables">/metastore/dimtables</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all dimension tables in the metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all dimension table names</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Create a new dimension table
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>dimensionTable</td>
-          <td>
-            The DimensionTable representation of the dimension table definition
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storageTables</td>
-          <td>
-            The Storage table description of dimension table in each storage
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if create was successful.
-APIResult with state Status#FAILED, if create has failed</p>
-      <a name="path__metastore_facts.html"></a>
-      <h1>/metastore/facts</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts">/metastore/facts</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-        <li><a href="#POST">POST</a></li>
-      </ul>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all fact tables in the metastore in the current database
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all fact table names</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Delete all fact tables
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>cascade</td>
-          <td>
-            if set to true, all the underlying tables will be dropped, if set to false, only the fact table will be dropped
-          </td>
-          <td>query</td>
-          <td>false</td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
-APIResult with state Status#FAILED in case of delete failure.
-APIResult with state Status#PARTIAL in case of partial delete.</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Create a new fact tabble
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>fact</td>
-          <td>
-            The FactTable representation of the fact table definition
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storageTables</td>
-          <td>
-            The Storage table description of fact in each storage
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if create was successful.
-APIResult with state Status#FAILED, if create has failed</p>
-      <a name="path__metastore_nativetables.html"></a>
-      <h1>/metastore/nativetables</h1>
-      <p class="note">Mount Point: <a href="../metastore/nativetables">/metastore/nativetables</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all native tables.
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>dbOption</td>
-          <td>
-            The options available are 'current' and 'all'. If option is current, gives all tables from current db. If option is all, gives all tables from all databases. If dbname is passed, dbOption is ignored. If no dbOption or dbname are passed, then default is to get tables from current db.
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>dbName</td>
-          <td>
-            The db name. If not empty, the tables in the db will be returned
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all table names.</p>
-      <a name="path__metastore_storages.html"></a>
-      <h1>/metastore/storages</h1>
-      <p class="note">Mount Point: <a href="../metastore/storages">/metastore/storages</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#POST">POST</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-      </ul>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all storages in the metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all the storage names</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Create new storage
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Request Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>The XStorage representation of storage</p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if create was successful.
-APIResult with state Status#FAILED, if create has failed</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Delete all storages in metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
-APIResult with state Status#FAILED in case of delete failure.
-APIResult with state Status#PARTIAL in case of partial delete.</p>
-      <a name="path__metastore_cubes_-cubeName-.html"></a>
+        <a name="path__metastore_cubes_-cubeName-.html"></a>
       <h1>/metastore/cubes/{cubeName}</h1>
       <p class="note">Mount Point: <a href="../metastore/cubes/{cubeName}">/metastore/cubes/{cubeName}</a></p>
       <p>
@@ -839,7 +354,11 @@ APIResult with state Status#PARTIAL in case of partial delete.</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>cube</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>The XCube representation of the updated cube definition</p>
@@ -848,6 +367,10 @@ APIResult with state Status#PARTIAL in case of partial delete.</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if update was successful.
@@ -888,6 +411,10 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td align="right">element:</td>
           <td>(custom)</td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>JAXB representation of XCube</p>
       <a name="DELETE"></a>
@@ -926,16 +453,65 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_databases_current.html"></a>
-      <h1>/metastore/databases/current</h1>
-      <p class="note">Mount Point: <a href="../metastore/databases/current">/metastore/databases/current</a></p>
+        <a name="path__metastore_cubes_-cubeName-_facts.html"></a>
+      <h1>/metastore/cubes/{cubeName}/facts</h1>
+      <p class="note">Mount Point: <a href="../metastore/cubes/{cubeName}/facts">/metastore/cubes/{cubeName}/facts</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get the current database
+            Get all facts that belong to a cube in the metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>cubeName</td>
+          <td>
+            name of the base cube or derived cube
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>List of FactTable objects</p>
+        <a name="path__metastore_databases.html"></a>
+      <h1>/metastore/databases</h1>
+      <p class="note">Mount Point: <a href="../metastore/databases">/metastore/databases</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all databases in the metastore
           </p>
       <h3>Parameters</h3>
       <table>
@@ -958,14 +534,18 @@ APIResult with state Status#FAILED, if drop has failed</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
-      <p>The current db name</p>
-      <a name="PUT"></a>
-      <h2>PUT</h2>
+      <p>StringList consisting of all database names.</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
       <p>
-            Set the current db
+            Create a new database
           </p>
       <h3>Parameters</h3>
       <table>
@@ -983,12 +563,25 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td>query</td>
           <td></td>
         </tr>
+        <tr>
+          <td>ignoreIfExisting</td>
+          <td>
+            If true, create will be ignored if db already exists,
+otherwise it fails.
+          </td>
+          <td>query</td>
+          <td>true</td>
+        </tr>
       </table>
       <h3>Request Body</h3>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>dbName</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>The db name</p>
@@ -998,10 +591,14 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
-      <p>APIResult with state Status#SUCCEEDED, if set was successful.
-APIResult with state Status#FAILED, if set has failed</p>
-      <a name="path__metastore_databases_-dbName-.html"></a>
+      <p>APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed</p>
+        <a name="path__metastore_databases_-dbName-.html"></a>
       <h1>/metastore/databases/{dbName}</h1>
       <p class="note">Mount Point: <a href="../metastore/databases/{dbName}">/metastore/databases/{dbName}</a></p>
       <a name="DELETE"></a>
@@ -1049,10 +646,226 @@ If db does not exist, delete is ignored.
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if delete was successful.
 APIResult with state Status#FAILED, if delete has failed</p>
-      <a name="path__metastore_dimensions_-dimName-.html"></a>
+        <a name="path__metastore_databases_current.html"></a>
+      <h1>/metastore/databases/current</h1>
+      <p class="note">Mount Point: <a href="../metastore/databases/current">/metastore/databases/current</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the current database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>The current db name</p>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Set the current db
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+            <td>dbName</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>The db name</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if set was successful.
+APIResult with state Status#FAILED, if set has failed</p>
+        <a name="path__metastore_dimensions.html"></a>
+      <h1>/metastore/dimensions</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimensions">/metastore/dimensions</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#POST">POST</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all dimensions in the metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>StringList consisting of all the dimension names</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Create new dimension
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+            <td>dimension</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>The XDimension representation of dimension</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Delete all dimensions in metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.</p>
+        <a name="path__metastore_dimensions_-dimName-.html"></a>
       <h1>/metastore/dimensions/{dimName}</h1>
       <p class="note">Mount Point: <a href="../metastore/dimensions/{dimName}">/metastore/dimensions/{dimName}</a></p>
       <p>
@@ -1097,7 +910,11 @@ APIResult with state Status#FAILED, if delete has failed</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>dimension</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>The XDimension representation of the updated dimension definition</p>
@@ -1106,6 +923,10 @@ APIResult with state Status#FAILED, if delete has failed</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if update was successful.
@@ -1146,6 +967,10 @@ APIResult with state Status#FAILED, if update has failed</p>
           <td align="right">element:</td>
           <td>(custom)</td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>JAXB representation of XDimension</p>
       <a name="DELETE"></a>
@@ -1184,10 +1009,102 @@ APIResult with state Status#FAILED, if update has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_dimtables_-dimTableName-.html"></a>
+        <a name="path__metastore_dimtables.html"></a>
+      <h1>/metastore/dimtables</h1>
+      <p class="note">Mount Point: <a href="../metastore/dimtables">/metastore/dimtables</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all dimension tables in the metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>StringList consisting of all dimension table names</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Create a new dimension table
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dimensionTable</td>
+          <td>
+            The DimensionTable representation of the dimension table definition
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storageTables</td>
+          <td>
+            The Storage table description of dimension table in each storage
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed</p>
+        <a name="path__metastore_dimtables_-dimTableName-.html"></a>
       <h1>/metastore/dimtables/{dimTableName}</h1>
       <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}">/metastore/dimtables/{dimTableName}</a></p>
       <p>
@@ -1232,7 +1149,11 @@ APIResult with state Status#FAILED, if drop has failed</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>dimensionTable</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>The DimensionTable representation of the updated dim table definition</p>
@@ -1241,6 +1162,10 @@ APIResult with state Status#FAILED, if drop has failed</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if update was successful.
@@ -1289,6 +1214,10 @@ APIResult with state Status#FAILED, if udpate has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
@@ -1328,364 +1257,13 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td align="right">element:</td>
           <td>(custom)</td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>JAXB representation of DimensionTable</p>
-      <a name="path__metastore_facts_-factName-.html"></a>
-      <h1>/metastore/facts/{factName}</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factName}">/metastore/facts/{factName}</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#PUT">PUT</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-      </ul>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get the fact table specified by name
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>JAXB representation of FactTable</p>
-      <a name="PUT"></a>
-      <h2>PUT</h2>
-      <p>
-            Update fact table definition
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            name of the fact table
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Request Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>The FactTable representation of the updated fact table definition</p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if update was successful.
-APIResult with state Status#FAILED, if udpate has failed</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Drop the fact table, specified by name
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>cascade</td>
-          <td>
-            If true, all the storage tables of the fact will also be dropped
-          </td>
-          <td>query</td>
-          <td>false</td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
-APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_nativetables_-tableName-.html"></a>
-      <h1>/metastore/nativetables/{tableName}</h1>
-      <p class="note">Mount Point: <a href="../metastore/nativetables/{tableName}">/metastore/nativetables/{tableName}</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get the native table passed in name
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>tableName</td>
-          <td>
-            The native table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>JAXB representation of NativeTable</p>
-      <a name="path__metastore_storages_-storageName-.html"></a>
-      <h1>/metastore/storages/{storageName}</h1>
-      <p class="note">Mount Point: <a href="../metastore/storages/{storageName}">/metastore/storages/{storageName}</a></p>
-      <a name="PUT"></a>
-      <h2>PUT</h2>
-      <p>
-            Update storage definition
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storageName</td>
-          <td>
-            The storage name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Request Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>The XStorage representation of the updated storage definition</p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if update was successful.
-APIResult with state Status#FAILED, if update has failed</p>
-      <a name="path__metastore_storages_-storage-.html"></a>
-      <h1>/metastore/storages/{storage}</h1>
-      <p class="note">Mount Point: <a href="../metastore/storages/{storage}">/metastore/storages/{storage}</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get the storage specified by name
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storage</td>
-          <td>
-            The storage name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>JAXB representation of XStorage</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Drop the storage, specified by name
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storage</td>
-          <td>
-            The storage name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
-APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_cubes_-cubeName-_facts.html"></a>
-      <h1>/metastore/cubes/{cubeName}/facts</h1>
-      <p class="note">Mount Point: <a href="../metastore/cubes/{cubeName}/facts">/metastore/cubes/{cubeName}/facts</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all facts that belong to a cube in the metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>cubeName</td>
-          <td>
-            name of the base cube or derived cube
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>List of FactTable objects</p>
-      <a name="path__metastore_dimtables_-dimTableName-_storages.html"></a>
+        <a name="path__metastore_dimtables_-dimTableName-_storages.html"></a>
       <h1>/metastore/dimtables/{dimTableName}/storages</h1>
       <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages">/metastore/dimtables/{dimTableName}/storages</a></p>
       <p>
@@ -1732,6 +1310,10 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_stringList.html">stringList</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>StringList consisting of all the storage names</p>
       <a name="POST"></a>
@@ -1768,7 +1350,11 @@ APIResult with state Status#FAILED, if drop has failed</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>storageTbl</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>The Storage table description</p>
@@ -1777,6 +1363,10 @@ APIResult with state Status#FAILED, if drop has failed</p>
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
@@ -1817,145 +1407,14 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
-APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_facts_-factName-_storages.html"></a>
-      <h1>/metastore/facts/{factName}/storages</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages">/metastore/facts/{factName}/storages</a></p>
-      <p>
-        The following operations are supported on this resource:
-      </p>
-      <ul>
-        <li><a href="#GET">GET</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
-        <li><a href="#POST">POST</a></li>
-      </ul>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get all storages of the fact table in the metastore
-          </p>
-      <h3>Parameters</h3>
-      <table>
         <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_stringList.html">stringList</a></td>
-        </tr>
-      </table>
-      <p>StringList consisting of all the storage names</p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Drop all the storage tables of a fact table
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            Add storage to fact table
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Request Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>The storage table description</p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
-        </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if add was successful.
-APIResult with state Status#FAILED, if add has failed</p>
-      <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-.html"></a>
+        <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-.html"></a>
       <h1>/metastore/dimtables/{dimTableName}/storages/{storage}</h1>
       <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages/{storage}">/metastore/dimtables/{dimTableName}/storages/{storage}</a></p>
       <a name="GET"></a>
@@ -2001,6 +1460,10 @@ APIResult with state Status#FAILED, if add has failed</p>
         <tr>
           <td align="right">element:</td>
           <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>JAXB representation of XStorageTableElement</p>
@@ -2048,106 +1511,14 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
-      </table>
-      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
-APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_facts_-factName-_storages_-storage-.html"></a>
-      <h1>/metastore/facts/{factName}/storages/{storage}</h1>
-      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}">/metastore/facts/{factName}/storages/{storage}</a></p>
-      <a name="DELETE"></a>
-      <h2>DELETE</h2>
-      <p>
-            Drop the storage of a fact, specified by name
-          </p>
-      <h3>Parameters</h3>
-      <table>
         <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storage</td>
-          <td>
-            The storage name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_result.html">result</a></td>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Get the fact storage table
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>sessionid</td>
-          <td>
-            The sessionid in which user is working
-          </td>
-          <td>query</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>factName</td>
-          <td>
-            The fact table name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>storage</td>
-          <td>
-            The storage name
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-      </table>
-      <p>JAXB representation of XStorageTableElement</p>
-      <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-_partition.html"></a>
+        <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-_partition.html"></a>
       <h1>/metastore/dimtables/{dimTableName}/storages/{storage}/partition</h1>
       <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages/{storage}/partition">/metastore/dimtables/{dimTableName}/storages/{storage}/partition</a></p>
       <a name="DELETE"></a>
@@ -2202,10 +1573,14 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-_partitions.html"></a>
+        <a name="path__metastore_dimtables_-dimTableName-_storages_-storage-_partitions.html"></a>
       <h1>/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</h1>
       <p class="note">Mount Point: <a href="../metastore/dimtables/{dimTableName}/storages/{storage}/partitions">/metastore/dimtables/{dimTableName}/storages/{storage}/partitions</a></p>
       <p>
@@ -2257,7 +1632,8 @@ can be filtered
         <tr>
           <td>filter</td>
           <td>
-            The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"
+            The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"
           </td>
           <td>query</td>
           <td></td>
@@ -2268,6 +1644,10 @@ can be filtered
         <tr>
           <td align="right">element:</td>
           <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>JAXB representation of PartitionList containing XPartition objects</p>
@@ -2311,7 +1691,8 @@ can be filtered
         <tr>
           <td>filter</td>
           <td>
-            The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"
+            The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"
           </td>
           <td>query</td>
           <td></td>
@@ -2322,6 +1703,10 @@ can be filtered
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
@@ -2368,7 +1753,11 @@ APIResult with state Status#FAILED, if drop has failed</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>partition</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>XPartition representation of partition</p>
@@ -2378,10 +1767,568 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#FAILED, if add has failed</p>
-      <a name="path__metastore_facts_-factName-_storages_-storage-_partition.html"></a>
+        <a name="path__metastore_facts.html"></a>
+      <h1>/metastore/facts</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts">/metastore/facts</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+        <li><a href="#POST">POST</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all fact tables in the metastore in the current database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>StringList consisting of all fact table names</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Delete all fact tables
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>cascade</td>
+          <td>
+            if set to true, all the underlying tables will be dropped, if set to false, only the fact table will be dropped
+          </td>
+          <td>query</td>
+          <td>false</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Create a new fact tabble
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>fact</td>
+          <td>
+            The FactTable representation of the fact table definition
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storageTables</td>
+          <td>
+            The Storage table description of fact in each storage
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed</p>
+        <a name="path__metastore_facts_-factName-.html"></a>
+      <h1>/metastore/facts/{factName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}">/metastore/facts/{factName}</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#PUT">PUT</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the fact table specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>JAXB representation of FactTable</p>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Update fact table definition
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            name of the fact table
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+            <td>fact</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>The FactTable representation of the updated fact table definition</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if udpate has failed</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Drop the fact table, specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>cascade</td>
+          <td>
+            If true, all the storage tables of the fact will also be dropped
+          </td>
+          <td>query</td>
+          <td>false</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed</p>
+        <a name="path__metastore_facts_-factName-_storages.html"></a>
+      <h1>/metastore/facts/{factName}/storages</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages">/metastore/facts/{factName}/storages</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+        <li><a href="#POST">POST</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all storages of the fact table in the metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>StringList consisting of all the storage names</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Drop all the storage tables of a fact table
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Add storage to fact table
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+            <td>storageTable</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>The storage table description</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#FAILED, if add has failed</p>
+        <a name="path__metastore_facts_-factName-_storages_-storage-.html"></a>
+      <h1>/metastore/facts/{factName}/storages/{storage}</h1>
+      <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}">/metastore/facts/{factName}/storages/{storage}</a></p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Drop the storage of a fact, specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storage</td>
+          <td>
+            The storage name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed</p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the fact storage table
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>factName</td>
+          <td>
+            The fact table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storage</td>
+          <td>
+            The storage name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>JAXB representation of XStorageTableElement</p>
+        <a name="path__metastore_facts_-factName-_storages_-storage-_partition.html"></a>
       <h1>/metastore/facts/{factName}/storages/{storage}/partition</h1>
       <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}/partition">/metastore/facts/{factName}/storages/{storage}/partition</a></p>
       <a name="DELETE"></a>
@@ -2436,10 +2383,14 @@ APIResult with state Status#FAILED, if add has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
 APIResult with state Status#FAILED, if drop has failed</p>
-      <a name="path__metastore_facts_-factName-_storages_-storage-_partitions.html"></a>
+        <a name="path__metastore_facts_-factName-_storages_-storage-_partitions.html"></a>
       <h1>/metastore/facts/{factName}/storages/{storage}/partitions</h1>
       <p class="note">Mount Point: <a href="../metastore/facts/{factName}/storages/{storage}/partitions">/metastore/facts/{factName}/storages/{storage}/partitions</a></p>
       <p>
@@ -2491,7 +2442,8 @@ can be filtered as well.
         <tr>
           <td>filter</td>
           <td>
-            The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"
+            The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"
           </td>
           <td>query</td>
           <td></td>
@@ -2502,6 +2454,10 @@ can be filtered as well.
         <tr>
           <td align="right">element:</td>
           <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>JAXB representation of PartitionList containing XPartition objects</p>
@@ -2545,7 +2501,8 @@ can be filtered as well.
         <tr>
           <td>filter</td>
           <td>
-            The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"
+            The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"
           </td>
           <td>query</td>
           <td></td>
@@ -2556,6 +2513,10 @@ can be filtered as well.
         <tr>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
         </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if drop was successful.
@@ -2602,7 +2563,11 @@ APIResult with state Status#FAILED, if drop has failed</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+            <td>partition</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
         </tr>
       </table>
       <p>XPartition representation of partition</p>
@@ -2612,9 +2577,389 @@ APIResult with state Status#FAILED, if drop has failed</p>
           <td align="right">element:</td>
           <td><a href="el_ns0_result.html">result</a></td>
         </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#FAILED, if add has failed</p>
+        <a name="path__metastore_nativetables.html"></a>
+      <h1>/metastore/nativetables</h1>
+      <p class="note">Mount Point: <a href="../metastore/nativetables">/metastore/nativetables</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all native tables.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dbOption</td>
+          <td>
+            The options available are 'current' and 'all'.
+If option is current, gives all tables from current db.
+If option is all, gives all tables from all databases.
+If dbname is passed, dbOption is ignored.
+If no dbOption or dbname are passed, then default is to get tables from current db.
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dbName</td>
+          <td>
+            The db name. If not empty, the tables in the db will be returned
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>StringList consisting of all table names.</p>
+        <a name="path__metastore_nativetables_-tableName-.html"></a>
+      <h1>/metastore/nativetables/{tableName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/nativetables/{tableName}">/metastore/nativetables/{tableName}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the native table passed in name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>tableName</td>
+          <td>
+            The native table name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>JAXB representation of NativeTable</p>
+        <a name="path__metastore_storages.html"></a>
+      <h1>/metastore/storages</h1>
+      <p class="note">Mount Point: <a href="../metastore/storages">/metastore/storages</a></p>
+      <p>
+        The following operations are supported on this resource:
+      </p>
+      <ul>
+        <li><a href="#GET">GET</a></li>
+        <li><a href="#POST">POST</a></li>
+        <li><a href="#DELETE">DELETE</a></li>
+      </ul>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get all storages in the metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_stringList.html">stringList</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>StringList consisting of all the storage names</p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Create new storage
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+            <td>storage</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>The XStorage representation of storage</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if create was successful.
+APIResult with state Status#FAILED, if create has failed</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Delete all storages in metastore
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED in case of successful delete.
+APIResult with state Status#FAILED in case of delete failure.
+APIResult with state Status#PARTIAL in case of partial delete.</p>
+        <a name="path__metastore_storages_-storage-.html"></a>
+      <h1>/metastore/storages/{storage}</h1>
+      <p class="note">Mount Point: <a href="../metastore/storages/{storage}">/metastore/storages/{storage}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the storage specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storage</td>
+          <td>
+            The storage name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>JAXB representation of XStorage</p>
+      <a name="DELETE"></a>
+      <h2>DELETE</h2>
+      <p>
+            Drop the storage, specified by name
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storage</td>
+          <td>
+            The storage name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if drop was successful.
+APIResult with state Status#FAILED, if drop has failed</p>
+        <a name="path__metastore_storages_-storageName-.html"></a>
+      <h1>/metastore/storages/{storageName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/storages/{storageName}">/metastore/storages/{storageName}</a></p>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Update storage definition
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>storageName</td>
+          <td>
+            The storage name
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+            <td>storage</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>The XStorage representation of the updated storage definition</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_result.html">result</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>APIResult with state Status#SUCCEEDED, if update was successful.
+APIResult with state Status#FAILED, if update has failed</p>
 
       <div class="clear" />
     </div>
@@ -2636,6 +2981,15 @@ APIResult with state Status#FAILED, if add has failed</p>
   <script>
     $(function() {
       $('#breadcrumbs').xBreadcrumbs();
+    });
+  </script>
+
+
+  <!-- prettify code blocks. see http://code.google.com/p/google-code-prettify/ -->
+  <script src="js/libs/prettify/prettify.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
     });
   </script>
 

@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <wadl:application xmlns:wadl="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <wadl:doc xmlns:enunciate="http://enunciate.codehaus.org/" enunciate:generatedBy="Enunciate-1.25"/>
+  <wadl:doc xmlns:enunciate="http://enunciate.codehaus.org/" enunciate:generatedBy="Enunciate-1.28"/>
   <wadl:grammars>
     <wadl:include href="ns0.xsd"/>
   </wadl:grammars>
@@ -104,7 +105,8 @@
           </wadl:param>
           <wadl:param name="type" style="query">
             <wadl:doc>
-              <![CDATA[The type of cubes. Accepted values are 'all' or 'base' or 'derived' or 'queryable']]>
+              <![CDATA[The type of cubes. Accepted values are
+'all' or 'base' or 'derived' or 'queryable']]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -200,7 +202,8 @@ APIResult with state Status#FAILED, if create has failed]]>
           </wadl:param>
           <wadl:param name="ignoreIfExisting" style="query">
             <wadl:doc>
-              <![CDATA[If true, create will be ignored if db already exists, otherwise it fails.]]>
+              <![CDATA[If true, create will be ignored if db already exists,
+otherwise it fails.]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -390,7 +393,11 @@ APIResult with state Status#FAILED, if create has failed]]>
           </wadl:param>
           <wadl:param name="dbOption" style="query">
             <wadl:doc>
-              <![CDATA[The options available are 'current' and 'all'. If option is current, gives all tables from current db. If option is all, gives all tables from all databases. If dbname is passed, dbOption is ignored. If no dbOption or dbname are passed, then default is to get tables from current db.]]>
+              <![CDATA[The options available are 'current' and 'all'.
+If option is current, gives all tables from current db.
+If option is all, gives all tables from all databases.
+If dbname is passed, dbOption is ignored.
+If no dbOption or dbname are passed, then default is to get tables from current db.]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="dbName" style="query">
@@ -488,7 +495,8 @@ APIResult with state Status#PARTIAL in case of partial delete.]]>
           </wadl:param>
           <wadl:param name="user" style="query">
             <wadl:doc>
-              <![CDATA[If any user is passed, all the queries prepared by the user will be returned, otherwise all the queries will be returned]]>
+              <![CDATA[If any user is passed, all the queries prepared by the user will be returned,
+otherwise all the queries will be returned]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -529,7 +537,8 @@ query plan will contain the prepare handle as well.]]>
           </wadl:param>
           <wadl:param name="user" style="query">
             <wadl:doc>
-              <![CDATA[If any user is passed, all the queries prepared by the user will be destroyed, otherwise all the queries will be destroyed]]>
+              <![CDATA[If any user is passed, all the queries prepared by the user will be destroyed,
+otherwise all the queries will be destroyed]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -558,12 +567,14 @@ APIResult with state Status#PARTIAL in case of partial destroy.]]>
           </wadl:param>
           <wadl:param name="state" style="query">
             <wadl:doc>
-              <![CDATA[If any state is passed, all the queries in that state will be returned, otherwise all queries will be returned. Possible states are QueryStatus.Status#values()]]>
+              <![CDATA[If any state is passed, all the queries in that state will be returned,
+otherwise all queries will be returned. Possible states are QueryStatus.Status#values()]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="user" style="query">
             <wadl:doc>
-              <![CDATA[If any user is passed, all the queries submitted by the user will be returned, otherwise all the queries will be returned]]>
+              <![CDATA[If any user is passed, all the queries submitted by the user will be returned,
+otherwise all the queries will be returned]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -604,12 +615,16 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
           </wadl:param>
           <wadl:param name="state" style="query">
             <wadl:doc>
-              <![CDATA[If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be cancelled. Possible states are QueryStatus.Status#values() The queries in QueryStatus.Status#FAILED,QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled]]>
+              <![CDATA[If any state is passed, all the queries in that state will be cancelled,
+otherwise all queries will be cancelled. Possible states are QueryStatus.Status#values()
+The queries in QueryStatus.Status#FAILED,QueryStatus.Status#FAILED,
+QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="user" style="query">
             <wadl:doc>
-              <![CDATA[If any user is passed, all the queries submitted by the user will be cancelled, otherwise all the queries will be cancelled]]>
+              <![CDATA[If any user is passed, all the queries submitted by the user will be cancelled,
+otherwise all the queries will be cancelled]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -638,12 +653,14 @@ APIResult with state Status#PARTIAL in case of partial cancellation.]]>
           </wadl:param>
           <wadl:param name="verbose" style="query">
             <wadl:doc>
-              <![CDATA[If true, all the parameters will be returned. If false, configuration parameters will be returned]]>
+              <![CDATA[If true, all the parameters will be returned.
+If false, configuration parameters will be returned]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="key" style="query">
             <wadl:doc>
-              <![CDATA[if this is empty, output will contain all parameters and their values, if it is non empty parameters will be filtered by key]]>
+              <![CDATA[if this is empty, output will contain all parameters and their values,
+if it is non empty parameters will be filtered by key]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -1776,7 +1793,8 @@ can be filtered]]>
           </wadl:param>
           <wadl:param name="filter" style="query">
             <wadl:doc>
-              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+              <![CDATA[The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -1800,7 +1818,8 @@ can be filtered]]>
           </wadl:param>
           <wadl:param name="filter" style="query">
             <wadl:doc>
-              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+              <![CDATA[The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -1900,7 +1919,8 @@ can be filtered as well.]]>
           </wadl:param>
           <wadl:param name="filter" style="query">
             <wadl:doc>
-              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+              <![CDATA[The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -1924,7 +1944,8 @@ can be filtered as well.]]>
           </wadl:param>
           <wadl:param name="filter" style="query">
             <wadl:doc>
-              <![CDATA[The filter for partitions, string representation of the filter for ex: x &lt "XXX" and y &gt "YYY"]]>
+              <![CDATA[The filter for partitions, string representation of the filter
+for ex: x &lt "XXX" and y &gt "YYY"]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>

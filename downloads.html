@@ -47,8 +47,8 @@
               <a href="downloads.html">Files and Libraries</a>
               <ul>
                 <li><a href="model.html">Data Model</a></li>
-                <li><a href="downloads.html">Files and Libraries</a></li>
                 <li><a href="rest.html">REST</a></li>
+                <li><a href="downloads.html">Files and Libraries</a></li>
               </ul>
             </li>
           </ul>
@@ -63,10 +63,12 @@
   <ul>
     <li><a href="#Java Client Library">Java Client Library</a></li>
     <li><a href="#Java JSON Client Library">Java JSON Client Library</a></li>
+    <li><a href="#PHP Client Library">PHP Client Library</a></li>
+    <li><a href="#Ruby Client Library">Ruby Client Library</a></li>
   </ul>
   <a name="Java Client Library"></a>
   <h2>Java Client Library</h2>
-  <p class="note">Created Aug 26, 2014 4:05:27 PM</p>
+  <p class="note">Created Aug 27, 2014 2:16:54 PM</p>
   <p><h1>
   Introduction
 </h1>
@@ -119,18 +121,18 @@ StringList result = client.resource(baseUrl + "/metastore/databases")
     </tr>
     <tr>
       <td><a href="grill-client.jar">grill-client.jar</a></td>
-      <td>26.73K</td>
+      <td>26.80K</td>
       <td>The binaries for the Java client library.</td>
     </tr>
     <tr>
       <td><a href="grill-client-sources.jar">grill-client-sources.jar</a></td>
-      <td>13.37K</td>
+      <td>14.19K</td>
       <td>The sources for the Java client library.</td>
     </tr>
   </table>
   <a name="Java JSON Client Library"></a>
   <h2>Java JSON Client Library</h2>
-  <p class="note">Created Aug 26, 2014 4:05:27 PM</p>
+  <p class="note">Created Aug 27, 2014 2:16:54 PM</p>
   <p><h1>
   Introduction
 </h1>
@@ -170,8 +172,88 @@ StringList result = (StringList) mapper.readValue( connection.getInputStream(), 
     </tr>
     <tr>
       <td><a href="grill-json-client-sources.jar">grill-json-client-sources.jar</a></td>
-      <td>12.31K</td>
+      <td>13.03K</td>
       <td>The sources for the Java JSON client library.</td>
+    </tr>
+  </table>
+  <a name="PHP Client Library"></a>
+  <h2>PHP Client Library</h2>
+  <p class="note">Created Aug 27, 2014 2:16:48 PM</p>
+  <p><h1>
+  Introduction
+</h1>
+
+<p>
+  The PHP client-side library defines the PHP classes that can be (de)serialized to/from JSON.
+  This is useful for accessing the REST endpoints that are published by this application, but only
+  those that produce a JSON representation of their resources (content type "application/json").
+</p>
+
+<p>
+  This library requires the <a href="http://php.net/manual/en/function.json-encode.php">json_encode</a> function which was included in PHP versions 5.2.0+.
+</p></p>
+  <h3>Files</h3>
+  <table>
+    <tr>
+      <th>name</th>
+      <th>size</th>
+    </tr>
+    <tr>
+      <td><a href="grill.php">grill.php</a></td>
+      <td>59.77K</td>
+    </tr>
+  </table>
+  <a name="Ruby Client Library"></a>
+  <h2>Ruby Client Library</h2>
+  <p class="note">Created Aug 27, 2014 2:16:48 PM</p>
+  <p><h1>
+  Introduction
+</h1>
+
+<p>
+  The Ruby client-side library defines the Ruby classes that can be (de)serialized to/from JSON.
+  This is useful for accessing the REST endpoints that are published by this application, but only
+  those that produce a JSON representation of their resources (content type "application/json").
+</p>
+
+<p>
+  This library leverages the <a href="http://json.rubyforge.org/">Ruby JSON Implementation</a>, which is
+  required in order to use this library.
+</p>
+
+<h1>
+  JSON REST Example
+</h1>
+
+<code class="prettyprint">
+require 'net/https'
+require 'uri'
+//...
+
+//read a resource from a REST url
+url = URI.parse("...")
+request = Net::HTTP::Get.new(url.request_uri)
+
+http = Net::HTTP.new(url.host, url.port)
+//set up additional http stuff...
+res = http.start do |ht|
+  ht.request(request)
+end
+
+result = StringList.from_json(JSON.parse(res.body))
+
+//handle the result as needed...
+</code>
+</p>
+  <h3>Files</h3>
+  <table>
+    <tr>
+      <th>name</th>
+      <th>size</th>
+    </tr>
+    <tr>
+      <td><a href="grill.rb">grill.rb</a></td>
+      <td>32.73K</td>
     </tr>
   </table>
 
