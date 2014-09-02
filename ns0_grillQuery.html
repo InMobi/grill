@@ -111,15 +111,7 @@
         </tr>
         <tr>
           <td>
-            userQuery (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            driverOpHandle (string)
+            queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -130,6 +122,22 @@
             status (<a href="ns0_queryStatus.html">queryStatus</a>)
           </td>
           <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            selectedDriverClassName (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            finishTime (long)
+          </td>
+          <td>1/1</td>
           <td>
           </td>
         </tr>
@@ -151,6 +159,14 @@
         </tr>
         <tr>
           <td>
+            isPersistent (boolean)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             driverStartTime (long)
           </td>
           <td>1/1</td>
@@ -159,55 +175,15 @@
         </tr>
         <tr>
           <td>
-            queryConf (<a href="ns0_grillConf.html">grillConf</a>)
+            driverOpHandle (string)
           </td>
           <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            submittedUser (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            finishTime (long)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            driverQuery (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            closedTime (long)
-          </td>
-          <td>1/1</td>
           <td>
           </td>
         </tr>
         <tr>
           <td>
             launchTime (long)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            driverFinishTime (long)
           </td>
           <td>1/1</td>
           <td>
@@ -223,7 +199,7 @@
         </tr>
         <tr>
           <td>
-            selectedDriverClassName (string)
+            queryConf (<a href="ns0_grillConf.html">grillConf</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -231,17 +207,41 @@
         </tr>
         <tr>
           <td>
-            queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            isPersistent (boolean)
+            driverFinishTime (long)
           </td>
           <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            userQuery (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            submittedUser (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            closedTime (long)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            driverQuery (string)
+          </td>
+          <td>0/1</td>
           <td>
           </td>
         </tr>
@@ -255,17 +255,9 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>userQuery</td>
+          <td>queryHandle</td>
           <td>
-              userQuery (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>driverOpHandle</td>
-          <td>
-              driverOpHandle (string)
+              queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
           </td>
           <td>
           </td>
@@ -274,6 +266,22 @@
           <td>status</td>
           <td>
               status (<a href="ns0_queryStatus.html">queryStatus</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>selectedDriverClassName</td>
+          <td>
+              selectedDriverClassName (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>finishTime</td>
+          <td>
+              finishTime (long)
           </td>
           <td>
           </td>
@@ -295,6 +303,14 @@
           </td>
         </tr>
         <tr>
+          <td>isPersistent</td>
+          <td>
+              isPersistent (boolean)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
           <td>driverStartTime</td>
           <td>
               driverStartTime (long)
@@ -303,41 +319,9 @@
           </td>
         </tr>
         <tr>
-          <td>queryConf</td>
+          <td>driverOpHandle</td>
           <td>
-              queryConf (<a href="ns0_grillConf.html">grillConf</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>submittedUser</td>
-          <td>
-              submittedUser (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>finishTime</td>
-          <td>
-              finishTime (long)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>driverQuery</td>
-          <td>
-              driverQuery (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>closedTime</td>
-          <td>
-              closedTime (long)
+              driverOpHandle (string)
           </td>
           <td>
           </td>
@@ -351,14 +335,6 @@
           </td>
         </tr>
         <tr>
-          <td>driverFinishTime</td>
-          <td>
-              driverFinishTime (long)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
           <td>priority</td>
           <td>
               priority (<a href="ns0_priority.html">priority</a>)
@@ -367,25 +343,49 @@
           </td>
         </tr>
         <tr>
-          <td>selectedDriverClassName</td>
+          <td>queryConf</td>
           <td>
-              selectedDriverClassName (string)
+              queryConf (<a href="ns0_grillConf.html">grillConf</a>)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>queryHandle</td>
+          <td>driverFinishTime</td>
           <td>
-              queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+              driverFinishTime (long)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>isPersistent</td>
+          <td>userQuery</td>
           <td>
-              isPersistent (boolean)
+              userQuery (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>submittedUser</td>
+          <td>
+              submittedUser (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>closedTime</td>
+          <td>
+              closedTime (long)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>driverQuery</td>
+          <td>
+              driverQuery (string)
           </td>
           <td>
           </td>
