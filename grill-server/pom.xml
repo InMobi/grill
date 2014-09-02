@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-		<name>Grill Server</name>
+    <name>Grill Server</name>
 
     <parent>
         <artifactId>grill-parent</artifactId>
@@ -9,9 +10,9 @@
         <version>1.1.0-SNAPSHOT</version>
     </parent>
 
-  <properties>
-   <mvn.classpath.file>${pom.basedir}/target/classpath</mvn.classpath.file>
-  </properties>
+    <properties>
+        <mvn.classpath.file>${pom.basedir}/target/classpath</mvn.classpath.file>
+    </properties>
 
 
     <artifactId>grill-server</artifactId>
@@ -41,37 +42,37 @@
             <artifactId>jersey-media-moxy</artifactId>
         </dependency>
         <dependency>
-        <groupId>com.inmobi.grill</groupId>
-        <artifactId>grill-driver-cube</artifactId>
-        <version>${project.version}</version>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-driver-cube</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-        <groupId>com.inmobi.grill</groupId>
-        <artifactId>grill-driver-hive</artifactId>
-        <version>${project.version}</version>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-driver-hive</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-        <groupId>com.inmobi.grill</groupId>
-        <artifactId>grill-query-lib</artifactId>
-        <version>${project.version}</version>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-query-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-        <groupId>com.inmobi.grill</groupId>
-        <artifactId>grill-driver-hive</artifactId>
-        <version>${project.version}</version>
-        <type>test-jar</type>
-        <scope>test</scope>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-driver-hive</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
-    <dependency>
-       <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-       <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-     </dependency>
-     <dependency>
-        <groupId>org.glassfish.jersey.test-framework</groupId>
-        <artifactId>jersey-test-framework-core</artifactId>
-      </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -87,14 +88,14 @@
             <artifactId>jersey-media-multipart</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.glassfish.jersey.media</groupId>
-           <artifactId>jersey-media-json-jackson</artifactId>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
         </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-            </dependency>
-        
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish.grizzly</groupId>
             <artifactId>grizzly-framework</artifactId>
@@ -117,64 +118,74 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
         </dependency>
-        
+
         <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-core</artifactId>
-    		</dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
         <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-ganglia</artifactId>
-    		</dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-ganglia</artifactId>
+        </dependency>
         <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-jvm</artifactId>
-    		</dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+        </dependency>
         <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-servlets</artifactId>
-    		</dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+        </dependency>
         <dependency>
-	        <groupId>org.slf4j</groupId>
-	        <artifactId>jul-to-slf4j</artifactId>
-    		</dependency>
-      <dependency>
-       <groupId>org.slf4j</groupId>
-       <artifactId>slf4j-log4j12</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-client</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>commons-dbutils</groupId>
-        <artifactId>commons-dbutils</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.hsqldb</groupId>
-        <artifactId>hsqldb</artifactId>
-      </dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>2.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -186,24 +197,24 @@
                     <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
-          <plugin>
-            <!-- build the test JAR (test classes) -->
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>2.4</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>test-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
+            <plugin>
+                <!-- build the test JAR (test classes) -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>${jetty.version}</version>
-          </plugin>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -223,7 +234,8 @@
                     <environmentVariables>
                         <MVN_CLASSPATH_FILE>${mvn.classpath.file}</MVN_CLASSPATH_FILE>
                     </environmentVariables>
-                   <argLine>-Xms256m -Xmx512m -XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
+                    <argLine>-Xms256m -Xmx512m -XX:PermSize=256m
+                        -XX:MaxPermSize=256m</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -243,21 +255,31 @@
                 </executions>
             </plugin>
 
-					<plugin>
-						<groupId>org.codehaus.enunciate</groupId>
-						<artifactId>maven-enunciate-plugin</artifactId>
-						<version>1.25</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>docs</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<configFile>enunciate.xml</configFile>
-						</configuration>
-				</plugin>
+            <plugin>
+                <groupId>org.codehaus.enunciate</groupId>
+                <artifactId>maven-enunciate-plugin</artifactId>
+                <version>1.25</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>docs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configFile>enunciate.xml</configFile>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                        <version>${java.version}</version>
+                        <scope>system</scope>
+                        <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                    </dependency>
+                </dependencies>
+
+            </plugin>
 
         </plugins>
     </build>

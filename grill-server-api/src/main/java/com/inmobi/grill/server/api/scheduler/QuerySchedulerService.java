@@ -1,5 +1,12 @@
 package com.inmobi.grill.server.api.scheduler;
 
+import java.util.List;
+
+import com.inmobi.grill.api.GrillConf;
+import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.api.query.QueryHandle;
+
 /*
  * #%L
  * Grill API for server and extensions
@@ -21,5 +28,71 @@ package com.inmobi.grill.server.api.scheduler;
  */
 
 public interface QuerySchedulerService {
+  public static final String NAME = "scheduler";
+
+  /**
+   * Submit a query for scheduling
+   * 
+   * @param task
+   *          (query/etc)
+   * @param conf
+   * @param jarPath
+   *          : jars to be used for this query
+   * @param schedulerType
+   *          : type of scheduleQuery
+   * @param frequencyParams
+   *          : in case the scheduletype is custom read frequency params to
+   *          schedule.
+   * 
+   * @return ScheduleId if schedule is successful
+   */
+  public String scheduleTask(Object task, GrillConf conf, String jarPath,
+      String schedulerType, String frequencyParams) throws GrillException;
+
+  /**
+   * 
+   * @param sessionid
+   * @param state
+   * @param user
+   * @param scheduleid
+   * @return
+   * @throws GrillException
+   */
+  public List<QueryHandle> getAllQueries(GrillSessionHandle sessionid,
+      String state, String user, String scheduleid) throws GrillException;
+
+  /**
+   * 
+   * @param newtask
+   * @param conf
+   * @param jarpath
+   * @param schedulertype
+   * @param frequencyparam
+   * @return
+   * @throws GrillException
+   */
+  public boolean updateTask(Object newtask, GrillConf conf, String jarpath,
+      String schedulertype, String frequencyparam) throws GrillException;
+
+  /**
+   * 
+   * @param sessionid
+   * @param scheduleid
+   * @return
+   * @throws GrillException
+   */
+  public boolean delete(GrillSessionHandle sessionid, String scheduleid)
+      throws GrillException;
+
+  /**
+   * 
+   * @param sessionid
+   * @param scheduleid
+   * @param status
+   * @return
+   * @throws GrillException
+   */
+  public boolean statusUpdate(GrillSessionHandle sessionid, String scheduleid,
+      String status) throws GrillException;
 
 }
