@@ -177,18 +177,6 @@
       /**
        * (no documentation provided)
        */
-      private $preparedTime;
-      /**
-       * (no documentation provided)
-       */
-      private $userQuery;
-      /**
-       * (no documentation provided)
-       */
-      private $driverQuery;
-      /**
-       * (no documentation provided)
-       */
       private $preparedUser;
       /**
        * (no documentation provided)
@@ -197,11 +185,23 @@
       /**
        * (no documentation provided)
        */
+      private $driverQuery;
+      /**
+       * (no documentation provided)
+       */
       private $selectedDriverClassName;
       /**
        * (no documentation provided)
        */
       private $conf;
+      /**
+       * (no documentation provided)
+       */
+      private $preparedTime;
+      /**
+       * (no documentation provided)
+       */
+      private $userQuery;
 
       /**
        * Constructs a GrillPreparedQuery from a (parsed) JSON hash
@@ -212,45 +212,6 @@
         }
       }
       
-      /**
-       * (no documentation provided)
-       */
-      public function getPreparedTime() {
-        return $this->preparedTime;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setPreparedTime($preparedTime) {
-        $this->preparedTime = $preparedTime;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getUserQuery() {
-        return $this->userQuery;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setUserQuery($userQuery) {
-        $this->userQuery = $userQuery;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getDriverQuery() {
-        return $this->driverQuery;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setDriverQuery($driverQuery) {
-        $this->driverQuery = $driverQuery;
-      }
       /**
        * (no documentation provided)
        */
@@ -280,6 +241,19 @@
       /**
        * (no documentation provided)
        */
+      public function getDriverQuery() {
+        return $this->driverQuery;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setDriverQuery($driverQuery) {
+        $this->driverQuery = $driverQuery;
+      }
+      /**
+       * (no documentation provided)
+       */
       public function getSelectedDriverClassName() {
         return $this->selectedDriverClassName;
       }
@@ -304,30 +278,56 @@
         $this->conf = $conf;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getPreparedTime() {
+        return $this->preparedTime;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setPreparedTime($preparedTime) {
+        $this->preparedTime = $preparedTime;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getUserQuery() {
+        return $this->userQuery;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setUserQuery($userQuery) {
+        $this->userQuery = $userQuery;
+      }
+      /**
        * Returns the associative array for this GrillPreparedQuery
        */
       public function toArray() {
         $a = array();
-        if( $this->preparedTime ) {
-          $a["preparedTime"] = $this->preparedTime;
-        }
-        if( $this->userQuery ) {
-          $a["userQuery"] = $this->userQuery;
-        }
-        if( $this->driverQuery ) {
-          $a["driverQuery"] = $this->driverQuery;
-        }
         if( $this->preparedUser ) {
           $a["preparedUser"] = $this->preparedUser;
         }
         if( $this->prepareHandle ) {
           $a["prepareHandle"] = $this->prepareHandle->toArray();
         }
+        if( $this->driverQuery ) {
+          $a["driverQuery"] = $this->driverQuery;
+        }
         if( $this->selectedDriverClassName ) {
           $a["selectedDriverClassName"] = $this->selectedDriverClassName;
         }
         if( $this->conf ) {
           $a["conf"] = $this->conf->toArray();
+        }
+        if( $this->preparedTime ) {
+          $a["preparedTime"] = $this->preparedTime;
+        }
+        if( $this->userQuery ) {
+          $a["userQuery"] = $this->userQuery;
         }
         return $a;
       }
@@ -343,26 +343,26 @@
        * Initializes this GrillPreparedQuery from an associative array
        */
       public function initFromArray($o) {
-        if( isset($o['preparedTime']) ) {
-          $this->preparedTime = $o["preparedTime"];
-        }
-        if( isset($o['userQuery']) ) {
-          $this->userQuery = $o["userQuery"];
-        }
-        if( isset($o['driverQuery']) ) {
-          $this->driverQuery = $o["driverQuery"];
-        }
         if( isset($o['preparedUser']) ) {
           $this->preparedUser = $o["preparedUser"];
         }
         if( isset($o['prepareHandle']) ) {
           $this->prepareHandle = new \Com\Inmobi\Grill\Api\Query\QueryPrepareHandle($o["prepareHandle"]);
         }
+        if( isset($o['driverQuery']) ) {
+          $this->driverQuery = $o["driverQuery"];
+        }
         if( isset($o['selectedDriverClassName']) ) {
           $this->selectedDriverClassName = $o["selectedDriverClassName"];
         }
         if( isset($o['conf']) ) {
           $this->conf = new \Com\Inmobi\Grill\Api\GrillConf($o["conf"]);
+        }
+        if( isset($o['preparedTime']) ) {
+          $this->preparedTime = $o["preparedTime"];
+        }
+        if( isset($o['userQuery']) ) {
+          $this->userQuery = $o["userQuery"];
         }
       }
     
@@ -426,7 +426,7 @@
       /**
        * (no documentation provided)
        */
-      private $queryHandle;
+      private $finishTime;
       /**
        * (no documentation provided)
        */
@@ -434,27 +434,7 @@
       /**
        * (no documentation provided)
        */
-      private $selectedDriverClassName;
-      /**
-       * (no documentation provided)
-       */
-      private $finishTime;
-      /**
-       * (no documentation provided)
-       */
-      private $submissionTime;
-      /**
-       * (no documentation provided)
-       */
-      private $resultSetPath;
-      /**
-       * (no documentation provided)
-       */
-      private $isPersistent;
-      /**
-       * (no documentation provided)
-       */
-      private $driverStartTime;
+      private $closedTime;
       /**
        * (no documentation provided)
        */
@@ -462,15 +442,7 @@
       /**
        * (no documentation provided)
        */
-      private $launchTime;
-      /**
-       * (no documentation provided)
-       */
-      private $priority;
-      /**
-       * (no documentation provided)
-       */
-      private $queryConf;
+      private $driverStartTime;
       /**
        * (no documentation provided)
        */
@@ -478,7 +450,11 @@
       /**
        * (no documentation provided)
        */
-      private $userQuery;
+      private $resultSetPath;
+      /**
+       * (no documentation provided)
+       */
+      private $queryConf;
       /**
        * (no documentation provided)
        */
@@ -486,11 +462,35 @@
       /**
        * (no documentation provided)
        */
-      private $closedTime;
+      private $userQuery;
+      /**
+       * (no documentation provided)
+       */
+      private $queryHandle;
+      /**
+       * (no documentation provided)
+       */
+      private $isPersistent;
+      /**
+       * (no documentation provided)
+       */
+      private $submissionTime;
+      /**
+       * (no documentation provided)
+       */
+      private $priority;
       /**
        * (no documentation provided)
        */
       private $driverQuery;
+      /**
+       * (no documentation provided)
+       */
+      private $launchTime;
+      /**
+       * (no documentation provided)
+       */
+      private $selectedDriverClassName;
 
       /**
        * Constructs a GrillQuery from a (parsed) JSON hash
@@ -504,15 +504,15 @@
       /**
        * (no documentation provided)
        */
-      public function getQueryHandle() {
-        return $this->queryHandle;
+      public function getFinishTime() {
+        return $this->finishTime;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setQueryHandle($queryHandle) {
-        $this->queryHandle = $queryHandle;
+      public function setFinishTime($finishTime) {
+        $this->finishTime = $finishTime;
       }
       /**
        * (no documentation provided)
@@ -530,80 +530,15 @@
       /**
        * (no documentation provided)
        */
-      public function getSelectedDriverClassName() {
-        return $this->selectedDriverClassName;
+      public function getClosedTime() {
+        return $this->closedTime;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setSelectedDriverClassName($selectedDriverClassName) {
-        $this->selectedDriverClassName = $selectedDriverClassName;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getFinishTime() {
-        return $this->finishTime;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setFinishTime($finishTime) {
-        $this->finishTime = $finishTime;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getSubmissionTime() {
-        return $this->submissionTime;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setSubmissionTime($submissionTime) {
-        $this->submissionTime = $submissionTime;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getResultSetPath() {
-        return $this->resultSetPath;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setResultSetPath($resultSetPath) {
-        $this->resultSetPath = $resultSetPath;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getIsPersistent() {
-        return $this->isPersistent;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setIsPersistent($isPersistent) {
-        $this->isPersistent = $isPersistent;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getDriverStartTime() {
-        return $this->driverStartTime;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setDriverStartTime($driverStartTime) {
-        $this->driverStartTime = $driverStartTime;
+      public function setClosedTime($closedTime) {
+        $this->closedTime = $closedTime;
       }
       /**
        * (no documentation provided)
@@ -621,41 +556,15 @@
       /**
        * (no documentation provided)
        */
-      public function getLaunchTime() {
-        return $this->launchTime;
+      public function getDriverStartTime() {
+        return $this->driverStartTime;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setLaunchTime($launchTime) {
-        $this->launchTime = $launchTime;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getPriority() {
-        return $this->priority;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setPriority($priority) {
-        $this->priority = $priority;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getQueryConf() {
-        return $this->queryConf;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setQueryConf($queryConf) {
-        $this->queryConf = $queryConf;
+      public function setDriverStartTime($driverStartTime) {
+        $this->driverStartTime = $driverStartTime;
       }
       /**
        * (no documentation provided)
@@ -673,15 +582,28 @@
       /**
        * (no documentation provided)
        */
-      public function getUserQuery() {
-        return $this->userQuery;
+      public function getResultSetPath() {
+        return $this->resultSetPath;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setUserQuery($userQuery) {
-        $this->userQuery = $userQuery;
+      public function setResultSetPath($resultSetPath) {
+        $this->resultSetPath = $resultSetPath;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getQueryConf() {
+        return $this->queryConf;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setQueryConf($queryConf) {
+        $this->queryConf = $queryConf;
       }
       /**
        * (no documentation provided)
@@ -699,15 +621,67 @@
       /**
        * (no documentation provided)
        */
-      public function getClosedTime() {
-        return $this->closedTime;
+      public function getUserQuery() {
+        return $this->userQuery;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setClosedTime($closedTime) {
-        $this->closedTime = $closedTime;
+      public function setUserQuery($userQuery) {
+        $this->userQuery = $userQuery;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getQueryHandle() {
+        return $this->queryHandle;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setQueryHandle($queryHandle) {
+        $this->queryHandle = $queryHandle;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getIsPersistent() {
+        return $this->isPersistent;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setIsPersistent($isPersistent) {
+        $this->isPersistent = $isPersistent;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getSubmissionTime() {
+        return $this->submissionTime;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setSubmissionTime($submissionTime) {
+        $this->submissionTime = $submissionTime;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getPriority() {
+        return $this->priority;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setPriority($priority) {
+        $this->priority = $priority;
       }
       /**
        * (no documentation provided)
@@ -723,60 +697,86 @@
         $this->driverQuery = $driverQuery;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getLaunchTime() {
+        return $this->launchTime;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setLaunchTime($launchTime) {
+        $this->launchTime = $launchTime;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getSelectedDriverClassName() {
+        return $this->selectedDriverClassName;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setSelectedDriverClassName($selectedDriverClassName) {
+        $this->selectedDriverClassName = $selectedDriverClassName;
+      }
+      /**
        * Returns the associative array for this GrillQuery
        */
       public function toArray() {
         $a = array();
-        if( $this->queryHandle ) {
-          $a["queryHandle"] = $this->queryHandle->toArray();
+        if( $this->finishTime ) {
+          $a["finishTime"] = $this->finishTime;
         }
         if( $this->status ) {
           $a["status"] = $this->status->toArray();
         }
-        if( $this->selectedDriverClassName ) {
-          $a["selectedDriverClassName"] = $this->selectedDriverClassName;
-        }
-        if( $this->finishTime ) {
-          $a["finishTime"] = $this->finishTime;
-        }
-        if( $this->submissionTime ) {
-          $a["submissionTime"] = $this->submissionTime;
-        }
-        if( $this->resultSetPath ) {
-          $a["resultSetPath"] = $this->resultSetPath;
-        }
-        if( $this->isPersistent ) {
-          $a["isPersistent"] = $this->isPersistent;
-        }
-        if( $this->driverStartTime ) {
-          $a["driverStartTime"] = $this->driverStartTime;
+        if( $this->closedTime ) {
+          $a["closedTime"] = $this->closedTime;
         }
         if( $this->driverOpHandle ) {
           $a["driverOpHandle"] = $this->driverOpHandle;
         }
-        if( $this->launchTime ) {
-          $a["launchTime"] = $this->launchTime;
-        }
-        if( $this->priority ) {
-          $a["priority"] = $this->priority;
-        }
-        if( $this->queryConf ) {
-          $a["queryConf"] = $this->queryConf->toArray();
+        if( $this->driverStartTime ) {
+          $a["driverStartTime"] = $this->driverStartTime;
         }
         if( $this->driverFinishTime ) {
           $a["driverFinishTime"] = $this->driverFinishTime;
         }
-        if( $this->userQuery ) {
-          $a["userQuery"] = $this->userQuery;
+        if( $this->resultSetPath ) {
+          $a["resultSetPath"] = $this->resultSetPath;
+        }
+        if( $this->queryConf ) {
+          $a["queryConf"] = $this->queryConf->toArray();
         }
         if( $this->submittedUser ) {
           $a["submittedUser"] = $this->submittedUser;
         }
-        if( $this->closedTime ) {
-          $a["closedTime"] = $this->closedTime;
+        if( $this->userQuery ) {
+          $a["userQuery"] = $this->userQuery;
+        }
+        if( $this->queryHandle ) {
+          $a["queryHandle"] = $this->queryHandle->toArray();
+        }
+        if( $this->isPersistent ) {
+          $a["isPersistent"] = $this->isPersistent;
+        }
+        if( $this->submissionTime ) {
+          $a["submissionTime"] = $this->submissionTime;
+        }
+        if( $this->priority ) {
+          $a["priority"] = $this->priority;
         }
         if( $this->driverQuery ) {
           $a["driverQuery"] = $this->driverQuery;
+        }
+        if( $this->launchTime ) {
+          $a["launchTime"] = $this->launchTime;
+        }
+        if( $this->selectedDriverClassName ) {
+          $a["selectedDriverClassName"] = $this->selectedDriverClassName;
         }
         return $a;
       }
@@ -792,56 +792,56 @@
        * Initializes this GrillQuery from an associative array
        */
       public function initFromArray($o) {
-        if( isset($o['queryHandle']) ) {
-          $this->queryHandle = new \Com\Inmobi\Grill\Api\Query\QueryHandle($o["queryHandle"]);
+        if( isset($o['finishTime']) ) {
+          $this->finishTime = $o["finishTime"];
         }
         if( isset($o['status']) ) {
           $this->status = new \Com\Inmobi\Grill\Api\Query\QueryStatus($o["status"]);
         }
-        if( isset($o['selectedDriverClassName']) ) {
-          $this->selectedDriverClassName = $o["selectedDriverClassName"];
-        }
-        if( isset($o['finishTime']) ) {
-          $this->finishTime = $o["finishTime"];
-        }
-        if( isset($o['submissionTime']) ) {
-          $this->submissionTime = $o["submissionTime"];
-        }
-        if( isset($o['resultSetPath']) ) {
-          $this->resultSetPath = $o["resultSetPath"];
-        }
-        if( isset($o['isPersistent']) ) {
-          $this->isPersistent = $o["isPersistent"];
-        }
-        if( isset($o['driverStartTime']) ) {
-          $this->driverStartTime = $o["driverStartTime"];
+        if( isset($o['closedTime']) ) {
+          $this->closedTime = $o["closedTime"];
         }
         if( isset($o['driverOpHandle']) ) {
           $this->driverOpHandle = $o["driverOpHandle"];
         }
-        if( isset($o['launchTime']) ) {
-          $this->launchTime = $o["launchTime"];
-        }
-        if( isset($o['priority']) ) {
-          $this->priority = $o["priority"];
-        }
-        if( isset($o['queryConf']) ) {
-          $this->queryConf = new \Com\Inmobi\Grill\Api\GrillConf($o["queryConf"]);
+        if( isset($o['driverStartTime']) ) {
+          $this->driverStartTime = $o["driverStartTime"];
         }
         if( isset($o['driverFinishTime']) ) {
           $this->driverFinishTime = $o["driverFinishTime"];
         }
-        if( isset($o['userQuery']) ) {
-          $this->userQuery = $o["userQuery"];
+        if( isset($o['resultSetPath']) ) {
+          $this->resultSetPath = $o["resultSetPath"];
+        }
+        if( isset($o['queryConf']) ) {
+          $this->queryConf = new \Com\Inmobi\Grill\Api\GrillConf($o["queryConf"]);
         }
         if( isset($o['submittedUser']) ) {
           $this->submittedUser = $o["submittedUser"];
         }
-        if( isset($o['closedTime']) ) {
-          $this->closedTime = $o["closedTime"];
+        if( isset($o['userQuery']) ) {
+          $this->userQuery = $o["userQuery"];
+        }
+        if( isset($o['queryHandle']) ) {
+          $this->queryHandle = new \Com\Inmobi\Grill\Api\Query\QueryHandle($o["queryHandle"]);
+        }
+        if( isset($o['isPersistent']) ) {
+          $this->isPersistent = $o["isPersistent"];
+        }
+        if( isset($o['submissionTime']) ) {
+          $this->submissionTime = $o["submissionTime"];
+        }
+        if( isset($o['priority']) ) {
+          $this->priority = $o["priority"];
         }
         if( isset($o['driverQuery']) ) {
           $this->driverQuery = $o["driverQuery"];
+        }
+        if( isset($o['launchTime']) ) {
+          $this->launchTime = $o["launchTime"];
+        }
+        if( isset($o['selectedDriverClassName']) ) {
+          $this->selectedDriverClassName = $o["selectedDriverClassName"];
         }
       }
     
@@ -1099,11 +1099,7 @@
       /**
        * (no documentation provided)
        */
-      private $statusMessage;
-      /**
-       * (no documentation provided)
-       */
-      private $errorMessage;
+      private $progress;
       /**
        * (no documentation provided)
        */
@@ -1111,15 +1107,19 @@
       /**
        * (no documentation provided)
        */
-      private $progress;
-      /**
-       * (no documentation provided)
-       */
-      private $isResultSetAvailable;
+      private $statusMessage;
       /**
        * (no documentation provided)
        */
       private $progressMessage;
+      /**
+       * (no documentation provided)
+       */
+      private $errorMessage;
+      /**
+       * (no documentation provided)
+       */
+      private $isResultSetAvailable;
 
       /**
        * Constructs a QueryStatus from a (parsed) JSON hash
@@ -1133,28 +1133,15 @@
       /**
        * (no documentation provided)
        */
-      public function getStatusMessage() {
-        return $this->statusMessage;
+      public function getProgress() {
+        return $this->progress;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setStatusMessage($statusMessage) {
-        $this->statusMessage = $statusMessage;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getErrorMessage() {
-        return $this->errorMessage;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setErrorMessage($errorMessage) {
-        $this->errorMessage = $errorMessage;
+      public function setProgress($progress) {
+        $this->progress = $progress;
       }
       /**
        * (no documentation provided)
@@ -1172,28 +1159,15 @@
       /**
        * (no documentation provided)
        */
-      public function getProgress() {
-        return $this->progress;
+      public function getStatusMessage() {
+        return $this->statusMessage;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setProgress($progress) {
-        $this->progress = $progress;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getIsResultSetAvailable() {
-        return $this->isResultSetAvailable;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setIsResultSetAvailable($isResultSetAvailable) {
-        $this->isResultSetAvailable = $isResultSetAvailable;
+      public function setStatusMessage($statusMessage) {
+        $this->statusMessage = $statusMessage;
       }
       /**
        * (no documentation provided)
@@ -1209,27 +1183,53 @@
         $this->progressMessage = $progressMessage;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getErrorMessage() {
+        return $this->errorMessage;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setErrorMessage($errorMessage) {
+        $this->errorMessage = $errorMessage;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getIsResultSetAvailable() {
+        return $this->isResultSetAvailable;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setIsResultSetAvailable($isResultSetAvailable) {
+        $this->isResultSetAvailable = $isResultSetAvailable;
+      }
+      /**
        * Returns the associative array for this QueryStatus
        */
       public function toArray() {
         $a = array();
-        if( $this->statusMessage ) {
-          $a["statusMessage"] = $this->statusMessage;
-        }
-        if( $this->errorMessage ) {
-          $a["errorMessage"] = $this->errorMessage;
+        if( $this->progress ) {
+          $a["progress"] = $this->progress;
         }
         if( $this->status ) {
           $a["status"] = $this->status;
         }
-        if( $this->progress ) {
-          $a["progress"] = $this->progress;
-        }
-        if( $this->isResultSetAvailable ) {
-          $a["isResultSetAvailable"] = $this->isResultSetAvailable;
+        if( $this->statusMessage ) {
+          $a["statusMessage"] = $this->statusMessage;
         }
         if( $this->progressMessage ) {
           $a["progressMessage"] = $this->progressMessage;
+        }
+        if( $this->errorMessage ) {
+          $a["errorMessage"] = $this->errorMessage;
+        }
+        if( $this->isResultSetAvailable ) {
+          $a["isResultSetAvailable"] = $this->isResultSetAvailable;
         }
         return $a;
       }
@@ -1245,23 +1245,23 @@
        * Initializes this QueryStatus from an associative array
        */
       public function initFromArray($o) {
-        if( isset($o['statusMessage']) ) {
-          $this->statusMessage = $o["statusMessage"];
-        }
-        if( isset($o['errorMessage']) ) {
-          $this->errorMessage = $o["errorMessage"];
+        if( isset($o['progress']) ) {
+          $this->progress = $o["progress"];
         }
         if( isset($o['status']) ) {
           $this->status = $o["status"];
         }
-        if( isset($o['progress']) ) {
-          $this->progress = $o["progress"];
-        }
-        if( isset($o['isResultSetAvailable']) ) {
-          $this->isResultSetAvailable = $o["isResultSetAvailable"];
+        if( isset($o['statusMessage']) ) {
+          $this->statusMessage = $o["statusMessage"];
         }
         if( isset($o['progressMessage']) ) {
           $this->progressMessage = $o["progressMessage"];
+        }
+        if( isset($o['errorMessage']) ) {
+          $this->errorMessage = $o["errorMessage"];
+        }
+        if( isset($o['isResultSetAvailable']) ) {
+          $this->isResultSetAvailable = $o["isResultSetAvailable"];
         }
       }
     
@@ -1281,11 +1281,11 @@
       /**
        * (no documentation provided)
        */
-      private $name;
+      private $type;
       /**
        * (no documentation provided)
        */
-      private $type;
+      private $name;
 
       /**
        * Constructs a ResultColumn from a (parsed) JSON hash
@@ -1296,19 +1296,6 @@
         }
       }
       
-      /**
-       * (no documentation provided)
-       */
-      public function getName() {
-        return $this->name;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setName($name) {
-        $this->name = $name;
-      }
       /**
        * (no documentation provided)
        */
@@ -1323,15 +1310,28 @@
         $this->type = $type;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getName() {
+        return $this->name;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setName($name) {
+        $this->name = $name;
+      }
+      /**
        * Returns the associative array for this ResultColumn
        */
       public function toArray() {
         $a = array();
-        if( $this->name ) {
-          $a["name"] = $this->name;
-        }
         if( $this->type ) {
           $a["type"] = $this->type;
+        }
+        if( $this->name ) {
+          $a["name"] = $this->name;
         }
         return $a;
       }
@@ -1347,11 +1347,11 @@
        * Initializes this ResultColumn from an associative array
        */
       public function initFromArray($o) {
-        if( isset($o['name']) ) {
-          $this->name = $o["name"];
-        }
         if( isset($o['type']) ) {
           $this->type = $o["type"];
+        }
+        if( isset($o['name']) ) {
+          $this->name = $o["name"];
         }
       }
     
@@ -1489,11 +1489,11 @@
       /**
        * (no documentation provided)
        */
-      private $status;
+      private $message;
       /**
        * (no documentation provided)
        */
-      private $message;
+      private $status;
 
       /**
        * Constructs a APIResult from a (parsed) JSON hash
@@ -1504,19 +1504,6 @@
         }
       }
       
-      /**
-       * (no documentation provided)
-       */
-      public function getStatus() {
-        return $this->status;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setStatus($status) {
-        $this->status = $status;
-      }
       /**
        * (no documentation provided)
        */
@@ -1531,15 +1518,28 @@
         $this->message = $message;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getStatus() {
+        return $this->status;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setStatus($status) {
+        $this->status = $status;
+      }
+      /**
        * Returns the associative array for this APIResult
        */
       public function toArray() {
         $a = array();
-        if( $this->status ) {
-          $a["status"] = $this->status;
-        }
         if( $this->message ) {
           $a["message"] = $this->message;
+        }
+        if( $this->status ) {
+          $a["status"] = $this->status;
         }
         return $a;
       }
@@ -1555,11 +1555,11 @@
        * Initializes this APIResult from an associative array
        */
       public function initFromArray($o) {
-        if( isset($o['status']) ) {
-          $this->status = $o["status"];
-        }
         if( isset($o['message']) ) {
           $this->message = $o["message"];
+        }
+        if( isset($o['status']) ) {
+          $this->status = $o["status"];
         }
       }
     
@@ -1579,11 +1579,11 @@
       /**
        * (no documentation provided)
        */
-      private $numRows;
+      private $persistedURI;
       /**
        * (no documentation provided)
        */
-      private $persistedURI;
+      private $numRows;
 
       /**
        * Constructs a PersistentQueryResult from a (parsed) JSON hash
@@ -1594,19 +1594,6 @@
         }
       }
       
-      /**
-       * (no documentation provided)
-       */
-      public function getNumRows() {
-        return $this->numRows;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumRows($numRows) {
-        $this->numRows = $numRows;
-      }
       /**
        * (no documentation provided)
        */
@@ -1621,15 +1608,28 @@
         $this->persistedURI = $persistedURI;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getNumRows() {
+        return $this->numRows;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumRows($numRows) {
+        $this->numRows = $numRows;
+      }
+      /**
        * Returns the associative array for this PersistentQueryResult
        */
       public function toArray() {
         $a = parent::toArray();
-        if( $this->numRows ) {
-          $a["numRows"] = $this->numRows;
-        }
         if( $this->persistedURI ) {
           $a["persistedURI"] = $this->persistedURI;
+        }
+        if( $this->numRows ) {
+          $a["numRows"] = $this->numRows;
         }
         return $a;
       }
@@ -1640,11 +1640,11 @@
        */
       public function initFromArray($o) {
         parent::initFromArray($o);
-        if( isset($o['numRows']) ) {
-          $this->numRows = $o["numRows"];
-        }
         if( isset($o['persistedURI']) ) {
           $this->persistedURI = $o["persistedURI"];
+        }
+        if( isset($o['numRows']) ) {
+          $this->numRows = $o["numRows"];
         }
       }
     
@@ -1749,47 +1749,11 @@
       /**
        * (no documentation provided)
        */
+      private $numFilters;
+      /**
+       * (no documentation provided)
+       */
       private $gbyWeight;
-      /**
-       * (no documentation provided)
-       */
-      private $numObys;
-      /**
-       * (no documentation provided)
-       */
-      private $tableWeights;
-      /**
-       * (no documentation provided)
-       */
-      private $numSelDi;
-      /**
-       * (no documentation provided)
-       */
-      private $numHaving;
-      /**
-       * (no documentation provided)
-       */
-      private $joinWeight;
-      /**
-       * (no documentation provided)
-       */
-      private $hasSubQuery;
-      /**
-       * (no documentation provided)
-       */
-      private $numAggrExprs;
-      /**
-       * (no documentation provided)
-       */
-      private $numSels;
-      /**
-       * (no documentation provided)
-       */
-      private $havingWeight;
-      /**
-       * (no documentation provided)
-       */
-      private $prepareHandle;
       /**
        * (no documentation provided)
        */
@@ -1797,35 +1761,15 @@
       /**
        * (no documentation provided)
        */
-      private $tablesQueried;
-      /**
-       * (no documentation provided)
-       */
       private $execMode;
       /**
        * (no documentation provided)
        */
-      private $obyWeight;
+      private $havingWeight;
       /**
        * (no documentation provided)
        */
-      private $filterWeight;
-      /**
-       * (no documentation provided)
-       */
-      private $numGbys;
-      /**
-       * (no documentation provided)
-       */
-      private $numFilters;
-      /**
-       * (no documentation provided)
-       */
-      private $numJoins;
-      /**
-       * (no documentation provided)
-       */
-      private $selectWeight;
+      private $joinWeight;
       /**
        * (no documentation provided)
        */
@@ -1833,7 +1777,63 @@
       /**
        * (no documentation provided)
        */
+      private $numGbys;
+      /**
+       * (no documentation provided)
+       */
+      private $numHaving;
+      /**
+       * (no documentation provided)
+       */
+      private $numJoins;
+      /**
+       * (no documentation provided)
+       */
       private $planString;
+      /**
+       * (no documentation provided)
+       */
+      private $numObys;
+      /**
+       * (no documentation provided)
+       */
+      private $tablesQueried;
+      /**
+       * (no documentation provided)
+       */
+      private $numSels;
+      /**
+       * (no documentation provided)
+       */
+      private $prepareHandle;
+      /**
+       * (no documentation provided)
+       */
+      private $numSelDi;
+      /**
+       * (no documentation provided)
+       */
+      private $tableWeights;
+      /**
+       * (no documentation provided)
+       */
+      private $filterWeight;
+      /**
+       * (no documentation provided)
+       */
+      private $obyWeight;
+      /**
+       * (no documentation provided)
+       */
+      private $hasSubQuery;
+      /**
+       * (no documentation provided)
+       */
+      private $selectWeight;
+      /**
+       * (no documentation provided)
+       */
+      private $numAggrExprs;
 
       /**
        * Constructs a QueryPlan from a (parsed) JSON hash
@@ -1847,6 +1847,19 @@
       /**
        * (no documentation provided)
        */
+      public function getNumFilters() {
+        return $this->numFilters;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumFilters($numFilters) {
+        $this->numFilters = $numFilters;
+      }
+      /**
+       * (no documentation provided)
+       */
       public function getGbyWeight() {
         return $this->gbyWeight;
       }
@@ -1856,136 +1869,6 @@
        */
       public function setGbyWeight($gbyWeight) {
         $this->gbyWeight = $gbyWeight;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumObys() {
-        return $this->numObys;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumObys($numObys) {
-        $this->numObys = $numObys;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getTableWeights() {
-        return $this->tableWeights;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setTableWeights($tableWeights) {
-        $this->tableWeights = $tableWeights;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumSelDi() {
-        return $this->numSelDi;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumSelDi($numSelDi) {
-        $this->numSelDi = $numSelDi;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumHaving() {
-        return $this->numHaving;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumHaving($numHaving) {
-        $this->numHaving = $numHaving;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getJoinWeight() {
-        return $this->joinWeight;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setJoinWeight($joinWeight) {
-        $this->joinWeight = $joinWeight;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getHasSubQuery() {
-        return $this->hasSubQuery;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setHasSubQuery($hasSubQuery) {
-        $this->hasSubQuery = $hasSubQuery;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumAggrExprs() {
-        return $this->numAggrExprs;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumAggrExprs($numAggrExprs) {
-        $this->numAggrExprs = $numAggrExprs;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumSels() {
-        return $this->numSels;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumSels($numSels) {
-        $this->numSels = $numSels;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getHavingWeight() {
-        return $this->havingWeight;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setHavingWeight($havingWeight) {
-        $this->havingWeight = $havingWeight;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getPrepareHandle() {
-        return $this->prepareHandle;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setPrepareHandle($prepareHandle) {
-        $this->prepareHandle = $prepareHandle;
       }
       /**
        * (no documentation provided)
@@ -2003,19 +1886,6 @@
       /**
        * (no documentation provided)
        */
-      public function getTablesQueried() {
-        return $this->tablesQueried;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setTablesQueried($tablesQueried) {
-        $this->tablesQueried = $tablesQueried;
-      }
-      /**
-       * (no documentation provided)
-       */
       public function getExecMode() {
         return $this->execMode;
       }
@@ -2029,80 +1899,28 @@
       /**
        * (no documentation provided)
        */
-      public function getObyWeight() {
-        return $this->obyWeight;
+      public function getHavingWeight() {
+        return $this->havingWeight;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setObyWeight($obyWeight) {
-        $this->obyWeight = $obyWeight;
+      public function setHavingWeight($havingWeight) {
+        $this->havingWeight = $havingWeight;
       }
       /**
        * (no documentation provided)
        */
-      public function getFilterWeight() {
-        return $this->filterWeight;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setFilterWeight($filterWeight) {
-        $this->filterWeight = $filterWeight;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumGbys() {
-        return $this->numGbys;
+      public function getJoinWeight() {
+        return $this->joinWeight;
       }
       
       /**
        * (no documentation provided)
        */
-      public function setNumGbys($numGbys) {
-        $this->numGbys = $numGbys;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumFilters() {
-        return $this->numFilters;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumFilters($numFilters) {
-        $this->numFilters = $numFilters;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getNumJoins() {
-        return $this->numJoins;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setNumJoins($numJoins) {
-        $this->numJoins = $numJoins;
-      }
-      /**
-       * (no documentation provided)
-       */
-      public function getSelectWeight() {
-        return $this->selectWeight;
-      }
-      
-      /**
-       * (no documentation provided)
-       */
-      public function setSelectWeight($selectWeight) {
-        $this->selectWeight = $selectWeight;
+      public function setJoinWeight($joinWeight) {
+        $this->joinWeight = $joinWeight;
       }
       /**
        * (no documentation provided)
@@ -2120,6 +1938,45 @@
       /**
        * (no documentation provided)
        */
+      public function getNumGbys() {
+        return $this->numGbys;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumGbys($numGbys) {
+        $this->numGbys = $numGbys;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getNumHaving() {
+        return $this->numHaving;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumHaving($numHaving) {
+        $this->numHaving = $numHaving;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getNumJoins() {
+        return $this->numJoins;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumJoins($numJoins) {
+        $this->numJoins = $numJoins;
+      }
+      /**
+       * (no documentation provided)
+       */
       public function getPlanString() {
         return $this->planString;
       }
@@ -2131,45 +1988,188 @@
         $this->planString = $planString;
       }
       /**
+       * (no documentation provided)
+       */
+      public function getNumObys() {
+        return $this->numObys;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumObys($numObys) {
+        $this->numObys = $numObys;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getTablesQueried() {
+        return $this->tablesQueried;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setTablesQueried($tablesQueried) {
+        $this->tablesQueried = $tablesQueried;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getNumSels() {
+        return $this->numSels;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumSels($numSels) {
+        $this->numSels = $numSels;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getPrepareHandle() {
+        return $this->prepareHandle;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setPrepareHandle($prepareHandle) {
+        $this->prepareHandle = $prepareHandle;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getNumSelDi() {
+        return $this->numSelDi;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumSelDi($numSelDi) {
+        $this->numSelDi = $numSelDi;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getTableWeights() {
+        return $this->tableWeights;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setTableWeights($tableWeights) {
+        $this->tableWeights = $tableWeights;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getFilterWeight() {
+        return $this->filterWeight;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setFilterWeight($filterWeight) {
+        $this->filterWeight = $filterWeight;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getObyWeight() {
+        return $this->obyWeight;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setObyWeight($obyWeight) {
+        $this->obyWeight = $obyWeight;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getHasSubQuery() {
+        return $this->hasSubQuery;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setHasSubQuery($hasSubQuery) {
+        $this->hasSubQuery = $hasSubQuery;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getSelectWeight() {
+        return $this->selectWeight;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setSelectWeight($selectWeight) {
+        $this->selectWeight = $selectWeight;
+      }
+      /**
+       * (no documentation provided)
+       */
+      public function getNumAggrExprs() {
+        return $this->numAggrExprs;
+      }
+      
+      /**
+       * (no documentation provided)
+       */
+      public function setNumAggrExprs($numAggrExprs) {
+        $this->numAggrExprs = $numAggrExprs;
+      }
+      /**
        * Returns the associative array for this QueryPlan
        */
       public function toArray() {
         $a = parent::toArray();
+        if( $this->numFilters ) {
+          $a["numFilters"] = $this->numFilters;
+        }
         if( $this->gbyWeight ) {
           $a["gbyWeight"] = $this->gbyWeight;
         }
-        if( $this->numObys ) {
-          $a["numObys"] = $this->numObys;
+        if( $this->scanMode ) {
+          $a["scanMode"] = $this->scanMode;
         }
-        if( $this->tableWeights ) {
-          $a["tableWeights"] = $this->tableWeights;
-        }
-        if( $this->numSelDi ) {
-          $a["numSelDi"] = $this->numSelDi;
-        }
-        if( $this->numHaving ) {
-          $a["numHaving"] = $this->numHaving;
-        }
-        if( $this->joinWeight ) {
-          $a["joinWeight"] = $this->joinWeight;
-        }
-        if( $this->hasSubQuery ) {
-          $a["hasSubQuery"] = $this->hasSubQuery;
-        }
-        if( $this->numAggrExprs ) {
-          $a["numAggrExprs"] = $this->numAggrExprs;
-        }
-        if( $this->numSels ) {
-          $a["numSels"] = $this->numSels;
+        if( $this->execMode ) {
+          $a["execMode"] = $this->execMode;
         }
         if( $this->havingWeight ) {
           $a["havingWeight"] = $this->havingWeight;
         }
-        if( $this->prepareHandle ) {
-          $a["prepareHandle"] = $this->prepareHandle->toArray();
+        if( $this->joinWeight ) {
+          $a["joinWeight"] = $this->joinWeight;
         }
-        if( $this->scanMode ) {
-          $a["scanMode"] = $this->scanMode;
+        if( $this->queryCost ) {
+          $a["queryCost"] = $this->queryCost->toArray();
+        }
+        if( $this->numGbys ) {
+          $a["numGbys"] = $this->numGbys;
+        }
+        if( $this->numHaving ) {
+          $a["numHaving"] = $this->numHaving;
+        }
+        if( $this->numJoins ) {
+          $a["numJoins"] = $this->numJoins;
+        }
+        if( $this->planString ) {
+          $a["planString"] = $this->planString;
+        }
+        if( $this->numObys ) {
+          $a["numObys"] = $this->numObys;
         }
         if( $this->tablesQueried ) {
           $ab = array();
@@ -2178,32 +2178,32 @@
           }
           $a['tablesQueried'] = $ab;
         }
-        if( $this->execMode ) {
-          $a["execMode"] = $this->execMode;
+        if( $this->numSels ) {
+          $a["numSels"] = $this->numSels;
         }
-        if( $this->obyWeight ) {
-          $a["obyWeight"] = $this->obyWeight;
+        if( $this->prepareHandle ) {
+          $a["prepareHandle"] = $this->prepareHandle->toArray();
+        }
+        if( $this->numSelDi ) {
+          $a["numSelDi"] = $this->numSelDi;
+        }
+        if( $this->tableWeights ) {
+          $a["tableWeights"] = $this->tableWeights;
         }
         if( $this->filterWeight ) {
           $a["filterWeight"] = $this->filterWeight;
         }
-        if( $this->numGbys ) {
-          $a["numGbys"] = $this->numGbys;
+        if( $this->obyWeight ) {
+          $a["obyWeight"] = $this->obyWeight;
         }
-        if( $this->numFilters ) {
-          $a["numFilters"] = $this->numFilters;
-        }
-        if( $this->numJoins ) {
-          $a["numJoins"] = $this->numJoins;
+        if( $this->hasSubQuery ) {
+          $a["hasSubQuery"] = $this->hasSubQuery;
         }
         if( $this->selectWeight ) {
           $a["selectWeight"] = $this->selectWeight;
         }
-        if( $this->queryCost ) {
-          $a["queryCost"] = $this->queryCost->toArray();
-        }
-        if( $this->planString ) {
-          $a["planString"] = $this->planString;
+        if( $this->numAggrExprs ) {
+          $a["numAggrExprs"] = $this->numAggrExprs;
         }
         return $a;
       }
@@ -2214,41 +2214,41 @@
        */
       public function initFromArray($o) {
         parent::initFromArray($o);
+        if( isset($o['numFilters']) ) {
+          $this->numFilters = $o["numFilters"];
+        }
         if( isset($o['gbyWeight']) ) {
           $this->gbyWeight = $o["gbyWeight"];
         }
-        if( isset($o['numObys']) ) {
-          $this->numObys = $o["numObys"];
+        if( isset($o['scanMode']) ) {
+          $this->scanMode = $o["scanMode"];
         }
-        if( isset($o['tableWeights']) ) {
-          $this->tableWeights = $o["tableWeights"];
-        }
-        if( isset($o['numSelDi']) ) {
-          $this->numSelDi = $o["numSelDi"];
-        }
-        if( isset($o['numHaving']) ) {
-          $this->numHaving = $o["numHaving"];
-        }
-        if( isset($o['joinWeight']) ) {
-          $this->joinWeight = $o["joinWeight"];
-        }
-        if( isset($o['hasSubQuery']) ) {
-          $this->hasSubQuery = $o["hasSubQuery"];
-        }
-        if( isset($o['numAggrExprs']) ) {
-          $this->numAggrExprs = $o["numAggrExprs"];
-        }
-        if( isset($o['numSels']) ) {
-          $this->numSels = $o["numSels"];
+        if( isset($o['execMode']) ) {
+          $this->execMode = $o["execMode"];
         }
         if( isset($o['havingWeight']) ) {
           $this->havingWeight = $o["havingWeight"];
         }
-        if( isset($o['prepareHandle']) ) {
-          $this->prepareHandle = new \Com\Inmobi\Grill\Api\Query\QueryPrepareHandle($o["prepareHandle"]);
+        if( isset($o['joinWeight']) ) {
+          $this->joinWeight = $o["joinWeight"];
         }
-        if( isset($o['scanMode']) ) {
-          $this->scanMode = $o["scanMode"];
+        if( isset($o['queryCost']) ) {
+          $this->queryCost = new \Com\Inmobi\Grill\Api\Query\QueryCost($o["queryCost"]);
+        }
+        if( isset($o['numGbys']) ) {
+          $this->numGbys = $o["numGbys"];
+        }
+        if( isset($o['numHaving']) ) {
+          $this->numHaving = $o["numHaving"];
+        }
+        if( isset($o['numJoins']) ) {
+          $this->numJoins = $o["numJoins"];
+        }
+        if( isset($o['planString']) ) {
+          $this->planString = $o["planString"];
+        }
+        if( isset($o['numObys']) ) {
+          $this->numObys = $o["numObys"];
         }
         $this->tablesQueried = array();
         if( isset($o['tablesQueried']) ) {
@@ -2256,32 +2256,32 @@
             $this->tablesQueried[$i] = $x;
           }
         }
-        if( isset($o['execMode']) ) {
-          $this->execMode = $o["execMode"];
+        if( isset($o['numSels']) ) {
+          $this->numSels = $o["numSels"];
         }
-        if( isset($o['obyWeight']) ) {
-          $this->obyWeight = $o["obyWeight"];
+        if( isset($o['prepareHandle']) ) {
+          $this->prepareHandle = new \Com\Inmobi\Grill\Api\Query\QueryPrepareHandle($o["prepareHandle"]);
+        }
+        if( isset($o['numSelDi']) ) {
+          $this->numSelDi = $o["numSelDi"];
+        }
+        if( isset($o['tableWeights']) ) {
+          $this->tableWeights = $o["tableWeights"];
         }
         if( isset($o['filterWeight']) ) {
           $this->filterWeight = $o["filterWeight"];
         }
-        if( isset($o['numGbys']) ) {
-          $this->numGbys = $o["numGbys"];
+        if( isset($o['obyWeight']) ) {
+          $this->obyWeight = $o["obyWeight"];
         }
-        if( isset($o['numFilters']) ) {
-          $this->numFilters = $o["numFilters"];
-        }
-        if( isset($o['numJoins']) ) {
-          $this->numJoins = $o["numJoins"];
+        if( isset($o['hasSubQuery']) ) {
+          $this->hasSubQuery = $o["hasSubQuery"];
         }
         if( isset($o['selectWeight']) ) {
           $this->selectWeight = $o["selectWeight"];
         }
-        if( isset($o['queryCost']) ) {
-          $this->queryCost = new \Com\Inmobi\Grill\Api\Query\QueryCost($o["queryCost"]);
-        }
-        if( isset($o['planString']) ) {
-          $this->planString = $o["planString"];
+        if( isset($o['numAggrExprs']) ) {
+          $this->numAggrExprs = $o["numAggrExprs"];
         }
       }
     
