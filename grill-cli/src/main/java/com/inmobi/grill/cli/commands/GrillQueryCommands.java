@@ -28,6 +28,9 @@ import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.UUID;
@@ -39,11 +42,16 @@ public class GrillQueryCommands extends  BaseGrillCommand implements CommandMark
   public String executeQuery(
       @CliOption(key = {"", "query"}, mandatory = true, help = "Query to execute") String sql,
       @CliOption(key = {"async"}, mandatory = false, unspecifiedDefaultValue = "false",
-          specifiedDefaultValue = "true", help = "Sync query execution") boolean asynch) {
+          specifiedDefaultValue = "true", help = "Sync query execution") boolean asynch,
+      @CliOption(key = {"save"}, mandatory = false, help = "Result file location") String location) {
     if (!asynch) {
       try {
         GrillClient.GrillClientResultSetWithStats result = client.getResults(sql);
-        return formatResultSet(result);
+        if(location != null && !location.isEmpty()){
+          return storeResultSetInFile(formatResultSet(result), location);
+        } else {
+          return formatResultSet(result);
+        }
       } catch (Throwable t) {
         return t.getMessage();
       }
@@ -51,6 +59,27 @@ public class GrillQueryCommands extends  BaseGrillCommand implements CommandMark
       QueryHandle handle = client.executeQueryAsynch(sql);
       return handle.getHandleId().toString();
     }
+  }
+
+  public String storeResultSetInFile(String resultSet, String location) {
+    File file = new File(location);
+    if (file.isDirectory()) {
+      return "Entered path is a directory, please enter file name.";
+    }
+    if (!(new File(file.getParent())).exists()) {
+      return "Parent directory doesn't exist, please check the path.";
+    }
+    try {
+      if (!file.exists()) {
+        file.createNewFile();
+      }
+      FileWriter fileWriter = new FileWriter(file);
+      fileWriter.write(resultSet);
+      fileWriter.close();
+    } catch (IOException ioException) {
+      return ioException.getMessage();
+    }
+    return "Results saved to: " + file.getAbsolutePath();
   }
 
   private String formatResultSet(GrillClient.GrillClientResultSetWithStats rs) {
@@ -147,11 +176,16 @@ public class GrillQueryCommands extends  BaseGrillCommand implements CommandMark
 
   @CliCommand(value = "query results", help ="get results of async query")
   public String getQueryResults(@CliOption(key = {"", "query"},
-      mandatory = true, help = "query-handle for fetching result") String qh)   {
+      mandatory = true, help = "query-handle for fetching result") String qh,
+      @CliOption(key = {"save"}, mandatory = false, help = "Result file location") String location)   {
     try {
       GrillClient.GrillClientResultSetWithStats result = client.getAsyncResults(
           new QueryHandle(UUID.fromString(qh)));
-      return formatResultSet(result);
+      if(location != null && !location.isEmpty()){
+        return storeResultSetInFile(formatResultSet(result), location);
+      } else {
+        return formatResultSet(result);
+      }
     } catch (Throwable t) {
       return t.getMessage();
     }
@@ -204,12 +238,18 @@ public class GrillQueryCommands extends  BaseGrillCommand implements CommandMark
   public String executePreparedQuery(
       @CliOption(key = {"", "handle"}, mandatory = true, help = "Prepare handle to execute") String phandle,
       @CliOption(key = {"async"}, mandatory = false, unspecifiedDefaultValue = "false",
-          specifiedDefaultValue = "true", help = "Sync query execution") boolean asynch) {
+          specifiedDefaultValue = "true", help = "Sync query execution") boolean asynch,
+      @CliOption(key = {"save"}, mandatory = false, help = "Result file location") String location) {
     if (!asynch) {
       try {
         GrillClient.GrillClientResultSetWithStats result = 
-            client.getResultsFromPrepared(QueryPrepareHandle.fromString(phandle));
-        return formatResultSet(result);
+            client.getResultsFromPrepared(
+                QueryPrepareHandle.fromString(phandle));
+        if(location != null && !location.isEmpty()){
+          return storeResultSetInFile(formatResultSet(result), location);
+        } else {
+          return formatResultSet(result);
+        }
       } catch (Throwable t) {
         return t.getMessage();
       }
