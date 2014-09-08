@@ -1,6 +1,6 @@
 package com.inmobi.grill.api.schedule;
 
-public enum ScheduleType {
+public enum Frequency {
   DAILY(1),
   WEEKLY(2),
   MONTHLY(3),
@@ -10,7 +10,7 @@ public enum ScheduleType {
   
   private final int value;
   
-  private ScheduleType(int value) {
+  private Frequency(int value) {
     this.value = value;
   }
   
@@ -25,7 +25,7 @@ public enum ScheduleType {
    * Find a the enum type by its integer value.
    * @return null if the value is not found.
    */
-  public static ScheduleType findByValue(int value) { 
+  public static Frequency findByValue(int value) { 
     switch (value) {
       case 1:
         return DAILY;

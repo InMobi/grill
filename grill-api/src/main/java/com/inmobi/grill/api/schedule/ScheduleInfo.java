@@ -39,7 +39,7 @@ public class ScheduleInfo {
   @XmlElement @Getter private Object task;
   @XmlElement @Getter private String submittedUser;
   @XmlElement @Getter private JobType type;
-  @XmlElement @Getter private ScheduleType scheduleType;
+  @XmlElement @Getter private Frequency scheduleType;
   // In case of schedulerType = Custom, will take frequencyParams in standard cron format "min hour dayOFMonth Month DayOfWeek"
   @XmlElement @Getter private String frequencyParams;
   // startTime : from when Schedule should start running
