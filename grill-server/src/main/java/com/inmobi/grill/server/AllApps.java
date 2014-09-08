@@ -23,7 +23,7 @@ package com.inmobi.grill.server;
 import com.inmobi.grill.server.metastore.MetastoreResource;
 import com.inmobi.grill.server.query.QueryServiceResource;
 import com.inmobi.grill.server.quota.QuotaResource;
-import com.inmobi.grill.server.scheduler.ScheduleResource;
+import com.inmobi.grill.server.scheduler.SchedulerResource;
 import com.inmobi.grill.server.session.SessionResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -42,7 +42,7 @@ public class AllApps extends Application {
     classes.add(MetastoreResource.class);
     classes.add(QueryServiceResource.class);
     classes.add(QuotaResource.class);
-    classes.add(ScheduleResource.class);
+    classes.add(SchedulerResource.class);
     classes.add(IndexResource.class);
     classes.add(MultiPartFeature.class);
     classes.add(AuthenticationFilter.class);
