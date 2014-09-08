@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ScheduleRunInfo {
   // Gives insights of an instance of a schedule to user
   @XmlElement @Getter GrillScheduleRunHandle scheduleRunHandle;
-  @XmlElement @Getter ScheduleTask scheduleTask;
+  @XmlElement @Getter Object task;
   @XmlElement @Getter String startTime;
   @XmlElement @Getter String endTime;
   @XmlElement @Getter String resultSetPath;

@@ -36,7 +36,7 @@ import com.inmobi.grill.api.Priority;
 public class ScheduleInfo {
   // Schedule Info gives insights to user about a schedule ID
   @XmlElement @Getter private GrillScheduleHandle scheduleHandle;
-  @XmlElement @Getter private ScheduleTask task;
+  @XmlElement @Getter private Object task;
   @XmlElement @Getter private String submittedUser;
   @XmlElement @Getter private JobType type;
   @XmlElement @Getter private ScheduleType scheduleType;
