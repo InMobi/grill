@@ -300,15 +300,6 @@ public class GrillJdbcStatement implements Statement {
   @Override
   public void setQueryTimeout(int i) throws SQLException {
     throw new SQLException("Operation not supported!!!!");
-  }
 
-  @Override
-  public boolean isCloseOnCompletion() throws SQLException {
-    throw new SQLException("Operation not supported!!!!");
-  }
-  
-  @Override
-  public void closeOnCompletion() throws SQLException {
-    throw new SQLException("Operation not supported!!!!");
   }
 }
