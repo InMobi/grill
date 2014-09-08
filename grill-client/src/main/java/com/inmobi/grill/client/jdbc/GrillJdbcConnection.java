@@ -20,13 +20,28 @@ package com.inmobi.grill.client.jdbc;
  * #L%
  */
 
-import com.inmobi.grill.client.GrillConnection;
-import com.inmobi.grill.client.GrillConnectionParams;
-
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+
+import com.inmobi.grill.client.GrillConnection;
+import com.inmobi.grill.client.GrillConnectionParams;
 
 /**
  * JDBC connection class which handles connection level operations to grill server.
@@ -305,26 +320,6 @@ public class GrillJdbcConnection implements Connection {
     throw new SQLException("Operation not supported!!!!");
   }
 
-  public void setSchema(String schema) throws SQLException {
-    throw new SQLException("Operation not supported!!!");
-  }
-
-  public String getSchema() throws SQLException {
-    throw new SQLException("Operation not supported!!!");
-  }
-
-  public void abort(Executor executor) throws SQLException {
-    throw new SQLException("Operation not supported!!!");
-  }
-
-  public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-    throw new SQLException("Operation not supported!!!");
-  }
-
-  public int getNetworkTimeout() throws SQLException {
-    throw new SQLException("Operation not supported!!!");
-  }
-
   @Override
   public <T> T unwrap(Class<T> tClass) throws SQLException {
     throw new SQLException("Operation not supported!!!!");
@@ -332,6 +327,31 @@ public class GrillJdbcConnection implements Connection {
 
   @Override
   public boolean isWrapperFor(Class<?> aClass) throws SQLException {
+    throw new SQLException("Operation not supported!!!!");
+  }
+
+  @Override
+  public int getNetworkTimeout() throws SQLException {
+    throw new SQLException("Operation not supported!!!!");
+  }
+
+  @Override
+  public void setNetworkTimeout(Executor e,int i) throws SQLException {
+    throw new SQLException("Operation not supported!!!!");
+  }
+
+  @Override
+  public void abort(Executor e) throws SQLException {
+    throw new SQLException("Operation not supported!!!!");
+  }
+
+  @Override
+  public String getSchema() throws SQLException {
+    throw new SQLException("Operation not supported!!!!");
+  }
+
+  @Override
+  public void setSchema(String s) throws SQLException {
     throw new SQLException("Operation not supported!!!!");
   }
 }

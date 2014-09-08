@@ -21,56 +21,34 @@ package com.inmobi.grill.api.schedule;
  */
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @XmlRootElement
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SchedulerTaskStatus implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public class GrillScheduleRunHandle implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  public enum Status {
-    NEW,
-    ACTIVATED,
-    PAUSED
-  }
-  
-  @XmlElement @Getter private Status status;
+  @XmlElement
+  @Getter
+  private UUID handleId;
 
-  public static boolean isValidTransition(Status oldState, Status newState) {
-    switch (oldState) {
-    case NEW:
-      switch (newState) {
-      case ACTIVATED:
-        return true;
-      }
-      break;
-    case ACTIVATED:
-      switch (newState) {
-      case PAUSED:
-        return true;
-      }
-      break;
-    case PAUSED:
-      switch (newState) {
-      case ACTIVATED:
-        return true;
-      }
-      break;
-    default:
-      // fall-through
-    }
-    return false;
+  public static GrillScheduleRunHandle fromString(String handle) {
+    return new GrillScheduleRunHandle(UUID.fromString(handle));
   }
 
-  public boolean isValidateTransition(Status newState) {
-    return isValidTransition(this.status, newState);
+  @Override
+  public String toString() {
+    return handleId.toString();
   }
 }

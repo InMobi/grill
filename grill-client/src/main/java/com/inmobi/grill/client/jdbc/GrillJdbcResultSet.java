@@ -20,14 +20,39 @@ package com.inmobi.grill.client.jdbc;
  * #L%
  */
 
-import com.inmobi.grill.api.query.*;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
-import java.util.*;
+import java.sql.NClob;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.inmobi.grill.api.query.InMemoryQueryResult;
+import com.inmobi.grill.api.query.QueryResultSetMetadata;
+import com.inmobi.grill.api.query.ResultColumn;
+import com.inmobi.grill.api.query.ResultColumnType;
+import com.inmobi.grill.api.query.ResultRow;
 
 
 public class GrillJdbcResultSet implements ResultSet {
@@ -1262,5 +1287,15 @@ public class GrillJdbcResultSet implements ResultSet {
   @Override
   public boolean isWrapperFor(Class<?> aClass) throws SQLException {
     return false;
+  }
+
+  @Override
+  public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+    throw new SQLException("Operation not supported");
+  }
+  
+  @Override
+  public <T> T getObject(int i, Class<T> type) throws SQLException {
+    throw new SQLException("Operation not supported");
   }
 }
