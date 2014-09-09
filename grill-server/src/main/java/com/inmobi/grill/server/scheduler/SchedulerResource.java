@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -42,12 +43,13 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.schedule.GrillSchedule;
+import com.inmobi.grill.api.schedule.ObjectFactory;
 import com.inmobi.grill.api.schedule.GrillScheduleHandle;
 import com.inmobi.grill.api.schedule.GrillScheduleRunHandle;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.ScheduleStatus;
+import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.scheduler.SchedulerService;
 
@@ -62,6 +64,7 @@ public class SchedulerResource {
   public static final Logger LOG = LogManager
       .getLogger(SchedulerResource.class);
   private SchedulerService schedulerService;
+  public static final ObjectFactory xScheduleObjectFactory = new ObjectFactory();
 
   private void checkSessionId(GrillSessionHandle sessionHandle) {
     if (sessionHandle == null) {
@@ -138,12 +141,12 @@ public class SchedulerResource {
   @Path("/schedules/{scheduleid}/defn")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public GrillSchedule getScheduleDefn(
+  public JAXBElement<XSchedule> getScheduleDefn(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
       @PathParam("scheduleid") GrillScheduleHandle scheduleid) {
     checkSessionId(sessionHandle);
     try {
-      return schedulerService.getScheduleDefn(sessionHandle, scheduleid);
+      return xScheduleObjectFactory.createXSchedule(schedulerService.getScheduleDefn(sessionHandle, scheduleid));
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
@@ -243,10 +246,10 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public boolean schedule(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @FormDataParam("grillschedule") GrillSchedule grillSchedule) {
+      @FormDataParam("grillschedule") XSchedule schedule) {
     checkSessionId(sessionHandle);
     try {
-      return schedulerService.scheduleTask(sessionHandle, grillSchedule);
+      return schedulerService.scheduleTask(sessionHandle, schedule);
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
@@ -269,11 +272,11 @@ public class SchedulerResource {
   public boolean updateTask(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
       @PathParam("scheduleid") GrillScheduleHandle scheduleid,
-      @QueryParam("newgrillschedule") GrillSchedule newGrillSchedule) {
+      @QueryParam("newgrillschedule") XSchedule newSchedule) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService.updateSchedule(sessionHandle, scheduleid,
-          newGrillSchedule);
+          newSchedule);
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
