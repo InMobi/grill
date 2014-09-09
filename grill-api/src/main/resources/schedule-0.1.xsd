@@ -21,21 +21,17 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element type="x_job_type" name="job_type" />
-            <xs:element type="x_schedule_task" name="schedule_task" />
+            <xs:element type="x_execution" name="execution" />
             <xs:element type="x_frequency" name="frequency" />
+            <xs:element type="xs:string" name="resource_path"
+                minOccurs="0" maxOccurs="unbounded" />
+            <xs:element type="x_schedule_param" name="schedule_params" />
+            <xs:element type="x_start" name="start" />
+            <xs:element type="xs:time" name="end_time" />
         </xs:sequence>
-        <xs:attribute type="xs:time" name="start_time" use="required" />
-        <xs:attribute type="xs:time" name="end_time" use="required" />
     </xs:complexType>
 
-    <xs:simpleType name="x_job_type">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="QUERY" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="x_schedule_task">
+    <xs:complexType name="x_execution">
         <xs:annotation>
             <xs:documentation>
                 x_schedule_task defines the task which has
@@ -55,9 +51,10 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="query" type="xs:string" />
-            <xs:element name="jar_paths" type="xs:string" />
-            <xs:element name="conf" type="map_type"
+            <xs:element name="query_conf" type="map_type"
                 minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="session_db" type="xs:string" />
+            <xs:element name="session_conf" type="map_type" />
         </xs:sequence>
     </xs:complexType>
 
@@ -76,7 +73,6 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="frequency_type" type="x_frequency_type" />
-            <xs:element name="frequency_params" type="x_frequency_param" />
         </xs:sequence>
     </xs:complexType>
 
@@ -89,7 +85,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="x_frequency_param">
+    <xs:complexType name="x_schedule_param">
         <xs:annotation>
             <xs:documentation>
                 frequncy params, which will be needed
@@ -166,4 +162,16 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="x_start">
+        <xs:annotation>
+            <xs:documentation>
+                x_start_time which can be either a
+                scheduleid or time
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="time" type="xs:time" />
+            <xs:element name="id" type="xs:string" />
+        </xs:choice>
+    </xs:complexType>
 </xs:schema>
