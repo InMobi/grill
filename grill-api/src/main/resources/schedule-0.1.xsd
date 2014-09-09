@@ -70,7 +70,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="frequency" type="x_frequency_type" />
+            <xs:element name="frequency" type="x_frequency" />
             <xs:element name="id" type="xs:string" />
         </xs:choice>
     </xs:complexType>
@@ -85,29 +85,18 @@
     <xs:complexType name="x_frequency">
         <xs:annotation>
             <xs:documentation>
-                Query task details
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="frequency_type" type="x_frequency_type" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="x_frequency_type">
-        <xs:annotation>
-            <xs:documentation>
                 x_frequncy_type, which defines the
                 frequency of schedule, may be daily, weekly, monthly or
                 cron_expression
             </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="frequncy_enum" type="x_frequency_enum" />
+            <xs:element name="frequncy_enum" type="x_frequency_type" />
             <xs:element name="cron_expression" type="x_cron_expression" />
         </xs:choice>
     </xs:complexType>
 
-    <xs:simpleType name="x_frequency_enum">
+    <xs:simpleType name="x_frequency_type">
         <xs:restriction base="xs:string">
             <xs:enumeration value="DAILY" />
             <xs:enumeration value="WEEKLY" />
