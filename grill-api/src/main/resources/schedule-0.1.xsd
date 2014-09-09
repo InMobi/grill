@@ -79,7 +79,7 @@
     <xs:simpleType name="x_frequency_type">
         <xs:restriction base="xs:string">
             <xs:enumeration value="DAILY" />
-            <xs:enumeration value="WEKLY" />
+            <xs:enumeration value="WEEKLY" />
             <xs:enumeration value="MONTHLY" />
             <xs:enumeration value="CUSTOM" />
         </xs:restriction>
