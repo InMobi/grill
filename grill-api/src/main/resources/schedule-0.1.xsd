@@ -112,6 +112,8 @@
             <xs:enumeration value="DAILY" />
             <xs:enumeration value="WEEKLY" />
             <xs:enumeration value="MONTHLY" />
+            <xs:enumeration value="QUARTERLY" />
+            <xs:enumeration value="YEARLY" />
         </xs:restriction>
     </xs:simpleType>
 
