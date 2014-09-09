@@ -5,12 +5,12 @@ import java.util.List;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.schedule.GrillSchedule;
 import com.inmobi.grill.api.schedule.GrillScheduleHandle;
 import com.inmobi.grill.api.schedule.GrillScheduleRunHandle;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.ScheduleStatus;
+import com.inmobi.grill.api.schedule.XSchedule;
 
 /*
  * #%L
@@ -56,7 +56,7 @@ public interface SchedulerService {
    * @return QueryHandle
    * @throws GrillException
    */
-  public GrillSchedule getScheduleDefn(GrillSessionHandle sessionHandle,
+  public XSchedule getScheduleDefn(GrillSessionHandle sessionHandle,
       GrillScheduleHandle scheduleid) throws GrillException;
 
   /**
@@ -123,7 +123,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public boolean scheduleTask(GrillSessionHandle sessionid,
-      GrillSchedule grillSchedule) throws GrillException;
+      XSchedule schedule) throws GrillException;
 
   /**
    * 
@@ -134,7 +134,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public boolean updateSchedule(GrillSessionHandle sessionid,
-      GrillScheduleHandle scheduleid, GrillSchedule newGrillSchedule)
+      GrillScheduleHandle scheduleid, XSchedule newSchedule)
       throws GrillException;
 
   /**

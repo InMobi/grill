@@ -37,16 +37,8 @@ public class ScheduleInfo {
   // Schedule Info gives insights to user about a schedule ID
   @XmlElement @Getter private GrillScheduleHandle scheduleHandle;
   // XSD object task
-  @XmlElement @Getter private Object task;
+  @XmlElement @Getter private XSchedule schedule; // A schedule task
   @XmlElement @Getter private String submittedUser;
-  @XmlElement @Getter private JobType type;
-  @XmlElement @Getter private Frequency scheduleType;
-  // In case of schedulerType = Custom, will take frequencyParams in standard cron format "min hour dayOFMonth Month DayOfWeek"
-  @XmlElement @Getter private String frequencyParams;
-  // startTime : from when Schedule should start running
-  @XmlElement @Getter private String startTime;
-  // endTime : till when Schedule should run
-  @XmlElement @Getter private String endTime;
   @XmlElement @Getter private Priority priority;
   @XmlElement @Getter private String lastRunInstance;
   @XmlElement @Getter private int runcount;
