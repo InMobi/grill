@@ -37,12 +37,8 @@ public class ScheduleInfo {
   // Schedule Info gives insights to user about a schedule ID
   @XmlElement @Getter private GrillScheduleHandle scheduleHandle;
   // XSD object task
-  @XmlElement @Getter private XSchedule schedule; // Needs to be changed to schedule
+  @XmlElement @Getter private XSchedule schedule; // A schedule task
   @XmlElement @Getter private String submittedUser;
-  // startTime : from when Schedule should start running
-  @XmlElement @Getter private String startTime;
-  // endTime : till when Schedule should run
-  @XmlElement @Getter private String endTime;
   @XmlElement @Getter private Priority priority;
   @XmlElement @Getter private String lastRunInstance;
   @XmlElement @Getter private int runcount;
