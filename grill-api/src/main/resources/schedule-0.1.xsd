@@ -94,6 +94,7 @@
             <xs:element name="frequncy_enum" type="x_frequency_type" />
             <xs:element name="cron_expression" type="x_cron_expression" />
         </xs:choice>
+        <xs:attribute type="xs:string" name="timezone" />
     </xs:complexType>
 
     <xs:simpleType name="x_frequency_type">
