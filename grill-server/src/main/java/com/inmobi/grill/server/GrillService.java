@@ -126,8 +126,7 @@ public abstract class GrillService extends CompositeService implements Externali
     String clusterUser = username;
     if(queryConf.containsKey(GrillConfConstants.GRILL_QUERY_CLUSTER_USER)) {
       clusterUser = queryConf.get(GrillConfConstants.GRILL_QUERY_CLUSTER_USER);
-    } else if(Boolean.parseBoolean(hiveConf.get(GrillConfConstants.GRILL_QUERY_USE_DEFAULT_CLUSTER_USER,
-      "false"))) {
+    } else if(hiveConf.getBoolean(GrillConfConstants.GRILL_QUERY_USE_DEFAULT_CLUSTER_USER, false)) {
       clusterUser = hiveConf.get(GrillConfConstants.GRILL_QUERY_CLUSTER_DEFAULT_USER, "grill");
     }
     return clusterUser;
