@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -58,11 +61,29 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
     setup(client);
     GrillQueryCommands qCom = new GrillQueryCommands();
     qCom.setClient(client);
+    testStoreResultSetInFile(qCom);
     testExecuteSyncQuery(qCom);
     testExecuteAsyncQuery(qCom);
     testExplainQuery(qCom);
     testPreparedQuery(qCom);
     testShowPersistentResultSet(qCom);
+  }
+
+  private void testStoreResultSetInFile(GrillQueryCommands qCom) {
+    File file = new File("/tmp");
+    Assert.assertTrue(
+        qCom.storeResultSetInFile("1\tfirst", file.getAbsolutePath()).contains(
+            "Entered path is a directory, please enter file name."));
+
+    file = new File("/temporary/tempResult.txt");
+    Assert.assertTrue(
+        qCom.storeResultSetInFile("1\tfirst", file.getAbsolutePath()).contains(
+            "Parent directory doesn't exist, please check the path."));
+
+    file = new File("/tmp/tempResult.txt");
+    Assert.assertTrue(
+        qCom.storeResultSetInFile("1\tfirst", file.getAbsolutePath()).contains(
+            "Results saved to: " + file.getAbsolutePath()));
   }
 
   private void testPreparedQuery(GrillQueryCommands qCom) throws Exception {
@@ -78,12 +99,36 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
     Assert.assertTrue(result.contains("User query:cube select id, name from test_dim"));
     Assert.assertTrue(result.contains(qh));
 
-    result = qCom.executePreparedQuery(qh, false);
+    //Test sync prepared query without output location
+    result = qCom.executePreparedQuery(qh, false, null);
 
     LOG.warn("XXXXXX Prepared query sync result is  " + result);
     Assert.assertTrue(result.contains("1\tfirst"));
 
-    String handle = qCom.executePreparedQuery(qh, true);
+    //Test sync prepared query with output location
+    try {
+      File file = File.createTempFile("result","tmp");
+      String message = qCom.executePreparedQuery(qh, false,
+          file.getAbsolutePath());
+      Assert.assertTrue(message.contains("Results saved to: " + file.getAbsolutePath()));
+
+      FileReader fileReader = new FileReader(file);
+      BufferedReader br = new BufferedReader(fileReader);
+      StringBuilder resultFromFile = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        resultFromFile.append (line);
+        resultFromFile.append ("\n");
+      }
+      Assert.assertTrue(resultFromFile.toString().contains("1\tfirst"));
+      closeReaders(fileReader, br);
+    } catch (IOException e) {
+      e.printStackTrace();
+      Assert.fail("Failed during file IO operations while testing prepared sync query execution: " + e.getMessage());
+    }
+
+    //Test Async prepared query without output location
+    String handle = qCom.executePreparedQuery(qh, true, null);
     LOG.debug("Perpared query handle is   " + handle);
     while(!client.getQueryStatus(handle).isFinished()) {
       Thread.sleep(5000);
@@ -92,9 +137,36 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
     LOG.debug("Prepared Query Status is  " + status);
     Assert.assertTrue(status.contains("Status : SUCCESSFUL"));
 
-    result = qCom.getQueryResults(handle);
+    result = qCom.getQueryResults(handle, null);
     LOG.debug("Prepared Query Result is  " + result);
     Assert.assertTrue(result.contains("1\tfirst"));
+
+    //Test Async prepared query with output location
+    try {
+      File file = File.createTempFile("result","tmp");
+      handle = qCom.executePreparedQuery(qh, true, file.getAbsolutePath());
+
+      while(!client.getQueryStatus(handle).isFinished()) {
+        Thread.sleep(5000);
+      }
+
+      result = qCom.getQueryResults(handle, file.getAbsolutePath());
+      Assert.assertTrue(result.contains("Results saved to: " + file.getAbsolutePath()));
+
+      FileReader fileReader = new FileReader(file);
+      BufferedReader br = new BufferedReader(fileReader);
+      StringBuilder resultFromFile = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        resultFromFile.append (line);
+        resultFromFile.append ("\n");
+      }
+      Assert.assertTrue(resultFromFile.toString().contains("1\tfirst"));
+      closeReaders(fileReader, br);
+    } catch (IOException e) {
+      e.printStackTrace();
+      Assert.fail("Failed during file IO operations while testing async query execution: " + e.getMessage());
+    }
 
     result = qCom.destroyPreparedQuery(qh);
 
@@ -121,7 +193,7 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
 
   private void testExecuteAsyncQuery(GrillQueryCommands qCom) throws Exception {
     String sql = "cube select id,name from test_dim";
-    String qh = qCom.executeQuery(sql, true);
+    String qh = qCom.executeQuery(sql, true, null);
     String result = qCom.getAllQueries("","");
     //this is because previous query has run two query handle will be there
     Assert.assertTrue(result.contains(qh));
@@ -132,9 +204,35 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
 
     Assert.assertTrue(qCom.getStatus(qh).contains("Status : SUCCESSFUL"));
 
-    result = qCom.getQueryResults(qh);
+    result = qCom.getQueryResults(qh, null);
     Assert.assertTrue(result.contains("1\tfirst"));
     //Kill query is not tested as there is no deterministic way of killing a query
+
+    try {
+      File file = File.createTempFile("result","tmp");
+      String handle = qCom.executeQuery(sql, true, file.getAbsolutePath());
+
+      while(!client.getQueryStatus(handle).isFinished()) {
+        Thread.sleep(5000);
+      }
+
+      result = qCom.getQueryResults(handle, file.getAbsolutePath());
+      Assert.assertTrue(result.contains("Results saved to: " + file.getAbsolutePath()));
+
+      FileReader fileReader = new FileReader(file);
+      BufferedReader br = new BufferedReader(fileReader);
+      StringBuilder resultFromFile = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        resultFromFile.append (line);
+        resultFromFile.append ("\n");
+      }
+      Assert.assertTrue(resultFromFile.toString().contains("1\tfirst"));
+      closeReaders(fileReader, br);
+    } catch (IOException e) {
+      e.printStackTrace();
+      Assert.fail("Failed during file IO operations while testing async query execution: " + e.getMessage());
+    }
 
     result = qCom.getAllQueries("SUCCESSFUL","");
     Assert.assertTrue(result.contains(qh));
@@ -182,8 +280,29 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
 
   private void testExecuteSyncQuery(GrillQueryCommands qCom) {
     String sql = "cube select id,name from test_dim";
-    String result = qCom.executeQuery(sql, false);
+    String result = qCom.executeQuery(sql, false, null);
     Assert.assertTrue(result.contains("1\tfirst"), result);
+
+    try {
+      File file = File.createTempFile("result","tmp");
+      String message = qCom.executeQuery(sql, false, file.getAbsolutePath());
+      Assert.assertTrue(message.contains("Results saved to: " + file.getAbsolutePath()));
+
+      FileReader fileReader = new FileReader(file);
+      BufferedReader br = new BufferedReader(fileReader);
+      StringBuilder resultFromFile = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        resultFromFile.append (line);
+        resultFromFile.append ("\n");
+      }
+      Assert.assertTrue(resultFromFile.toString().contains("1\tfirst"));
+      closeReaders(fileReader, br);
+    } catch (IOException e) {
+      e.printStackTrace();
+      Assert.fail("Failed during file IO operations while testing sync query execution: " + e.getMessage());
+    }
+
   }
 
   private void testShowPersistentResultSet(GrillQueryCommands qCom) throws Exception {
@@ -191,7 +310,7 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
     client.setConnectionParam("grill.persistent.resultset.indriver", "true");
     String query = "cube select id,name from test_dim";
     try {
-      String result = qCom.executeQuery(query, false);
+      String result = qCom.executeQuery(query, false, null);
       System.out.println("@@ RESULT " + result);
       Assert.assertNotNull(result);
       Assert.assertFalse(result.contains("Failed to get resultset"));
@@ -201,4 +320,15 @@ public class TestGrillQueryCommands extends GrillCliApplicationTest {
     }
     System.out.println("@@END_PERSISTENT_RESULT_TEST-------------");
   }
+
+  private void closeReaders(FileReader fileReader, BufferedReader br)
+      throws IOException {
+    if (br != null) {
+      br.close();
+    }
+    if (fileReader != null) {
+      fileReader.close();
+    }
+  }
+
 }
