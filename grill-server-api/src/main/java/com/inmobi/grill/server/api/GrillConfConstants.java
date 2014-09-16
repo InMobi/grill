@@ -82,6 +82,7 @@ public class GrillConfConstants {
   public static final String GRILL_QUERY_CLUSTER_USER = "grill.query.cluster.user";
   public static final String GRILL_QUERY_CLUSTER_DEFAULT_USER = "grill.query.cluster.default.user";
   public static final String GRILL_QUERY_USE_DEFAULT_CLUSTER_USER = "grill.query.use.default.cluster.user";
+  public static final String GRILL_QUERY_LOGGED_IN_USER = "grill.query.logged.in.user";
 
   public static String getServiceImplConfKey(String sName) {
     return GRILL_PFX + sName + GRILL_SERVICE_IMPL_SFX;

@@ -85,6 +85,7 @@ public class GrillSessionImpl extends HiveSessionImpl {
         conf.set(entry.getKey(), entry.getValue());
       }
     }
+    LOG.info("sessionConf=" + sessionConf);
   }
 
   public Configuration getSessionConf() {

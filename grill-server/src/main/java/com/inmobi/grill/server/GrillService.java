@@ -23,6 +23,7 @@ package com.inmobi.grill.server;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.session.GrillSessionImpl;
 
 import org.apache.commons.logging.Log;
@@ -85,7 +86,9 @@ public abstract class GrillService extends CompositeService implements Externali
       if (configuration != null) {
         sessionConf.putAll(configuration);
       }
+      sessionConf.put(GrillConfConstants.GRILL_QUERY_LOGGED_IN_USER, username);
       String clusterUser = getClusterUser(username, sessionConf, cliService.getHiveConf());
+      password = "useless";
       if (
           cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION)
           .equals(HiveAuthFactory.AuthTypes.KERBEROS.toString())
@@ -150,7 +153,8 @@ public abstract class GrillService extends CompositeService implements Externali
     // No-op when authType is NOSASL
     if (!authType.equalsIgnoreCase(HiveAuthFactory.AuthTypes.NOSASL.toString())) {
       try {
-        AuthenticationProviderFactory.AuthMethods authMethod = AuthenticationProviderFactory.AuthMethods.getValidAuthMethod(authType);
+        AuthenticationProviderFactory.AuthMethods authMethod =
+          AuthenticationProviderFactory.AuthMethods.getValidAuthMethod(authType);
         PasswdAuthenticationProvider provider =
           AuthenticationProviderFactory.getAuthenticationProvider(authMethod, cliService.getHiveConf());
         provider.Authenticate(userName, password);

@@ -872,6 +872,10 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
 
   private QueryHandle executeAsyncInternal(GrillSessionHandle sessionHandle, QueryContext ctx,
       Configuration qconf) throws GrillException {
+    LOG.info("execute configuration: ");
+    for(Map.Entry<String,String> entry: qconf) {
+      LOG.info(entry.getKey()+":"+entry.getValue());
+    }
     ctx.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
     QueryStatus before = ctx.getStatus();
     ctx.setStatus(new QueryStatus(0.0,
