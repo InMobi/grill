@@ -69,8 +69,4 @@ public class ScheduleStatus implements Serializable {
     }
     return false;
   }
-
-  public boolean isValidateTransition(Status newState) {
-    return isValidTransition(this.status, newState);
-  }
 }

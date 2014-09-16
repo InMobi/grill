@@ -35,7 +35,7 @@ import com.inmobi.grill.api.Priority;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleInfo {
   // Schedule Info gives insights to user about a schedule ID
-  @XmlElement @Getter private GrillScheduleHandle scheduleHandle;
+  @XmlElement @Getter private String scheduleHandle;
   // XSD object task
   @XmlElement @Getter private XSchedule schedule; // A schedule task
   @XmlElement @Getter private String submittedUser;

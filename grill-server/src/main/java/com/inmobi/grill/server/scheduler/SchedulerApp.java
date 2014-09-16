@@ -30,7 +30,7 @@ import org.glassfish.jersey.filter.LoggingFilter;
 
 import com.inmobi.grill.server.GrillApplicationListener;
 
-@ApplicationPath("/queryscheduler")
+@ApplicationPath("/scheduler")
 public class SchedulerApp extends Application {
   @Override
   public Set<Class<?>> getClasses() {

@@ -44,11 +44,10 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.schedule.ObjectFactory;
-import com.inmobi.grill.api.schedule.GrillScheduleHandle;
-import com.inmobi.grill.api.schedule.GrillScheduleRunHandle;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.ScheduleStatus;
+import com.inmobi.grill.api.schedule.ScheduleStatus.Status;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.scheduler.SchedulerService;
@@ -64,7 +63,8 @@ public class SchedulerResource {
   public static final Logger LOG = LogManager
       .getLogger(SchedulerResource.class);
   private SchedulerService schedulerService;
-  public static final ObjectFactory xScheduleObjectFactory = new ObjectFactory();
+  public static final ObjectFactory xScheduleObjectFactory =
+      new ObjectFactory();
 
   private void checkSessionId(GrillSessionHandle sessionHandle) {
     if (sessionHandle == null) {
@@ -115,16 +115,15 @@ public class SchedulerResource {
   @Path("/schedules")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public List<GrillScheduleHandle> getAllSchedule(
+  public List<String> getAllSchedule(
       @QueryParam("sessionid") GrillSessionHandle sessionid,
-      @DefaultValue("") @QueryParam("scheduleid") GrillScheduleHandle scheduleid,
-      @DefaultValue("") @QueryParam("state") String state,
-      @DefaultValue("") @QueryParam("user") String user,
-      @DefaultValue("") @QueryParam("type") String type) {
+      @DefaultValue("") @QueryParam("scheduleid") String scheduleid,
+      @DefaultValue("") @QueryParam("status") String status,
+      @DefaultValue("") @QueryParam("user") String user) {
     checkSessionId(sessionid);
     try {
-      return schedulerService.getAllSchedules(sessionid, scheduleid, state,
-          user, type);
+      return schedulerService.getAllSchedules(sessionid, scheduleid, status,
+          user);
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
@@ -143,10 +142,11 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public JAXBElement<XSchedule> getScheduleDefn(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid) {
+      @PathParam("scheduleid") String scheduleid) {
     checkSessionId(sessionHandle);
     try {
-      return xScheduleObjectFactory.createXSchedule(schedulerService.getScheduleDefn(sessionHandle, scheduleid));
+      return xScheduleObjectFactory.createXSchedule(schedulerService
+          .getScheduleDefn(sessionHandle, scheduleid));
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
@@ -166,7 +166,7 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public ScheduleInfo getScheduleInfo(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid) {
+      @PathParam("scheduleid") String scheduleid) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService.getGrillSchedule(sessionHandle, scheduleid);
@@ -187,9 +187,9 @@ public class SchedulerResource {
   @Path("/schedules/{scheduleid}/runs")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public List<GrillScheduleRunHandle> getScheduleRuns(
+  public List<String> getScheduleRuns(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid) {
+      @PathParam("scheduleid") String scheduleid) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService.getScheduleRuns(sessionHandle, scheduleid);
@@ -212,8 +212,8 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public ScheduleRunInfo getScheduleRunDetail(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid,
-      @PathParam("runid") GrillScheduleRunHandle runHandle) {
+      @PathParam("scheduleid") String scheduleid,
+      @PathParam("runid") String runHandle) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService.getScheduleRunDetail(sessionHandle, scheduleid,
@@ -271,7 +271,7 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public boolean updateTask(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid,
+      @PathParam("scheduleid") String scheduleid,
       @QueryParam("newgrillschedule") XSchedule newSchedule) {
     checkSessionId(sessionHandle);
     try {
@@ -295,13 +295,13 @@ public class SchedulerResource {
   @Path("/schedules/{scheduleid}")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public boolean statusUpdate(
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid,
+  public boolean statusUpdate(@PathParam("scheduleid") String scheduleid,
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @QueryParam("newstatus") ScheduleStatus newstatus) {
+      @QueryParam("newstatus") Status newstatus) {
     checkSessionId(sessionHandle);
     try {
-      return schedulerService.updateStatus(sessionHandle, scheduleid, newstatus);
+      return schedulerService
+          .updateStatus(sessionHandle, scheduleid, newstatus);
     } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
@@ -311,13 +311,13 @@ public class SchedulerResource {
   @Path("/schedules/{scheduleid}/runs/{runid}")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public boolean rerun(@PathParam("scheduleid") GrillScheduleHandle scheduleid,
-      @PathParam("runid") GrillScheduleRunHandle runid,
+  public boolean rerun(@PathParam("scheduleid") String scheduleid,
+      @PathParam("runid") String runid,
       @QueryParam("sessionid") GrillSessionHandle sessionHandle) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService.rerun(sessionHandle, scheduleid, runid);
-    } catch(GrillException e) {
+    } catch (GrillException e) {
       throw new WebApplicationException(e);
     }
   }
@@ -336,7 +336,7 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public boolean deleteSchedule(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @PathParam("scheduleid") GrillScheduleHandle scheduleid) {
+      @PathParam("scheduleid") String scheduleid) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService.delete(sessionHandle, scheduleid);

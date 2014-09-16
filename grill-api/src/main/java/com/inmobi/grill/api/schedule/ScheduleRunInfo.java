@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleRunInfo {
   // Gives insights of an instance of a schedule to user
-  @XmlElement @Getter GrillScheduleHandle scheduleHandle;
-  @XmlElement @Getter GrillScheduleRunHandle scheduleRunHandle;
+  @XmlElement @Getter String scheduleHandle;
+  @XmlElement @Getter String scheduleRunHandle;
   @XmlElement @Getter Object task;
   @XmlElement @Getter String startTime;
   @XmlElement @Getter String endTime;

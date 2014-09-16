@@ -24,8 +24,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.fs.Path;
 
-import com.inmobi.grill.server.api.driver.GrillResultSetMetadata;
-
 /**
  * Query result formatter, if the result is persisted by driver
  *
