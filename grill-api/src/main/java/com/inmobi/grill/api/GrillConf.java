@@ -20,15 +20,21 @@ package com.inmobi.grill.api;
  * #L%
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sun.misc.IOUtils;
 
 @XmlRootElement(name = "conf")
 @NoArgsConstructor
@@ -40,5 +46,28 @@ public class GrillConf implements Serializable {
 
   public void addProperty(String key, String value) {
     properties.put(key, value);
+  }
+
+  public static GrillConf fromString(String confStr) throws Exception {
+    ByteArrayInputStream xmlInputStream = null;
+
+    try {
+      xmlInputStream = new ByteArrayInputStream(confStr.getBytes());
+      JAXBContext jaxbContext = JAXBContext.newInstance(GrillConf.class);
+      Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+      return (GrillConf) unmarshaller.unmarshal(xmlInputStream);
+    } finally {
+      if (xmlInputStream != null) {
+        xmlInputStream.close();
+      }
+    }
+  }
+
+  public static String toXMLString(GrillConf conf) throws Exception {
+    JAXBContext jaxbContext = JAXBContext.newInstance(GrillConf.class);
+    Marshaller marshaller = jaxbContext.createMarshaller();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    marshaller.marshal(conf, out);
+    return out.toString();
   }
 }

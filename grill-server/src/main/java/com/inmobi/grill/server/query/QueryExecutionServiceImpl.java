@@ -42,9 +42,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import com.inmobi.grill.api.query.*;
 import com.inmobi.grill.server.GrillService;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.query.*;
+import com.inmobi.grill.server.session.HiveSessionService;
 import com.inmobi.grill.server.stats.StatisticsService;
 import com.inmobi.grill.server.api.driver.*;
 import com.inmobi.grill.server.api.events.GrillEventListener;
@@ -64,16 +66,6 @@ import org.apache.hive.service.cli.CLIService;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.query.GrillPreparedQuery;
-import com.inmobi.grill.api.query.GrillQuery;
-import com.inmobi.grill.api.query.QueryHandle;
-import com.inmobi.grill.api.query.QueryHandleWithResultSet;
-import com.inmobi.grill.api.query.QueryPlan;
-import com.inmobi.grill.api.query.QueryPrepareHandle;
-import com.inmobi.grill.api.query.QueryResult;
-import com.inmobi.grill.api.query.QueryResultSetMetadata;
-import com.inmobi.grill.api.query.QueryStatus;
-import com.inmobi.grill.api.query.SubmitOp;
 import com.inmobi.grill.api.query.QueryStatus.Status;
 import com.inmobi.grill.driver.cube.CubeGrillDriver;
 import com.inmobi.grill.driver.cube.RewriteUtil;
@@ -589,6 +581,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
     this.grillServerDao.init(conf);
     try {
       this.grillServerDao.createFinishedQueriesTable();
+      grillServerDao.createNamedQueriesTable();
     } catch (Exception e) {
       LOG.warn("Unable to create finished query table, query purger will not purge queries", e);
     }
@@ -1446,5 +1439,87 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   @Override
   public long getFinishedQueriesCount() {
     return finishedQueries.size();
+  }
+
+  @Override
+  public String createNamedQuery(GrillSessionHandle sessionHandle,
+                                 NamedQuery namedQuery) throws GrillException {
+    try {
+      namedQuery.setNamedQueryHandle(UUID.randomUUID().toString());
+      String userName = getSession(sessionHandle).getUserName();
+      String namedQueryHandle = grillServerDao.createNamedQuery(userName, namedQuery);
+      LOG.info("Created named query with handle: " + namedQueryHandle + " " + namedQuery);
+      return namedQueryHandle;
+    } catch (Exception e) {
+      LOG.error("Error creating named query " + namedQuery, e);
+      throw new GrillException(e);
+    }
+  }
+
+  @Override
+  public void updateNamedQuery(GrillSessionHandle sessionHandle, NamedQuery namedQuery) throws GrillException {
+    try {
+      String userName = getSession(sessionHandle).getUserName();
+      if (!grillServerDao.updateNamedQuery(userName, namedQuery)) {
+        throw new NotFoundException("No such named query " + namedQuery.getNamedQueryHandle());
+      }
+    } catch (Exception e) {
+      LOG.error("Error updating named query with handle " + namedQuery.getNamedQueryHandle(), e);
+      throw new GrillException(e);
+    }
+  }
+
+  @Override
+  public void deleteNamedQuery(GrillSessionHandle sessionHandle,
+                               String namedQueryHandle) throws GrillException {
+    try {
+      String userName = getSession(sessionHandle).getUserName();
+      if (!grillServerDao.deleteNamedQuery(userName, namedQueryHandle)) {
+        throw new NotFoundException("No such named query " + namedQueryHandle);
+      }
+    } catch (Exception e) {
+      LOG.error("Error deleting named query with handle " + namedQueryHandle);
+      throw new GrillException(e);
+    }
+  }
+
+  @Override
+  public List<NamedQuery> getNamedQueries(GrillSessionHandle sessionHandle,
+                                          String queryName) throws GrillException {
+    try {
+      return grillServerDao.getNamedQueries(queryName);
+    } catch (Exception e) {
+      LOG.error("Error getting named queries matching name " + queryName, e);
+      throw new GrillException(e);
+    }
+  }
+
+  protected NamedQuery getNamedQuery(String namedQueryHandle) throws GrillException {
+    NamedQuery namedQuery = null;
+    try {
+      namedQuery = grillServerDao.getNamedQuery(namedQueryHandle);
+      if (namedQuery == null) {
+        throw new NotFoundException("No such named query " + namedQueryHandle);
+      }
+    } catch (Exception e) {
+      LOG.error("Unable to get named query with handle " + namedQueryHandle, e);
+      throw new GrillException(e);
+    }
+    return namedQuery;
+  }
+
+  @Override
+  public QueryHandle executeAsyncNamedQuery(GrillSessionHandle sessionHandle, String namedQueryHandle)
+    throws GrillException {
+    NamedQuery namedQuery = getNamedQuery(namedQueryHandle);
+    return executeAsync(sessionHandle, namedQuery.getQuery(), namedQuery.getQueryConf());
+  }
+
+  @Override
+  public QueryHandleWithResultSet executeNamedQuery(GrillSessionHandle sessionHandle,
+                                                    String namedQueryHandle,
+                                                    long timeout) throws GrillException {
+    NamedQuery namedQuery = getNamedQuery(namedQueryHandle);
+    return execute(sessionHandle, namedQuery.getQuery(), timeout, namedQuery.getQueryConf());
   }
 }

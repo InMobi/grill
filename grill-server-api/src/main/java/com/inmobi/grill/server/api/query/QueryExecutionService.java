@@ -27,14 +27,7 @@ import javax.ws.rs.core.Response;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.query.GrillPreparedQuery;
-import com.inmobi.grill.api.query.GrillQuery;
-import com.inmobi.grill.api.query.QueryHandle;
-import com.inmobi.grill.api.query.QueryHandleWithResultSet;
-import com.inmobi.grill.api.query.QueryPlan;
-import com.inmobi.grill.api.query.QueryPrepareHandle;
-import com.inmobi.grill.api.query.QueryResult;
-import com.inmobi.grill.api.query.QueryResultSetMetadata;
+import com.inmobi.grill.api.query.*;
 
 public interface QueryExecutionService {
 
@@ -282,4 +275,44 @@ public interface QueryExecutionService {
    * @return finished queries count
    */
   public long getFinishedQueriesCount();
+
+  /**
+   * Create a new named query
+   * @param sessionHandle
+   * @param namedQuery named query object
+   * @return ID for the newly created named query
+   * @throws GrillException
+   */
+  public String createNamedQuery(GrillSessionHandle sessionHandle,
+                                 NamedQuery namedQuery) throws GrillException;
+
+  /**
+   * Delete a named query
+   */
+  public void deleteNamedQuery(GrillSessionHandle sessionHandle, String namedQueryHandle)
+    throws GrillException;
+
+  /**
+   * Update an existing named query
+   */
+  public void updateNamedQuery(GrillSessionHandle sessionHandle, NamedQuery namedQuery) throws GrillException;
+
+  /**
+   * Get list of named queries matching a name
+   */
+  public List<NamedQuery> getNamedQueries(GrillSessionHandle sessionHandle, String queryName)
+    throws GrillException;
+
+  /**
+   * Execute a named query in blocking mode. Similar to execute() call
+   */
+  public QueryHandleWithResultSet executeNamedQuery(GrillSessionHandle sessionHandle,
+                                       String namedQueryHandle,
+                                       long timeout) throws GrillException;
+
+  /**
+   * Execute a named qyery in non blocking mode. Similar to executeAsync() call
+   */
+  public QueryHandle executeAsyncNamedQuery(GrillSessionHandle sessionHandle, String namedQueryHandle)
+    throws GrillException;
 }

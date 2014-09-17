@@ -18,19 +18,30 @@ package com.inmobi.grill.server.query;
  * limitations under the License.
  * #L%
  */
+import com.inmobi.grill.api.GrillConf;
+import com.inmobi.grill.api.query.NamedQuery;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.query.FinishedGrillQuery;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Top level class which logs and retrieves finished query from Database
@@ -81,7 +92,7 @@ public class GrillServerDAO {
    */
   public void createFinishedQueriesTable() throws Exception {
     String sql = "CREATE TABLE if not exists finished_queries (handle varchar(255) not null unique," +
-        "userquery varchar(255) not null,submitter varchar(255) not null," +
+        "userquery varchar(10000) not null,submitter varchar(255) not null," +
         "starttime bigint, endtime bigint,result varchar(255)," +
         "status varchar(255), metadata varchar(100000), rows int, errormessage varchar(10000), " +
         "driverstarttime bigint, driverendtime bigint, metadataclass varchar(10000))";
@@ -137,4 +148,91 @@ public class GrillServerDAO {
     return null;
   }
 
+
+  public void createNamedQueriesTable() throws Exception {
+    String sql = "CREATE TABLE IF NOT EXISTS named_queries(namedqueryhandle VARCHAR(255) NOT NULL," +
+      "queryname VARCHAR(255) NOT NULL," +
+      "username VARCHAR(255) NOT NULL," +
+      "query VARCHAR(10000) NOT NULL," +
+      "queryconf VARCHAR(10000))";
+    QueryRunner runner = new QueryRunner(ds);
+    runner.update(sql);
+  }
+
+  public static class NamedQueryHandler implements ResultSetHandler<NamedQuery> {
+    @Override
+    public NamedQuery handle(ResultSet resultSet) throws SQLException {
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      try {
+        return new NamedQuery(
+          resultSet.getString(1),
+          resultSet.getString(2),
+          resultSet.getString(3),
+          resultSet.getString(4),
+          GrillConf.fromString(resultSet.getString(5))
+        );
+      } catch (Exception e) {
+        throw new SQLException(e);
+      }
+    }
+  }
+
+
+
+  public NamedQuery getNamedQuery(String namedQueryHandle) throws Exception {
+    String sql = "SELECT * FROM named_queries WHERE namedqueryhandle=?";
+    QueryRunner queryRunner = new QueryRunner(ds);
+    return queryRunner.query(sql, new NamedQueryHandler());
+  }
+
+  public List<NamedQuery> getNamedQueries(String queryName) throws Exception {
+    String sql = "SELECT * FORM named_queries WHERE name LIKE ?";
+    QueryRunner queryRunner = new QueryRunner(ds);
+    return queryRunner.query(sql, new ResultSetHandler<List<NamedQuery>>() {
+      @Override
+      public List<NamedQuery> handle(ResultSet resultSet) throws SQLException {
+        List<NamedQuery> namedQueryList = new ArrayList<NamedQuery>();
+        NamedQueryHandler namedQueryHandler = new NamedQueryHandler();
+        while (resultSet.next()) {
+          namedQueryList.add(namedQueryHandler.handle(resultSet));
+        }
+        return namedQueryList;
+      }
+    }, queryName);
+  }
+
+  public String createNamedQuery(String userName, NamedQuery query) throws Exception {
+    String insertQuery = "INSERT INTO named_queries VALUES(?,?,?,?,?)";
+    QueryRunner queryRunner = new QueryRunner(ds);
+
+    queryRunner.update(insertQuery,
+      query.getNamedQueryHandle(),
+      query.getQueryName(),
+      userName,
+      query.getQuery(),
+      GrillConf.toXMLString(query.getQueryConf())
+     );
+
+    return query.getNamedQueryHandle();
+  }
+
+  public boolean updateNamedQuery(String userName, NamedQuery namedQuery) throws Exception {
+
+    String sql = "UPDATE named_queries SET query=?, queryname=?, queryconf=? " +
+      "WHERE username=? AND namedqueryhandle=?";
+    QueryRunner queryRunner = new QueryRunner(ds);
+    int updateCount = queryRunner.update(sql, namedQuery.getQuery(), namedQuery.getQueryName(),
+      GrillConf.toXMLString(namedQuery.getQueryConf()));
+    return updateCount != 0;
+  }
+
+  public boolean deleteNamedQuery(String userName, String namedQueryHandle) throws Exception {
+    String sql = "DELETE FORM named_queries WHERE username=? AND namedqueryhandle=?";
+    QueryRunner queryRunner = new QueryRunner(ds);
+    int updateCount = queryRunner.update(sql, userName, namedQueryHandle);
+    return updateCount != 0;
+  }
 }

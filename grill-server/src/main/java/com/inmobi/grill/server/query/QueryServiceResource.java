@@ -22,22 +22,14 @@ package com.inmobi.grill.server.query;
 
 import java.util.List;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.lang.model.element.Name;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.inmobi.grill.api.query.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.yarn.webapp.WebApp;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -47,17 +39,6 @@ import com.inmobi.grill.api.APIResult.Status;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.query.GrillPreparedQuery;
-import com.inmobi.grill.api.query.GrillQuery;
-import com.inmobi.grill.api.query.QueryHandle;
-import com.inmobi.grill.api.query.QueryHandleWithResultSet;
-import com.inmobi.grill.api.query.QueryPlan;
-import com.inmobi.grill.api.query.QueryPrepareHandle;
-import com.inmobi.grill.api.query.QueryResult;
-import com.inmobi.grill.api.query.QueryResultSetMetadata;
-import com.inmobi.grill.api.query.QueryStatus;
-import com.inmobi.grill.api.query.QuerySubmitResult;
-import com.inmobi.grill.api.query.SubmitOp;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
 
@@ -84,6 +65,21 @@ public class QueryServiceResource {
       throw new BadRequestException("Invalid query");
     }
   }
+
+  private SubmitOp getSubmitOp(String operation) {
+    SubmitOp sop = null;
+    try {
+      sop = SubmitOp.valueOf(operation.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException(e);
+    }
+    if (sop == null) {
+      throw new BadRequestException("Invalid operation type: " + operation +
+        submitClue);
+    }
+    return sop;
+  }
+
   /**
    * API to know if Query service is up and running
    * 
@@ -163,17 +159,7 @@ public class QueryServiceResource {
     checkQuery(query);
     checkSessionId(sessionid);
     try {
-      SubmitOp sop = null;
-      try {
-        sop = SubmitOp.valueOf(operation.toUpperCase());
-      } catch (IllegalArgumentException e) {
-        throw new BadRequestException(e);
-      }
-      if (sop == null) {
-        throw new BadRequestException("Invalid operation type: " + operation +
-            submitClue);
-      }
-      switch (sop) {
+      switch (getSubmitOp(operation)) {
       case EXECUTE:
         return queryServer.executeAsync(sessionid, query, conf);
       case EXPLAIN:
@@ -691,5 +677,115 @@ public class QueryServiceResource {
     }
   }
 
+  /**
+   * Create a named (saved) query. Once the query is created it can be invoked with using its handle.
+   * Each invocation will create a new {@link com.inmobi.grill.api.query.GrillQuery}.
+   * Named queries should be created with a query name, query string and configuration to be used
+   * when executing the query
+   *
+   * @param sessionHandle
+   * @param namedQuery
+   * @return unique ID of the newly created named query
+   */
+  @POST
+  @Path("/namedqueries")
+  public String createNamedQuery(GrillSessionHandle sessionHandle, NamedQuery namedQuery) {
+    checkSessionId(sessionHandle);
+    try {
+      return queryServer.createNamedQuery(sessionHandle, namedQuery);
+    } catch (GrillException e) {
+      throw new WebApplicationException(e);
+    }
+  }
+
+  /**
+   * Get a list of named queries matching the name argument
+   * @param sessionHandle
+   * @param queryName
+   * @return
+   */
+  @GET
+  @Path("/namedqueries/{queryName}")
+  public NamedQueryList getNamedQueries(GrillSessionHandle sessionHandle,
+                                          @PathParam("queryName") String queryName) {
+    checkSessionId(sessionHandle);
+    try {
+      List<NamedQuery> namedQueries = queryServer.getNamedQueries(sessionHandle, queryName);
+      if (namedQueries == null || namedQueries.isEmpty()) {
+        throw new NotFoundException("No queries found matching the name: " + queryName);
+      }
+      return new NamedQueryList(namedQueries);
+    } catch (GrillException e) {
+      throw new WebApplicationException(e);
+    }
+  }
+
+  /**
+   * Update an existing named query
+   * @param sessionHandle
+   * @param namedQuery
+   * @return
+   */
+  @PUT
+  @Path("/namedqueries")
+  public APIResult updateNamedQuery(GrillSessionHandle sessionHandle, NamedQuery namedQuery) {
+    checkSessionId(sessionHandle);
+    try {
+      queryServer.updateNamedQuery(sessionHandle, namedQuery);
+      return new APIResult(Status.SUCCEEDED, "Updated named query "+ namedQuery.getNamedQueryHandle());
+    } catch (GrillException e) {
+      return new APIResult(Status.FAILED, "Failed to update named query " + namedQuery.getNamedQueryHandle()
+        + " reason: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Delete an existing named query
+   * @param sessionHandle
+   * @param namedQueryHandle
+   * @return
+   */
+  @DELETE
+  @Path("/namedqueries/{namedQueryHandle}")
+  public APIResult deleteNamedQuery(GrillSessionHandle sessionHandle,
+                                    @PathParam("namedQueryHandle") String namedQueryHandle) {
+    checkSessionId(sessionHandle);
+    try {
+      queryServer.deleteNamedQuery(sessionHandle, namedQueryHandle);
+      return new APIResult(Status.SUCCEEDED, "Deleted named query " + namedQueryHandle);
+    } catch (GrillException e) {
+      return new APIResult(Status.FAILED, "Failed to delete named query " + namedQueryHandle
+        + " reason: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Execute a named query. Semantics of this call are similar to the {@link query()} call
+   * @param sessionHandle
+   * @param namedQueryHandle named query ID
+   * @param operation to indicate if query should run in blocking or non blocking mode
+   * @param timeoutMillis (applicable only for blocking mode) timeout to wait for query result
+   * @return
+   */
+  @POST
+  @Path("/namedqueries/execute")
+  public QuerySubmitResult executeNamedQuery(GrillSessionHandle sessionHandle,
+                                             @FormDataParam("namedQuery") String namedQueryHandle,
+                                             @FormDataParam("operation") String operation,
+                                             @DefaultValue("30000") @FormDataParam("timeoutmillis") Long timeoutMillis) {
+    checkSessionId(sessionHandle);
+    try {
+      switch (getSubmitOp(operation)) {
+        case EXECUTE:
+          return queryServer.executeAsyncNamedQuery(sessionHandle, namedQueryHandle);
+        case EXECUTE_WITH_TIMEOUT:
+          return queryServer.executeNamedQuery(sessionHandle, namedQueryHandle, timeoutMillis);
+        default:
+          throw new BadRequestException("Not supported operation: " + operation);
+      }
+    } catch (GrillException e) {
+      throw new WebApplicationException(e);
+    }
+  }
 }
 
