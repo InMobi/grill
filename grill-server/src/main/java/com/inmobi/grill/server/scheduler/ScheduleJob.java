@@ -31,10 +31,9 @@ import com.inmobi.grill.api.schedule.XStartSpec;
 public class ScheduleJob {
 
   private static final Log LOG = LogFactory.getLog(ScheduleJob.class);
-  private Properties prop = new Properties();
+  private static Properties prop = new Properties();
   private Gson gson = new Gson();
-
-  public ScheduleJob(XSchedule s, Status status, String scheduleid) {
+  static {
     prop.setProperty("org.quartz.scheduler.instanceName", "GRILL_JOB_SCHEDULER");
     prop.setProperty("org.quartz.threadPool.class",
         "org.quartz.simpl.SimpleThreadPool");
@@ -56,7 +55,12 @@ public class ScheduleJob {
     prop.setProperty("org.quartz.dataSource.tasksDataStore.password", "");
     prop.setProperty("org.quartz.dataSource.tasksDataStore.maxConnections",
         "20");
+  }
 
+  public ScheduleJob() {
+  }
+
+  public ScheduleJob(XSchedule s, Status status, String scheduleid) {
     if (status.equals(Status.SCHEDULED)) {
       if (s.getExecution().getQueryType() != null) {
         // get all the objects from schedule
@@ -66,7 +70,8 @@ public class ScheduleJob {
           LOG.error("Unable to schedule Job.", e);
         }
       }
-    } else { // means status is Paused, stop the schedule.
+    } else { // means status is Paused, stop the schedule; Will delete the
+             // schedule entry from quartz for this.
       try {
         deschedule(scheduleid);
       } catch (SchedulerException e) {
@@ -81,7 +86,7 @@ public class ScheduleJob {
    * @param XSchedule
    * @throws SchedulerException
    */
-  private void deschedule(String scheduleid) throws SchedulerException {
+  public void deschedule(String scheduleid) throws SchedulerException {
     SchedulerFactory sf = new StdSchedulerFactory(prop);
     Scheduler scheduler = sf.getScheduler();
     scheduler.unscheduleJob(new TriggerKey(scheduleid));
@@ -95,7 +100,7 @@ public class ScheduleJob {
    * @param scheduleid
    * @throws SchedulerException
    */
-  private void schedule(XSchedule s, String scheduleid)
+  public void schedule(XSchedule s, String scheduleid)
       throws SchedulerException {
     SchedulerFactory sf = new StdSchedulerFactory(prop);
     Scheduler sched = sf.getScheduler();
@@ -184,6 +189,7 @@ public class ScheduleJob {
           newJob(ScheduleQueryExecution.class)
               .withIdentity(new JobKey(scheduleid))
               .usingJobData("query", query)
+              .usingJobData("scheduleid", scheduleid)
               .usingJobData("resource_path", resource_Path)
               .usingJobData("session_db", session_db)
               .usingJobData("conf", conf).build();

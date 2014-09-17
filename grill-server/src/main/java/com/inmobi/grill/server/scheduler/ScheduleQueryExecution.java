@@ -1,13 +1,11 @@
 package com.inmobi.grill.server.scheduler;
 
-import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,8 +64,7 @@ public class ScheduleQueryExecution implements Execution {
 
   @Override
   public String getId() throws GrillException {
-    // TODO Auto-generated method stub
-    return null;
+    return queryHandle.getHandleId().toString();
   }
 
   @Override
@@ -77,6 +74,7 @@ public class ScheduleQueryExecution implements Execution {
 
     String query = dataMap.getString("query");
     String conf = dataMap.getString("conf");
+    String scheduleid = dataMap.getString("scheduleid");
     String session_db = dataMap.getString("session_db");
     List<String> resource_path =
         gson.fromJson(dataMap.getString("resource_path"), List.class);
@@ -110,15 +108,16 @@ public class ScheduleQueryExecution implements Execution {
                 .getStatus();
       }
       end = new Date();
-      updateRunStatus(queryHandle, sessionHandle, status, start, end,
-          getQuerySvc().getQuery(sessionHandle, queryHandle).getResultSetPath());
+      updateRunStatus(scheduleid, queryHandle, sessionHandle, status, start,
+          end, getQuerySvc().getQuery(sessionHandle, queryHandle)
+              .getResultSetPath());
     } catch (GrillException e) {
       LOG.error("Exception occured while submitting schedule query.", e);
     }
 
   }
 
-  private void updateRunStatus(QueryHandle queryHandle,
+  private void updateRunStatus(String scheduleid, QueryHandle queryHandle,
       GrillSessionHandle sessionHandle, Status status, Date start, Date end,
       String resultSetPath) {
     Connection connection = SchedulerConnectionPool.getDataSource();
@@ -128,7 +127,7 @@ public class ScheduleQueryExecution implements Execution {
       final String queryString =
           "INSERT into schedule_run_info(schedule_id, session_handle, run_handle, start_time, end_time, status, result_path) VALUES(?, ?, ?, ?, ?, ?, ?)";
       stmt = connection.prepareStatement(queryString);
-      stmt.setString(1, );
+      stmt.setString(1, scheduleid);
       stmt.setString(2, sessionHandle.toString());
       stmt.setString(3, queryHandle.getHandleId().toString());
       stmt.setLong(4, start.getTime());
@@ -138,8 +137,7 @@ public class ScheduleQueryExecution implements Execution {
       stmt.executeUpdate();
       stmt.close();
     } catch (final SQLException e) {
-      LOG.error("Failed to submit Query", e);
-      status = false;
+      LOG.error("Failed to update Run Info in DB", e);
     } finally {
       try {
         if (connection != null) {

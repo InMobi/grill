@@ -36,6 +36,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hive.service.cli.CLIService;
+import org.quartz.SchedulerException;
 
 import com.google.gson.Gson;
 import com.inmobi.grill.api.GrillException;
@@ -76,7 +77,7 @@ public class SchedulerServiceImpl extends GrillService implements
     try {
       PreparedStatement stmt;
       final String queryString =
-          "select schedule_id from schedule_info where schedule_id ilike %?% AND status ilike %?% AND username ilike %?%";
+          "select schedule_id from schedule_info where schedule_id = ? AND status = ? AND username ilike %?%";
       stmt = connection.prepareStatement(queryString);
       if (scheduleid != null && !scheduleid.isEmpty()) {
         stmt.setString(1, scheduleid);
@@ -175,6 +176,13 @@ public class SchedulerServiceImpl extends GrillService implements
   public boolean delete(GrillSessionHandle sessionid, String scheduleid)
       throws GrillException {
     boolean status = true;
+    ScheduleJob job = new ScheduleJob();
+    try {
+      job.deschedule(scheduleid);
+    } catch (SchedulerException e) {
+      new GrillException("Unable to delete the schedule from quartz.", e);
+    }
+
     Connection connection = SchedulerConnectionPool.getDataSource();
     try {
       PreparedStatement stmt;
@@ -183,9 +191,15 @@ public class SchedulerServiceImpl extends GrillService implements
       stmt = connection.prepareStatement(queryString);
       stmt.setString(1, scheduleid);
       status = stmt.execute();
+
+      final String queryString1 =
+          "DELETE from schedule_run_info where schedule_id = ?";
+      stmt = connection.prepareStatement(queryString1);
+      stmt.setString(1, scheduleid);
+      status = stmt.execute();
       stmt.close();
     } catch (final SQLException e) {
-      LOG.error("Failed to submit Query", e);
+      new GrillException("Failed to submit Query", e);
       status = false;
     } finally {
       try {
@@ -193,7 +207,7 @@ public class SchedulerServiceImpl extends GrillService implements
           connection.close();
         }
       } catch (final SQLException e) {
-        LOG.error("Error closing connection", e);
+        new GrillException("Error closing connection", e);
       }
     }
     return status;
