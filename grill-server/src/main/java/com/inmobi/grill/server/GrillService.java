@@ -86,8 +86,9 @@ public abstract class GrillService extends CompositeService implements Externali
       if (configuration != null) {
         sessionConf.putAll(configuration);
       }
-      sessionConf.put(GrillConfConstants.GRILL_QUERY_LOGGED_IN_USER, username);
       String clusterUser = getClusterUser(username, sessionConf, cliService.getHiveConf());
+      sessionConf.put(GrillConfConstants.GRILL_QUERY_LOGGED_IN_USER, username);
+      sessionConf.put(GrillConfConstants.GRILL_QUERY_CLUSTER_USER, clusterUser);
       password = "useless";
       if (
           cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION)

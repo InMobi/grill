@@ -817,7 +817,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       accept(pctx.getUserQuery(), qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(pctx,
           getSession(sessionHandle).getUserName(), conf, qconf);
-      return executeAsyncInternal(sessionHandle, ctx, qconf);
+      return executeAsyncInternal(sessionHandle, ctx);
     } finally {
       release(sessionHandle);
     }
@@ -851,7 +851,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       accept(query, qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(query,
           getSession(sessionHandle).getUserName(), conf, qconf);
-      return executeAsyncInternal(sessionHandle, ctx, qconf);
+      return executeAsyncInternal(sessionHandle, ctx);
     } finally {
       release(sessionHandle);
     }
@@ -870,10 +870,9 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
     return ctx;
   }
 
-  private QueryHandle executeAsyncInternal(GrillSessionHandle sessionHandle, QueryContext ctx,
-      Configuration qconf) throws GrillException {
+  private QueryHandle executeAsyncInternal(GrillSessionHandle sessionHandle, QueryContext ctx) throws GrillException {
     LOG.info("execute configuration: ");
-    for(Map.Entry<String,String> entry: qconf) {
+    for(Map.Entry<String,String> entry: ctx.getConf()) {
       LOG.info(entry.getKey()+":"+entry.getValue());
     }
     ctx.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
@@ -1004,7 +1003,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
 
   private QueryHandleWithResultSet executeTimeoutInternal(GrillSessionHandle sessionHandle, QueryContext ctx, long timeoutMillis,
       Configuration conf) throws GrillException {
-    QueryHandle handle = executeAsyncInternal(sessionHandle, ctx, conf);
+    QueryHandle handle = executeAsyncInternal(sessionHandle, ctx);
     QueryHandleWithResultSet result = new QueryHandleWithResultSet(handle);
     // getQueryContext calls updateStatus, which fires query events if there's a change in status
     while (getQueryContext(sessionHandle, handle).getStatus().getStatus().equals(
