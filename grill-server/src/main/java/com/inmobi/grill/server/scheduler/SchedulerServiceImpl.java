@@ -135,8 +135,9 @@ public class SchedulerServiceImpl extends GrillService implements
         schedule.getResourcePath().addAll(
             gson.fromJson(rs.getClob(RESOURCE_PATH).getCharacterStream(),
                 List.class));
-        schedule.getScheduleConf().addAll(gson.fromJson(rs.getClob(SCHEDULE_CONF)
-            .getCharacterStream(), List.class));
+        schedule.getScheduleConf().addAll(
+            gson.fromJson(rs.getClob(SCHEDULE_CONF).getCharacterStream(),
+                List.class));
         GregorianCalendar xc = new GregorianCalendar();
         xc.setTimeInMillis(rs.getLong(START_TIME));
         schedule.setStartTime(DatatypeFactory.newInstance()
@@ -244,6 +245,7 @@ public class SchedulerServiceImpl extends GrillService implements
     Connection connection = SchedulerConnectionPool.getDataSource();
     Gson gson = new Gson();
 
+    String userName = getSession(sessionid).getUserName();
     String execJson = gson.toJson(schedule.getExecution());
     try {
       Clob execClob = connection.createClob();
@@ -263,7 +265,7 @@ public class SchedulerServiceImpl extends GrillService implements
 
       PreparedStatement stmt;
       final String queryString =
-          "INSERT into schedule_info(schedule_id, execution, start_spec, resource_path, schedule_conf, start_time, end_time, status, created_on) VALUES(?, ?, ?, ?, ?, ?, ?, 'NEW', now())";
+          "INSERT into schedule_info(schedule_id, execution, start_spec, resource_path, schedule_conf, start_time, end_time, username, status, created_on) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', now())";
       stmt = connection.prepareStatement(queryString);
       stmt.setString(1, UUID.randomUUID().toString());
       stmt.setClob(2, execClob);
@@ -272,6 +274,7 @@ public class SchedulerServiceImpl extends GrillService implements
       stmt.setClob(5, scheConClob);
       stmt.setInt(6, schedule.getStartTime().getMillisecond());
       stmt.setInt(7, schedule.getEndTime().getMillisecond());
+      stmt.setString(8, userName);
       stmt.executeUpdate();
       stmt.close();
     } catch (final SQLException e) {
@@ -388,7 +391,7 @@ public class SchedulerServiceImpl extends GrillService implements
       }
     }
     XSchedule schedule = getScheduleDefn(sessionid, scheduleid);
-    new ScheduleJob(schedule, newstatus);
+    new ScheduleJob(schedule, newstatus, scheduleid);
     return status;
   }
 

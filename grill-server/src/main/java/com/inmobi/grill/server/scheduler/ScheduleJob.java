@@ -1,21 +1,25 @@
 package com.inmobi.grill.server.scheduler;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
+import com.google.gson.Gson;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.schedule.MapType;
 import com.inmobi.grill.api.schedule.ScheduleStatus.Status;
@@ -23,16 +27,14 @@ import com.inmobi.grill.api.schedule.XFrequency;
 import com.inmobi.grill.api.schedule.XFrequencyType;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.api.schedule.XStartSpec;
-import static org.quartz.TriggerBuilder.*;
-import static org.quartz.CronScheduleBuilder.*;
-import static org.quartz.DateBuilder.*;
 
 public class ScheduleJob {
 
   private static final Log LOG = LogFactory.getLog(ScheduleJob.class);
-  Properties prop = new Properties();
+  private Properties prop = new Properties();
+  private Gson gson = new Gson();
 
-  public ScheduleJob(XSchedule s, Status status) {
+  public ScheduleJob(XSchedule s, Status status, String scheduleid) {
     prop.setProperty("org.quartz.scheduler.instanceName", "GRILL_JOB_SCHEDULER");
     prop.setProperty("org.quartz.threadPool.class",
         "org.quartz.simpl.SimpleThreadPool");
@@ -59,39 +61,51 @@ public class ScheduleJob {
       if (s.getExecution().getQueryType() != null) {
         // get all the objects from schedule
         try {
-          schedule(s);
+          schedule(s, scheduleid);
         } catch (SchedulerException e) {
-          LOG.error("Unable to schedule Job.");
+          LOG.error("Unable to schedule Job.", e);
         }
       }
-    } else {
-
+    } else { // means status is Paused, stop the schedule.
+      try {
+        deschedule(scheduleid);
+      } catch (SchedulerException e) {
+        LOG.error("Unable to schedule Job.", e);
+      }
     }
   }
 
-  private void schedule(XSchedule s) throws SchedulerException {
+  /**
+   * Deletes a schedule Job and trigger from quartz for specific scheduleId.
+   * 
+   * @param XSchedule
+   * @throws SchedulerException
+   */
+  private void deschedule(String scheduleid) throws SchedulerException {
+    SchedulerFactory sf = new StdSchedulerFactory(prop);
+    Scheduler scheduler = sf.getScheduler();
+    scheduler.unscheduleJob(new TriggerKey(scheduleid));
+    scheduler.deleteJob(new JobKey(scheduleid));
+  }
+
+  /**
+   * Schedules a Job with frequncy params as trigger using quartz.
+   * 
+   * @param XSchedule
+   * @param scheduleid
+   * @throws SchedulerException
+   */
+  private void schedule(XSchedule s, String scheduleid)
+      throws SchedulerException {
     SchedulerFactory sf = new StdSchedulerFactory(prop);
     Scheduler sched = sf.getScheduler();
     Trigger trigger = null;
-    
-    String query = s.getExecution().getQueryType().getQuery();
-    String session_db = s.getExecution().getQueryType().getSessionDb();
-    GrillConf grillConf = new GrillConf();
-    for (MapType conf : s.getExecution().getQueryType().getQueryConf()) {
-      grillConf.addProperty(conf.getKey(), conf.getValue());
-    }
-    for (MapType conf : s.getExecution().getQueryType().getSessionConf()) {
-      grillConf.addProperty(conf.getKey(), conf.getValue());
-    }
-    for (MapType conf : s.getScheduleConf()) {
-      grillConf.addProperty(conf.getKey(), conf.getValue());
-    }
-    
+
     TimeZone timeZone = TimeZone.getDefault();
     Date start = new Date(s.getStartTime().getMillisecond());
     Date end = new Date(s.getEndTime().getMillisecond());
 
-    List<String> resPath = s.getResourcePath();
+    String resource_Path = gson.toJson(s.getResourcePath());
     XStartSpec startSpec = s.getStartSpec();
     if (startSpec.getId() != null) {
       // handle scheduleId dependency
@@ -102,6 +116,7 @@ public class ScheduleJob {
         case DAILY:
           trigger =
               newTrigger()
+                  .withIdentity(new TriggerKey(scheduleid))
                   .withSchedule(
                       cronSchedule("0 0 12 * * ?").inTimeZone(timeZone))
                   .startAt(start).endAt(end).build();
@@ -109,6 +124,7 @@ public class ScheduleJob {
         case WEEKLY:
           trigger =
               newTrigger()
+                  .withIdentity(new TriggerKey(scheduleid))
                   .withSchedule(
                       cronSchedule("0 0 12 ? * MON").inTimeZone(timeZone))
                   .startAt(start).endAt(end).build();
@@ -116,6 +132,7 @@ public class ScheduleJob {
         case MONTHLY:
           trigger =
               newTrigger()
+                  .withIdentity(new TriggerKey(scheduleid))
                   .withSchedule(
                       cronSchedule("0 0 12 1 * ?").inTimeZone(timeZone))
                   .startAt(start).endAt(end).build();
@@ -123,6 +140,7 @@ public class ScheduleJob {
         case QUARTERLY:
           trigger =
               newTrigger()
+                  .withIdentity(new TriggerKey(scheduleid))
                   .withSchedule(
                       cronSchedule("0 0 12 1 1,4,7,10 ?").inTimeZone(timeZone))
                   .startAt(start).endAt(end).build();
@@ -130,6 +148,7 @@ public class ScheduleJob {
         case YEARLY:
           trigger =
               newTrigger()
+                  .withIdentity(new TriggerKey(scheduleid))
                   .withSchedule(
                       cronSchedule("0 0 12 1 1 ? *").inTimeZone(timeZone))
                   .startAt(start).endAt(end).build();
@@ -138,19 +157,37 @@ public class ScheduleJob {
       } else {
         trigger =
             newTrigger()
+                .withIdentity(new TriggerKey(scheduleid))
                 .withSchedule(
                     cronSchedule(frequency.getCronExpression()).inTimeZone(
                         timeZone)).startAt(start).endAt(end).build();
       }
     }
 
-    // TODO : Set all the query params in the JobDataMap
+    if (s.getExecution().getQueryType() != null) {
+      String query = s.getExecution().getQueryType().getQuery();
+      String session_db = s.getExecution().getQueryType().getSessionDb();
+      GrillConf grillConf = new GrillConf();
+      for (MapType conf : s.getExecution().getQueryType().getQueryConf()) {
+        grillConf.addProperty(conf.getKey(), conf.getValue());
+      }
+      for (MapType conf : s.getExecution().getQueryType().getSessionConf()) {
+        grillConf.addProperty(conf.getKey(), conf.getValue());
+      }
+      for (MapType conf : s.getScheduleConf()) {
+        grillConf.addProperty(conf.getKey(), conf.getValue());
+      }
+      String conf = gson.toJson(grillConf);
 
-    sched.start();
-    JobDetail job =
-        newJob(QueryExecution.class).withIdentity("job1", "group1").build();
-
-    sched.scheduleJob(job, trigger);
-
+      sched.start();
+      JobDetail job =
+          newJob(ScheduleQueryExecution.class)
+              .withIdentity(new JobKey(scheduleid))
+              .usingJobData("query", query)
+              .usingJobData("resource_path", resource_Path)
+              .usingJobData("session_db", session_db)
+              .usingJobData("conf", conf).build();
+      sched.scheduleJob(job, trigger);
+    }
   }
 }

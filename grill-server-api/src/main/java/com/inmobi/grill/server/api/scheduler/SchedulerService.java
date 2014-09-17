@@ -2,12 +2,10 @@ package com.inmobi.grill.server.api.scheduler;
 
 import java.util.List;
 
-import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleRunInfo;
-import com.inmobi.grill.api.schedule.ScheduleStatus;
 import com.inmobi.grill.api.schedule.ScheduleStatus.Status;
 import com.inmobi.grill.api.schedule.XSchedule;
 
