@@ -254,6 +254,7 @@ public class HiveDriver implements GrillDriver {
 
   public GrillResultSet execute(QueryContext ctx) throws GrillException {
     try {
+      LOG.info("Driver query: " + ctx.getDriverQuery());
       addPersistentPath(ctx);
       ctx.getConf().set("mapred.job.name", ctx.getQueryHandle().toString());
       OperationHandle op = getClient().executeStatement(

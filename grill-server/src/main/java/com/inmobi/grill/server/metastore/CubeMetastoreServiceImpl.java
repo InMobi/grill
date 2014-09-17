@@ -681,8 +681,8 @@ public class CubeMetastoreServiceImpl extends GrillService implements CubeMetast
 
   @Override
   public void addPartitionToFactStorage(GrillSessionHandle sessionid, String fact, String storageName, XPartition partition) throws GrillException {
+    acquire(sessionid);
     try {
-      acquire(sessionid);
       CubeFactTable factTable = checkFactStorage(sessionid, fact, storageName);
       getClient(sessionid).addPartition(
           JAXBUtils.storagePartSpecFromXPartition(partition),
