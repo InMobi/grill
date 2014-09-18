@@ -84,6 +84,11 @@ public class GrillConfConstants {
   public static final String GRILL_QUERY_USE_DEFAULT_CLUSTER_USER = "grill.query.use.default.cluster.user";
   public static final String GRILL_QUERY_LOGGED_IN_USER = "grill.query.logged.in.user";
 
+  // ldap user to cluster/hdfs accessing user resolver related configs
+  public static final String GRILL_QUERY_USER_RESOLVER_FIXED_VALUE = "grill.query.user.resolver.fixed.value";
+  public static final String GRILL_QUERY_USER_RESOLVER_PROPERTYBASED_FILENAME = "grill.query.user.resolver.propertybased.filename";
+  public static final String GRILL_QUERY_USER_RESOLVER_CUSTOM_CLASS = "grill.query.user.resolver.custom.class";
+
   public static String getServiceImplConfKey(String sName) {
     return GRILL_PFX + sName + GRILL_SERVICE_IMPL_SFX;
   }

@@ -860,7 +860,8 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
 
   protected QueryContext createContext(String query, String userName,
       GrillConf conf, Configuration qconf) throws GrillException {
-    QueryContext ctx = new QueryContext(query,userName, conf, qconf);
+
+    QueryContext ctx = new QueryContext(query, userName, conf, qconf);
     return ctx;
   }
 
