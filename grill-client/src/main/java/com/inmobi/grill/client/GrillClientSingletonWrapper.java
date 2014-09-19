@@ -3,8 +3,12 @@ package com.inmobi.grill.client;
 import com.inmobi.grill.client.exceptions.GrillClientServerConnectionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.shims.ShimLoader;
 
+import javax.security.auth.login.LoginException;
 import java.io.Console;
+import java.io.IOException;
+
 /*
  * #%L
  * Grill client
@@ -29,7 +33,7 @@ public enum GrillClientSingletonWrapper {
   private Log LOG = LogFactory.getLog(GrillClientSingletonWrapper.class);
   private GrillClient client;
   private static final int MAX_RETRIES = 3;
-  GrillClientSingletonWrapper() {
+  GrillClientSingletonWrapper() throws LoginException, IOException {
     try {
       client = new GrillClient();
     } catch(GrillClientServerConnectionException e) {
@@ -38,6 +42,8 @@ public enum GrillClientSingletonWrapper {
         throw e;
       }
       // Connecting without password prompt failed.
+
+
       for(int i = 0; i < MAX_RETRIES; i++) {
         try{
           client = new GrillClient(Credentials.prompt());

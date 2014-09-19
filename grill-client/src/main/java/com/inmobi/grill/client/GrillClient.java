@@ -27,8 +27,11 @@ import com.inmobi.grill.api.query.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.shims.ShimLoader;
 
+import javax.security.auth.login.LoginException;
 import java.io.Console;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,6 +62,14 @@ public class GrillClient {
     this.conf = conf;
     conf.setUser(username);
     this.password = password;
+    try {
+      String user = ShimLoader.getHadoopShims().getUGIForConf(conf).getUserName();
+      this.conf.set("grill.session.cluster.user", user);
+    } catch (LoginException e) {
+      LOG.error(e);
+    } catch (IOException e) {
+      LOG.error(e);
+    }
     connectToGrillServer();
     statement = new GrillStatement(conn);
   }

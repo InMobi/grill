@@ -23,9 +23,11 @@ package com.inmobi.grill.server.util;
 import java.util.Map;
 
 public class UtilityMethods {
-  public static <K, V> void mergeMaps(Map<K, V> into, Map<K, V> from) {
+  public static <K, V> void mergeMaps(Map<K, V> into, Map<K, V> from, boolean override) {
     for(K key: from.keySet()) {
-      into.put(key, from.get(key));
+      if(override || !into.containsKey(key)) {
+        into.put(key, from.get(key));
+      }
     }
   }
 }

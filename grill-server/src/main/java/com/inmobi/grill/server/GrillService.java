@@ -89,7 +89,7 @@ public abstract class GrillService extends CompositeService implements Externali
         sessionConf.putAll(configuration);
       }
       Map<String, String> userConfig = UserConfigLoaderFactory.getUserConfig(username, cliService.getHiveConf());
-      UtilityMethods.mergeMaps(sessionConf, userConfig);
+      UtilityMethods.mergeMaps(sessionConf, userConfig, false);
       String clusterUser = sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER);
       password = "useless";
       if (
