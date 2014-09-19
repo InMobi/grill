@@ -105,6 +105,7 @@ public class QueryExecutionStatistics extends LoggableGrillStatistics {
     colList.add(new FieldSchema("handle", "string", "Query Handle"));
     colList.add(new FieldSchema("userQuery", "string", "User Query before rewrite"));
     colList.add(new FieldSchema("submitter", "string", "submitter"));
+    colList.add(new FieldSchema("clusterUser", "string", "Cluster User which will do all operations on hdfs"));
     colList.add(new FieldSchema("sessionId","string", "Grill Session which ran the query"));
     colList.add(new FieldSchema("submissionTime", "bigint", "Time which query was submitted"));
     colList.add(new FieldSchema("startTime", "bigint", "Timestamp which query was Started"));

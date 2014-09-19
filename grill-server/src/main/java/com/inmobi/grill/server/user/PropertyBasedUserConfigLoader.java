@@ -61,7 +61,7 @@ public class PropertyBasedUserConfigLoader extends UserConfigLoader {
     HashMap<String, String> userConfig = new HashMap<String, String>();
     userConfig.put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER,
       userMap.get(loggedInUser) == null ?
-        hiveConf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_FIXED_VALUE, "grill") :
+        (userMap.get("*") == null ? loggedInUser : userMap.get("*")):
         userMap.get(loggedInUser));
     return userConfig;
   }

@@ -31,6 +31,7 @@ import javax.ws.rs.NotFoundException;
 import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.server.api.GrillConfConstants;
 
+import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -223,7 +224,6 @@ public class GrillSessionImpl extends HiveSessionImpl {
   public static class GrillSessionPersistInfo implements Externalizable {
     private List<ResourceEntry> resources = new ArrayList<ResourceEntry>();
     private Map<String, String> config = new HashMap<String, String>();
-    private Map<String, String> sessionConf = new HashMap<String, String>();
     private GrillSessionHandle sessionHandle;
     private String database;
     private String username;
@@ -287,11 +287,7 @@ public class GrillSessionImpl extends HiveSessionImpl {
     }
 
     public void setSessionConf(Map<String,String> sessionConf) {
-      this.sessionConf = sessionConf;
-    }
-
-    public Map<String, String> getSessionConf() {
-      return sessionConf;
+      UtilityMethods.mergeMaps(config, sessionConf, true);
     }
 
     @Override
@@ -313,12 +309,6 @@ public class GrillSessionImpl extends HiveSessionImpl {
         out.writeUTF(config.get(key));
       }
       out.writeLong(lastAccessTime);
-
-      out.writeInt(sessionConf.size());
-      for(String key: sessionConf.keySet()) {
-        out.writeUTF(key);
-        out.writeUTF(sessionConf.get(key));
-      }
     }
 
     @Override
@@ -344,14 +334,6 @@ public class GrillSessionImpl extends HiveSessionImpl {
         config.put(key, val);
       }
       lastAccessTime = in.readLong();
-
-      sessionConf.clear();
-      int sessionCfgSize = in.readInt();
-      for(int i = 0; i < sessionCfgSize; i++) {
-        String key = in.readUTF();
-        String val = in.readUTF();
-        sessionConf.put(key, val);
-      }
     }
   }
 }
