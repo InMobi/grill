@@ -76,7 +76,6 @@ public class GrillSessionImpl extends HiveSessionImpl {
   }
 
   public GrillSessionImpl(TProtocolVersion protocol, String username, String password,
-    //TODO persist sessionConf
       HiveConf serverConf, Map<String, String> sessionConf, String ipAddress) {
     super(protocol, username, password, serverConf, sessionConf, ipAddress);
     initPersistInfo(getSessionHandle(), username, password, sessionConf);
