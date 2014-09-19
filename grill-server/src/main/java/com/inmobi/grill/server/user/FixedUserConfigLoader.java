@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.query.user;
+package com.inmobi.grill.server.user;
 /*
  * #%L
  * Grill Server
@@ -19,10 +19,23 @@ package com.inmobi.grill.server.query.user;
  * #L%
  */
 
-public class DatabaseQueryUserResolver extends QueryUserResolver {
-  //TODO: either remove this or fill in generic code :/
+import com.inmobi.grill.server.api.GrillConfConstants;
+import org.apache.hadoop.hive.conf.HiveConf;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class FixedUserConfigLoader extends UserConfigLoader {
+
+  public FixedUserConfigLoader(HiveConf conf) {
+    super(conf);
+  }
+
   @Override
-  public String resolve(String loggedInUser) {
-    return null;
+  public Map<String, String> getUserConfig(String loggedInUser) {
+    HashMap<String, String> userConfig = new HashMap<String, String>();
+    userConfig.put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER,
+      hiveConf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_FIXED_VALUE, "grill"));
+    return userConfig;
   }
 }

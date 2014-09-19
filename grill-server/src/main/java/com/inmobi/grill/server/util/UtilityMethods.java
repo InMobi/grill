@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.query.user;
+package com.inmobi.grill.server.util;
 
 /*
  * #%L
@@ -20,13 +20,12 @@ package com.inmobi.grill.server.query.user;
  * #L%
  */
 
-import org.apache.hadoop.hive.conf.HiveConf;
+import java.util.Map;
 
-public abstract class QueryUserResolver {
-  protected final HiveConf hiveConf;
-
-  {
-    this.hiveConf = new HiveConf();
+public class UtilityMethods {
+  public static <K, V> void mergeMaps(Map<K, V> into, Map<K, V> from) {
+    for(K key: from.keySet()) {
+      into.put(key, from.get(key));
+    }
   }
-  public abstract String resolve(String loggedInUser);
 }

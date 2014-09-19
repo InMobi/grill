@@ -26,6 +26,8 @@ import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.session.GrillSessionImpl;
 
+import com.inmobi.grill.server.user.UserConfigLoaderFactory;
+import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -86,9 +88,9 @@ public abstract class GrillService extends CompositeService implements Externali
       if (configuration != null) {
         sessionConf.putAll(configuration);
       }
-      String clusterUser = getClusterUser(username, sessionConf, cliService.getHiveConf());
-      sessionConf.put(GrillConfConstants.GRILL_QUERY_LOGGED_IN_USER, username);
-      sessionConf.put(ConfVars.HIVEQUERYRUNASUSER.varname, clusterUser);
+      Map<String, String> userConfig = UserConfigLoaderFactory.getUserConfig(username, cliService.getHiveConf());
+      UtilityMethods.mergeMaps(sessionConf, userConfig);
+      String clusterUser = sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER);
       password = "useless";
       if (
           cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION)
@@ -122,10 +124,8 @@ public abstract class GrillService extends CompositeService implements Externali
 
   public String getClusterUser(String username, Map<String, String> queryConf, HiveConf hiveConf) {
     String clusterUser = username;
-    if(queryConf.containsKey(GrillConfConstants.GRILL_QUERY_CLUSTER_USER)) {
-      clusterUser = queryConf.get(GrillConfConstants.GRILL_QUERY_CLUSTER_USER);
-    } else if(hiveConf.getBoolean(GrillConfConstants.GRILL_QUERY_USE_DEFAULT_CLUSTER_USER, false)) {
-      clusterUser = hiveConf.get(GrillConfConstants.GRILL_QUERY_CLUSTER_DEFAULT_USER, "grill");
+    if(queryConf.containsKey(GrillConfConstants.GRILL_SESSION_CLUSTER_USER)) {
+      clusterUser = queryConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER);
     }
     return clusterUser;
   }

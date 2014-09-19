@@ -193,6 +193,28 @@
 </property>
 
 <property>
+  <name>grill.whether.mail.notify</name>
+  <value>false</value>
+  <description>When a query ends, whether to notify the submitter by mail or not.</description>
+</property>
+<property>
+  <name>grill.whether.mail.notify</name>
+  <value>false</value>
+  <description>When a query ends, whether to notify the submitter by mail or not.</description>
+</property>
+<property>
+  <name>grill.whether.mail.notify</name>
+  <value>false</value>
+  <description>When a query ends, whether to notify the submitter by mail or not.</description>
+</property>
+<property>
+  <name>grill.whether.mail.notify</name>
+  <value>false</value>
+  <description>When a query ends, whether to notify the submitter by mail or not.</description>
+</property>
+
+
+<property>
     <name>hive.metastore.failure.retries</name>
     <value>3</value>
     <description>Number of call retries when Hive Metastore calls fail with Thrift errros</description>

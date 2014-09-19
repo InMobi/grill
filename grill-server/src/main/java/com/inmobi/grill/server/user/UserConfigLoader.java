@@ -1,6 +1,4 @@
-package com.inmobi.grill.server.query.user;
-
-import com.inmobi.grill.api.GrillException;
+package com.inmobi.grill.server.user;
 
 /*
  * #%L
@@ -22,8 +20,15 @@ import com.inmobi.grill.api.GrillException;
  * #L%
  */
 
-public class QueryUserResolverException extends GrillException{
-  public QueryUserResolverException(String s) {
-    super(s);
+import org.apache.hadoop.hive.conf.HiveConf;
+
+import java.util.Map;
+
+public abstract class UserConfigLoader {
+  protected final HiveConf hiveConf;
+
+  public UserConfigLoader(HiveConf conf) {
+    this.hiveConf = conf;
   }
+  public abstract Map<String, String> getUserConfig(String loggedInUser);
 }

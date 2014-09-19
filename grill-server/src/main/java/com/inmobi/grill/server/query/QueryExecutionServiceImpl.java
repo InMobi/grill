@@ -430,6 +430,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
     QueryHandle query = ctx.getQueryHandle();
     switch (currState) {
     case CANCELED:
+      //TODO: correct username. put who cancelled it, not the submitter. Similar for others
       return new QueryCancelled(ctx.getEndTime(), prevState, currState, query, ctx.getSubmittedUser(), null);
     case CLOSED:
       return new QueryClosed(ctx.getClosedTime(), prevState, currState, query, ctx.getSubmittedUser(), null);
@@ -861,6 +862,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   protected QueryContext createContext(String query, String userName,
       GrillConf conf, Configuration qconf) throws GrillException {
 
+    //TODO set resolved user here.
     QueryContext ctx = new QueryContext(query, userName, conf, qconf);
     return ctx;
   }
@@ -872,10 +874,6 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private QueryHandle executeAsyncInternal(GrillSessionHandle sessionHandle, QueryContext ctx) throws GrillException {
-    LOG.info("execute configuration: ");
-    for(Map.Entry<String,String> entry: ctx.getConf()) {
-      LOG.info(entry.getKey()+":"+entry.getValue());
-    }
     ctx.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
     QueryStatus before = ctx.getStatus();
     ctx.setStatus(new QueryStatus(0.0,

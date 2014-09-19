@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.query.user;
+package com.inmobi.grill.server.user;
 /*
  * #%L
  * Grill Server
@@ -19,33 +19,35 @@ package com.inmobi.grill.server.query.user;
  * #L%
  */
 
-import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.server.api.GrillConfConstants;
+import org.apache.hadoop.hive.conf.HiveConf;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
-public class PropertyBasedQueryUserResolver extends QueryUserResolver {
+public class PropertyBasedUserConfigLoader extends UserConfigLoader {
 
   private HashMap<String, String> userMap;
 
-  public PropertyBasedQueryUserResolver() throws QueryUserResolverException{
+  public PropertyBasedUserConfigLoader(HiveConf conf) throws UserConfigLoaderException {
+    super(conf);
     userMap = new HashMap<String, String>();
     Properties properties = new Properties();
-    String filename = hiveConf.get(GrillConfConstants.GRILL_QUERY_USER_RESOLVER_PROPERTYBASED_FILENAME, null);
+    String filename = hiveConf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_PROPERTYBASED_FILENAME, null);
     if(filename == null) {
-      throw new QueryUserResolverException("property file path not provided for property based resolver." +
-        "Please set property " + GrillConfConstants.GRILL_QUERY_USER_RESOLVER_PROPERTYBASED_FILENAME);
+      throw new UserConfigLoaderException("property file path not provided for property based resolver." +
+        "Please set property " + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_PROPERTYBASED_FILENAME);
     }
     try {
       properties.load(new InputStreamReader(new FileInputStream(new File(
         filename))));
     } catch (IOException e) {
-      throw new QueryUserResolverException("property file not found. Provided path was: " + filename);
+      throw new UserConfigLoaderException("property file not found. Provided path was: " + filename);
     }
     for(Object o: properties.keySet()) {
       String key = (String) o;
@@ -55,9 +57,12 @@ public class PropertyBasedQueryUserResolver extends QueryUserResolver {
     }
   }
   @Override
-  public String resolve(String loggedInUser) {
-    return userMap.get(loggedInUser) == null ?
-      hiveConf.get(GrillConfConstants.GRILL_QUERY_USER_RESOLVER_FIXED_VALUE, "grill") :
-      userMap.get(loggedInUser);
+  public Map<String, String> getUserConfig(String loggedInUser) {
+    HashMap<String, String> userConfig = new HashMap<String, String>();
+    userConfig.put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER,
+      userMap.get(loggedInUser) == null ?
+        hiveConf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_FIXED_VALUE, "grill") :
+        userMap.get(loggedInUser));
+    return userConfig;
   }
 }

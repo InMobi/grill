@@ -51,6 +51,10 @@ public class QueryExecutionStatistics extends LoggableGrillStatistics {
 
   @Getter
   @Setter
+  private String clusterUser;
+
+  @Getter
+  @Setter
   private String sessionId;
 
   @Getter

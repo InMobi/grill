@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.query.user;
+package com.inmobi.grill.server.user;
 /*
  * #%L
  * Grill Server
@@ -21,24 +21,28 @@ package com.inmobi.grill.server.query.user;
 
 import com.inmobi.grill.server.api.GrillConfConstants;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.util.ReflectionUtils;
 
-public class CustomQueryUserResolver extends QueryUserResolver {
+import java.util.Map;
 
-  Class<? extends QueryUserResolver> customHandlerClass;
-  QueryUserResolver customProvider;
+public class CustomUserConfigLoader extends UserConfigLoader {
 
-  public CustomQueryUserResolver() {
-    this.customHandlerClass = (Class<? extends QueryUserResolver>) hiveConf.getClass(
-      GrillConfConstants.GRILL_QUERY_USER_RESOLVER_CUSTOM_CLASS,
-      QueryUserResolver.class
+  Class<? extends UserConfigLoader> customHandlerClass;
+  UserConfigLoader customProvider;
+
+  public CustomUserConfigLoader(HiveConf conf) {
+    super(conf);
+    this.customHandlerClass = (Class<? extends UserConfigLoader>) hiveConf.getClass(
+      GrillConfConstants.GRILL_SESSION_USER_RESOLVER_CUSTOM_CLASS,
+      UserConfigLoader.class
     );
     this.customProvider =
-      ReflectionUtils.newInstance(this.customHandlerClass, new Configuration());
+      ReflectionUtils.newInstance(this.customHandlerClass, conf);
   }
 
   @Override
-  public String resolve(String loggedInUser) {
-    return customProvider.resolve(loggedInUser);
+  public Map<String, String> getUserConfig(String loggedInUser) {
+    return customProvider.getUserConfig(loggedInUser);
   }
 }

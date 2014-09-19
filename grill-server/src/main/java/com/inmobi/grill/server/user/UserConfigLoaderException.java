@@ -1,4 +1,7 @@
-package com.inmobi.grill.server.query.user;
+package com.inmobi.grill.server.user;
+
+import com.inmobi.grill.api.GrillException;
+
 /*
  * #%L
  * Grill Server
@@ -19,12 +22,8 @@ package com.inmobi.grill.server.query.user;
  * #L%
  */
 
-import com.inmobi.grill.server.api.GrillConfConstants;
-
-public class FixedQueryUserResolver extends QueryUserResolver {
-
-  @Override
-  public String resolve(String loggedInUser) {
-    return hiveConf.get(GrillConfConstants.GRILL_QUERY_USER_RESOLVER_FIXED_VALUE, "grill");
+public class UserConfigLoaderException extends GrillException{
+  public UserConfigLoaderException(String s) {
+    super(s);
   }
 }

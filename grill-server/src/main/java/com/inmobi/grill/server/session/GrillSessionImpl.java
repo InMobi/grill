@@ -45,6 +45,7 @@ import org.apache.hive.service.cli.thrift.TProtocolVersion;
 import com.inmobi.grill.api.GrillException;
 
 public class GrillSessionImpl extends HiveSessionImpl {
+  //TODO: both users
   public static final Log LOG = LogFactory.getLog(GrillSessionImpl.class);
   private CubeMetastoreClient cubeClient;
   private GrillSessionPersistInfo persistInfo = new GrillSessionPersistInfo();
@@ -75,6 +76,7 @@ public class GrillSessionImpl extends HiveSessionImpl {
   }
 
   public GrillSessionImpl(TProtocolVersion protocol, String username, String password,
+    //TODO persist sessionConf
       HiveConf serverConf, Map<String, String> sessionConf, String ipAddress) {
     super(protocol, username, password, serverConf, sessionConf, ipAddress);
     initPersistInfo(getSessionHandle(), username, password);

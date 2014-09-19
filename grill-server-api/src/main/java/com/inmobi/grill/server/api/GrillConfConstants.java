@@ -79,15 +79,14 @@ public class GrillConfConstants {
   public static final String GRILL_QUERY_RESULT_DEFAULT_EMAIL_CC = "";
 
   // User session related config
-  public static final String GRILL_QUERY_CLUSTER_USER = "grill.query.cluster.user";
-  public static final String GRILL_QUERY_CLUSTER_DEFAULT_USER = "grill.query.cluster.default.user";
-  public static final String GRILL_QUERY_USE_DEFAULT_CLUSTER_USER = "grill.query.use.default.cluster.user";
-  public static final String GRILL_QUERY_LOGGED_IN_USER = "grill.query.logged.in.user";
+  public static final String GRILL_SESSION_CLUSTER_USER = "grill.session.cluster.user";
+  public static final String GRILL_SESSION_LOGGEDIN_USER = "grill.session.loggedin.user";
 
   // ldap user to cluster/hdfs accessing user resolver related configs
-  public static final String GRILL_QUERY_USER_RESOLVER_FIXED_VALUE = "grill.query.user.resolver.fixed.value";
-  public static final String GRILL_QUERY_USER_RESOLVER_PROPERTYBASED_FILENAME = "grill.query.user.resolver.propertybased.filename";
-  public static final String GRILL_QUERY_USER_RESOLVER_CUSTOM_CLASS = "grill.query.user.resolver.custom.class";
+  public static final String GRILL_SESSION_USER_RESOLVER_FIXED_VALUE = "grill.session.user.resolver.fixed.value";
+  public static final String GRILL_SESSION_USER_RESOLVER_PROPERTYBASED_FILENAME = "grill.session.user.resolver.propertybased.filename";
+  public static final String GRILL_SESSION_USER_RESOLVER_CUSTOM_CLASS = "grill.session.user.resolver.custom.class";
+  public static final String GRILL_SESSION_USER_RESOLVER_TYPE = "grill.session.user.resolver.type";
 
   public static String getServiceImplConfKey(String sName) {
     return GRILL_PFX + sName + GRILL_SERVICE_IMPL_SFX;
