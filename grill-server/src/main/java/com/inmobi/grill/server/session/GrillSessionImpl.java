@@ -45,7 +45,6 @@ import org.apache.hive.service.cli.thrift.TProtocolVersion;
 import com.inmobi.grill.api.GrillException;
 
 public class GrillSessionImpl extends HiveSessionImpl {
-  //TODO: both users
   public static final Log LOG = LogFactory.getLog(GrillSessionImpl.class);
   private CubeMetastoreClient cubeClient;
   private GrillSessionPersistInfo persistInfo = new GrillSessionPersistInfo();
@@ -53,12 +52,13 @@ public class GrillSessionImpl extends HiveSessionImpl {
   private long sessionTimeout;
   private Configuration conf = createDefaultConf();
 
-  private void initPersistInfo(SessionHandle sessionHandle, String username, String password) {
+  private void initPersistInfo(SessionHandle sessionHandle, String username, String password, Map<String, String> sessionConf) {
     persistInfo.setSessionHandle(new GrillSessionHandle(sessionHandle.getHandleIdentifier().getPublicId(),
       sessionHandle.getHandleIdentifier().getSecretId()));
     persistInfo.setUsername(username);
     persistInfo.setPassword(password);
     persistInfo.setLastAccessTime(lastAccessTime);
+    persistInfo.setSessionConf(sessionConf);
   }
 
   public static Configuration createDefaultConf() {
@@ -79,7 +79,7 @@ public class GrillSessionImpl extends HiveSessionImpl {
     //TODO persist sessionConf
       HiveConf serverConf, Map<String, String> sessionConf, String ipAddress) {
     super(protocol, username, password, serverConf, sessionConf, ipAddress);
-    initPersistInfo(getSessionHandle(), username, password);
+    initPersistInfo(getSessionHandle(), username, password, sessionConf);
     sessionTimeout = 1000 * serverConf.getLong(GrillConfConstants.GRILL_SESSION_TIMEOUT_SECONDS,
       GrillConfConstants.GRILL_SESSION_TIMEOUT_SECONDS_DEFAULT);
     if (sessionConf != null) {
@@ -100,7 +100,7 @@ public class GrillSessionImpl extends HiveSessionImpl {
   public GrillSessionImpl(SessionHandle sessionHandle, TProtocolVersion protocol, String username, String password,
                           HiveConf serverConf, Map<String, String> sessionConf, String ipAddress) {
     super(sessionHandle, protocol, username, password, serverConf, sessionConf, ipAddress);
-    initPersistInfo(getSessionHandle(), username, password);
+    initPersistInfo(getSessionHandle(), username, password, sessionConf);
     sessionTimeout = 1000 * serverConf.getLong(GrillConfConstants.GRILL_SESSION_TIMEOUT_SECONDS,
       GrillConfConstants.GRILL_SESSION_TIMEOUT_SECONDS_DEFAULT);
   }
@@ -224,6 +224,7 @@ public class GrillSessionImpl extends HiveSessionImpl {
   public static class GrillSessionPersistInfo implements Externalizable {
     private List<ResourceEntry> resources = new ArrayList<ResourceEntry>();
     private Map<String, String> config = new HashMap<String, String>();
+    private Map<String, String> sessionConf = new HashMap<String, String>();
     private GrillSessionHandle sessionHandle;
     private String database;
     private String username;
@@ -286,6 +287,14 @@ public class GrillSessionImpl extends HiveSessionImpl {
       return lastAccessTime;
     }
 
+    public void setSessionConf(Map<String,String> sessionConf) {
+      this.sessionConf = sessionConf;
+    }
+
+    public Map<String, String> getSessionConf() {
+      return sessionConf;
+    }
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
       out.writeUTF(sessionHandle.toString());
@@ -305,6 +314,12 @@ public class GrillSessionImpl extends HiveSessionImpl {
         out.writeUTF(config.get(key));
       }
       out.writeLong(lastAccessTime);
+
+      out.writeInt(sessionConf.size());
+      for(String key: sessionConf.keySet()) {
+        out.writeUTF(key);
+        out.writeUTF(sessionConf.get(key));
+      }
     }
 
     @Override
@@ -330,6 +345,14 @@ public class GrillSessionImpl extends HiveSessionImpl {
         config.put(key, val);
       }
       lastAccessTime = in.readLong();
+
+      sessionConf.clear();
+      int sessionCfgSize = in.readInt();
+      for(int i = 0; i < sessionCfgSize; i++) {
+        String key = in.readUTF();
+        String val = in.readUTF();
+        sessionConf.put(key, val);
+      }
     }
   }
 }
