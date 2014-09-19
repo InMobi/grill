@@ -122,14 +122,6 @@ public abstract class GrillService extends CompositeService implements Externali
     return grillSession;
   }
 
-  public String getClusterUser(String username, Map<String, String> queryConf, HiveConf hiveConf) {
-    String clusterUser = username;
-    if(queryConf.containsKey(GrillConfConstants.GRILL_SESSION_CLUSTER_USER)) {
-      clusterUser = queryConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER);
-    }
-    return clusterUser;
-  }
-
   /**
    * Restore session from previous instance of grill server
    */

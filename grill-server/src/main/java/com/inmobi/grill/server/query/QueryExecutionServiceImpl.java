@@ -779,7 +779,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
     Configuration conf = getGrillConf(sessionHandle, grillConf);
     accept(query, conf, op);
     PreparedQueryContext prepared = new PreparedQueryContext(query,
-        getSession(sessionHandle).getUserName(), conf, grillConf);
+        getSession(sessionHandle).getLoggedInUser(), conf, grillConf);
     rewriteAndSelect(prepared);
     preparedQueries.put(prepared.getPrepareHandle(), prepared);
     preparedQueryQueue.add(prepared);
@@ -817,7 +817,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       Configuration qconf = getGrillConf(sessionHandle, conf);
       accept(pctx.getUserQuery(), qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(pctx,
-          getSession(sessionHandle).getUserName(), conf, qconf);
+          getSession(sessionHandle).getLoggedInUser(), conf, qconf);
       return executeAsyncInternal(sessionHandle, ctx);
     } finally {
       release(sessionHandle);
@@ -835,7 +835,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       PreparedQueryContext pctx = getPreparedQueryContext(sessionHandle, prepareHandle);
       Configuration qconf = getGrillConf(sessionHandle, conf);
       QueryContext ctx = createContext(pctx,
-          getSession(sessionHandle).getUserName(), conf, qconf);
+          getSession(sessionHandle).getLoggedInUser(), conf, qconf);
       return executeTimeoutInternal(sessionHandle, ctx, timeoutMillis, qconf);
     } finally {
       release(sessionHandle);
@@ -851,7 +851,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       Configuration qconf = getGrillConf(sessionHandle, conf);
       accept(query, qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(query,
-          getSession(sessionHandle).getUserName(), conf, qconf);
+          getSession(sessionHandle).getLoggedInUser(), conf, qconf);
       return executeAsyncInternal(sessionHandle, ctx);
     } finally {
       release(sessionHandle);
@@ -993,7 +993,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       Configuration qconf = getGrillConf(sessionHandle, conf);
       accept(query, qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(query,
-          getSession(sessionHandle).getUserName(), conf, qconf);
+          getSession(sessionHandle).getLoggedInUser(), conf, qconf);
       return executeTimeoutInternal(sessionHandle, ctx, timeoutMillis, qconf);
     } finally {
       release(sessionHandle);
@@ -1233,7 +1233,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
           GrillConf conf = new GrillConf();
           conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
           QueryContext addQuery = new QueryContext(command,
-              getSession(sessionHandle).getUserName(),
+              getSession(sessionHandle).getLoggedInUser(),
               getGrillConf(sessionHandle, conf));
           addQuery.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
           driver.execute(addQuery);
@@ -1253,7 +1253,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
           GrillConf conf = new GrillConf();
           conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
           QueryContext addQuery = new QueryContext(command,
-              getSession(sessionHandle).getUserName(),
+              getSession(sessionHandle).getLoggedInUser(),
               getGrillConf(sessionHandle, conf));
           addQuery.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
           driver.execute(addQuery);
@@ -1388,7 +1388,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
         try {
           URI resultReadPath = new URI(resultFSReadUrl +
               resultPath.toUri().getPath() +
-              "?op=OPEN&user.name="+getSession(sessionHandle).getUserName());
+              "?op=OPEN&user.name="+getSession(sessionHandle).getClusterUser());
           return Response.seeOther(resultReadPath)
               .header("content-disposition","attachment; filename = "+ resultPath.getName())
               .type(MediaType.APPLICATION_OCTET_STREAM).build();

@@ -175,6 +175,14 @@ public class GrillSessionImpl extends HiveSessionImpl {
     return getSessionHandle().getHandleIdentifier().toString();
   }
 
+  public String getLoggedInUser() {
+    return getHiveConf().get(GrillConfConstants.GRILL_SESSION_LOGGEDIN_USER);
+  }
+
+  public String getClusterUser() {
+    return getUserName();
+  }
+
   public GrillSessionPersistInfo getGrillSessionPersistInfo() {
     return persistInfo;
   }
