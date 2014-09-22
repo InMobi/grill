@@ -89,6 +89,7 @@ public class GrillConfConstants {
 
   // User session related config
   public static final String GRILL_SESSION_CLUSTER_USER = "grill.session.cluster.user";
+  public static final String GRILL_SESSION_QUEUE = "grill.session.queue";
   public static final String GRILL_SESSION_LOGGEDIN_USER = "grill.session.loggedin.user";
 
   // ldap user to cluster/hdfs accessing user resolver related configs

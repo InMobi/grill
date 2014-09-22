@@ -20,6 +20,7 @@ package com.inmobi.grill.server.user;
  */
 
 import com.inmobi.grill.server.api.GrillConfConstants;
+import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.hadoop.hive.conf.HiveConf;
 
 import java.io.File;
@@ -32,11 +33,11 @@ import java.util.Properties;
 
 public class PropertyBasedUserConfigLoader extends UserConfigLoader {
 
-  private HashMap<String, String> userMap;
+  private HashMap<String, Map<String, String>> userMap;
 
   public PropertyBasedUserConfigLoader(HiveConf conf) throws UserConfigLoaderException {
     super(conf);
-    userMap = new HashMap<String, String>();
+    userMap = new HashMap<String, Map<String, String>>();
     Properties properties = new Properties();
     String filename = hiveConf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_PROPERTYBASED_FILENAME, null);
     if(filename == null) {
@@ -51,18 +52,17 @@ public class PropertyBasedUserConfigLoader extends UserConfigLoader {
     }
     for(Object o: properties.keySet()) {
       String key = (String) o;
-      for(String s: key.trim().split("\\s*,\\s*")) {
-        userMap.put(s, properties.getProperty(key));
+      String[] userAndPropkey = key.split("\\.", 2);
+      String user = userAndPropkey[0];
+      String propKey = userAndPropkey[1];
+      if(!userMap.containsKey(user)) {
+        userMap.put(user, new HashMap<String, String>());
       }
+      userMap.get(user).put(propKey, properties.getProperty(key));
     }
   }
   @Override
   public Map<String, String> getUserConfig(String loggedInUser) {
-    HashMap<String, String> userConfig = new HashMap<String, String>();
-    userConfig.put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER,
-      userMap.get(loggedInUser) == null ?
-        (userMap.get("*") == null ? loggedInUser : userMap.get("*")):
-        userMap.get(loggedInUser));
-    return userConfig;
+    return userMap.get(loggedInUser) == null ? userMap.get("*") : userMap.get(loggedInUser);
   }
 }

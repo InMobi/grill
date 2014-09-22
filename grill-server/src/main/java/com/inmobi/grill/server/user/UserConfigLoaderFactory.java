@@ -23,9 +23,7 @@ package com.inmobi.grill.server.user;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.metastore.api.hive_metastoreConstants;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserConfigLoaderFactory {

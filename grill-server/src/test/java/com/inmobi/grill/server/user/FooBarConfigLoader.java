@@ -1,7 +1,8 @@
 package com.inmobi.grill.server.user;
+
 /*
  * #%L
- * Grill Server
+ * Grill API for server and extensions
  * %%
  * Copyright (C) 2014 Inmobi
  * %%
@@ -19,20 +20,23 @@ package com.inmobi.grill.server.user;
  * #L%
  */
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.hadoop.hive.conf.HiveConf;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class DatabaseUserConfigLoader extends UserConfigLoader {
-  public DatabaseUserConfigLoader(HiveConf conf) {
+public class FooBarConfigLoader extends UserConfigLoader {
+
+  public FooBarConfigLoader(HiveConf conf) {
     super(conf);
-    throw new NotImplementedException();
   }
 
-  //TODO: either remove this or fill in generic code :/
   @Override
   public Map<String, String> getUserConfig(String loggedInUser) {
-    return null;
+    return new HashMap<String, String>() {
+      {
+        put("key", "value");
+      }
+    };
   }
 }

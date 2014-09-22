@@ -19,11 +19,14 @@ package com.inmobi.grill.server.user;
  * #L%
  */
 
+import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class CustomUserConfigLoader extends UserConfigLoader {
@@ -31,14 +34,17 @@ public class CustomUserConfigLoader extends UserConfigLoader {
   Class<? extends UserConfigLoader> customHandlerClass;
   UserConfigLoader customProvider;
 
-  public CustomUserConfigLoader(HiveConf conf) {
+  public CustomUserConfigLoader(HiveConf conf) throws GrillException {
     super(conf);
     this.customHandlerClass = (Class<? extends UserConfigLoader>) hiveConf.getClass(
       GrillConfConstants.GRILL_SESSION_USER_RESOLVER_CUSTOM_CLASS,
       UserConfigLoader.class
     );
-    this.customProvider =
-      ReflectionUtils.newInstance(this.customHandlerClass, conf);
+    try {
+      this.customProvider = customHandlerClass.getConstructor(HiveConf.class).newInstance(conf);
+    } catch (ReflectiveOperationException e) {
+      throw new GrillException(e);
+    }
   }
 
   @Override
