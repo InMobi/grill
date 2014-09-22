@@ -9,9 +9,9 @@ package com.inmobi.grill.server.query;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +21,11 @@ package com.inmobi.grill.server.query;
  */
 
 import com.inmobi.grill.api.query.QueryStatus;
+import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.events.AsyncEventListener;
 import com.inmobi.grill.server.api.events.GrillEventService;
+import com.inmobi.grill.server.api.metrics.MetricsService;
 import com.inmobi.grill.server.api.query.QueryContext;
 import com.inmobi.grill.server.api.query.QueryEnded;
 import org.apache.commons.logging.Log;
@@ -41,6 +43,7 @@ import java.util.Properties;
 public class QueryEndNotifier extends AsyncEventListener<QueryEnded> {
   private final QueryExecutionServiceImpl queryService;
   public static final Log LOG = LogFactory.getLog(QueryEndNotifier.class);
+  public static final String EMAIL_ERROR_COUNTER = "email-send-errors";
   private final HiveConf conf;
   private final String from;
   private final String host;
@@ -146,6 +149,8 @@ public class QueryEndNotifier extends AsyncEventListener<QueryEnded> {
       message.setContent(multipart);
       Transport.send(message);
     } catch (Exception e) {
+      MetricsService metricsService = (MetricsService) GrillServices.get().getService(MetricsService.NAME);
+      metricsService.incrCounter(QueryEndNotifier.class, EMAIL_ERROR_COUNTER);
       LOG.error("Error sending query end email", e);
     }
   }

@@ -11,10 +11,12 @@ import org.apache.hadoop.conf.Configuration;
 
 import com.inmobi.grill.server.api.GrillConfConstants;
 
+/**
+ * Top level class which logs and retrieves data from Database
+ */
 public class GrillServerDAO {
 
   public DataSource ds;
-
   public void init(Configuration conf) {
     String className =
         conf.get(GrillConfConstants.GRILL_SERVER_DB_DRIVER_NAME,

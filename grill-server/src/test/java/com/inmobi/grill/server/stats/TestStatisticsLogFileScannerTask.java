@@ -8,9 +8,9 @@ package com.inmobi.grill.server.stats;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ package com.inmobi.grill.server.stats;
  * #L%
  */
 
-import com.google.common.eventbus.Subscribe;
 import com.inmobi.grill.server.api.events.GrillEventService;
 import com.inmobi.grill.server.stats.store.log.PartitionEvent;
 import com.inmobi.grill.server.stats.store.log.StatisticsLogFileScannerTask;
@@ -34,7 +33,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,15 +40,19 @@ public class TestStatisticsLogFileScannerTask {
 
 
   private File f;
+  private File hidden;
   @BeforeMethod
   public void createTestLogFile() throws Exception {
     f = new File("/tmp/test.log.2014-08-05-11-28");
+    hidden = new File("/tmp/.test.log.2014-08-05-11-28.swp");
+    hidden.createNewFile();
     f.createNewFile();
   }
 
   @AfterMethod
   public void deleteTestFile() throws Exception {
     f.delete();
+    hidden.delete();
   }
 
 
@@ -84,6 +86,7 @@ public class TestStatisticsLogFileScannerTask {
     PartitionEvent event = events.get(0);
     Assert.assertEquals(event.getEventName(),
         TestStatisticsLogFileScannerTask.class.getSimpleName());
+    Assert.assertEquals(event.getPartMap().size(), 1);
     Assert.assertTrue(event.getPartMap().containsKey("2014-08-05-11-28"));
     Assert.assertEquals(event.getPartMap().get("2014-08-05-11-28"),
         f.getAbsolutePath());

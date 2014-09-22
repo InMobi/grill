@@ -28,29 +28,21 @@ import java.io.InputStreamReader;
 import javax.xml.bind.JAXBException;
 
 import com.inmobi.grill.api.query.*;
+import com.inmobi.grill.client.*;
 import org.apache.commons.lang.StringUtils;
 
-import com.inmobi.grill.api.APIResult;
-import com.inmobi.grill.client.GrillConnection;
-import com.inmobi.grill.client.GrillConnectionParams;
-import com.inmobi.grill.client.GrillMetadataClient;
-import com.inmobi.grill.client.GrillStatement;
-
 public class SampleQueries {
-  private GrillConnection connection;
   private GrillMetadataClient metaClient;
   private GrillStatement queryClient;
   private int retCode = 0;
 
   public SampleQueries() throws JAXBException {
-    connection = new GrillConnection(new GrillConnectionParams());
-    connection.open();
-    metaClient = new GrillMetadataClient(connection);
-    queryClient = new GrillStatement(connection);
+    metaClient = new GrillMetadataClient(GrillClientSingletonWrapper.INSTANCE.getClient().getConnection());
+    queryClient = new GrillStatement(GrillClientSingletonWrapper.INSTANCE.getClient().getConnection());
   }
 
   public void close() {
-    connection.close();
+    GrillClientSingletonWrapper.INSTANCE.getClient().closeConnection();
   }
 
   public static void main(String[] args) throws Exception {
@@ -97,7 +89,7 @@ public class SampleQueries {
       }
       total++;
       System.out.println("Query:" + query);
-      QueryHandle handle = queryClient.executeQuery(query, true);
+      QueryHandle handle = queryClient.executeQuery(query, true, null);
       System.out.println("Status:" + queryClient.getQuery().getStatus());
       System.out.println("Total time in millis:" + (queryClient.getQuery().getFinishTime() - queryClient.getQuery().getSubmissionTime()));
       System.out.println("Driver run time in millis:" + (queryClient.getQuery().getDriverFinishTime() - queryClient.getQuery().getDriverStartTime()));

@@ -8,9 +8,9 @@ package com.inmobi.grill.server.stats.store.log;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,9 @@ package com.inmobi.grill.server.stats.store.log;
  */
 
 import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.events.GrillEventService;
+import com.inmobi.grill.server.api.metrics.MetricsService;
 import lombok.Setter;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
@@ -41,7 +43,7 @@ public class StatisticsLogFileScannerTask extends TimerTask {
   private static final org.slf4j.Logger LOG =
       LoggerFactory.getLogger(StatisticsLogFileScannerTask.class);
 
-
+  public static final String LOG_SCANNER_ERRORS = "log-scanner-errors";
   private Map<String, String> scanSet = new ConcurrentHashMap<String, String>();
 
   @Setter
@@ -51,23 +53,28 @@ public class StatisticsLogFileScannerTask extends TimerTask {
 
   @Override
   public void run() {
-    for (Map.Entry<String, String> entry : scanSet.entrySet()) {
-      File f = new File(entry.getValue()).getAbsoluteFile();
-      String fileName = f.getAbsolutePath();
-      File[] latestLogFiles = getLatestLogFile(fileName);
-      HashMap<String, String> partMap = getPartMap(fileName,
+    try {
+      for (Map.Entry<String, String> entry : scanSet.entrySet()) {
+        File f = new File(entry.getValue()).getAbsoluteFile();
+        String fileName = f.getAbsolutePath();
+        File[] latestLogFiles = getLatestLogFile(fileName);
+        HashMap<String, String> partMap = getPartMap(fileName,
           latestLogFiles);
-      String eventName = entry.getKey();
-      PartitionEvent event = new PartitionEvent(eventName, partMap,
+        String eventName = entry.getKey();
+        PartitionEvent event = new PartitionEvent(eventName, partMap,
           classSet.get(eventName));
-      try {
-        service.notifyEvent(event);
-      } catch (GrillException e) {
-        LOG.warn("Unable to Notify partition event" +
+        try {
+          service.notifyEvent(event);
+        } catch (GrillException e) {
+          LOG.warn("Unable to Notify partition event" +
             event.getEventName() + " with map  " + event.getPartMap());
+        }
       }
+    } catch (Exception exc) {
+      MetricsService svc = (MetricsService) GrillServices.get().getService(MetricsService.NAME);
+      svc.incrCounter(StatisticsLogFileScannerTask.class, LOG_SCANNER_ERRORS);
+      LOG.error("Unknown error in log file scanner ", exc);
     }
-
   }
 
   private HashMap<String, String> getPartMap(String fileName, File[] latestLogFiles) {
@@ -86,7 +93,8 @@ public class StatisticsLogFileScannerTask extends TimerTask {
     return parent.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File file, String name) {
-        return !name.equals(fileNamePattern)
+        return !new File(name).isHidden()
+            &&!name.equals(fileNamePattern)
             && name.contains(fileNamePattern);
       }
     });
