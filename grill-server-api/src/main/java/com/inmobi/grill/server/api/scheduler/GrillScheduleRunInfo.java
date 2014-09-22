@@ -31,7 +31,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class ScheduleRunInfoDAO {
+public class GrillScheduleRunInfo {
 
   @Getter
   @Setter
@@ -55,6 +55,6 @@ public class ScheduleRunInfoDAO {
   @Setter
   String resultPath;
 
-  public ScheduleRunInfoDAO() {
+  public GrillScheduleRunInfo() {
   }
 }

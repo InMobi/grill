@@ -23,7 +23,7 @@ import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.metastore.CubeMetastoreService;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
 import com.inmobi.grill.server.api.scheduler.Execution;
-import com.inmobi.grill.server.api.scheduler.ScheduleRunInfoDAO;
+import com.inmobi.grill.server.api.scheduler.GrillScheduleRunInfo;
 import com.inmobi.grill.server.session.HiveSessionService;
 
 public class ScheduleQueryExecution implements Execution {
@@ -129,7 +129,7 @@ public class ScheduleQueryExecution implements Execution {
     QueryStatus status = new QueryStatus(0, Status.NEW, "", false, "", "");
     try {
       queryHandle =
-          executionService.executeAsync(sessionHandle, query, queryConf);
+          executionService.executeAsync(sessionHandle, query, queryConf, "Schedule Query: " + scheduleid);
       while (status.isFinished()) {
         try {
           Thread.sleep(Integer.parseInt(scheduleConf.getProperties().get(
@@ -164,7 +164,7 @@ public class ScheduleQueryExecution implements Execution {
   private void updateRunInfo(String scheduleid, QueryHandle queryHandle,
       GrillSessionHandle sessionHandle, Status status, Date start, Date end,
       String resultSetPath) {
-    ScheduleRunInfoDAO scheduleRunInfoDAO = new ScheduleRunInfoDAO();
+    GrillScheduleRunInfo scheduleRunInfoDAO = new GrillScheduleRunInfo();
     scheduleRunInfoDAO.setScheduleId(scheduleid);
     scheduleRunInfoDAO.setSessionHandle(sessionHandle.toString());
     scheduleRunInfoDAO.setRunHandle(queryHandle.toString());

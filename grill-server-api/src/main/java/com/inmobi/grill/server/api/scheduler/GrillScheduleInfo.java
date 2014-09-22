@@ -33,7 +33,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class ScheduleInfoDAO {
+public class GrillScheduleInfo {
 
   @Getter
   @Setter
@@ -66,6 +66,6 @@ public class ScheduleInfoDAO {
   @Setter
   Long created_on;
 
-  public ScheduleInfoDAO() {
+  public GrillScheduleInfo() {
   }
 }

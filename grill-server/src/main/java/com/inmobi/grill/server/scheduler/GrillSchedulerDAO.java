@@ -24,8 +24,8 @@ import com.inmobi.grill.api.schedule.XExecution;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.api.schedule.XStartSpec;
 import com.inmobi.grill.server.GrillServerDAO;
-import com.inmobi.grill.server.api.scheduler.ScheduleInfoDAO;
-import com.inmobi.grill.server.api.scheduler.ScheduleRunInfoDAO;
+import com.inmobi.grill.server.api.scheduler.GrillScheduleInfo;
+import com.inmobi.grill.server.api.scheduler.GrillScheduleRunInfo;
 
 public class GrillSchedulerDAO extends GrillServerDAO {
   private Gson gson = new Gson();
@@ -42,7 +42,7 @@ public class GrillSchedulerDAO extends GrillServerDAO {
   public String insertScheduleInfo(XSchedule schedule, String username)
       throws GrillException {
     String scheduleId = UUID.randomUUID().toString();
-    ScheduleInfoDAO scheduleInfoDAO = new ScheduleInfoDAO();
+    GrillScheduleInfo scheduleInfoDAO = new GrillScheduleInfo();
     scheduleInfoDAO.setSchedule_id(scheduleId);
     scheduleInfoDAO.setUsername(username);
     String execJson = gson.toJson(schedule.getExecution());
@@ -93,7 +93,7 @@ public class GrillSchedulerDAO extends GrillServerDAO {
    * @param runInfoDAO
    *          to be inserted
    */
-  public void insertScheduleRunInfo(ScheduleRunInfoDAO runInfoDAO)
+  public void insertScheduleRunInfo(GrillScheduleRunInfo runInfoDAO)
       throws Exception {
     String sql =
         "INSERT into schedule_run_info(schedule_id, session_handle, run_handle, start_time, end_time, status, result_path) VALUES(?, ?, ?, ?, ?, ?, ?)";
@@ -172,11 +172,11 @@ public class GrillSchedulerDAO extends GrillServerDAO {
 
   @SuppressWarnings("unchecked")
   public XSchedule getScheduleDefn(String schedule_id) throws Exception {
-    ResultSetHandler<ScheduleInfoDAO> rsh =
-        new BeanHandler<ScheduleInfoDAO>(ScheduleInfoDAO.class);
+    ResultSetHandler<GrillScheduleInfo> rsh =
+        new BeanHandler<GrillScheduleInfo>(GrillScheduleInfo.class);
     String sql = "select * from schedule_info where schedule_id = ?";
     QueryRunner runner = new QueryRunner(ds);
-    ScheduleInfoDAO scheduleInfoDAO = null;
+    GrillScheduleInfo scheduleInfoDAO = null;
     try {
       scheduleInfoDAO = runner.query(sql, rsh, schedule_id);
     } catch (SQLException e) {
