@@ -117,12 +117,11 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public List<String> getAllSchedule(
       @QueryParam("sessionid") GrillSessionHandle sessionid,
-      @DefaultValue("") @QueryParam("scheduleid") String scheduleid,
       @DefaultValue("") @QueryParam("status") String status,
       @DefaultValue("") @QueryParam("user") String user) {
     checkSessionId(sessionid);
     try {
-      return schedulerService.getAllSchedules(sessionid, scheduleid, status,
+      return schedulerService.getAllSchedules(sessionid, status,
           user);
     } catch (GrillException e) {
       throw new WebApplicationException(e);
@@ -244,7 +243,7 @@ public class SchedulerResource {
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public boolean schedule(
+  public String schedule(
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
       @FormDataParam("grillschedule") XSchedule schedule) {
     checkSessionId(sessionHandle);
@@ -297,7 +296,7 @@ public class SchedulerResource {
   MediaType.TEXT_PLAIN })
   public boolean statusUpdate(@PathParam("scheduleid") String scheduleid,
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
-      @QueryParam("newstatus") Status newstatus) {
+      @QueryParam("newstatus") String newstatus) {
     checkSessionId(sessionHandle);
     try {
       return schedulerService

@@ -28,7 +28,13 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.DelayQueue;
@@ -42,15 +48,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import com.inmobi.grill.server.GrillService;
-import com.inmobi.grill.server.GrillServices;
-import com.inmobi.grill.server.api.query.*;
-import com.inmobi.grill.server.stats.StatisticsService;
-import com.inmobi.grill.server.api.driver.*;
-import com.inmobi.grill.server.api.events.GrillEventListener;
-import com.inmobi.grill.server.api.events.GrillEventService;
-import com.inmobi.grill.server.api.metrics.MetricsService;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,6 +57,20 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.cli.CLIService;
+import org.apache.hive.service.cli.ColumnDescriptor;
+import org.apache.hive.service.cli.TypeDescriptor;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.ObjectCodec;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializerProvider;
+import org.codehaus.jackson.map.module.SimpleModule;
 
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
@@ -73,17 +84,41 @@ import com.inmobi.grill.api.query.QueryPrepareHandle;
 import com.inmobi.grill.api.query.QueryResult;
 import com.inmobi.grill.api.query.QueryResultSetMetadata;
 import com.inmobi.grill.api.query.QueryStatus;
-import com.inmobi.grill.api.query.SubmitOp;
 import com.inmobi.grill.api.query.QueryStatus.Status;
+import com.inmobi.grill.api.query.SubmitOp;
 import com.inmobi.grill.driver.cube.CubeGrillDriver;
 import com.inmobi.grill.driver.cube.RewriteUtil;
 import com.inmobi.grill.driver.hive.HiveDriver;
+import com.inmobi.grill.server.GrillService;
+import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
-import org.apache.hive.service.cli.ColumnDescriptor;
-import org.apache.hive.service.cli.TypeDescriptor;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.module.SimpleModule;
+import com.inmobi.grill.server.api.driver.DriverSelector;
+import com.inmobi.grill.server.api.driver.GrillDriver;
+import com.inmobi.grill.server.api.driver.GrillResultSet;
+import com.inmobi.grill.server.api.driver.GrillResultSetMetadata;
+import com.inmobi.grill.server.api.driver.PersistentResultSet;
+import com.inmobi.grill.server.api.driver.QueryCompletionListener;
+import com.inmobi.grill.server.api.events.GrillEventListener;
+import com.inmobi.grill.server.api.events.GrillEventService;
+import com.inmobi.grill.server.api.metrics.MetricsService;
+import com.inmobi.grill.server.api.query.FinishedGrillQuery;
+import com.inmobi.grill.server.api.query.PreparedQueryContext;
+import com.inmobi.grill.server.api.query.QueryAccepted;
+import com.inmobi.grill.server.api.query.QueryAcceptor;
+import com.inmobi.grill.server.api.query.QueryCancelled;
+import com.inmobi.grill.server.api.query.QueryClosed;
+import com.inmobi.grill.server.api.query.QueryContext;
+import com.inmobi.grill.server.api.query.QueryEnded;
+import com.inmobi.grill.server.api.query.QueryExecuted;
+import com.inmobi.grill.server.api.query.QueryExecutionService;
+import com.inmobi.grill.server.api.query.QueryFailed;
+import com.inmobi.grill.server.api.query.QueryLaunched;
+import com.inmobi.grill.server.api.query.QueryQueued;
+import com.inmobi.grill.server.api.query.QueryRejected;
+import com.inmobi.grill.server.api.query.QueryRunning;
+import com.inmobi.grill.server.api.query.QuerySuccess;
+import com.inmobi.grill.server.api.query.StatusChange;
+import com.inmobi.grill.server.stats.StatisticsService;
 
 public class QueryExecutionServiceImpl extends GrillService implements QueryExecutionService {
   public static final Log LOG = LogFactory.getLog(QueryExecutionServiceImpl.class);
@@ -122,7 +157,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   private MetricsService metricsService;
   private StatisticsService statisticsService;
   private int maxFinishedQueries;
-  private GrillServerDAO grillServerDao;
+  private GrillQueryDAO grillQueryDao;
 
   public QueryExecutionServiceImpl(CLIService cliService) throws GrillException {
     super(NAME, cliService);
@@ -502,7 +537,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
             }
           }
           try {
-            grillServerDao.insertFinishedQuery(finishedQuery);
+            grillQueryDao.insertFinishedQuery(finishedQuery);
           } catch (Exception e) {
             LOG.warn("Exception while purging query ",e);
             finishedQueries.add(finished);
@@ -574,10 +609,10 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private void initalizeFinishedQueryStore(Configuration conf) {
-    this.grillServerDao = new GrillServerDAO();
-    this.grillServerDao.init(conf);
+    this.grillQueryDao = new GrillQueryDAO();
+    this.grillQueryDao.init(conf);
     try {
-      this.grillServerDao.createFinishedQueriesTable();
+      this.grillQueryDao.createFinishedQueriesTable();
     } catch (Exception e) {
       LOG.warn("Unable to create finished query table, query purger will not purge queries", e);
     }
@@ -695,7 +730,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private GrillResultSet getResultsetFromDAO(QueryHandle queryHandle) throws GrillException {
-    FinishedGrillQuery query = grillServerDao.getQuery(queryHandle.toString());
+    FinishedGrillQuery query = grillQueryDao.getQuery(queryHandle.toString());
     if(query != null) {
       if(query.getResult() == null) {
         throw new NotFoundException("InMemory Query result purged " + queryHandle);
@@ -912,7 +947,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       acquire(sessionHandle);
       QueryContext ctx = allQueries.get(queryHandle);
       if (ctx == null) {
-        FinishedGrillQuery query = grillServerDao.getQuery(queryHandle.toString());
+        FinishedGrillQuery query = grillQueryDao.getQuery(queryHandle.toString());
         if(query == null) {
           throw new NotFoundException("Query not found " + queryHandle);
         }

@@ -43,7 +43,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public List<String> getAllSchedules(GrillSessionHandle sessionHandle,
-      String scheduleid, String status, String user) throws GrillException;
+      String status, String user) throws GrillException;
 
   /**
    * 
@@ -103,7 +103,7 @@ public interface SchedulerService {
    * @return true/false, based of schedule success or not
    * @throws GrillException
    */
-  public boolean scheduleTask(GrillSessionHandle sessionid, XSchedule schedule)
+  public String scheduleTask(GrillSessionHandle sessionid, XSchedule schedule)
       throws GrillException;
 
   /**
@@ -125,8 +125,8 @@ public interface SchedulerService {
    * @return
    * @throws GrillException
    */
-  public boolean updateStatus(GrillSessionHandle sessionid, String scheduleid,
-      Status newstatus) throws GrillException;
+  public void updateStatus(GrillSessionHandle sessionid, String scheduleid,
+      String newstatus) throws GrillException;
 
   /**
    * 

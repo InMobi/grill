@@ -5,6 +5,8 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -172,17 +174,21 @@ public class ScheduleJob {
     if (s.getExecution().getQueryType() != null) {
       String query = s.getExecution().getQueryType().getQuery();
       String session_db = s.getExecution().getQueryType().getSessionDb();
-      GrillConf grillConf = new GrillConf();
+      GrillConf queryConf = new GrillConf();
+      Map<String, String> sessionConf = new HashMap<String, String>();
+      GrillConf scheduleConf = new GrillConf();
       for (MapType conf : s.getExecution().getQueryType().getQueryConf()) {
-        grillConf.addProperty(conf.getKey(), conf.getValue());
+        queryConf.addProperty(conf.getKey(), conf.getValue());
       }
       for (MapType conf : s.getExecution().getQueryType().getSessionConf()) {
-        grillConf.addProperty(conf.getKey(), conf.getValue());
+        sessionConf.put(conf.getKey(), conf.getValue());
       }
       for (MapType conf : s.getScheduleConf()) {
-        grillConf.addProperty(conf.getKey(), conf.getValue());
+        scheduleConf.addProperty(conf.getKey(), conf.getValue());
       }
-      String conf = gson.toJson(grillConf);
+      String qconf = gson.toJson(queryConf);
+      String sesConf = gson.toJson(sessionConf);
+      String schConf = gson.toJson(scheduleConf);
 
       sched.start();
       JobDetail job =
@@ -190,9 +196,11 @@ public class ScheduleJob {
               .withIdentity(new JobKey(scheduleid))
               .usingJobData("query", query)
               .usingJobData("scheduleid", scheduleid)
-              .usingJobData("resource_path", resource_Path)
               .usingJobData("session_db", session_db)
-              .usingJobData("conf", conf).build();
+              .usingJobData("resource_path", resource_Path)
+              .usingJobData("query_conf", qconf)
+              .usingJobData("session_conf", sesConf)
+              .usingJobData("schedule_conf", schConf).build();
       sched.scheduleJob(job, trigger);
     }
   }

@@ -10,7 +10,7 @@ public class TestGrillDAO {
   @Test
   public void testDAO() throws Exception {
     Configuration conf = new Configuration();
-    GrillServerDAO dao = new GrillServerDAO();
+    GrillQueryDAO dao = new GrillQueryDAO();
     dao.init(conf);
     dao.createFinishedQueriesTable();
     FinishedGrillQuery query = new FinishedGrillQuery();
