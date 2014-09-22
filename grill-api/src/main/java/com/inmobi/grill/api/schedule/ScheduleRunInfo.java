@@ -7,17 +7,35 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @XmlRootElement
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ScheduleRunInfo {
   // Gives insights of an instance of a schedule to user
-  @XmlElement @Getter String scheduleHandle;
-  @XmlElement @Getter String scheduleRunHandle;
-  @XmlElement @Getter Object task;
-  @XmlElement @Getter String startTime;
-  @XmlElement @Getter String endTime;
-  @XmlElement @Getter String resultSetPath;
-  @XmlElement @Getter ScheduleTaskStatus taskStatus;
+  @XmlElement
+  @Getter
+  @Setter
+  String scheduleid;
+  @XmlElement
+  @Getter
+  @Setter
+  String runHandle;
+  @XmlElement
+  @Getter
+  @Setter
+  String startTime;
+  @XmlElement
+  @Getter
+  @Setter
+  String endTime;
+  @XmlElement
+  @Getter
+  @Setter
+  String resultSetPath;
+  @XmlElement
+  @Getter
+  @Setter
+  String taskStatus;
 }

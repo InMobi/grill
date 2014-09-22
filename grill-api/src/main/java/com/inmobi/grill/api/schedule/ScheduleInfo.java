@@ -27,21 +27,36 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import com.inmobi.grill.api.Priority;
+import lombok.Setter;
 
 @XmlRootElement
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ScheduleInfo {
   // Schedule Info gives insights to user about a schedule ID
-  @XmlElement @Getter private String scheduleHandle;
-  // XSD object task
-  @XmlElement @Getter private XSchedule schedule; // A schedule task
-  @XmlElement @Getter private String submittedUser;
-  @XmlElement @Getter private Priority priority;
-  @XmlElement @Getter private String lastRunInstance;
-  @XmlElement @Getter private int runcount;
-  @XmlElement @Getter private String latestResultSetPath;
-  @XmlElement @Getter private ScheduleStatus scheduleStatus; 
+  @XmlElement
+  @Getter
+  @Setter
+  private String scheduleHandle;
+  // XSD object Schedule
+  @XmlElement
+  @Getter
+  @Setter
+  private XSchedule schedule; // A schedule task
+  @XmlElement
+  @Getter
+  @Setter
+  private String submittedUser;
+  @XmlElement
+  @Getter
+  @Setter
+  private String lastRunInstanceId;
+  @XmlElement
+  @Getter
+  @Setter
+  private String latestResultSetPath;
+  @XmlElement
+  @Getter
+  @Setter
+  private String scheduleStatus;
 }

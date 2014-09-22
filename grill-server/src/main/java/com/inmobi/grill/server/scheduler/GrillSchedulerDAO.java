@@ -1,25 +1,26 @@
 package com.inmobi.grill.server.scheduler;
 
 import java.sql.Clob;
-import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleStatus;
 import com.inmobi.grill.api.schedule.ScheduleStatus.Status;
+import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.XExecution;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.api.schedule.XStartSpec;
@@ -29,9 +30,6 @@ import com.inmobi.grill.server.api.scheduler.GrillScheduleRunInfo;
 
 public class GrillSchedulerDAO extends GrillServerDAO {
   private Gson gson = new Gson();
-
-  private static final Logger LOG = LoggerFactory
-      .getLogger(GrillSchedulerDAO.class);
 
   /**
    * DAO method to insert a new Schedule info into Table
@@ -171,35 +169,39 @@ public class GrillSchedulerDAO extends GrillServerDAO {
   }
 
   @SuppressWarnings("unchecked")
-  public XSchedule getScheduleDefn(String schedule_id) throws Exception {
+  public XSchedule getScheduleDefn(String schedule_id) throws GrillException {
     ResultSetHandler<GrillScheduleInfo> rsh =
         new BeanHandler<GrillScheduleInfo>(GrillScheduleInfo.class);
     String sql = "select * from schedule_info where schedule_id = ?";
     QueryRunner runner = new QueryRunner(ds);
     GrillScheduleInfo scheduleInfoDAO = null;
+    XSchedule schedule = new XSchedule();
     try {
       scheduleInfoDAO = runner.query(sql, rsh, schedule_id);
+      schedule.setExecution(gson.fromJson(scheduleInfoDAO.getExecution()
+          .getCharacterStream(), XExecution.class));
+      schedule.setStartSpec(gson.fromJson(scheduleInfoDAO.getStart_spec()
+          .getCharacterStream(), XStartSpec.class));
+      schedule.getResourcePath().addAll(
+          gson.fromJson(
+              scheduleInfoDAO.getResource_path().getCharacterStream(),
+              List.class));
+      schedule.getScheduleConf().addAll(
+          gson.fromJson(
+              scheduleInfoDAO.getSchedule_conf().getCharacterStream(),
+              List.class));
+      GregorianCalendar xc = new GregorianCalendar();
+      xc.setTimeInMillis(scheduleInfoDAO.getStart_time());
+      schedule.setStartTime(DatatypeFactory.newInstance()
+          .newXMLGregorianCalendar(xc));
+      xc.setTimeInMillis(scheduleInfoDAO.getEnd_time());
+      schedule.setEndTime(DatatypeFactory.newInstance()
+          .newXMLGregorianCalendar(xc));
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new GrillException("Error getting schedule defn.", e);
+    } catch (DatatypeConfigurationException e1) {
+      throw new GrillException("Error getting schedule defn.", e1);
     }
-    XSchedule schedule = new XSchedule();
-    schedule.setExecution(gson.fromJson(scheduleInfoDAO.getExecution()
-        .getCharacterStream(), XExecution.class));
-    schedule.setStartSpec(gson.fromJson(scheduleInfoDAO.getStart_spec()
-        .getCharacterStream(), XStartSpec.class));
-    schedule.getResourcePath().addAll(
-        gson.fromJson(scheduleInfoDAO.getResource_path().getCharacterStream(),
-            List.class));
-    schedule.getScheduleConf().addAll(
-        gson.fromJson(scheduleInfoDAO.getSchedule_conf().getCharacterStream(),
-            List.class));
-    GregorianCalendar xc = new GregorianCalendar();
-    xc.setTimeInMillis(scheduleInfoDAO.getStart_time());
-    schedule.setStartTime(DatatypeFactory.newInstance()
-        .newXMLGregorianCalendar(xc));
-    xc.setTimeInMillis(scheduleInfoDAO.getEnd_time());
-    schedule.setEndTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(
-        xc));
     return schedule;
   }
 
@@ -290,5 +292,62 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     } catch (SQLException e) {
       e.printStackTrace();
     }
+  }
+
+  public ScheduleInfo getScheduleDetails(String schedule_id)
+      throws GrillException {
+    ResultSetHandler<String> rsh = new ResultSetHandler<String>() {
+      @Override
+      public String handle(ResultSet rs) throws SQLException {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (rs.next()) {
+          stringBuilder.append(rs.getString(1)).append("#");
+          stringBuilder.append(rs.getString(2));
+        }
+        return stringBuilder.toString();
+      }
+    };
+    ScheduleInfo scheduleInfo = new ScheduleInfo();
+    XSchedule schedule = getScheduleDefn(schedule_id);
+    String query =
+        "SELECT username, status from schedule_info where schedule_id=?";
+    QueryRunner runner = new QueryRunner(ds);
+    try {
+      String result = runner.query(query, rsh, schedule_id);
+      scheduleInfo.setSubmittedUser(result.split("#")[0]);
+      scheduleInfo.setScheduleStatus(result.split("#")[1]);
+    } catch (SQLException e) {
+      throw new GrillException("Error in getting scheduleInfo.", e);
+    }
+
+    String runDataQuery =
+        "SELECT run_id, result_path from schedule_run_info where schedule_id=?";
+    try {
+      String result = runner.query(runDataQuery, rsh, schedule_id);
+      scheduleInfo.setLastRunInstanceId(result.split("#")[0]);
+      scheduleInfo.setLatestResultSetPath(result.split("#")[1]);
+    } catch (SQLException e) {
+      throw new GrillException("Error in getting scheduleInfo.", e);
+    }
+    scheduleInfo.setScheduleHandle(schedule_id);
+    scheduleInfo.setSchedule(schedule);
+    return scheduleInfo;
+  }
+
+  public ScheduleRunInfo getRunInfo(String scheduleId, String runHandle)
+      throws GrillException {
+    ScheduleRunInfo runInfo = new ScheduleRunInfo();
+    ResultSetHandler<ScheduleRunInfo> rsh =
+        new BeanHandler<ScheduleRunInfo>(ScheduleRunInfo.class);
+    String runDataQuery =
+        "SELECT schedule_id, run_handle, start_time, end_time, result_path, status"
+            + " from schedule_run_info where schedule_id=? and run_handle=?";
+    QueryRunner runner = new QueryRunner(ds);
+    try {
+      runInfo = runner.query(runDataQuery, rsh, scheduleId, runHandle);
+    } catch (SQLException e) {
+      throw new GrillException("Error in getting scheduleInfo.", e);
+    }
+    return runInfo;
   }
 }

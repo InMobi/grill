@@ -47,7 +47,6 @@ import com.inmobi.grill.api.schedule.ObjectFactory;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.ScheduleStatus;
-import com.inmobi.grill.api.schedule.ScheduleStatus.Status;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.scheduler.SchedulerService;
@@ -294,12 +293,12 @@ public class SchedulerResource {
   @Path("/schedules/{scheduleid}")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
   MediaType.TEXT_PLAIN })
-  public boolean statusUpdate(@PathParam("scheduleid") String scheduleid,
+  public void statusUpdate(@PathParam("scheduleid") String scheduleid,
       @QueryParam("sessionid") GrillSessionHandle sessionHandle,
       @QueryParam("newstatus") String newstatus) {
     checkSessionId(sessionHandle);
     try {
-      return schedulerService
+      schedulerService
           .updateStatus(sessionHandle, scheduleid, newstatus);
     } catch (GrillException e) {
       throw new WebApplicationException(e);

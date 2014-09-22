@@ -54,6 +54,9 @@ public class GrillScheduleRunInfo {
   @Getter
   @Setter
   String resultPath;
+  @Getter
+  @Setter
+  String query;
 
   public GrillScheduleRunInfo() {
   }

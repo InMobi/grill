@@ -22,8 +22,6 @@ package com.inmobi.grill.server.scheduler;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hive.service.cli.CLIService;
 import org.quartz.SchedulerException;
@@ -41,7 +39,6 @@ import com.inmobi.grill.server.api.scheduler.SchedulerService;
 public class SchedulerServiceImpl extends GrillService implements
     SchedulerService {
 
-  private static final Log LOG = LogFactory.getLog(SchedulerServiceImpl.class);
   private GrillSchedulerDAO grillSchedulerDao;
   private Configuration conf;
 
@@ -87,8 +84,8 @@ public class SchedulerServiceImpl extends GrillService implements
   public ScheduleInfo getGrillSchedule(GrillSessionHandle sessionHandle,
       String scheduleid) throws GrillException {
     // Return defn + status + created_on + last run result
-    // TODO Auto-generated method stub
-    return null;
+    grillSchedulerDao.init(conf);
+    return grillSchedulerDao.getScheduleDetails(scheduleid);
   }
 
   @Override
@@ -121,8 +118,9 @@ public class SchedulerServiceImpl extends GrillService implements
   public ScheduleRunInfo getScheduleRunDetail(GrillSessionHandle sessionid,
       String scheduleid, String runHandle) throws GrillException {
     // Will return the QueryDetails using get call on query_run_details
-    // TODO Auto-generated method stub
-    return null;
+    conf = new Configuration();
+    grillSchedulerDao.init(conf);
+    return grillSchedulerDao.getRunInfo(scheduleid, runHandle);
   }
 
   @Override
