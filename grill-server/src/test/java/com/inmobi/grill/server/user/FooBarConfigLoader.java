@@ -27,16 +27,17 @@ import java.util.Map;
 
 public class FooBarConfigLoader extends UserConfigLoader {
 
+  public static HashMap<String, String> CONST_HASH_MAP = new HashMap<String, String>() {
+    {
+      put("key", "value");
+    }
+  };
   public FooBarConfigLoader(HiveConf conf) {
     super(conf);
   }
 
   @Override
   public Map<String, String> getUserConfig(String loggedInUser) {
-    return new HashMap<String, String>() {
-      {
-        put("key", "value");
-      }
-    };
+    return CONST_HASH_MAP;
   }
 }

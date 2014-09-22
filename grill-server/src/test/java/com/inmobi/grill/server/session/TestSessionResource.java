@@ -103,6 +103,7 @@ public class TestSessionResource extends GrillJerseyTest {
         StringList.class);
     System.out.println("Session params:" + sessionParams.getElements());
     Assert.assertTrue(sessionParams.getElements().size() > 1);
+    Assert.assertTrue(sessionParams.getElements().contains("grill.session.cluster.user=grilluser"));
 
     // set hive variable
     FormDataMultiPart setpart = new FormDataMultiPart();
@@ -123,7 +124,6 @@ public class TestSessionResource extends GrillJerseyTest {
     System.out.println("Session params:" + sessionParams.getElements());
     Assert.assertEquals(sessionParams.getElements().size(), 1);
     Assert.assertTrue(sessionParams.getElements().contains("hivevar:myvar=10"));
-
     // set hive conf
     setpart = new FormDataMultiPart();
     setpart.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),

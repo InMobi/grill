@@ -100,4 +100,14 @@
   <description>Implementation class for Test Resource</description>
 </property>
 
+<property>
+  <name>grill.session.user.resolver.type</name>
+  <value>FIXED</value>
+</property>
+<property>
+  <name>grill.session.user.resolver.fixed.value</name>
+  <value>grilluser</value>
+</property>
+
+
 </configuration>

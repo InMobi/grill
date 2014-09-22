@@ -66,10 +66,6 @@ public class UserConfigLoaderTest {
   @Test
   public void testCustom() throws GrillException {
     conf.addResource(UserConfigLoaderTest.class.getResourceAsStream("/user/custom.xml"));
-    Assert.assertEquals(UserConfigLoaderFactory.getUserConfig("user1", conf), new HashMap<String, String>() {
-      {
-        put("key", "value");
-      }
-    });
+    Assert.assertEquals(UserConfigLoaderFactory.getUserConfig("user1", conf), FooBarConfigLoader.CONST_HASH_MAP);
   }
 }
