@@ -78,10 +78,10 @@ public class GrillClient {
     this(cred.getUsername(), cred.getPassword());
   }
 
-  public QueryHandle executeQueryAsynch(String sql) {
+  public QueryHandle executeQueryAsynch(String sql, String queryName) {
     GrillStatement statement = new GrillStatement(conn);
     LOG.debug("Executing query " + sql);
-    statement.execute(sql, false);
+    statement.execute(sql, false, queryName);
     GrillQuery query = statement.getQuery();
     LOG.debug("Adding query to statementMap " + query.getQueryHandle());
     statementMap.put(query.getQueryHandle(), statement);
@@ -111,10 +111,10 @@ public class GrillClient {
     }
   }
 
-  public GrillClientResultSetWithStats getResults(String sql) {
+  public GrillClientResultSetWithStats getResults(String sql, String queryName) {
     GrillStatement statement = new GrillStatement(conn);
     LOG.debug("Executing query " + sql);
-    statement.execute(sql, true);
+    statement.execute(sql, true, queryName);
     return getResultsFromStatement(statement);
   }
 
@@ -184,8 +184,8 @@ public class GrillClient {
     return getGrillStatement(query).getResultSet();
   }
 
-  public List<QueryHandle> getQueries(String state, String user) {
-    return new GrillStatement(conn).getAllQueries(state, user);
+  public List<QueryHandle> getQueries(String state, String queryName, String user) {
+    return new GrillStatement(conn).getAllQueries(state, queryName, user);
   }
 
 
@@ -473,33 +473,33 @@ public class GrillClient {
     return new GrillMetadataClient(conn).addPartitionToDimensionTable(table, storage, partSpec);
   }
 
-  public QueryPrepareHandle prepare(String sql) {
-    return statement.prepareQuery(sql);
+  public QueryPrepareHandle prepare(String sql, String queryName) {
+    return statement.prepareQuery(sql, queryName);
   }
 
-  public QueryPlan explainAndPrepare(String sql) {
-    return statement.explainAndPrepare(sql);
+  public QueryPlan explainAndPrepare(String sql, String queryName) {
+    return statement.explainAndPrepare(sql, queryName);
   }
 
   public boolean destroyPrepared(QueryPrepareHandle queryPrepareHandle) {
     return statement.destroyPrepared(queryPrepareHandle);
   }
 
-  public List<QueryPrepareHandle> getPreparedQueries() {
-    return statement.getAllPreparedQueries();
+  public List<QueryPrepareHandle> getPreparedQueries(String userName, String queryName) {
+    return statement.getAllPreparedQueries(userName, queryName);
   }
 
   public GrillPreparedQuery getPreparedQuery(QueryPrepareHandle phandle) {
     return statement.getPreparedQuery(phandle);
   }
 
-  public GrillClientResultSetWithStats getResultsFromPrepared(QueryPrepareHandle phandle) {
-    QueryHandle qh = statement.executeQuery(phandle, true);
+  public GrillClientResultSetWithStats getResultsFromPrepared(QueryPrepareHandle phandle, String queryName) {
+    QueryHandle qh = statement.executeQuery(phandle, true, queryName);
     return getResultsFromHandle(qh);
   }
 
-  public QueryHandle executePrepared(QueryPrepareHandle phandle) {
-    return statement.executeQuery(phandle, false);
+  public QueryHandle executePrepared(QueryPrepareHandle phandle, String queryName) {
+    return statement.executeQuery(phandle, false, queryName);
   }
 
   public boolean isConnectionOpen() {
