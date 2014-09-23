@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -29,40 +30,48 @@ import com.inmobi.grill.api.schedule.XFrequency;
 import com.inmobi.grill.api.schedule.XFrequencyType;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.api.schedule.XStartSpec;
+import com.inmobi.grill.server.api.GrillConfConstants;
 
 public class ScheduleJob {
 
   private static final Log LOG = LogFactory.getLog(ScheduleJob.class);
   private static Properties prop = new Properties();
   private Gson gson = new Gson();
-  static {
+
+  public ScheduleJob() {
+    Configuration conf = new Configuration();
     prop.setProperty("org.quartz.scheduler.instanceName", "GRILL_JOB_SCHEDULER");
     prop.setProperty("org.quartz.threadPool.class",
         "org.quartz.simpl.SimpleThreadPool");
     prop.setProperty("org.quartz.threadPool.threadCount", "4");
     prop.setProperty(
-        "org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread",
+        "org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer",
         "true");
+    prop.setProperty("org.quartz.scheduler.dbFailureRetryInterval", "60000");
     prop.setProperty("org.quartz.jobStore.class",
         "org.quartz.impl.jdbcjobstore.JobStoreTX");
     prop.setProperty("org.quartz.jobStore.driverDelegateClass",
         "org.quartz.impl.jdbcjobstore.StdJDBCDelegate");
+        
     prop.setProperty("org.quartz.jobStore.dataSource", "tasksDataStore");
-    prop.setProperty("org.quartz.jobStore.tablePrefix", "QRTZ_");
-    prop.setProperty("org.quartz.jobStore.misfireThreshold", "60000");
-    prop.setProperty("org.quartz.jobStore.isClustered", "false");
-    prop.setProperty("org.quartz.dataSource.tasksDataStore.driver", "");
-    prop.setProperty("org.quartz.dataSource.tasksDataStore.URL", "");
-    prop.setProperty("org.quartz.dataSource.tasksDataStore.user", "");
-    prop.setProperty("org.quartz.dataSource.tasksDataStore.password", "");
+    prop.setProperty("org.quartz.dataSource.tasksDataStore.driver", conf.get(
+        GrillConfConstants.GRILL_SERVER_DB_DRIVER_NAME,
+        GrillConfConstants.DEFAULT_SERVER_DB_DRIVER_NAME));
+    prop.setProperty("org.quartz.dataSource.tasksDataStore.URL", conf.get(
+        GrillConfConstants.GRILL_SERVER_DB_JDBC_URL,
+        GrillConfConstants.DEFAULT_SERVER_DB_JDBC_URL));
+    prop.setProperty("org.quartz.dataSource.tasksDataStore.user", conf.get(
+        GrillConfConstants.GRILL_SERVER_DB_JDBC_USER,
+        GrillConfConstants.DEFAULT_SERVER_DB_USER));
+    prop.setProperty("org.quartz.dataSource.tasksDataStore.password", conf.get(
+        GrillConfConstants.GRILL_SERVER_DB_JDBC_PASS,
+        GrillConfConstants.DEFAULT_SERVER_DB_PASS));
     prop.setProperty("org.quartz.dataSource.tasksDataStore.maxConnections",
         "20");
   }
 
-  public ScheduleJob() {
-  }
-
   public ScheduleJob(XSchedule s, Status status, String scheduleid) {
+    this();
     if (status.equals(Status.SCHEDULED)) {
       if (s.getExecution().getQueryType() != null) {
         // get all the objects from schedule

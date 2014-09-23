@@ -111,7 +111,6 @@ public class GrillServer {
 
   private static GrillServer thisServer;
 
-  @SuppressWarnings("restriction")
   public static void main(String[] args) throws Exception {
     Signal.handle(new Signal("TERM"), new SignalHandler() {
 
