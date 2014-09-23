@@ -304,7 +304,7 @@
 
 <property>
     <name>grill.scheduler.ws.resource.impl</name>
-    <value>com.inmobi.grill.server.scheduler.ScheduleResource</value>
+    <value>com.inmobi.grill.server.scheduler.SchedulerResource</value>
     <description>Implementation class for query scheduler resource</description>
 </property>
 
