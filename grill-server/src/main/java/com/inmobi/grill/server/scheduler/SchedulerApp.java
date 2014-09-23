@@ -36,7 +36,7 @@ public class SchedulerApp extends Application {
   public Set<Class<?>> getClasses() {
       final Set<Class<?>> classes = new HashSet<Class<?>>();
       // register root resource
-      classes.add(ScheduleResource.class);
+      classes.add(SchedulerResource.class);
       classes.add(GrillApplicationListener.class);
       classes.add(LoggingFilter.class);
       return classes;

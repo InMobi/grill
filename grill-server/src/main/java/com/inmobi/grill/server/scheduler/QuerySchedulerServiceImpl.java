@@ -20,14 +20,108 @@ package com.inmobi.grill.server.scheduler;
  * #L%
  */
 
+import java.util.List;
+
 import org.apache.hive.service.cli.CLIService;
 
+import com.inmobi.grill.api.GrillConf;
+import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.api.schedule.GrillScheduleHandle;
+import com.inmobi.grill.api.schedule.GrillScheduleRunHandle;
+import com.inmobi.grill.api.schedule.ScheduleInfo;
+import com.inmobi.grill.api.schedule.ScheduleRunInfo;
+import com.inmobi.grill.api.schedule.ScheduleStatus;
+import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.server.GrillService;
-import com.inmobi.grill.server.api.scheduler.QuerySchedulerService;
+import com.inmobi.grill.server.api.scheduler.SchedulerService;
 
-public class QuerySchedulerServiceImpl extends GrillService implements QuerySchedulerService {
+public class QuerySchedulerServiceImpl extends GrillService implements SchedulerService {
 
   public QuerySchedulerServiceImpl(CLIService cliService) {
     super("scheduler", cliService);
   }
-}
+
+  @Override
+  public List<GrillScheduleHandle> getAllSchedules(
+      GrillSessionHandle sessionHandle, GrillScheduleHandle scheduleid,
+      String state, String user, String type) throws GrillException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public XSchedule getScheduleDefn(GrillSessionHandle sessionHandle,
+      GrillScheduleHandle scheduleid) throws GrillException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ScheduleInfo getGrillSchedule(GrillSessionHandle sessionHandle,
+      GrillScheduleHandle scheduleid) throws GrillException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean updateSchedule(Object newtask, GrillConf conf, String jarpath,
+      String schedulertype, String frequencyparam) throws GrillException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean delete(GrillSessionHandle sessionid,
+      GrillScheduleHandle scheduleid) throws GrillException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public List<GrillScheduleRunHandle> getScheduleRuns(
+      GrillSessionHandle sessionid, GrillScheduleHandle scheduleid)
+      throws GrillException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ScheduleRunInfo getScheduleRunDetail(GrillSessionHandle sessionid,
+      GrillScheduleHandle scheduleid, GrillScheduleRunHandle runHandle)
+      throws GrillException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean scheduleTask(GrillSessionHandle sessionid, XSchedule schedule)
+      throws GrillException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean updateSchedule(GrillSessionHandle sessionid,
+      GrillScheduleHandle scheduleid, XSchedule newSchedule)
+      throws GrillException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean updateStatus(GrillSessionHandle sessionid,
+      GrillScheduleHandle scheduleid, ScheduleStatus newstatus)
+      throws GrillException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean rerun(GrillSessionHandle sessionHandle,
+      GrillScheduleHandle scheduleid, GrillScheduleRunHandle runid)
+      throws GrillException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+ }
