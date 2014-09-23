@@ -33,7 +33,7 @@ public enum GrillClientSingletonWrapper {
   private Log LOG = LogFactory.getLog(GrillClientSingletonWrapper.class);
   private GrillClient client;
   private static final int MAX_RETRIES = 3;
-  GrillClientSingletonWrapper() throws LoginException, IOException {
+  GrillClientSingletonWrapper() {
     try {
       client = new GrillClient();
     } catch(GrillClientServerConnectionException e) {
