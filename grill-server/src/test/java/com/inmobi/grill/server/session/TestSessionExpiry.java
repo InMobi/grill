@@ -36,6 +36,7 @@ import static org.testng.Assert.fail;
 public class TestSessionExpiry {
   public void testSessionExpiry() throws Exception {
     HiveConf conf = new HiveConf();
+    conf.addResource(TestSessionExpiry.class.getResourceAsStream("/grill-site.xml"));
     conf.setVar(HiveConf.ConfVars.HIVE_SESSION_IMPL_CLASSNAME, GrillSessionImpl.class.getName());
     conf.setLong(GrillConfConstants.GRILL_SESSION_TIMEOUT_SECONDS, 1L);
     CLIService cliService = new CLIService();
