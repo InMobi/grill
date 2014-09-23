@@ -106,7 +106,7 @@
 </property>
 <property>
   <name>grill.session.user.resolver.fixed.value</name>
-  <value>grilluser</value>
+  <value>testgrilluser</value>
 </property>
 
 

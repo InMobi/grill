@@ -90,6 +90,7 @@ public abstract class GrillService extends CompositeService implements Externali
       }
       Map<String, String> userConfig = UserConfigLoaderFactory.getUserConfig(username, cliService.getHiveConf());
       UtilityMethods.mergeMaps(sessionConf, userConfig, false);
+      sessionConf.put(GrillConfConstants.GRILL_SESSION_LOGGEDIN_USER, username);
       String clusterUser = sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER);
       password = "useless";
       if (
@@ -152,6 +153,7 @@ public abstract class GrillService extends CompositeService implements Externali
           AuthenticationProviderFactory.getAuthenticationProvider(authMethod, cliService.getHiveConf());
         provider.Authenticate(userName, password);
       } catch (Exception e) {
+        LOG.error("Auth error: " + e);
         throw new NotAuthorizedException(e);
       }
     }

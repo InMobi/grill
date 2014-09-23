@@ -819,14 +819,19 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       Configuration qconf = getGrillConf(sessionHandle, conf);
       accept(pctx.getUserQuery(), qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(pctx,
+<<<<<<< HEAD
           getSession(sessionHandle).getLoggedInUser(), conf, qconf);
+      return executeAsyncInternal(sessionHandle, ctx);
+=======
+          getSession(sessionHandle).getUserName(), conf, qconf);
       if (StringUtils.isNotBlank(queryName)) {
         // Override previously set query name
         ctx.setQueryName(queryName);
       } else {
         ctx.setQueryName(pctx.getQueryName());
       }
-      return executeAsyncInternal(sessionHandle, ctx);
+      return executeAsyncInternal(sessionHandle, ctx, qconf);
+>>>>>>> 6465864d836fab6811c220ec594b4229d15a8ba6
     } finally {
       release(sessionHandle);
     }
@@ -844,13 +849,17 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       PreparedQueryContext pctx = getPreparedQueryContext(sessionHandle, prepareHandle);
       Configuration qconf = getGrillConf(sessionHandle, conf);
       QueryContext ctx = createContext(pctx,
+<<<<<<< HEAD
           getSession(sessionHandle).getLoggedInUser(), conf, qconf);
+=======
+          getSession(sessionHandle).getUserName(), conf, qconf);
       if (StringUtils.isNotBlank(queryName)) {
         // Override previously set query name
         ctx.setQueryName(queryName);
       } else {
         ctx.setQueryName(pctx.getQueryName());
       }
+>>>>>>> 6465864d836fab6811c220ec594b4229d15a8ba6
       return executeTimeoutInternal(sessionHandle, ctx, timeoutMillis, qconf);
     } finally {
       release(sessionHandle);
@@ -866,9 +875,14 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       Configuration qconf = getGrillConf(sessionHandle, conf);
       accept(query, qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(query,
+<<<<<<< HEAD
           getSession(sessionHandle).getLoggedInUser(), conf, qconf);
-      ctx.setQueryName(queryName);
       return executeAsyncInternal(sessionHandle, ctx);
+=======
+          getSession(sessionHandle).getUserName(), conf, qconf);
+      ctx.setQueryName(queryName);
+      return executeAsyncInternal(sessionHandle, ctx, qconf);
+>>>>>>> 6465864d836fab6811c220ec594b4229d15a8ba6
     } finally {
       release(sessionHandle);
     }
@@ -877,7 +891,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
 
   protected QueryContext createContext(String query, String userName,
       GrillConf conf, Configuration qconf) throws GrillException {
-    QueryContext ctx = new QueryContext(query,userName, conf, qconf);
+    QueryContext ctx = new QueryContext(query, userName, conf, qconf);
     return ctx;
   }
 
@@ -1007,8 +1021,12 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       Configuration qconf = getGrillConf(sessionHandle, conf);
       accept(query, qconf, SubmitOp.EXECUTE);
       QueryContext ctx = createContext(query,
+<<<<<<< HEAD
           getSession(sessionHandle).getLoggedInUser(), conf, qconf);
+=======
+          getSession(sessionHandle).getUserName(), conf, qconf);
       ctx.setQueryName(queryName);
+>>>>>>> 6465864d836fab6811c220ec594b4229d15a8ba6
       return executeTimeoutInternal(sessionHandle, ctx, timeoutMillis, qconf);
     } finally {
       release(sessionHandle);
@@ -1016,8 +1034,13 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private QueryHandleWithResultSet executeTimeoutInternal(GrillSessionHandle sessionHandle, QueryContext ctx, long timeoutMillis,
-                                                          Configuration conf) throws GrillException {
+<<<<<<< HEAD
+      Configuration conf) throws GrillException {
     QueryHandle handle = executeAsyncInternal(sessionHandle, ctx);
+=======
+                                                          Configuration conf) throws GrillException {
+    QueryHandle handle = executeAsyncInternal(sessionHandle, ctx, conf);
+>>>>>>> 6465864d836fab6811c220ec594b4229d15a8ba6
     QueryHandleWithResultSet result = new QueryHandleWithResultSet(handle);
     // getQueryContext calls updateStatus, which fires query events if there's a change in status
     while (getQueryContext(sessionHandle, handle).getStatus().getStatus().equals(
@@ -1160,7 +1183,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       boolean filterByQueryName = StringUtils.isNotBlank(queryName);
 
       if (StringUtils.isBlank(userName)) {
-        userName = getSession(sessionHandle).getLoggedInUser();
+        userName = getSession(sessionHandle).getUserName();
       }
 
       List<QueryHandle> all = new ArrayList<QueryHandle>(allQueries.keySet());

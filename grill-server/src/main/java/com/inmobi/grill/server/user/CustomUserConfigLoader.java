@@ -42,7 +42,15 @@ public class CustomUserConfigLoader extends UserConfigLoader {
     );
     try {
       this.customProvider = customHandlerClass.getConstructor(HiveConf.class).newInstance(conf);
-    } catch (ReflectiveOperationException e) {
+      // in java6, these four extend directly from Exception. So have to handle separately. In java7,
+      // the common subclass is ReflectiveOperationException
+    } catch (InvocationTargetException e) {
+      throw new GrillException(e);
+    } catch (NoSuchMethodException e) {
+      throw new GrillException(e);
+    } catch (InstantiationException e) {
+      throw new GrillException(e);
+    } catch (IllegalAccessException e) {
       throw new GrillException(e);
     }
   }

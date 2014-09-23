@@ -20,6 +20,7 @@ package com.inmobi.grill.server.auth;
  * #L%
  */
 
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.auth.PasswdAuthenticationProvider;
 
 import javax.security.sasl.AuthenticationException;
