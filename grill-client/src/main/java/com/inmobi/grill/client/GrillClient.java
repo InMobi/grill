@@ -28,13 +28,16 @@ import com.inmobi.grill.api.query.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class GrillClient {
   private static final Log LOG = LogFactory.getLog(GrillClient.class);
+  private static final String DEFAULT_PASSWORD = "";
   private final GrillClientConfig conf;
+  private String password;
   private GrillConnection conn;
   private final HashMap<QueryHandle, GrillStatement> statementMap =
       Maps.newHashMap();
@@ -45,19 +48,37 @@ public class GrillClient {
   }
 
   public GrillClient(GrillClientConfig conf) {
+    this(conf, conf.getUser(), DEFAULT_PASSWORD);
+  }
+
+  public GrillClient(String username, String password) {
+    this(new GrillClientConfig(), username, password);
+  }
+
+  public GrillClient(GrillClientConfig conf, String username, String password) {
     this.conf = conf;
+    conf.setUser(username);
+    this.password = password;
     connectToGrillServer();
     statement = new GrillStatement(conn);
   }
 
-  public QueryHandle executeQueryAsynch(String sql) {
+  public GrillClient(Credentials cred) {
+    this(cred.getUsername(), cred.getPassword());
+  }
+
+  public QueryHandle executeQueryAsynch(String sql, String queryName) {
     GrillStatement statement = new GrillStatement(conn);
     LOG.debug("Executing query " + sql);
-    statement.execute(sql, false);
+    statement.execute(sql, false, queryName);
     GrillQuery query = statement.getQuery();
     LOG.debug("Adding query to statementMap " + query.getQueryHandle());
     statementMap.put(query.getQueryHandle(), statement);
     return query.getQueryHandle();
+  }
+
+  public GrillConnection getConnection() {
+    return conn;
   }
 
   public static class GrillClientResultSetWithStats {
@@ -79,10 +100,10 @@ public class GrillClient {
     }
   }
 
-  public GrillClientResultSetWithStats getResults(String sql) {
+  public GrillClientResultSetWithStats getResults(String sql, String queryName) {
     GrillStatement statement = new GrillStatement(conn);
     LOG.debug("Executing query " + sql);
-    statement.execute(sql, true);
+    statement.execute(sql, true, queryName);
     return getResultsFromStatement(statement);
   }
 
@@ -152,15 +173,15 @@ public class GrillClient {
     return getGrillStatement(query).getResultSet();
   }
 
-  public List<QueryHandle> getQueries(String state, String user) {
-    return new GrillStatement(conn).getAllQueries(state, user);
+  public List<QueryHandle> getQueries(String state, String queryName, String user) {
+    return new GrillStatement(conn).getAllQueries(state, queryName, user);
   }
 
 
   private void connectToGrillServer() {
     LOG.debug("Connecting to grill server " + new GrillConnectionParams(conf));
     conn = new GrillConnection(new GrillConnectionParams(conf));
-    conn.open();
+    conn.open(password);
     LOG.debug("Successfully connected to server " + conn);
   }
 
@@ -245,6 +266,7 @@ public class GrillClient {
   }
 
   public APIResult closeConnection() {
+    LOG.debug("Closing grill connection: " + new GrillConnectionParams(conf));
     return this.conn.close();
   }
 
@@ -440,34 +462,37 @@ public class GrillClient {
     return new GrillMetadataClient(conn).addPartitionToDimensionTable(table, storage, partSpec);
   }
 
-  public QueryPrepareHandle prepare(String sql) {
-    return statement.prepareQuery(sql);
+  public QueryPrepareHandle prepare(String sql, String queryName) {
+    return statement.prepareQuery(sql, queryName);
   }
 
-  public QueryPlan explainAndPrepare(String sql) {
-    return statement.explainAndPrepare(sql);
+  public QueryPlan explainAndPrepare(String sql, String queryName) {
+    return statement.explainAndPrepare(sql, queryName);
   }
 
   public boolean destroyPrepared(QueryPrepareHandle queryPrepareHandle) {
     return statement.destroyPrepared(queryPrepareHandle);
   }
 
-  public List<QueryPrepareHandle> getPreparedQueries() {
-    return statement.getAllPreparedQueries();
+  public List<QueryPrepareHandle> getPreparedQueries(String userName, String queryName) {
+    return statement.getAllPreparedQueries(userName, queryName);
   }
 
   public GrillPreparedQuery getPreparedQuery(QueryPrepareHandle phandle) {
     return statement.getPreparedQuery(phandle);
   }
 
-  public GrillClientResultSetWithStats getResultsFromPrepared(QueryPrepareHandle phandle) {
-    QueryHandle qh = statement.executeQuery(phandle, true);
+  public GrillClientResultSetWithStats getResultsFromPrepared(QueryPrepareHandle phandle, String queryName) {
+    QueryHandle qh = statement.executeQuery(phandle, true, queryName);
     return getResultsFromHandle(qh);
   }
 
-  public QueryHandle executePrepared(QueryPrepareHandle phandle) {
-    return statement.executeQuery(phandle, false);
+  public QueryHandle executePrepared(QueryPrepareHandle phandle, String queryName) {
+    return statement.executeQuery(phandle, false, queryName);
   }
 
+  public boolean isConnectionOpen() {
+    return this.conn.isOpen();
+  }
 
 }

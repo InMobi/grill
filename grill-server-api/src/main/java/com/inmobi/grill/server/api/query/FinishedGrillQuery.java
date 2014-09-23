@@ -8,9 +8,9 @@ package com.inmobi.grill.server.api.query;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,6 +85,10 @@ public class FinishedGrillQuery {
   @Setter
   private String metadataClass;
 
+  @Getter
+  @Setter
+  private String queryName;
+
   public FinishedGrillQuery() {
 
   }
@@ -100,6 +104,9 @@ public class FinishedGrillQuery {
     this.errorMessage = ctx.getStatus().getErrorMessage();
     this.driverStartTime = ctx.getDriverStatus().getDriverStartTime();
     this.driverEndTime = ctx.getDriverStatus().getDriverFinishTime();
+    if (ctx.getQueryName() != null) {
+      this.queryName = ctx.getQueryName().toLowerCase();
+    }
   }
 
 }

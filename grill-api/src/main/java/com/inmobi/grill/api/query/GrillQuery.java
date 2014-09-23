@@ -26,10 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.Priority;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @XmlRootElement
 @AllArgsConstructor
@@ -52,4 +49,9 @@ public class GrillQuery {
   @XmlElement @Getter private long driverFinishTime;
   @XmlElement @Getter private long finishTime;
   @XmlElement @Getter private long closedTime;
+<<<<<<< HEAD
+=======
+  @XmlElement @Getter private String queryName;
+
+>>>>>>> 687cd4891294063d75859192c2efacfd6846d33c
 }
