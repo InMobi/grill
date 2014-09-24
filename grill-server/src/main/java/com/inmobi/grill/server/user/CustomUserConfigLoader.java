@@ -56,7 +56,7 @@ public class CustomUserConfigLoader extends UserConfigLoader {
   }
 
   @Override
-  public Map<String, String> getUserConfig(String loggedInUser) {
+  public Map<String, String> getUserConfig(String loggedInUser) throws UserConfigLoaderException {
     return customProvider.getUserConfig(loggedInUser);
   }
 }

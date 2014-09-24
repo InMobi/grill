@@ -80,8 +80,10 @@ public abstract class GrillService extends CompositeService implements Externali
   public GrillSessionHandle openSession(String username, String password, Map<String, String> configuration)
       throws GrillException {
     SessionHandle sessionHandle;
-    doPasswdAuth(username, password, cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION));
-
+    if(username.contains("@")) {
+      username = username.substring(0, username.indexOf("@"));
+    }
+    doPasswdAuth(username, password);
     try {
       Map<String, String> sessionConf = new HashMap<String, String>();
       sessionConf.putAll(GrillSessionImpl.DEFAULT_HIVE_SESSION_CONF);
@@ -91,6 +93,10 @@ public abstract class GrillService extends CompositeService implements Externali
       Map<String, String> userConfig = UserConfigLoaderFactory.getUserConfig(username, cliService.getHiveConf());
       UtilityMethods.mergeMaps(sessionConf, userConfig, false);
       sessionConf.put(GrillConfConstants.GRILL_SESSION_LOGGEDIN_USER, username);
+      if(sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER) == null) {
+        LOG.info("Didn't get cluster user from user config loader. Setting same as logged in user: " + username);
+        sessionConf.put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER, username);
+      }
       String clusterUser = sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER);
       password = "useless";
       if (
@@ -143,7 +149,15 @@ public abstract class GrillService extends CompositeService implements Externali
     }
   }
 
-  private void doPasswdAuth(String userName, String password, String authType){
+  private void doPasswdAuth(String userName, String password){
+    // Grill confs to Hive Confs.
+    for(ConfVars var: new ConfVars[]{ConfVars.HIVE_SERVER2_PLAIN_LDAP_DOMAIN}) {
+      if(cliService.getHiveConf().getVar(var) == null) {
+        cliService.getHiveConf().setVar(var,
+          cliService.getHiveConf().get(GrillConfConstants.GRILL_SERVER_DOMAIN));
+      }
+    }
+    String authType = cliService.getHiveConf().getVar(ConfVars.HIVE_SERVER2_AUTHENTICATION);
     // No-op when authType is NOSASL
     if (!authType.equalsIgnoreCase(HiveAuthFactory.AuthTypes.NOSASL.toString())) {
       try {

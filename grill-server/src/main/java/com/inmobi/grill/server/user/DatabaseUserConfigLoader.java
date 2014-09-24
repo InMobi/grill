@@ -19,20 +19,90 @@ package com.inmobi.grill.server.user;
  * #L%
  */
 
-import org.apache.commons.lang.NotImplementedException;
+import com.inmobi.grill.server.api.GrillConfConstants;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.hadoop.hive.conf.HiveConf;
 
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DatabaseUserConfigLoader extends UserConfigLoader {
-  public DatabaseUserConfigLoader(HiveConf conf) {
+  private final String querySql;
+  private final String[] keys;
+  private DataSource ds;
+  public DatabaseUserConfigLoader(HiveConf conf) throws UserConfigLoaderException {
     super(conf);
-    throw new NotImplementedException();
+    String className = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_DRIVER_NAME);
+    String jdbcUrl = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_URL);
+    String userName = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_USERNAME);
+    String pass = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_PASSWORD);
+    querySql = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_QUERY);
+    keys = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_KEYS).split("\\s*,\\s*", -1);
+    if(anyNull(className, jdbcUrl, userName, pass)) {
+      throw new UserConfigLoaderException("You need to specify all of the following in conf: ["
+        + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_DRIVER_NAME + ", "
+        + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_URL + ", "
+        + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_USERNAME + ", "
+        + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_PASSWORD + ", "
+        + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_KEYS + ", "
+      + "]");
+    }
+    BasicDataSource tmp = new BasicDataSource();
+    tmp.setDriverClassName(className);
+    tmp.setUrl(jdbcUrl);
+    tmp.setUsername(userName);
+    tmp.setPassword(pass);
+    ds = tmp;
+  }
+
+  private boolean anyNull(String... args) {
+    for(String arg: args) {
+      if(arg == null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   //TODO: either remove this or fill in generic code :/
   @Override
-  public Map<String, String> getUserConfig(String loggedInUser) {
-    return null;
+  public Map<String, String> getUserConfig(String loggedInUser) throws UserConfigLoaderException {
+    QueryRunner runner = new QueryRunner(ds);
+    try {
+      String[] config = runner.query(querySql, new ResultSetHandler<String[]>() {
+        @Override
+        public String[] handle(ResultSet resultSet) throws SQLException {
+          String[] result = new String[resultSet.getMetaData().getColumnCount()];
+          if(!resultSet.next()) {
+            throw new SQLException("no rows retrieved in query");
+          }
+          for(int i=1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+            result[i - 1] = resultSet.getString(i);
+          }
+          if(resultSet.next()) {
+            throw new SQLException("more than one row retrieved in query");
+          }
+          return result;
+        }
+      }, loggedInUser);
+      if(config.length != keys.length) {
+        throw new UserConfigLoaderException("size of columns retrieved by db query(" + config.length + ") " +
+          "is not equal to the number of keys required(" + keys.length + ").");
+      }
+      HashMap<String, String> userConfig = new HashMap<String, String>();
+      for(int i = 0; i < keys.length; i++) {
+        userConfig.put(keys[i], config[i]);
+      }
+      return userConfig;
+    } catch (SQLException e) {
+      throw new UserConfigLoaderException(e);
+    }
   }
 }

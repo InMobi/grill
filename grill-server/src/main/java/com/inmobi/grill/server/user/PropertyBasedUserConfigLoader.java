@@ -20,7 +20,6 @@ package com.inmobi.grill.server.user;
  */
 
 import com.inmobi.grill.server.api.GrillConfConstants;
-import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.hadoop.hive.conf.HiveConf;
 
 import java.io.File;

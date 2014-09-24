@@ -2,6 +2,8 @@ package com.inmobi.grill.server.user;
 
 import com.inmobi.grill.api.GrillException;
 
+import java.sql.SQLException;
+
 /*
  * #%L
  * Grill Server
@@ -22,8 +24,12 @@ import com.inmobi.grill.api.GrillException;
  * #L%
  */
 
-public class UserConfigLoaderException extends GrillException{
+public class UserConfigLoaderException extends GrillException {
   public UserConfigLoaderException(String s) {
     super(s);
+  }
+
+  public UserConfigLoaderException(Throwable e) {
+    super(e);
   }
 }

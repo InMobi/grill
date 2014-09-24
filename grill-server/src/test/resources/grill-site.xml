@@ -108,7 +108,10 @@
   <name>grill.session.user.resolver.fixed.value</name>
   <value>testgrilluser</value>
 </property>
-
+<property>
+  <name>grill.server.domain</name>
+  <value>localhost</value>
+</property>
 
 <property>
     <!-- Immediately insert all finished queries to DB -->

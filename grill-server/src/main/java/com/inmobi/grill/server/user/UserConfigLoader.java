@@ -22,6 +22,7 @@ package com.inmobi.grill.server.user;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 public abstract class UserConfigLoader {
@@ -30,5 +31,5 @@ public abstract class UserConfigLoader {
   public UserConfigLoader(HiveConf conf) {
     this.hiveConf = conf;
   }
-  public abstract Map<String, String> getUserConfig(String loggedInUser);
+  public abstract Map<String, String> getUserConfig(String loggedInUser) throws UserConfigLoaderException;
 }

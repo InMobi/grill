@@ -194,12 +194,12 @@
 
 <property>
   <name>grill.session.cluster.user</name>
-  <value>grilluser</value>
+  <value></value>
   <description>Session level config which will determine which cluster user will access hdfs</description>
 </property>
 <property>
   <name>grill.session.loggedin.user</name>
-  <value>username@company</value>
+  <value></value>
   <description>The username used to log in to grill. e.g. LDAP user</description>
 </property>
 <property>

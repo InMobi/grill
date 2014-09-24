@@ -63,6 +63,11 @@ public class UserConfigLoaderTest {
       }
     });
   }
+
+  @Test
+  public void testDatabase() throws GrillException {
+
+  }
   @Test
   public void testCustom() throws GrillException {
     conf.addResource(UserConfigLoaderTest.class.getResourceAsStream("/user/custom.xml"));
