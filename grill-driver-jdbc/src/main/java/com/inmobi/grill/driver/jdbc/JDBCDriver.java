@@ -33,10 +33,9 @@ import com.inmobi.grill.server.api.driver.GrillResultSet;
 import com.inmobi.grill.server.api.driver.QueryCompletionListener;
 import com.inmobi.grill.server.api.query.PreparedQueryContext;
 import com.inmobi.grill.server.api.query.QueryContext;
-import com.inmobi.grill.driver.cube.RewriteUtil;
+import com.inmobi.grill.server.query.rewrite.RewriteUtil;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.cube.parse.HQLParser;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
@@ -58,7 +57,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import lombok.Setter;
 import static com.inmobi.grill.driver.jdbc.JDBCDriverConfConstants.*;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.KW_CASE;
 import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TMP_FILE;
 /**
  * This driver is responsible for running queries against databases which can be queried using the JDBC API.

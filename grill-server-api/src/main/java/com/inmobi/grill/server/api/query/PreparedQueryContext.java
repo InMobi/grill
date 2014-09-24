@@ -39,6 +39,7 @@ import lombok.Setter;
 public class PreparedQueryContext implements Delayed {
   @Getter private final QueryPrepareHandle prepareHandle;
   @Getter private final String userQuery;
+  @Getter @Setter private String cubeQuery;
   @Getter private final Date preparedTime;
   @Getter private final String preparedUser;
   transient @Getter private final Configuration conf;

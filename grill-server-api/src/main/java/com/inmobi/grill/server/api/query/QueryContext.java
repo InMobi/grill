@@ -22,6 +22,7 @@ package com.inmobi.grill.server.api.query;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,7 +48,10 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   private static final long serialVersionUID = 1L;
 
   @Getter @Setter private QueryHandle queryHandle;
+  // User provides three query types - NonSQL, CubeQL, DSL
   @Getter final private String userQuery;
+  // Cube query will be the same as User query whne CubeQL is provided
+  @Getter @Setter private String cubeQuery;
   @Getter final private String submittedUser;
   transient @Getter @Setter private Configuration conf;
   @Getter private GrillConf qconf;
@@ -55,6 +59,7 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   @Getter final private boolean isPersistent;
   @Getter final private boolean isDriverPersistent;
   transient @Getter @Setter private GrillDriver selectedDriver;
+  // CubeQL is rewritten to a chosen Driver Specific QL
   @Getter @Setter private String driverQuery;
   @Getter private QueryStatus status;
   @Getter @Setter private String resultSetPath;

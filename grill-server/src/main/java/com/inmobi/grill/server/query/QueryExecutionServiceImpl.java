@@ -42,9 +42,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import com.inmobi.grill.server.query.rewrite.RewriteUtil;
 import com.inmobi.grill.server.GrillService;
 import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.query.*;
+import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.stats.StatisticsService;
 import com.inmobi.grill.server.api.driver.*;
 import com.inmobi.grill.server.api.events.GrillEventListener;
@@ -76,7 +78,6 @@ import com.inmobi.grill.api.query.QueryStatus;
 import com.inmobi.grill.api.query.SubmitOp;
 import com.inmobi.grill.api.query.QueryStatus.Status;
 import com.inmobi.grill.driver.cube.CubeGrillDriver;
-import com.inmobi.grill.driver.cube.RewriteUtil;
 import com.inmobi.grill.driver.hive.HiveDriver;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import org.apache.hive.service.cli.ColumnDescriptor;
@@ -668,25 +669,23 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private void rewriteAndSelect(QueryContext ctx) throws GrillException {
-    Map<GrillDriver, String> driverQueries = RewriteUtil.rewriteQuery(
-        ctx.getUserQuery(), drivers.values(), ctx.getConf());
+    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
 
     // 2. select driver to run the query
     GrillDriver driver = driverSelector.select(drivers.values(), driverQueries, conf);
 
     ctx.setSelectedDriver(driver);
-    ctx.setDriverQuery(driverQueries.get(driver));
+    ctx.setDriverQuery(driverQueries.get(driver).getCommand());
   }
 
   private void rewriteAndSelect(PreparedQueryContext ctx) throws GrillException {
-    Map<GrillDriver, String> driverQueries = RewriteUtil.rewriteQuery(
-        ctx.getUserQuery(), drivers.values(), ctx.getConf());
+    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
 
     // 2. select driver to run the query
     GrillDriver driver = driverSelector.select(drivers.values(), driverQueries, conf);
 
     ctx.setSelectedDriver(driver);
-    ctx.setDriverQuery(driverQueries.get(driver));
+    ctx.setDriverQuery(driverQueries.get(driver).getCommand());
   }
 
 
@@ -1201,12 +1200,12 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       acquire(sessionHandle);
       Configuration qconf = getGrillConf(sessionHandle, grillConf);
       accept(query, qconf, SubmitOp.EXPLAIN);
-      Map<GrillDriver, String> driverQueries = RewriteUtil.rewriteQuery(query,
-          drivers.values(), qconf);
+      Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(query,  getSession(sessionHandle).getUsername(), qconf , drivers.values());
+
       // select driver to run the query
       GrillDriver selectedDriver = driverSelector.select(drivers.values(),
           driverQueries, conf);
-      return selectedDriver.explain(driverQueries.get(selectedDriver), qconf)
+      return selectedDriver.explain(driverQueries.get(selectedDriver).getCommand(), qconf)
           .toQueryPlan();
     } catch (GrillException e) {
       QueryPlan plan;

@@ -21,6 +21,7 @@ package com.inmobi.grill.server;
  */
 
 import com.codahale.metrics.servlets.AdminServlet;
+import com.inmobi.grill.server.query.rewrite.dsl.DSLRegistry;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.ui.UIApp;
 import org.apache.commons.logging.Log;
@@ -96,6 +97,7 @@ public class GrillServer {
   public void startServices(HiveConf conf) {
     GrillServices.get().init(conf);
     GrillServices.get().start();
+    DSLRegistry.getInstance().init(conf);
   }
 
   public void start() throws IOException {

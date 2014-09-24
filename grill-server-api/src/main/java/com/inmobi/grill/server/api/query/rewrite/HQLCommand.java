@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.api.driver;
+package com.inmobi.grill.server.api.query.rewrite;
 
 /*
  * #%L
@@ -9,9 +9,9 @@ package com.inmobi.grill.server.api.driver;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,28 @@ package com.inmobi.grill.server.api.driver;
  * #L%
  */
 
-import java.util.Collection;
-import java.util.Map;
-
-import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import org.apache.hadoop.conf.Configuration;
 
-public interface DriverSelector {
-  public GrillDriver select(Collection<GrillDriver> drivers,
-      Map<GrillDriver, HQLCommand> queries, Configuration conf);
+public abstract class HQLCommand extends QueryCommand {
+
+  protected HQLCommand(String input, String userName, Configuration conf) {
+    super(input, userName, conf);
+  }
+
+  protected HQLCommand() {
+  }
+
+  @Override
+  public Type getType() {
+    return Type.HQL;
+  }
+
+  public static HQLCommand get(String input, String userName, Configuration conf) {
+    return new HQLCommand(input, userName, conf) {
+      @Override
+      public boolean matches(String line) {
+        return false;
+      }
+    };
+  }
 }
