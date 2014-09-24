@@ -32,6 +32,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GrillQuery {
+
   @XmlElement @Getter private QueryHandle queryHandle;
   @XmlElement @Getter private String userQuery;
   @XmlElement @Getter private String submittedUser;
@@ -49,9 +50,6 @@ public class GrillQuery {
   @XmlElement @Getter private long driverFinishTime;
   @XmlElement @Getter private long finishTime;
   @XmlElement @Getter private long closedTime;
-<<<<<<< HEAD
-=======
   @XmlElement @Getter private String queryName;
 
->>>>>>> 687cd4891294063d75859192c2efacfd6846d33c
 }
