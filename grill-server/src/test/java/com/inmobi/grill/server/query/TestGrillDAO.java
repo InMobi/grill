@@ -20,26 +20,82 @@ package com.inmobi.grill.server.query;
  * #L%
  */
 
-import com.inmobi.grill.server.api.query.FinishedGrillQuery;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.ws.rs.core.Application;
+
 import org.apache.hadoop.conf.Configuration;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class TestGrillDAO {
+import com.inmobi.grill.api.GrillConf;
+import com.inmobi.grill.api.GrillSessionHandle;
+import com.inmobi.grill.api.query.GrillQuery;
+import com.inmobi.grill.api.query.QueryHandle;
+import com.inmobi.grill.api.query.QueryStatus;
+import com.inmobi.grill.server.GrillJerseyTest;
+import com.inmobi.grill.server.GrillServices;
+import com.inmobi.grill.server.api.query.FinishedGrillQuery;
+import com.inmobi.grill.server.api.query.QueryContext;
 
-  @Test
-  public void testDAO() throws Exception {
+public class TestGrillDAO extends GrillJerseyTest {
+  GrillQueryDAO dao;
+
+  @BeforeClass
+  public void setup() {
     Configuration conf = new Configuration();
     GrillQueryDAO dao = new GrillQueryDAO();
     dao.init(conf);
-    dao.createFinishedQueriesTable();
-    FinishedGrillQuery query = new FinishedGrillQuery();
-    query.setHandle("adas");
-    query.setSubmitter("adasdas");
-    query.setUserQuery("asdsadasdasdsa");
-    dao.insertFinishedQuery(query);
-    Assert.assertEquals(query,
-        dao.getQuery(query.getHandle()));
-    dao.dropFinishedQueriesTable();
+  }
+
+  @Test
+  public void testGrillServerDAO() throws Exception {
+    QueryExecutionServiceImpl service = (QueryExecutionServiceImpl)
+      GrillServices.get().getService("query");
+
+    // Test insert query
+    QueryContext queryContext = service.createContext("SELECT ID FROM testTable", "foo@localhost",
+      new GrillConf(), new Configuration());
+    queryContext.setQueryName("daoTestQuery1");
+    FinishedGrillQuery finishedGrillQuery = new FinishedGrillQuery(queryContext);
+    finishedGrillQuery.setStatus(QueryStatus.Status.SUCCESSFUL.name());
+    String finishedHandle = finishedGrillQuery.getHandle();
+    dao.insertFinishedQuery(finishedGrillQuery);
+    FinishedGrillQuery actual = dao.getQuery(finishedHandle);
+    Assert.assertEquals(actual.getHandle(), finishedHandle);
+
+    // Test find finished queries
+    GrillSessionHandle session =
+    service.openSession("foo@localhost", "bar", new HashMap<String, String>());
+
+    List<QueryHandle> persistedHandles = dao.findFinishedQueries(null, null, null);
+    if (persistedHandles != null) {
+      for (QueryHandle handle : persistedHandles) {
+        GrillQuery query = service.getQuery(session, handle);
+        if (!handle.getHandleId().toString().equals(finishedHandle)) {
+          Assert.assertTrue(query.getStatus().isFinished(),
+            query.getQueryHandle() + " STATUS=" + query.getStatus().getStatus());
+        }
+      }
+    }
+
+    System.out.println("@@ State = " + queryContext.getStatus().getStatus().name());
+    List<QueryHandle> daoTestQueryHandles =
+      dao.findFinishedQueries(finishedGrillQuery.getStatus(),
+      queryContext.getSubmittedUser(), "daotestquery1");
+    Assert.assertEquals(daoTestQueryHandles.size(), 1);
+    Assert.assertEquals(daoTestQueryHandles.get(0).getHandleId().toString(), finishedHandle);
+  }
+
+  @Override
+  protected int getTestPort() {
+    return 101010;
+  }
+
+  @Override
+  protected Application configure() {
+    return new QueryApp();
   }
 }

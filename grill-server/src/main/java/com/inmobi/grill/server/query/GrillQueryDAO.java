@@ -19,14 +19,20 @@ package com.inmobi.grill.server.query;
  * limitations under the License.
  * #L%
  */
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.api.query.QueryHandle;
 import com.inmobi.grill.server.GrillServerDAO;
 import com.inmobi.grill.server.api.query.FinishedGrillQuery;
 
@@ -107,4 +113,59 @@ public class GrillQueryDAO extends GrillServerDAO {
     return null;
   }
 
+  public List<QueryHandle> findFinishedQueries(String state, String user, String queryName) throws GrillException {
+    boolean addFilter = StringUtils.isNotBlank(state) || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(queryName);
+    StringBuilder builder = new StringBuilder("SELECT handle FROM finished_queries");
+    List<Object> params = null;
+    if (addFilter) {
+      builder.append(" WHERE ");
+      List<String> filters = new ArrayList<String>(3);
+      params = new ArrayList<Object>(3);
+
+      if (StringUtils.isNotBlank(state)) {
+        filters.add("status=?");
+        params.add(state);
+      }
+
+      if (StringUtils.isNotBlank(user)) {
+        filters.add("submitter=?");
+        params.add(user);
+      }
+
+      if (StringUtils.isNotBlank(queryName)) {
+        filters.add("queryname like ?");
+        params.add("%" + queryName + "%");
+      }
+
+      builder.append(StringUtils.join(filters, " AND "));
+    }
+
+    ResultSetHandler<List<QueryHandle>> resultSetHandler = new ResultSetHandler<List<QueryHandle>>() {
+      @Override
+      public List<QueryHandle> handle(ResultSet resultSet) throws SQLException {
+        List<QueryHandle> queryHandleList = new ArrayList<QueryHandle>();
+        while (resultSet.next()) {
+          String handle = resultSet.getString(1);
+          try {
+            queryHandleList.add(QueryHandle.fromString(handle));
+          } catch (IllegalArgumentException exc) {
+            LOG.warn("Warning invalid query handle found in DB " + handle);
+          }
+        }
+        return queryHandleList;
+      }
+    };
+
+    QueryRunner runner = new QueryRunner(ds);
+    String query = builder.toString();
+    try {
+      if (addFilter) {
+        return runner.query(query, resultSetHandler, params.toArray());
+      } else {
+        return runner.query(query, resultSetHandler);
+      }
+    } catch (SQLException e) {
+      throw new GrillException(e);
+    }
+  }
 }

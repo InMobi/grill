@@ -1210,6 +1210,20 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
           itr.remove();
         }
       }
+
+      // Unless user wants to get queries in 'non finished' state, get finished queries from DB as well
+      if (status == null || status == Status.CANCELED || status == Status.SUCCESSFUL || status == Status.FAILED) {
+        if ("all".equalsIgnoreCase(userName)) {
+          userName = null;
+        }
+        List<QueryHandle> persistedQueries =
+          grillQueryDao.findFinishedQueries(state, userName, queryName);
+        if (persistedQueries != null && !persistedQueries.isEmpty()) {
+          LOG.info("Adding persisted queries " + persistedQueries.size());
+          all.addAll(persistedQueries);
+        }
+      }
+
       return all;
     } finally {
       release(sessionHandle);
