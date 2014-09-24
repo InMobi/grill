@@ -20,6 +20,7 @@ package com.inmobi.grill.server.auth;
  * #L%
  */
 
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.auth.PasswdAuthenticationProvider;
 
 import javax.security.sasl.AuthenticationException;
@@ -27,7 +28,6 @@ import javax.security.sasl.AuthenticationException;
 public class FooBarAuthenticationProvider implements PasswdAuthenticationProvider {
   public static String MSG = "<username,password>!=<foo@localhost,bar>";
   private final String[][] allowedCombinations = new String[][]{
-    {"foo@localhost", "bar"},
     {"foo", "bar"},
     {"anonymous", ""},
   };

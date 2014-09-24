@@ -193,6 +193,41 @@
 </property>
 
 <property>
+  <name>grill.session.cluster.user</name>
+  <value></value>
+  <description>Session level config which will determine which cluster user will access hdfs</description>
+</property>
+<property>
+  <name>grill.session.loggedin.user</name>
+  <value></value>
+  <description>The username used to log in to grill. e.g. LDAP user</description>
+</property>
+<property>
+  <name>grill.session.user.resolver.type</name>
+  <value>FIXED</value>
+  <description>Type of user config resolver. allowed values are FIXED, PROPERTYBASED, DATABASE, CUSTOM.</description>
+</property>
+
+<property>
+  <name>grill.session.user.resolver.propertybased.filename</name>
+  <value>/path/to/propertyfile</value>
+  <description>when grill.session.user.resolver.type is PROPERTYBASED, then this file will be read and parsed to
+    determine cluster user. example schema of the file is:
+      user1, user2, user3 = clusteruser1
+      user4, user5 = clusteruser2
+      * = clusteruser3
+  </description>
+</property>
+
+<property>
+  <name>grill.session.user.resolver.custom.class</name>
+  <value>full.package.name.Classname</value>
+  <description>In case the provided implementations are not sufficient for user config resolver,
+    a custom classname can be provided. Class should extend com.inmobi.grill.server.user.UserConfigLoader
+  </description>
+</property>
+
+<property>
     <name>hive.metastore.failure.retries</name>
     <value>3</value>
     <description>Number of call retries when Hive Metastore calls fail with Thrift errros</description>

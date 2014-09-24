@@ -1,4 +1,4 @@
-package com.inmobi.grill.server.query;
+  package com.inmobi.grill.server.query;
 
 /*
  * #%L
@@ -103,7 +103,7 @@ public class TestQueryService extends GrillJerseyTest {
     metricsSvc = (MetricsService)GrillServices.get().getService(MetricsService.NAME);
     Map<String, String> sessionconf = new HashMap<String, String>();
     sessionconf.put("test.session.key", "svalue");
-    grillSessionId = queryService.openSession("foo@localhost", "bar", sessionconf);
+    grillSessionId = queryService.openSession("foo", "bar", sessionconf);
     createTable(testTable);
     loadData(testTable, TEST_DATA_FILE);
   }
