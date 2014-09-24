@@ -43,27 +43,35 @@ public class DatabaseUserConfigLoader extends UserConfigLoader {
     String jdbcUrl = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_URL);
     String userName = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_USERNAME);
     String pass = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_PASSWORD);
+    if(pass == null) {
+      pass = "";
+    }
     querySql = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_QUERY);
     keys = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_KEYS).split("\\s*,\\s*", -1);
-    if(anyNull(className, jdbcUrl, userName, pass)) {
+    if(anyNull(className, jdbcUrl, userName, pass, querySql, keys)) {
       throw new UserConfigLoaderException("You need to specify all of the following in conf: ["
         + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_DRIVER_NAME + ", "
         + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_URL + ", "
         + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_USERNAME + ", "
         + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_PASSWORD + ", "
+        + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_QUERY + ", "
         + GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_KEYS + ", "
       + "]");
     }
-    BasicDataSource tmp = new BasicDataSource();
-    tmp.setDriverClassName(className);
-    tmp.setUrl(jdbcUrl);
-    tmp.setUsername(userName);
-    tmp.setPassword(pass);
-    ds = tmp;
+    ds = getDataSourceFromConf(conf);
   }
 
-  private boolean anyNull(String... args) {
-    for(String arg: args) {
+  public static BasicDataSource getDataSourceFromConf(HiveConf conf) {
+    BasicDataSource tmp = new BasicDataSource();
+    tmp.setDriverClassName(conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_DRIVER_NAME));
+    tmp.setUrl(conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_URL));
+    tmp.setUsername(conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_USERNAME));
+    tmp.setPassword(conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_DB_JDBC_PASSWORD));
+    return tmp;
+  }
+
+  private boolean anyNull(Object... args) {
+    for(Object arg: args) {
       if(arg == null) {
         return true;
       }

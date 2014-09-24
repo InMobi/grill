@@ -2,11 +2,21 @@ package com.inmobi.grill.server.user;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.GrillConfConstants;
+import liquibase.Liquibase;
+import liquibase.database.jvm.HsqlConnection;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.FileSystemResourceAccessor;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.hsqldb.server.Server;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import javax.sql.DataSource;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 /*
@@ -64,9 +74,42 @@ public class UserConfigLoaderTest {
     });
   }
 
-  @Test
-  public void testDatabase() throws GrillException {
+  public void setupHsqlDb(String dbName, String path) throws SQLException, LiquibaseException {
+    Server server = new Server();
+    server.setLogWriter(new PrintWriter(System.out));
+    server.setErrWriter(new PrintWriter(System.out));
+    server.setSilent(true);
+    server.setDatabaseName(0, dbName);
+    server.setDatabasePath(0, "file:" + path);
+    server.start();
+    BasicDataSource ds = DatabaseUserConfigLoader.getDataSourceFromConf(conf);
+    Liquibase liquibase = new Liquibase(UserConfigLoader.class.getResource("/user/db_changelog.xml").getFile(),
+      new FileSystemResourceAccessor(), new HsqlConnection(ds.getConnection()));
+    liquibase.dropAll();
+    liquibase.update("");
+  }
 
+  @Test
+  public void testDatabase() throws GrillException, SQLException, LiquibaseException {
+    String path = "target/userconfig_hsql.db";
+    String dbName = "main";
+    conf.addResource(UserConfigLoaderTest.class.getResourceAsStream("/user/database.xml"));
+
+    setupHsqlDb(dbName, path);
+    String[][] valuesToVerify = new String[][] {
+      {"user1", "clusteruser1", "queue12"},
+      {"user2", "clusteruser2", "queue12"},
+      {"user3", "clusteruser3", "queue34"},
+      {"user4", "clusteruser4", "queue34"},
+    };
+    for(final String[] sa: valuesToVerify) {
+      Assert.assertEquals(UserConfigLoaderFactory.getUserConfig(sa[0], conf), new HashMap<String, String>() {
+        {
+          put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER, sa[1]);
+          put(GrillConfConstants.GRILL_SESSION_QUEUE, sa[2]);
+        }
+      });
+    }
   }
   @Test
   public void testCustom() throws GrillException {
