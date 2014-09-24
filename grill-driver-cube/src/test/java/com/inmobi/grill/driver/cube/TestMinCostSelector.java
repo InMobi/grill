@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import org.apache.hadoop.conf.Configuration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -48,7 +49,7 @@ public class TestMinCostSelector {
   public void testMinCostSelector() {
     MinQueryCostSelector selector = new MinQueryCostSelector();
     List<GrillDriver> drivers = new ArrayList<GrillDriver>();
-    Map<GrillDriver, String> driverQueries = new HashMap<GrillDriver, String>();
+    Map<GrillDriver, HQLCommand> driverQueries = new HashMap<GrillDriver, HQLCommand>();
     Configuration conf = new Configuration();
 
     MockDriver d1 = new MockDriver();
@@ -58,21 +59,23 @@ public class TestMinCostSelector {
     
     drivers.add(d1);
     drivers.add(d2);
-    driverQueries.put(d1, "test query");
+    final HQLCommand hqlCommand = HQLCommand.get("test query", null, conf);
+    driverQueries.put(d1, hqlCommand);
+
     GrillDriver selected = selector.select(drivers, driverQueries, conf);
     Assert.assertEquals(d1, selected);
-    driverQueries.put(d2, "test query");
+    driverQueries.put(d2, hqlCommand);
     driverQueries.remove(d1);
     selected = selector.select(drivers, driverQueries, conf);
     Assert.assertEquals(d2, selected);
 
     drivers.add(fd1);
-    driverQueries.put(fd1, "test query");
+    driverQueries.put(fd1, hqlCommand);
     selected = selector.select(drivers, driverQueries, conf);
     Assert.assertEquals(d2, selected);
 
     drivers.add(fd2);
-    driverQueries.put(fd2, "test query");
+    driverQueries.put(fd2, hqlCommand);
     selected = selector.select(drivers, driverQueries, conf);
     Assert.assertEquals(d2, selected);
   }

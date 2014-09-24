@@ -50,6 +50,13 @@ public abstract class CubeQLCommand extends QueryCommand {
     return Type.CUBE;
   }
 
+  /**
+   * Factory method to create CubeQL command
+   * @param input Query String
+   * @param userName User who submitted the query
+   * @param conf The Query Configuration
+   * @return the rewritten CubeQLCommand
+   */
   public static CubeQLCommand get(String input, String userName, Configuration conf) {
     return new CubeQLCommand(input, userName, conf) {
       @Override

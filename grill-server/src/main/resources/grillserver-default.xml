@@ -356,4 +356,10 @@
     <description>Implementation class for Grill Application Listener</description>
 </property>
 
+<property>
+    <name>grill.query.dsls</name>
+    <value></value>
+    <description>These DSLs should be registered when Grill Server starts up</description>
+</property>
+
 </configuration>

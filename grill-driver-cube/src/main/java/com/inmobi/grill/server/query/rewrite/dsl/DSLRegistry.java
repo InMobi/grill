@@ -20,6 +20,7 @@ package com.inmobi.grill.server.query.rewrite.dsl;
  * #L%
  */
 import com.inmobi.grill.server.api.GrillConfConstants;
+import com.inmobi.grill.server.api.query.rewrite.dsl.DSL;
 import org.apache.hadoop.hive.conf.HiveConf;
 
 import java.util.*;
@@ -46,7 +47,7 @@ public final class DSLRegistry {
     for(String DSLName : DSLNames) {
       try {
         final Class<?> dslClass = conf.getClass(GrillConfConstants.DSL_QUERY_PFX + DSLName + GrillConfConstants.DSL_IMPL_SUFFIX, null);
-        final DSL dslInstance = (DSL)dslClass.newInstance();
+        final DSL dslInstance = (DSL) dslClass.newInstance();
         register(dslInstance);
       } catch (InstantiationException e) {
         throw new IllegalStateException("DSL " + DSLName + " could not be loaded ", e);

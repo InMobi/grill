@@ -45,7 +45,7 @@ public class QueryCommands {
      }
   }
 
-  private static String preProcessQuery(final String query) {
+  public static String preProcessQuery(final String query) {
     String finalQuery = query.replaceAll("[\\n\\r]", " ")
         .replaceAll("&&", " AND ").replaceAll("\\|\\|", " OR ");
     return finalQuery;

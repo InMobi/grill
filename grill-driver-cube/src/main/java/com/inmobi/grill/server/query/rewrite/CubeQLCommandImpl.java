@@ -117,7 +117,13 @@ public class CubeQLCommandImpl extends CubeQLCommand {
   }
 
   public List<CubeQueryInfo> parse() throws SemanticException, ParseException {
-    String query = getCommand();
+    List<CubeQueryInfo> cubeQueries = findCubePositions(getCommand());
+    this.cubeQueries = cubeQueries;
+    parsed = true;
+    return cubeQueries;
+  }
+
+  public static List<CubeQueryInfo> findCubePositions(String query) throws SemanticException, ParseException {
     ASTNode ast = HQLParser.parseHQL(query);
     LOG.debug("User query AST:" + ast.dump());
     List<CubeQueryInfo> cubeQueries = new ArrayList<CubeQueryInfo>();
@@ -125,8 +131,6 @@ public class CubeQLCommandImpl extends CubeQLCommand {
     for (CubeQueryInfo cqi : cubeQueries) {
       cqi.query = query.substring(cqi.startPos, cqi.endPos);
     }
-    this.cubeQueries = cubeQueries;
-    parsed = true;
     return cubeQueries;
   }
 

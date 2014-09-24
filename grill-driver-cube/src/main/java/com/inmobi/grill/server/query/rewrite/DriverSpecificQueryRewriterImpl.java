@@ -90,9 +90,8 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
 
   private  Map<GrillDriver, HQLCommand> doNonSQLRewrites(NonSQLCommand cmd, Collection<GrillDriver> drivers) throws GrillException {
     Map<GrillDriver, HQLCommand> driverSpecificHQLs = new HashMap<GrillDriver, HQLCommand>();
-    final NonSQLCommand nonSQLCmd = cmd;
     for(GrillDriver driver : drivers) {
-      final HQLCommand hqlCommand = nonSQLCmd.rewrite();
+      final HQLCommand hqlCommand = cmd.rewrite();
       driverSpecificHQLs.put(driver, hqlCommand);
     }
     return driverSpecificHQLs;

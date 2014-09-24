@@ -21,6 +21,9 @@ package com.inmobi.grill.server.query.rewrite.dsl;
  */
 
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+import com.inmobi.grill.server.api.query.rewrite.dsl.DSL;
+import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
+import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
