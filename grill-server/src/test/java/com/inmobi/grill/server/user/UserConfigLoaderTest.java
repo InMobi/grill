@@ -13,9 +13,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -40,10 +38,12 @@ import java.util.HashMap;
  */
 public class UserConfigLoaderTest {
   private HiveConf conf;
+  private UserConfigLoader userConfigLoader;
 
   @BeforeTest(alwaysRun = true)
-  public void init() {
+  public void init() throws GrillException {
     conf = new HiveConf();
+    this.userConfigLoader = new UserConfigLoaderFactory(conf).initializeUserConfigLoader();
   }
   @Test
   public void testFixed() throws GrillException {
@@ -53,20 +53,20 @@ public class UserConfigLoaderTest {
         put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER, "grilluser");
       }
     };
-    Assert.assertEquals(UserConfigLoaderFactory.getUserConfig("user1", conf), expected);
+    Assert.assertEquals(userConfigLoader.getUserConfig("user1"), expected);
   }
 
   @Test
   public void testPropertyBased() throws GrillException {
     conf.addResource(UserConfigLoaderTest.class.getResourceAsStream("/user/propertybased.xml"));
     conf.set(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_PROPERTYBASED_FILENAME, UserConfigLoaderTest.class.getResource("/user/propertybased.txt").getPath());
-    Assert.assertEquals(UserConfigLoaderFactory.getUserConfig("user1", conf), new HashMap<String, String>() {
+    Assert.assertEquals(userConfigLoader.getUserConfig("user1"), new HashMap<String, String>() {
       {
         put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER, "clusteruser1");
         put(GrillConfConstants.GRILL_SESSION_QUEUE, "queue1");
       }
     });
-    Assert.assertEquals(UserConfigLoaderFactory.getUserConfig("user2", conf), new HashMap<String, String>() {
+    Assert.assertEquals(userConfigLoader.getUserConfig("user2"), new HashMap<String, String>() {
       {
         put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER, "clusteruser2");
         put(GrillConfConstants.GRILL_SESSION_QUEUE, "queue2");
@@ -103,7 +103,7 @@ public class UserConfigLoaderTest {
       {"user4", "clusteruser4", "queue34"},
     };
     for(final String[] sa: valuesToVerify) {
-      Assert.assertEquals(UserConfigLoaderFactory.getUserConfig(sa[0], conf), new HashMap<String, String>() {
+      Assert.assertEquals(userConfigLoader.getUserConfig(sa[0]), new HashMap<String, String>() {
         {
           put(GrillConfConstants.GRILL_SESSION_CLUSTER_USER, sa[1]);
           put(GrillConfConstants.GRILL_SESSION_QUEUE, sa[2]);
@@ -114,6 +114,6 @@ public class UserConfigLoaderTest {
   @Test
   public void testCustom() throws GrillException {
     conf.addResource(UserConfigLoaderTest.class.getResourceAsStream("/user/custom.xml"));
-    Assert.assertEquals(UserConfigLoaderFactory.getUserConfig("user1", conf), FooBarConfigLoader.CONST_HASH_MAP);
+    Assert.assertEquals(userConfigLoader.getUserConfig("user1"), FooBarConfigLoader.CONST_HASH_MAP);
   }
 }

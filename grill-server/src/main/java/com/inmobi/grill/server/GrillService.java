@@ -26,12 +26,12 @@ import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.session.GrillSessionImpl;
 
+import com.inmobi.grill.server.user.UserConfigLoader;
 import com.inmobi.grill.server.user.UserConfigLoaderFactory;
 import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.conf.HiveConf.ConfVars;
 import org.apache.hive.service.CompositeService;
 import org.apache.hive.service.auth.AuthenticationProviderFactory;
@@ -57,6 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class GrillService extends CompositeService implements Externalizable {
   public static final Log LOG = LogFactory.getLog(GrillService.class);
   private final CLIService cliService;
+  private final UserConfigLoader userConfigLoader;
 
   protected boolean stopped = false;
 
@@ -65,9 +66,10 @@ public abstract class GrillService extends CompositeService implements Externali
   protected static ConcurrentHashMap<String, GrillSessionHandle> sessionMap =
       new ConcurrentHashMap<String, GrillSessionHandle>();
 
-  protected GrillService(String name, CLIService cliService) {
+  protected GrillService(String name, CLIService cliService) throws GrillException {
     super(name);
     this.cliService = cliService;
+    this.userConfigLoader = new UserConfigLoaderFactory(cliService.getHiveConf()).getUserConfigLoader();
   }
 
   /**
@@ -90,7 +92,7 @@ public abstract class GrillService extends CompositeService implements Externali
       if (configuration != null) {
         sessionConf.putAll(configuration);
       }
-      Map<String, String> userConfig = UserConfigLoaderFactory.getUserConfig(username, cliService.getHiveConf());
+      Map<String, String> userConfig = userConfigLoader.getUserConfig(username);
       UtilityMethods.mergeMaps(sessionConf, userConfig, false);
       sessionConf.put(GrillConfConstants.GRILL_SESSION_LOGGEDIN_USER, username);
       if(sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER) == null) {
