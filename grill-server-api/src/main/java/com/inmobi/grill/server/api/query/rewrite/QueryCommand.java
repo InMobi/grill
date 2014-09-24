@@ -24,6 +24,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.hadoop.conf.Configuration;
 
+/**
+ * Query Command which is passed to Query rewriters
+ */
 public abstract class QueryCommand {
 
   protected QueryCommand(QueryCommand queryCommand) {
@@ -32,6 +35,9 @@ public abstract class QueryCommand {
     this.conf = queryCommand.getConf();
   }
 
+  /**
+   * Type  of query to be rewritten
+   */
   public static enum Type {
     NONSQL("NonSQL", "Non SQL commands like add/set"),
     CUBE("CUBEQL", "CubeQL"),
@@ -87,6 +93,12 @@ public abstract class QueryCommand {
     this.conf = conf;
   }
 
+  /**
+   * Matches passed command with the expected query pattern
+   * @param line
+   * @return true if matches
+   * @return false if not
+   */
   public abstract boolean matches(String line);
 
 }

@@ -22,6 +22,9 @@ package com.inmobi.grill.server.api.query.rewrite;
 
 import org.apache.hadoop.conf.Configuration;
 
+/**
+ * NonSQL Commands that is rewritten to Driver specific HQLCommand
+ */
 public abstract class NonSQLCommand extends QueryCommand {
 
   protected NonSQLCommand(String input, String userName, Configuration conf) {

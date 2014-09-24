@@ -100,4 +100,14 @@
   <description>Implementation class for Test Resource</description>
 </property>
 
+<property>
+    <!-- Immediately insert all finished queries to DB -->
+    <name>grill.max.finished.queries</name>
+    <value>1</value>
+</property>
+
+<property>
+    <name>grill.server.db.jdbc.url</name>
+    <value>jdbc:hsqldb:target/queries.db</value>
+</property>
 </configuration>

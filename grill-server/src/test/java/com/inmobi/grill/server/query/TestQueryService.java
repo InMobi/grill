@@ -281,8 +281,7 @@ public class TestQueryService extends GrillJerseyTest {
     assertTrue(ctx.getDriverFinishTime() > 0);
     assertTrue(ctx.getFinishTime() > 0);
     Assert.assertEquals(ctx.getStatus().getStatus(), QueryStatus.Status.FAILED);
-    assertEquals(metricsSvc.getFinishedQueries(), finishedQueries + 1);
-    
+
     // Update conf for query
     final FormDataMultiPart confpart = new FormDataMultiPart();
     conf = new GrillConf();
@@ -373,6 +372,9 @@ public class TestQueryService extends GrillJerseyTest {
         "select ID from " + testTable));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("operation").build(),
         "prepare"));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("queryName").build(),
+      "testQuery1"));
+
     mp.bodyPart(new FormDataBodyPart(
         FormDataContentDisposition.name("conf").fileName("conf").build(),
         new GrillConf(),
@@ -383,7 +385,9 @@ public class TestQueryService extends GrillJerseyTest {
 
     // Get all prepared queries
     List<QueryPrepareHandle> allQueries = (List<QueryPrepareHandle>)target
-        .queryParam("sessionid", grillSessionId).request().get(new GenericType<List<QueryPrepareHandle>>(){});
+        .queryParam("sessionid", grillSessionId)
+        .queryParam("queryName", "testQuery1")
+      .request().get(new GenericType<List<QueryPrepareHandle>>(){});
     Assert.assertTrue(allQueries.size() >= 1);
     Assert.assertTrue(allQueries.contains(pHandle));
 
@@ -421,6 +425,10 @@ public class TestQueryService extends GrillJerseyTest {
         Entity.entity(confpart, MediaType.MULTIPART_FORM_DATA_TYPE),
         QueryHandle.class);
 
+
+    // Override query name
+    confpart.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("queryName").build(),
+      "testQueryName2"));
     // do post once again
     QueryHandle handle2 = target.path(pHandle.toString()).request().post(
         Entity.entity(confpart, MediaType.MULTIPART_FORM_DATA_TYPE),
@@ -429,6 +437,7 @@ public class TestQueryService extends GrillJerseyTest {
 
     GrillQuery ctx1 = target().path("queryapi/queries").path(
         handle1.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
+    Assert.assertEquals(ctx1.getQueryName().toLowerCase(), "testquery1");
     // wait till the query finishes
     QueryStatus stat = ctx1.getStatus();
     while (!stat.isFinished()) {
@@ -441,6 +450,7 @@ public class TestQueryService extends GrillJerseyTest {
 
     GrillQuery ctx2 = target().path("queryapi/queries").path(
         handle2.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
+    Assert.assertEquals(ctx2.getQueryName().toLowerCase(), "testqueryname2");
     // wait till the query finishes
     stat = ctx2.getStatus();
     while (!stat.isFinished()) {
@@ -643,7 +653,7 @@ public class TestQueryService extends GrillJerseyTest {
   }
 
   @Test
-  public void testNotification() throws IOException {
+  public void testNotification() throws IOException, InterruptedException {
     wiser.start();
     final WebTarget target = target().path("queryapi/queries");
     final FormDataMultiPart mp2 = new FormDataMultiPart();
@@ -656,20 +666,34 @@ public class TestQueryService extends GrillJerseyTest {
       "select ID, IDSTR from " + testTable));
     mp2.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name(
       "operation").build(),
-      "execute_with_timeout"));
+      "execute"));
     mp2.bodyPart(new FormDataBodyPart(
       FormDataContentDisposition.name("conf").fileName("conf").build(),
       conf,
       MediaType.APPLICATION_XML_TYPE));
+    final QueryHandle handle = target.request().post(
+        Entity.entity(mp2, MediaType.MULTIPART_FORM_DATA_TYPE), QueryHandle.class);
 
-    QueryHandleWithResultSet result = target.request().post(
-      Entity.entity(mp2, MediaType.MULTIPART_FORM_DATA_TYPE), QueryHandleWithResultSet.class);
-    Assert.assertNotNull(result.getQueryHandle());
-    Assert.assertNotNull(result.getResult());
-    validateInmemoryResult((InMemoryQueryResult) result.getResult());
+    Assert.assertNotNull(handle);
+
+    GrillQuery ctx = target.path(handle.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
+    Assert.assertTrue(ctx.getStatus().getStatus().equals(Status.QUEUED) ||
+        ctx.getStatus().getStatus().equals(Status.LAUNCHED) ||
+        ctx.getStatus().getStatus().equals(Status.RUNNING) ||
+        ctx.getStatus().getStatus().equals(Status.SUCCESSFUL));
+
+    // wait till the query finishes
+    QueryStatus stat = ctx.getStatus();
+    while (!stat.isFinished()) {
+      ctx = target.path(handle.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
+      stat = ctx.getStatus();
+      Thread.sleep(1000);
+    }
+    Assert.assertEquals(ctx.getStatus().getStatus(), QueryStatus.Status.SUCCESSFUL);
+
     List<WiserMessage> messages = wiser.getMessages();
     Assert.assertEquals(messages.size(), 1);
-    Assert.assertTrue(messages.get(0).toString().contains(result.getQueryHandle().toString()));
+    Assert.assertTrue(messages.get(0).toString().contains(handle.toString()));
     wiser.stop();
   }
 
@@ -956,7 +980,7 @@ public class TestQueryService extends GrillJerseyTest {
   // test execute with timeout, fetch results
   // cancel the query with execute_with_timeout
   @Test
-  public void testExecuteWithTimeoutQuery() throws IOException {
+  public void testExecuteWithTimeoutQuery() throws IOException, InterruptedException {
     final WebTarget target = target().path("queryapi/queries");
 
     final FormDataMultiPart mp = new FormDataMultiPart();
@@ -966,6 +990,9 @@ public class TestQueryService extends GrillJerseyTest {
         "select ID, IDSTR from " + testTable));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("operation").build(),
         "execute_with_timeout"));
+    // set a timeout value enough for tests
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("timeoutmillis").build(),
+        "300000"));
     mp.bodyPart(new FormDataBodyPart(
         FormDataContentDisposition.name("conf").fileName("conf").build(),
         new GrillConf(),
@@ -988,6 +1015,9 @@ public class TestQueryService extends GrillJerseyTest {
     mp2.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name(
         "operation").build(),
         "execute_with_timeout"));
+    // set a timeout value enough for tests
+    mp2.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("timeoutmillis").build(),
+        "300000"));
     mp2.bodyPart(new FormDataBodyPart(
         FormDataContentDisposition.name("conf").fileName("conf").build(),
         conf,
@@ -998,7 +1028,6 @@ public class TestQueryService extends GrillJerseyTest {
     Assert.assertNotNull(result.getQueryHandle());
     Assert.assertNotNull(result.getResult());
     validateInmemoryResult((InMemoryQueryResult) result.getResult());
-
   }
 
   @Test

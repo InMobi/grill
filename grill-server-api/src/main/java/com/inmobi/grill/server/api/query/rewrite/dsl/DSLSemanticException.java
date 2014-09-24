@@ -25,6 +25,9 @@ import com.inmobi.grill.api.GrillException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Thrown when there is a DSL syntax/semantic Error during the DSL rewrite
+ */
 public class DSLSemanticException extends GrillException {
 
   List<String> dslRwriteErrors = new ArrayList<String>(1);

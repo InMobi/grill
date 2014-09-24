@@ -23,8 +23,17 @@ import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 
+/**
+ *  Grill server can accept a registered Domain Specific Language.
+ *  The Parsing and rewriting of the DSL is the responsibility of the DSL implementation
+ *  and can be rewritten to CubeQL/HQL
+ */
 public interface DSL {
 
+  /**
+   *
+   * @return The DSL identifier
+   */
   String getName();
 
   /**
@@ -36,11 +45,10 @@ public interface DSL {
    */
   boolean accept(DSLCommand command) throws ParseException, AuthorizationException;
 
-
   /**
    *
    * @param command the query to be rewritten
-   * @return
+   * @return the rewritten query - CubeQL/HQL
    * @throws ParseException
    * @throws AuthorizationException  thrown when user is not authorized to submit the DSL query
    */

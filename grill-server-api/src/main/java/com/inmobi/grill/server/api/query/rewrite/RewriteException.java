@@ -21,6 +21,9 @@ package com.inmobi.grill.server.api.query.rewrite;
  */
 import com.inmobi.grill.api.GrillException;
 
+/**
+ * Rewrite Exception thrown upon a query rewrite error
+ */
 public class RewriteException extends GrillException {
 
   public RewriteException(String message) {

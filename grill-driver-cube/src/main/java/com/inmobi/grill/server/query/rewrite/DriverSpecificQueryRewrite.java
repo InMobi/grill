@@ -28,6 +28,16 @@ import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * Rewrites the given query to Driver Specific HQL
+ */
 public interface DriverSpecificQueryRewrite {
+  /**
+   *
+   * @param command query to be rewritten
+   * @param drivers Grill drivers for which teh query needs to be rewritten
+   * @return
+   * @throws GrillException
+   */
     Map<GrillDriver, HQLCommand> rewrite(QueryCommand command, Collection<GrillDriver> drivers) throws GrillException;
 }

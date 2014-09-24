@@ -26,6 +26,9 @@ import java.util.List;
  * #L%
  */
 
+/**
+ * CubeQL Command that is rewritten to HQLCommand based on the driver configuration
+ */
 public abstract class CubeQLCommand extends QueryCommand {
 
   public static class CubeQueryInfo {
@@ -66,6 +69,12 @@ public abstract class CubeQLCommand extends QueryCommand {
     };
   }
 
+  /**
+   * Parser parses the given CubeQL into AST representation
+   * @return list of CubeQL AST respresentations
+   * @throws SemanticException if there is a semantic error
+   * @throws ParseException if there is a syntax error
+   */
   public abstract List<CubeQueryInfo> parse() throws SemanticException, ParseException;
 
   public abstract HQLCommand rewrite() throws RewriteException;

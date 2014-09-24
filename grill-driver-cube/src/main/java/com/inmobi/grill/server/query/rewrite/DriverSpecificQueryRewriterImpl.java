@@ -38,7 +38,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Rewrites the given query to Driver Specific HQL
+ */
 public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewrite {
 
   public static final Log LOG = LogFactory.getLog(DriverSpecificQueryRewriterImpl.class);
@@ -56,6 +58,14 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
   public DriverSpecificQueryRewriterImpl() {
   }
 
+  /**
+   *
+   * @param queryCmd The query which needs to be rewritten
+   * @param drivers Grill drivers for which the query needs to be rewritten
+   * @return
+   * @throws GrillException
+   */
+  @Override
   public Map<GrillDriver, HQLCommand> rewrite(QueryCommand queryCmd, Collection<GrillDriver> drivers) throws GrillException {
 
     final QueryCommand.Type type = queryCmd.getType();
