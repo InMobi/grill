@@ -153,8 +153,16 @@ This provides api for all things query.</p>
         <tr>
           <td>user</td>
           <td>
-            If any user is passed, all the queries prepared by the user will be returned,
-otherwise all the queries will be returned
+            returns queries of the user. If set to "all", returns queries of all users. By default returns the queries
+of the current user.
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryName</td>
+          <td>
+            returns queries matching the query name
           </td>
           <td>query</td>
           <td></td>
@@ -219,6 +227,14 @@ SubmitOp#EXPLAIN_AND_PREPARE or SubmitOp#PREPARE
           <td>formdata</td>
           <td></td>
         </tr>
+        <tr>
+          <td>queryName</td>
+          <td>
+            human readable query name set by user (optional parameter)
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
       </table>
       <h3>Response Body</h3>
       <table>
@@ -258,8 +274,16 @@ query plan will contain the prepare handle as well.</p>
         <tr>
           <td>user</td>
           <td>
-            If any user is passed, all the queries prepared by the user will be destroyed,
-otherwise all the queries will be destroyed
+            destroys queries of the user. If set to "all", destroys queries of all users. By default destroys the queries
+of the current user.
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryName</td>
+          <td>
+            destroys queries matching the query name
           </td>
           <td>query</td>
           <td></td>
@@ -484,6 +508,14 @@ SubmitOp#EXECUTE_WITH_TIMEOUT operation
           <td>formdata</td>
           <td>30000</td>
         </tr>
+        <tr>
+          <td>queryName</td>
+          <td>
+            human readable query name set by user (optional parameter)
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
       </table>
       <h3>Response Body</h3>
       <table>
@@ -512,7 +544,9 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get all the queries in the query server; can be filtered with state and user.
+            Get all the queries in the query server; can be filtered with state and queryName.
+This will by default only return queries submitted by the user that has started the session.
+To get queries of all users, set the searchAllUsers parameter to false.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -525,7 +559,7 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
         <tr>
           <td>sessionid</td>
           <td>
-            The sessionid in which user is working
+            The sessionid in which queryName is working
           </td>
           <td>query</td>
           <td></td>
@@ -540,10 +574,19 @@ otherwise all queries will be returned. Possible states are QueryStatus.Status#v
           <td></td>
         </tr>
         <tr>
+          <td>queryName</td>
+          <td>
+            If any queryName is passed, all the queries containing the queryName will be returned,
+otherwise all the queries will be returned
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
           <td>user</td>
           <td>
-            If any user is passed, all the queries submitted by the user will be returned,
-otherwise all the queries will be returned
+            Returns queries submitted by this user. If set to "all", returns queries of all users. By default, returns
+queries of the current user.
           </td>
           <td>query</td>
           <td></td>
@@ -617,6 +660,22 @@ SubmitOp#EXECUTE_WITH_TIMEOUT operation
           <td>formdata</td>
           <td>30000</td>
         </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryName</td>
+          <td>
+            human readable query name set by user (optional parameter)
+          </td>
+          <td>formdata</td>
+          <td></td>
+        </tr>
       </table>
       <h3>Response Body</h3>
       <table>
@@ -669,6 +728,14 @@ QueryStatus.Status#CLOSED, QueryStatus.Status#UNKNOWN cannot be cancelled
           <td>
             If any user is passed, all the queries submitted by the user will be cancelled,
 otherwise all the queries will be cancelled
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>queryName</td>
+          <td>
+            Cancel queries matching the query name
           </td>
           <td>query</td>
           <td></td>
