@@ -77,7 +77,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
         //Rewrite to CubeQL if needed
         QueryCommand rewrittenQL = dslCommand.rewrite();
         if (rewrittenQL.getType() == QueryCommand.Type.DOMAIN) {
-          throw new DSLSemanticException("DSL query rewrite failed. Expected it to be rewritten to CubeQL/HQL but found DSL");
+          throw new DSLSemanticException("DSL query rewrite failed. Expected it to be rewritten to CubeQL/HQL but found DSL " + rewrittenQL);
         }
         return rewrite(rewrittenQL, drivers);
       case CUBE:
@@ -108,9 +108,9 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
       //Validate if rewritten query can be parsed
       cubeQL.parse();
     } catch (SemanticException e) {
-      throw new GrillException(e);
+      throw new DriverSpecificRewriteException("Could not rewrite cubeQL" , e);
     } catch (ParseException e) {
-      throw new GrillException(e);
+      throw new DriverSpecificRewriteException("Could not parse cubeQL " , e);
     }
 
     //Update query context with the cubeQL
