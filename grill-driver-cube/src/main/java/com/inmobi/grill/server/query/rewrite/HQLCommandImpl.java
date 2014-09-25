@@ -26,11 +26,6 @@ import org.apache.hadoop.conf.Configuration;
 
 public class HQLCommandImpl extends HQLCommand {
 
-  /**
-   * Store input cubeQL/NonSQL
-   */
-  QueryCommand innerQL;
-
   public HQLCommandImpl() {
   }
 
@@ -39,7 +34,7 @@ public class HQLCommandImpl extends HQLCommand {
   }
 
   public HQLCommandImpl(QueryCommand queryCommand) {
-     this.innerQL = queryCommand;
+    super(queryCommand.getCommand(), queryCommand.getUserName(), queryCommand.getConf());
   }
 
   @Override
@@ -51,15 +46,4 @@ public class HQLCommandImpl extends HQLCommand {
   public boolean matches(String line) {
     return true;
   }
-
-  @Override
-  public String getUserName() {
-    return innerQL.getUserName();
-  }
-
-  @Override
-  public Configuration getConf() {
-    return innerQL.getConf();
-  }
-
 }
