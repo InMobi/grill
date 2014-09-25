@@ -30,4 +30,10 @@ public class UtilityMethods {
       }
     }
   }
+  public static String removeDomain(String username) {
+    if(username.contains("@")) {
+      username = username.substring(0, username.indexOf("@"));
+    }
+    return username;
+  }
 }

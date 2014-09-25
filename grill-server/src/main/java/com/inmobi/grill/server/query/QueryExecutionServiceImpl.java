@@ -51,6 +51,7 @@ import com.inmobi.grill.server.api.events.GrillEventListener;
 import com.inmobi.grill.server.api.events.GrillEventService;
 import com.inmobi.grill.server.api.metrics.MetricsService;
 
+import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1147,6 +1148,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
                                          String userName,
                                          String queryName)
       throws GrillException {
+    userName = UtilityMethods.removeDomain(userName);
     try {
       acquire(sessionHandle);
       Status status = null;

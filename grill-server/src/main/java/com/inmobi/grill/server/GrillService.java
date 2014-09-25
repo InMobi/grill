@@ -26,7 +26,6 @@ import com.inmobi.grill.api.GrillSessionHandle;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.session.GrillSessionImpl;
 
-import com.inmobi.grill.server.user.UserConfigLoader;
 import com.inmobi.grill.server.user.UserConfigLoaderFactory;
 import com.inmobi.grill.server.util.UtilityMethods;
 import org.apache.commons.logging.Log;
@@ -80,9 +79,7 @@ public abstract class GrillService extends CompositeService implements Externali
   public GrillSessionHandle openSession(String username, String password, Map<String, String> configuration)
       throws GrillException {
     SessionHandle sessionHandle;
-    if(username.contains("@")) {
-      username = username.substring(0, username.indexOf("@"));
-    }
+    username = UtilityMethods.removeDomain(username);
     doPasswdAuth(username, password);
     try {
       Map<String, String> sessionConf = new HashMap<String, String>();
