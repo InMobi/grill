@@ -24,12 +24,13 @@ import com.inmobi.grill.server.api.driver.GrillDriver;
 import com.inmobi.grill.server.api.query.rewrite.RewriteException;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class DriverSpecificRewriteException extends RewriteException {
 
   @Getter
-  Map<GrillDriver, String> driverErrorMessages;
+  Map<GrillDriver, String> driverErrorMessages = new HashMap<GrillDriver, String>();
 
   public DriverSpecificRewriteException(String msg, Throwable th){
     super(msg, th);
