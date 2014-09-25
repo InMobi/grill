@@ -29,6 +29,7 @@ import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.NonSQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
+import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.parse.ParseException;
@@ -79,7 +80,9 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
     if (QueryCommand.Type.DOMAIN.equals(type)) {
       DSLCommand dslCommand = (DSLCommand) queryCmd;
       rewrittenQL = dslCommand.rewrite();
-      Preconditions.checkArgument(rewrittenQL.getType() != QueryCommand.Type.DOMAIN, "DSL query cannot be rewritten to DSL");
+      if(rewrittenQL.getType() == QueryCommand.Type.DOMAIN) {
+        throw new DSLSemanticException("DSL query rewrite failed. Expected it to be rewritten to CubeQL/HQL but found DSL");
+      }
       return rewrite(rewrittenQL, drivers);
     } else if (QueryCommand.Type.CUBE.equals(type)) {
       CubeQLCommand cubeQL = (CubeQLCommand) queryCmd;
