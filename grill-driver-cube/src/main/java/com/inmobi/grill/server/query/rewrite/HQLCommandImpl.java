@@ -37,11 +37,11 @@ public class HQLCommandImpl extends HQLCommand {
     super(queryCommand.getCommand(), queryCommand.getUserName(), queryCommand.getConf());
   }
 
-  @Override
-  public Type getType() {
-    return Type.HQL;
-  }
-
+  /**
+   * Any command that is not matched by CubeQL, DSL, NonSQL is assumed to be HQL by default
+   * @param line
+   * @return
+   */
   @Override
   public boolean matches(String line) {
     return true;
