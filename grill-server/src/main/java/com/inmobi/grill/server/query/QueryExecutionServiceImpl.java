@@ -45,7 +45,6 @@ import javax.ws.rs.core.StreamingOutput;
 import com.inmobi.grill.server.query.rewrite.RewriteUtil;
 import com.inmobi.grill.server.GrillService;
 import com.inmobi.grill.server.GrillServices;
-import com.inmobi.grill.server.api.events.AsyncEventListener;
 import com.inmobi.grill.server.api.query.*;
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.session.GrillSessionImpl;
@@ -132,9 +131,9 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   private int maxFinishedQueries;
   GrillServerDAO grillServerDao;
 
-  final GrillEventListener<DriverEvent> driverEventListener = new AsyncEventListener<DriverEvent>() {
+  final GrillEventListener<DriverEvent> driverEventListener = new GrillEventListener<DriverEvent>() {
     @Override
-    public void process(DriverEvent event) {
+    public void onEvent(DriverEvent event) {
       // Need to restore session only in case of hive driver
       if (event instanceof DriverSessionStarted) {
         LOG.info("New driver event by driver " + event.getDriver());
@@ -974,6 +973,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
         finishedCtx.getDriverStatus().setDriverStartTime(query.getDriverStartTime());
         finishedCtx.getDriverStatus().setDriverFinishTime(query.getDriverEndTime());
         finishedCtx.setResultSetPath(query.getResult());
+        finishedCtx.setQueryName(query.getQueryName());
         return finishedCtx;
       }
       updateStatus(queryHandle);

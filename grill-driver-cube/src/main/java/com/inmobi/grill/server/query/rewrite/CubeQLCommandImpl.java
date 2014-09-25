@@ -116,6 +116,10 @@ public class CubeQLCommandImpl extends CubeQLCommand {
     return conf;
   }
 
+  public static CubeQueryRewriter getRewriter(GrillDriver driver, Configuration queryConf) throws SemanticException {
+    return new CubeQueryRewriter(getDriverQueryConf(driver, queryConf));
+  }
+
   public List<CubeQueryInfo> parse() throws SemanticException, ParseException {
     List<CubeQueryInfo> cubeQueries = findCubePositions(getCommand());
     this.cubeQueries = cubeQueries;
