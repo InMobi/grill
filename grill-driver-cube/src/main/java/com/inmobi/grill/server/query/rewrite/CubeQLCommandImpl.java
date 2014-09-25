@@ -45,11 +45,6 @@ public class CubeQLCommandImpl extends CubeQLCommand {
   private List<CubeQueryInfo> cubeQueries = null;
   private boolean parsed = false;
 
-  static Pattern cubePattern = Pattern.compile(".*CUBE\\sSELECT(.*)",
-      Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-  static Matcher matcher = null;
-
-
   public CubeQLCommandImpl(String command, String userName, Configuration conf) {
     super(command, userName, conf);
   }
@@ -87,20 +82,6 @@ public class CubeQLCommandImpl extends CubeQLCommand {
       throw new RewriteException("Rewriting failed, cause : " + e.getMessage(), e);
     }
     return hqlCommand;
-  }
-
-  @Override
-  public boolean matches(String line) {
-    return isCubeQuery(line);
-  }
-
-  public static boolean isCubeQuery(String query) {
-    if (matcher == null) {
-      matcher = cubePattern.matcher(query);
-    } else {
-      matcher.reset(query);
-    }
-    return matcher.matches();
   }
 
   public static Configuration getDriverQueryConf(GrillDriver driver, Configuration queryConf) {

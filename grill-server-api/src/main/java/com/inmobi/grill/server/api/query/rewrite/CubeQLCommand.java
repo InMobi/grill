@@ -1,10 +1,12 @@
-package com.inmobi.grill.server.api.query.rewrite;
+ package com.inmobi.grill.server.api.query.rewrite;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*
  * #%L
@@ -30,6 +32,10 @@ import java.util.List;
  * CubeQL Command that is rewritten to HQLCommand based on the driver configuration
  */
 public abstract class CubeQLCommand extends QueryCommand {
+
+  static Pattern cubePattern = Pattern.compile(".*CUBE\\sSELECT(.*)",
+      Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+  static Matcher matcher = null;
 
   public static class CubeQueryInfo {
     public int startPos;
@@ -76,6 +82,20 @@ public abstract class CubeQLCommand extends QueryCommand {
     };
   }
 
+  @Override
+  public boolean matches(String line) {
+    return isCubeQuery(line);
+  }
+
+  public static boolean isCubeQuery(String query) {
+    if (matcher == null) {
+      matcher = cubePattern.matcher(query);
+    } else {
+      matcher.reset(query);
+    }
+    return matcher.matches();
+  }
+
   /**
    * Parser parses the given CubeQL into AST representation
    * @return list of CubeQL AST respresentations
@@ -83,7 +103,5 @@ public abstract class CubeQLCommand extends QueryCommand {
    * @throws ParseException if there is a syntax error
    */
   public abstract List<CubeQueryInfo> parse() throws SemanticException, ParseException;
-
-  public abstract HQLCommand rewrite() throws RewriteException;
 
 }

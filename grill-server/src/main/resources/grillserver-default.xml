@@ -356,6 +356,13 @@
     <value></value>
     <description>These DSLs should be registered when Grill Server starts up</description>
 </property>
+
+<property>
+    <name>grill.query.rewriter</name>
+    <value>com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl</value>
+    <description>Rewriter Class which implements the query rewrites for each driver</description>
+</property>
+
 <!-- CLI service properties which can be overriden for GRILL services -->
 
 <property>

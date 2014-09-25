@@ -23,6 +23,7 @@ package com.inmobi.grill.server.query.rewrite;
 import java.util.Collection;
 import java.util.Map;
 import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.query.*;
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
@@ -31,23 +32,36 @@ import com.inmobi.grill.server.api.driver.GrillDriver;
 
 public class RewriteUtil {
 
-  public static Map<GrillDriver, HQLCommand> rewriteQuery(QueryContext ctx, Collection<GrillDriver> drivers) throws GrillException {
-    DriverSpecificQueryRewrite rewriter = new DriverSpecificQueryRewriterImpl(ctx);
+  public static Map<GrillDriver, QueryCommand> rewriteQuery(QueryContext ctx, Collection<GrillDriver> drivers) throws GrillException {
+    DriverSpecificQueryRewrite rewriter = getQueryRewriter(ctx.getConf());
+    rewriter.init(ctx);
     return rewrite(rewriter, ctx.getUserQuery(), ctx.getSubmittedUser(), ctx.getConf(), drivers);
   }
 
-  public static Map<GrillDriver, HQLCommand> rewriteQuery(PreparedQueryContext ctx, Collection<GrillDriver> drivers) throws GrillException {
-    DriverSpecificQueryRewrite rewriter = new DriverSpecificQueryRewriterImpl(ctx);
+  public static Map<GrillDriver, QueryCommand> rewriteQuery(PreparedQueryContext ctx, Collection<GrillDriver> drivers) throws GrillException {
+    DriverSpecificQueryRewrite rewriter = getQueryRewriter(ctx.getConf());
+    rewriter.init(ctx);
     return rewrite(rewriter, ctx.getUserQuery(), ctx.getPreparedUser(), ctx.getConf(), drivers);
   }
 
-  public static  Map<GrillDriver, HQLCommand> rewriteQuery(String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
-    DriverSpecificQueryRewrite rewriter = new DriverSpecificQueryRewriterImpl();
+  public static  Map<GrillDriver, QueryCommand> rewriteQuery(String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
+    DriverSpecificQueryRewrite rewriter = getQueryRewriter(conf);
     return rewrite(rewriter, q1, userName, conf, drivers);
   }
 
-  private static Map<GrillDriver,HQLCommand> rewrite(DriverSpecificQueryRewrite rewriter, String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
+  private static Map<GrillDriver, QueryCommand> rewrite(DriverSpecificQueryRewrite rewriter, String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
     final QueryCommand queryCommand = QueryCommands.get(q1, userName, conf);
     return rewriter.rewrite(queryCommand, drivers);
+  }
+
+  private static DriverSpecificQueryRewrite getQueryRewriter(Configuration conf) {
+    Class<?> rewriterClass = conf.getClass(GrillConfConstants.GRILL_QUERY_REWRITER, null);
+    try {
+      return (DriverSpecificQueryRewrite) rewriterClass.newInstance();
+    } catch (InstantiationException e) {
+      throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
+    }
   }
 }

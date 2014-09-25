@@ -24,6 +24,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.hadoop.conf.Configuration;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Query Command which is passed to Query rewriters
  */
@@ -39,17 +43,20 @@ public abstract class QueryCommand {
    * Type  of query to be rewritten
    */
   public static enum Type {
-    NONSQL("NonSQL", "Non SQL commands like add/set"),
-    CUBE("CUBEQL", "CubeQL"),
-    DOMAIN("DSL", "Domain specific language"),
-    HQL("HQL", "Hive Query language");
+    HQL("HQL", "Hive Query language", null),
+    NONSQL("NonSQL", "Non SQL commands like add/set", HQL),
+    CUBE("CUBEQL", "CubeQL", HQL),
+    DOMAIN("DSL", "Domain specific language", CUBE, HQL, NONSQL);
 
     private final String name;
     private final String description;
+    private Set<Type> nextValidStates;
 
-    private Type(String name, String description) {
-      this.name = name;
-      this.description = description;
+    private Type(String name, String description, Type... hql) {
+      this.name=name;
+      this.description=description;
+      this.nextValidStates = new HashSet<Type>();
+      nextValidStates.addAll(Arrays.asList(hql));
     }
 
     public String getName() {
@@ -58,6 +65,10 @@ public abstract class QueryCommand {
 
     public String getDescription() {
       return description;
+    }
+
+    public Set<Type> getNextValidStates() {
+       return nextValidStates;
     }
 
   }
@@ -100,5 +111,13 @@ public abstract class QueryCommand {
    * @return false if not
    */
   public abstract boolean matches(String line);
+
+  /**
+   * Rewrite the given command to another type
+   *
+   * @return the rewritten query command
+   * @throws RewriteException if there is an error during rewrite
+   */
+  public abstract QueryCommand rewrite() throws RewriteException;
 
 }

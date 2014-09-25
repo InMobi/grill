@@ -24,9 +24,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
+import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import org.apache.hadoop.conf.Configuration;
 
 public interface DriverSelector {
   public GrillDriver select(Collection<GrillDriver> drivers,
-      Map<GrillDriver, HQLCommand> queries, Configuration conf);
+      Map<GrillDriver, QueryCommand> queries, Configuration conf);
 }

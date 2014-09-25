@@ -71,6 +71,7 @@ public class DSLCommandImpl extends DSLCommand {
 
     final Collection<DSL> DSLs = DSLRegistry.getInstance().getDSLs();
     DSLSemanticException dslException = new DSLSemanticException("No Domain accepted the query due to : ");
+
     for (DSL dsl : DSLs) {
       try {
         if (dsl.accept(this)) {

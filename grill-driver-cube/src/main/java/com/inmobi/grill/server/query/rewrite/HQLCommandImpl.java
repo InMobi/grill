@@ -22,6 +22,7 @@ package com.inmobi.grill.server.query.rewrite;
 
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+import com.inmobi.grill.server.api.query.rewrite.RewriteException;
 import org.apache.hadoop.conf.Configuration;
 
 public class HQLCommandImpl extends HQLCommand {
@@ -33,17 +34,13 @@ public class HQLCommandImpl extends HQLCommand {
     super(command, userName, conf);
   }
 
+  @Override
+  public QueryCommand rewrite() throws RewriteException {
+    return this;
+  }
+
   public HQLCommandImpl(QueryCommand queryCommand) {
     super(queryCommand.getCommand(), queryCommand.getUserName(), queryCommand.getConf());
   }
 
-  /**
-   * Any command that is not matched by CubeQL, DSL, NonSQL is assumed to be HQL by default
-   * @param line
-   * @return
-   */
-  @Override
-  public boolean matches(String line) {
-    return true;
-  }
 }

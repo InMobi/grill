@@ -228,4 +228,7 @@ public class GrillConfConstants {
   public static final String DSLS = "grill.query.dsls";
   public static final String DSL_QUERY_PFX = "grill.query";
   public static final String DSL_IMPL_SUFFIX = "dsl.impl";
+
+  public static final String GRILL_QUERY_REWRITER = "grill.server.query.rewriter";
+
 }

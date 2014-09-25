@@ -50,7 +50,4 @@ public abstract class DSLCommand extends QueryCommand {
 
      };
   }
-
-  public abstract QueryCommand rewrite() throws DSLSemanticException;
-
 }

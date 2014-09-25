@@ -40,8 +40,23 @@ public abstract class HQLCommand extends QueryCommand {
     return new HQLCommand(input, userName, conf) {
       @Override
       public boolean matches(String line) {
-        return false;
+        return true;
+      }
+
+      @Override
+      public QueryCommand rewrite() throws RewriteException {
+        return null;
       }
     };
+  }
+
+  /**
+   * Any command that is not matched by CubeQL, DSL, NonSQL is assumed to be HQL by default
+   * @param line
+   * @return
+   */
+  @Override
+  public boolean matches(String line) {
+    return true;
   }
 }

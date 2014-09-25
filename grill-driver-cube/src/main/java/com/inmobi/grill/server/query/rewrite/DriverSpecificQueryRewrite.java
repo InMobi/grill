@@ -22,6 +22,8 @@ package com.inmobi.grill.server.query.rewrite;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.driver.GrillDriver;
+import com.inmobi.grill.server.api.query.PreparedQueryContext;
+import com.inmobi.grill.server.api.query.QueryContext;
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 
@@ -32,6 +34,19 @@ import java.util.Map;
  * Rewrites the given query to Driver Specific HQL
  */
 public interface DriverSpecificQueryRewrite {
+
+  /**
+   * Initialize the rewriter
+   * @param ctx QueryContext
+   */
+  void init(QueryContext ctx);
+
+  /**
+   * Initialize the rewriter
+   * @param ctx PreparedQueryContext
+   */
+  void init(PreparedQueryContext ctx);
+
   /**
    *
    * @param command query to be rewritten
@@ -39,5 +54,5 @@ public interface DriverSpecificQueryRewrite {
    * @return
    * @throws GrillException
    */
-    Map<GrillDriver, HQLCommand> rewrite(QueryCommand command, Collection<GrillDriver> drivers) throws GrillException;
+    Map<GrillDriver, QueryCommand> rewrite(QueryCommand command, Collection<GrillDriver> drivers) throws GrillException;
 }

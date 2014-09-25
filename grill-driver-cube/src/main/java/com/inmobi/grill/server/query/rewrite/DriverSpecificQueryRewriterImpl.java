@@ -25,8 +25,6 @@ import com.inmobi.grill.driver.cube.CubeGrillDriver;
 import com.inmobi.grill.server.api.driver.GrillDriver;
 import com.inmobi.grill.server.api.query.*;
 import com.inmobi.grill.server.api.query.rewrite.*;
-import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
-import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.parse.ParseException;
@@ -45,15 +43,12 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
   QueryContext ctx;
   PreparedQueryContext prepCtx;
 
-  public DriverSpecificQueryRewriterImpl(QueryContext ctx) {
+  public void init(QueryContext ctx) {
     this.ctx = ctx;
   }
 
-  public DriverSpecificQueryRewriterImpl(PreparedQueryContext ctx) {
+  public void init(PreparedQueryContext ctx) {
     this.prepCtx = ctx;
-  }
-
-  public DriverSpecificQueryRewriterImpl() {
   }
 
   /**
@@ -64,49 +59,49 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
    * @throws GrillException
    */
   @Override
-  public Map<GrillDriver, HQLCommand> rewrite(QueryCommand queryCmd, Collection<GrillDriver> drivers) throws GrillException {
+  public Map<GrillDriver, QueryCommand> rewrite(QueryCommand queryCmd, Collection<GrillDriver> drivers) throws GrillException {
 
     final QueryCommand.Type type = queryCmd.getType();
     Preconditions.checkNotNull(type, "Unable to parse Query Command " + queryCmd.getCommand());
-
     switch (type) {
       case NONSQL:
-        return doNonSQLRewrites((NonSQLCommand) queryCmd, drivers);
+        return doNonSQLRewrites(queryCmd, drivers);
       case DOMAIN:
-        DSLCommand dslCommand = (DSLCommand) queryCmd;
-        //Rewrite to CubeQL if needed
-        QueryCommand rewrittenQL = dslCommand.rewrite();
-        if (rewrittenQL.getType() == QueryCommand.Type.DOMAIN) {
-          throw new DSLSemanticException("DSL query rewrite failed. Expected it to be rewritten to CubeQL/HQL but found DSL " + rewrittenQL);
+        //Rewrite to CubeQL/HQL
+        final QueryCommand rewrittenQuery = queryCmd.rewrite();
+        if(! QueryCommand.Type.DOMAIN.getNextValidStates().contains(rewrittenQuery.getType())) {
+          throw new DriverSpecificRewriteException("Invalid rewritten query type " + rewrittenQuery.getType());
         }
-        return rewrite(rewrittenQL, drivers);
+        return rewrite(rewrittenQuery, drivers);
       case CUBE:
-        CubeQLCommand cubeQL = (CubeQLCommand) queryCmd;
-        return doCubeRewrites(cubeQL, drivers);
+        return doCubeRewrites(queryCmd, drivers);
       case HQL:
-        Map<GrillDriver, HQLCommand> driverSpecificHQLs = new HashMap<GrillDriver, HQLCommand>();
+        Map<GrillDriver, QueryCommand> driverSpecificHQLs = new HashMap<GrillDriver, QueryCommand>();
         for(GrillDriver driver : drivers) {
-          driverSpecificHQLs.put(driver, (HQLCommand)queryCmd);
+          driverSpecificHQLs.put(driver, queryCmd);
         }
         return driverSpecificHQLs;
     }
-    throw new DriverSpecificRewriteException("Could not parse the given query. Aborting");
+    throw new IllegalArgumentException("Unknown query command type " + queryCmd.getCommand());
   }
 
-  private  Map<GrillDriver, HQLCommand> doNonSQLRewrites(NonSQLCommand cmd, Collection<GrillDriver> drivers) throws GrillException {
-    Map<GrillDriver, HQLCommand> driverSpecificHQLs = new HashMap<GrillDriver, HQLCommand>();
+  private  Map<GrillDriver, QueryCommand> doNonSQLRewrites(QueryCommand cmd, Collection<GrillDriver> drivers) throws GrillException {
+    Map<GrillDriver, QueryCommand> driverSpecificHQLs = new HashMap<GrillDriver, QueryCommand>();
     for(GrillDriver driver : drivers) {
-      final HQLCommand hqlCommand = cmd.rewrite();
+      final QueryCommand hqlCommand = cmd.rewrite();
+      if(! QueryCommand.Type.NONSQL.getNextValidStates().contains(hqlCommand.getType())) {
+        throw new DriverSpecificRewriteException("Invalid rewritten query type " + hqlCommand.getType());
+      }
       driverSpecificHQLs.put(driver, hqlCommand);
     }
     return driverSpecificHQLs;
   }
 
-  private Map<GrillDriver, HQLCommand> doCubeRewrites(CubeQLCommand cubeQL, Collection<GrillDriver> drivers) throws GrillException {
-    Map<GrillDriver, HQLCommand> driverSpecificHQLs = new HashMap<GrillDriver, HQLCommand>();
+  private Map<GrillDriver, QueryCommand> doCubeRewrites(QueryCommand cubeQL, Collection<GrillDriver> drivers) throws GrillException {
+    Map<GrillDriver, QueryCommand> driverSpecificHQLs = new HashMap<GrillDriver, QueryCommand>();
     try {
       //Validate if rewritten query can be parsed
-      cubeQL.parse();
+      ((CubeQLCommand) cubeQL).parse();
     } catch (SemanticException e) {
       throw new DriverSpecificRewriteException("Could not rewrite cubeQL" , e);
     } catch (ParseException e) {
@@ -122,7 +117,10 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
       try {
         //Set Driver specific Query Conf
         cubeQL.setConf(CubeQLCommandImpl.getDriverQueryConf(driver, cubeQL.getConf()));
-        final HQLCommand driverSpecificHQL = cubeQL.rewrite();
+        final QueryCommand driverSpecificHQL = cubeQL.rewrite();
+        if(! QueryCommand.Type.CUBE.getNextValidStates().contains(driverSpecificHQL.getType())) {
+          throw new DriverSpecificRewriteException("Invalid rewritten query type " + driverSpecificHQL.getType());
+        }
         driverSpecificHQLs.put(driver, driverSpecificHQL);
       } catch(GrillException e) {
         CubeGrillDriver.LOG.warn("Driver : " + driver.getClass().getName() +
@@ -137,7 +135,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
   }
 
 
-  private void updateQueryContext(CubeQLCommand queryCmd) throws GrillException {
+  private void updateQueryContext(QueryCommand queryCmd) throws GrillException {
     //Update cube query in context
     if(prepCtx != null) {
       prepCtx.setCubeQuery(queryCmd.getCommand());

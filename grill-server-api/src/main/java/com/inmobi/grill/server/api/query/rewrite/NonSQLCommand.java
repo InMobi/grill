@@ -52,6 +52,4 @@ public abstract class NonSQLCommand extends QueryCommand {
       }
     };
   }
-
-  public abstract HQLCommand rewrite() throws RewriteException;
 }

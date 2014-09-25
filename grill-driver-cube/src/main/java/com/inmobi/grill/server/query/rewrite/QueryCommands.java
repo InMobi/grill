@@ -57,7 +57,7 @@ public class QueryCommands {
         return cmd.getType();
       }
     }
-    return null;
+    throw new IllegalArgumentException("Could not parse query input : " + input);
   }
 
 }

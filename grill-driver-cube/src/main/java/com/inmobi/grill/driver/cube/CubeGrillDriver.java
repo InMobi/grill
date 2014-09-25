@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.query.rewrite.RewriteUtil;
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
 import com.inmobi.grill.server.api.driver.*;
@@ -93,7 +94,7 @@ public class CubeGrillDriver implements GrillDriver {
   }
 
   protected GrillDriver selectDriver(Map<GrillDriver,
-      HQLCommand> queries, Configuration conf) {
+      QueryCommand> queries, Configuration conf) {
     return driverSelector.select(drivers, queries, conf);
   }
 
@@ -103,7 +104,7 @@ public class CubeGrillDriver implements GrillDriver {
      */
     @Override
     public GrillDriver select(Collection<GrillDriver> drivers,
-      final Map<GrillDriver, HQLCommand> driverQueries, final Configuration conf) {
+      final Map<GrillDriver, QueryCommand> driverQueries, final Configuration conf) {
       return Collections.min(drivers, new Comparator<GrillDriver>() {
         @Override
         public int compare(GrillDriver d1, GrillDriver d2) {
@@ -160,7 +161,7 @@ public class CubeGrillDriver implements GrillDriver {
   private void rewriteAndSelect(QueryContext ctx) throws GrillException {
     queryContexts.put(ctx.getQueryHandle(), ctx);
     //1. Rewrite to driver specific query
-    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers);
+    Map<GrillDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers);
 
     // 2. select driver to run the query
     GrillDriver driver = selectDriver(driverQueries, conf);
@@ -264,7 +265,7 @@ public class CubeGrillDriver implements GrillDriver {
     preparedQueries.put(ctx.getPrepareHandle(), ctx);
 
     //1. Rewrite to driver specific query
-    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers);
+    Map<GrillDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers);
 
     // 2. select driver to run the query
     GrillDriver driver = selectDriver(driverQueries, conf);
@@ -282,7 +283,7 @@ public class CubeGrillDriver implements GrillDriver {
       return explainAndPrepare(ctx);
     }
 
-    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(query, null, conf, drivers);
+    Map<GrillDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(query, null, conf, drivers);
     GrillDriver driver = selectDriver(driverQueries, conf);
     return driver.explain(driverQueries.get(driver).getCommand(), conf);
   }

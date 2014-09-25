@@ -42,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.query.rewrite.RewriteUtil;
 import com.inmobi.grill.server.GrillService;
 import com.inmobi.grill.server.GrillServices;
@@ -687,7 +688,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private void rewriteAndSelect(QueryContext ctx) throws GrillException {
-    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
+    Map<GrillDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
 
     // 2. select driver to run the query
     GrillDriver driver = driverSelector.select(drivers.values(), driverQueries, conf);
@@ -697,7 +698,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   }
 
   private void rewriteAndSelect(PreparedQueryContext ctx) throws GrillException {
-    Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
+    Map<GrillDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
 
     // 2. select driver to run the query
     GrillDriver driver = driverSelector.select(drivers.values(), driverQueries, conf);
@@ -1275,7 +1276,8 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       acquire(sessionHandle);
       Configuration qconf = getGrillConf(sessionHandle, grillConf);
       accept(query, qconf, SubmitOp.EXPLAIN);
-      Map<GrillDriver, HQLCommand> driverQueries = RewriteUtil.rewriteQuery(query,  getSession(sessionHandle).getUsername(), qconf , drivers.values());
+      Map<GrillDriver, HQLCommand> driverQueries =
+          RewriteUtil.rewriteQuery(query,  getSession(sessionHandle).getUsername(), qconf , drivers.values());
 
       // select driver to run the query
       GrillDriver selectedDriver = driverSelector.select(drivers.values(),
