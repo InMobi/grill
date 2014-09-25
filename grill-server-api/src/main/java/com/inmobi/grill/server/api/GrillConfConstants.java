@@ -93,16 +93,16 @@ public class GrillConfConstants {
   public static final String GRILL_SESSION_LOGGEDIN_USER = "grill.session.loggedin.user";
 
   // ldap user to cluster/hdfs accessing user resolver related configs
-  public static final String GRILL_SESSION_USER_RESOLVER_TYPE = "grill.session.user.resolver.type";
-  public static final String GRILL_SESSION_USER_RESOLVER_FIXED_VALUE = "grill.session.user.resolver.fixed.value";
-  public static final String GRILL_SESSION_USER_RESOLVER_PROPERTYBASED_FILENAME = "grill.session.user.resolver.propertybased.filename";
-  public static final String GRILL_SESSION_USER_RESOLVER_CUSTOM_CLASS = "grill.session.user.resolver.custom.class";
-  public static final String GRILL_SESSION_USER_RESOLVER_DB_DRIVER_NAME = "grill.session.user.resolver.db.driver.name";
-  public static final String GRILL_SESSION_USER_RESOLVER_DB_JDBC_URL = "grill.session.user.resolver.db.jdbc.url";
-  public static final String GRILL_SESSION_USER_RESOLVER_DB_JDBC_USERNAME = "grill.session.user.resolver.db.jdbc.username";
-  public static final String GRILL_SESSION_USER_RESOLVER_DB_JDBC_PASSWORD = "grill.session.user.resolver.db.jdbc.password";
-  public static final String GRILL_SESSION_USER_RESOLVER_DB_KEYS = "grill.session.user.resolver.db.keys";
-  public static final String GRILL_SESSION_USER_RESOLVER_DB_QUERY = "grill.session.user.resolver.db.query";
+  public static final String GRILL_SERVER_USER_RESOLVER_TYPE = "grill.server.user.resolver.type";
+  public static final String GRILL_SERVER_USER_RESOLVER_FIXED_VALUE = "grill.server.user.resolver.fixed.value";
+  public static final String GRILL_SERVER_USER_RESOLVER_PROPERTYBASED_FILENAME = "grill.server.user.resolver.propertybased.filename";
+  public static final String GRILL_SERVER_USER_RESOLVER_CUSTOM_CLASS = "grill.server.user.resolver.custom.class";
+  public static final String GRILL_SERVER_USER_RESOLVER_DB_DRIVER_NAME = "grill.server.user.resolver.db.driver.name";
+  public static final String GRILL_SERVER_USER_RESOLVER_DB_JDBC_URL = "grill.server.user.resolver.db.jdbc.url";
+  public static final String GRILL_SERVER_USER_RESOLVER_DB_JDBC_USERNAME = "grill.server.user.resolver.db.jdbc.username";
+  public static final String GRILL_SERVER_USER_RESOLVER_DB_JDBC_PASSWORD = "grill.server.user.resolver.db.jdbc.password";
+  public static final String GRILL_SERVER_USER_RESOLVER_DB_KEYS = "grill.server.user.resolver.db.keys";
+  public static final String GRILL_SERVER_USER_RESOLVER_DB_QUERY = "grill.server.user.resolver.db.query";
 
   public static String getServiceImplConfKey(String sName) {
     return GRILL_PFX + sName + GRILL_SERVICE_IMPL_SFX;

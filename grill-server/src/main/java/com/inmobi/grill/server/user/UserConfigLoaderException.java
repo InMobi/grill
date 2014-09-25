@@ -24,7 +24,7 @@ import java.sql.SQLException;
  * #L%
  */
 
-public class UserConfigLoaderException extends GrillException {
+public class UserConfigLoaderException extends RuntimeException {
   public UserConfigLoaderException(String s) {
     super(s);
   }

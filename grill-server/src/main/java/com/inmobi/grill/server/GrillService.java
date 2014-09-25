@@ -57,7 +57,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class GrillService extends CompositeService implements Externalizable {
   public static final Log LOG = LogFactory.getLog(GrillService.class);
   private final CLIService cliService;
-  private final UserConfigLoader userConfigLoader;
 
   protected boolean stopped = false;
 
@@ -66,10 +65,9 @@ public abstract class GrillService extends CompositeService implements Externali
   protected static ConcurrentHashMap<String, GrillSessionHandle> sessionMap =
       new ConcurrentHashMap<String, GrillSessionHandle>();
 
-  protected GrillService(String name, CLIService cliService) throws GrillException {
+  protected GrillService(String name, CLIService cliService) {
     super(name);
     this.cliService = cliService;
-    this.userConfigLoader = new UserConfigLoaderFactory(cliService.getHiveConf()).getUserConfigLoader();
   }
 
   /**
@@ -92,7 +90,7 @@ public abstract class GrillService extends CompositeService implements Externali
       if (configuration != null) {
         sessionConf.putAll(configuration);
       }
-      Map<String, String> userConfig = userConfigLoader.getUserConfig(username);
+      Map<String, String> userConfig = UserConfigLoaderFactory.getUserConfig(username);
       UtilityMethods.mergeMaps(sessionConf, userConfig, false);
       sessionConf.put(GrillConfConstants.GRILL_SESSION_LOGGEDIN_USER, username);
       if(sessionConf.get(GrillConfConstants.GRILL_SESSION_CLUSTER_USER) == null) {

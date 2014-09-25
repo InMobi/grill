@@ -19,13 +19,9 @@ package com.inmobi.grill.server.user;
  * #L%
  */
 
-import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.GrillConfConstants;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.util.ReflectionUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -34,10 +30,10 @@ public class CustomUserConfigLoader extends UserConfigLoader {
   Class<? extends UserConfigLoader> customHandlerClass;
   UserConfigLoader customProvider;
 
-  public CustomUserConfigLoader(HiveConf conf) throws GrillException {
+  public CustomUserConfigLoader(HiveConf conf) {
     super(conf);
     this.customHandlerClass = (Class<? extends UserConfigLoader>) hiveConf.getClass(
-      GrillConfConstants.GRILL_SESSION_USER_RESOLVER_CUSTOM_CLASS,
+      GrillConfConstants.GRILL_SERVER_USER_RESOLVER_CUSTOM_CLASS,
       UserConfigLoader.class
     );
     try {
@@ -45,13 +41,13 @@ public class CustomUserConfigLoader extends UserConfigLoader {
       // in java6, these four extend directly from Exception. So have to handle separately. In java7,
       // the common subclass is ReflectiveOperationException
     } catch (InvocationTargetException e) {
-      throw new GrillException(e);
+      throw new UserConfigLoaderException(e);
     } catch (NoSuchMethodException e) {
-      throw new GrillException(e);
+      throw new UserConfigLoaderException(e);
     } catch (InstantiationException e) {
-      throw new GrillException(e);
+      throw new UserConfigLoaderException(e);
     } catch (IllegalAccessException e) {
-      throw new GrillException(e);
+      throw new UserConfigLoaderException(e);
     }
   }
 

@@ -20,22 +20,19 @@ package com.inmobi.grill.server.user;
  * #L%
  */
 
-import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import org.apache.hadoop.hive.conf.HiveConf;
 
+import java.util.Map;
+
 public class UserConfigLoaderFactory {
 
-  private final HiveConf conf;
-  private final UserConfigLoader userConfigLoader;
+  private static HiveConf conf;
+  private static UserConfigLoader userConfigLoader;
 
-  public UserConfigLoaderFactory(HiveConf conf) throws GrillException {
-    this.conf = conf;
-    this.userConfigLoader = initializeUserConfigLoader();
-  }
-
-  public UserConfigLoader getUserConfigLoader() {
-    return userConfigLoader;
+  public static void init(HiveConf c) {
+    conf = c;
+    userConfigLoader = initializeUserConfigLoader();
   }
 
   public static enum RESOLVER_TYPE {
@@ -44,19 +41,19 @@ public class UserConfigLoaderFactory {
     DATABASE,
     CUSTOM
   }
-  public UserConfigLoader initializeUserConfigLoader() throws GrillException {
-    String resolverType = conf.get(GrillConfConstants.GRILL_SESSION_USER_RESOLVER_TYPE);
+  public static UserConfigLoader initializeUserConfigLoader() {
+    String resolverType = conf.get(GrillConfConstants.GRILL_SERVER_USER_RESOLVER_TYPE);
     if(resolverType == null || resolverType.length() == 0) {
-      throw new GrillException("user resolver type not determined. value was not provided in conf");
+      throw new UserConfigLoaderException("user resolver type not determined. value was not provided in conf");
     }
     for(RESOLVER_TYPE type: RESOLVER_TYPE.values()) {
       if(type.name().equals(resolverType)) {
         return getQueryUserResolver(type);
       }
     }
-    throw new GrillException("user resolver type not determined. provided value: " + resolverType);
+    throw new UserConfigLoaderException("user resolver type not determined. provided value: " + resolverType);
   }
-  public UserConfigLoader getQueryUserResolver(RESOLVER_TYPE resolverType) throws GrillException {
+  public static UserConfigLoader getQueryUserResolver(RESOLVER_TYPE resolverType) {
     switch(resolverType) {
       case PROPERTYBASED:
         return new PropertyBasedUserConfigLoader(conf);
@@ -68,5 +65,9 @@ public class UserConfigLoaderFactory {
       default:
         return new FixedUserConfigLoader(conf);
     }
+  }
+
+  public static Map<String, String> getUserConfig(String loggedInUser) {
+    return userConfigLoader.getUserConfig(loggedInUser);
   }
 }

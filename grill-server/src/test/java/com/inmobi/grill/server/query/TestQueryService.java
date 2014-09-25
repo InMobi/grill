@@ -450,6 +450,7 @@ public class TestQueryService extends GrillJerseyTest {
 
     GrillQuery ctx2 = target().path("queryapi/queries").path(
         handle2.toString()).queryParam("sessionid", grillSessionId).request().get(GrillQuery.class);
+    Assert.assertNotNull(ctx2);
     Assert.assertEquals(ctx2.getQueryName().toLowerCase(), "testqueryname2");
     // wait till the query finishes
     stat = ctx2.getStatus();
