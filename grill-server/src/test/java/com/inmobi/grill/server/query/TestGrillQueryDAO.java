@@ -40,7 +40,7 @@ import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.query.FinishedGrillQuery;
 import com.inmobi.grill.server.api.query.QueryContext;
 
-public class TestGrillDAO extends GrillJerseyTest {
+public class TestGrillQueryDAO extends GrillJerseyTest {
   GrillQueryDAO dao;
 
   @BeforeClass

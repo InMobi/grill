@@ -23,6 +23,7 @@ package com.inmobi.grill.server.scheduler;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.cli.CLIService;
 import org.quartz.SchedulerException;
 
@@ -44,6 +45,24 @@ public class SchedulerServiceImpl extends GrillService implements
 
   public SchedulerServiceImpl(CLIService cliService) {
     super("scheduler", cliService);
+  }
+
+  public void init(HiveConf hiveConf) {
+    super.init(hiveConf);
+    this.conf = hiveConf;
+    initializeTables(conf);
+    LOG.info("Query execution service initialized");
+  }
+
+  private void initializeTables(Configuration conf) {
+    this.grillSchedulerDao = new GrillSchedulerDAO();
+    this.grillSchedulerDao.init(conf);
+    try {
+      this.grillSchedulerDao.createScheduleInfoTable();
+      this.grillSchedulerDao.createScheduleRunInfoTable();
+    } catch (Exception e) {
+      LOG.warn("Unable to create scheduler service table.", e);
+    }
   }
 
   @Override
