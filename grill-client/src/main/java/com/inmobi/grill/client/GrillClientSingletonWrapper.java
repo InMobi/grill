@@ -3,7 +3,6 @@ package com.inmobi.grill.client;
 import com.inmobi.grill.client.exceptions.GrillClientServerConnectionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.shims.ShimLoader;
 
 import javax.security.auth.login.LoginException;
 import java.io.Console;
