@@ -358,7 +358,7 @@
 </property>
 
 <property>
-    <name>grill.query.rewriter</name>
+    <name>grill.server.query.rewriter</name>
     <value>com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl</value>
     <description>Rewriter Class which implements the query rewrites for each driver</description>
 </property>
