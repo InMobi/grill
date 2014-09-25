@@ -364,7 +364,7 @@
 
 <property>
   <name>grill.session.user.resolver.fixed.value</name>
-  <value>grilluser</value>
+  <value></value>
   <description>when grill.session.user.resolver.type=FIXED, This will be the value cluster user will resolve to.</description>
 </property>
 
