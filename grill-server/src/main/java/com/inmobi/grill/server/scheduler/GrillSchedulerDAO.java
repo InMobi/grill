@@ -14,13 +14,14 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.hive.com.esotericsoftware.minlog.Log;
 
 import com.google.gson.Gson;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
+import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.ScheduleStatus;
 import com.inmobi.grill.api.schedule.ScheduleStatus.Status;
-import com.inmobi.grill.api.schedule.ScheduleRunInfo;
 import com.inmobi.grill.api.schedule.XExecution;
 import com.inmobi.grill.api.schedule.XSchedule;
 import com.inmobi.grill.api.schedule.XStartSpec;
@@ -32,6 +33,59 @@ public class GrillSchedulerDAO extends GrillServerDAO {
   private Gson gson = new Gson();
 
   /**
+   * Method to create ScheduleInfo table, this is required for embedded grill
+   * server. For production server we will not be creating tables as it would be
+   * created upfront.
+   */
+  public void createScheduleInfoTable() throws GrillException {
+    String sql =
+        "CREATE TABLE if not exists schedule_info (schedule_id varchar(255) not null unique,"
+            + "execution clob not null, startspec clob not null,"
+            + "resourcepath clob, schedule_conf clob, starttime bigint,"
+            + "endtime bigint, username varchar(255), status varchar(255), "
+            + "createdon bigint)";
+    try {
+      createTable(sql);
+    } catch (SQLException e) {
+      throw new GrillException("Unable to create ScheduleInfo table.", e);
+    }
+  }
+
+  public void dropScheduleInfoTable() throws Exception {
+    try {
+      dropTable("drop table schedule_info");
+    } catch (SQLException e) {
+      throw new GrillException("Unable to drop schedule_info table", e);
+    }
+  }
+
+  /**
+   * Method to create ScheduleRunInfo table, this is required for embedded grill
+   * server. For production server we will not be creating tables as it would be
+   * created upfront.
+   */
+  public void createScheduleRunInfoTable() throws GrillException {
+    String sql =
+        "CREATE TABLE if not exists schedule_run_info (schedule_id varchar(255) not null unique,"
+            + "sessionhandle varchar(255) not null, runhandle varchar(255) not null,"
+            + "starttime bigint, endtime bigint, resultpath varchar(255),"
+            + "status varchar(255), query varchar(255))";
+    try {
+      createTable(sql);
+    } catch (SQLException e) {
+      throw new GrillException("Unable to create ScheduleRunInfo table.", e);
+    }
+  }
+
+  public void dropScheduleRunInfoTable() throws Exception {
+    try {
+      dropTable("drop table schedule_run_info");
+    } catch (SQLException e) {
+      throw new GrillException("Unable to drop schedule_run_info table", e);
+    }
+  }
+
+  /**
    * DAO method to insert a new Schedule info into Table
    * 
    * @param scheduleInfoDAO
@@ -41,14 +95,14 @@ public class GrillSchedulerDAO extends GrillServerDAO {
       throws GrillException {
     String scheduleId = UUID.randomUUID().toString();
     GrillScheduleInfo scheduleInfoDAO = new GrillScheduleInfo();
-    scheduleInfoDAO.setSchedule_id(scheduleId);
+    scheduleInfoDAO.setScheduleId(scheduleId);
     scheduleInfoDAO.setUsername(username);
     String execJson = gson.toJson(schedule.getExecution());
     String startSpecJson = gson.toJson(schedule.getStartSpec());
     String resPathJson = gson.toJson(schedule.getResourcePath());
     String scheConJson = gson.toJson(schedule.getScheduleConf());
-    scheduleInfoDAO.setStart_time(schedule.getStartTime().getMillisecond());
-    scheduleInfoDAO.setEnd_time(schedule.getEndTime().getMillisecond());
+    scheduleInfoDAO.setStartTime(schedule.getStartTime().getMillisecond());
+    scheduleInfoDAO.setEndTime(schedule.getEndTime().getMillisecond());
     try {
       Clob execClob = ds.getConnection().createClob();
       execClob.setString(0, execJson);
@@ -56,15 +110,15 @@ public class GrillSchedulerDAO extends GrillServerDAO {
 
       Clob startSpecClob = ds.getConnection().createClob();
       startSpecClob.setString(0, startSpecJson);
-      scheduleInfoDAO.setStart_spec(startSpecClob);
+      scheduleInfoDAO.setStartSpec(startSpecClob);
 
       Clob resPathClob = ds.getConnection().createClob();
       resPathClob.setString(0, resPathJson);
-      scheduleInfoDAO.setResource_path(resPathClob);
+      scheduleInfoDAO.setResourcePath(resPathClob);
 
       Clob scheConClob = ds.getConnection().createClob();
       scheConClob.setString(0, scheConJson);
-      scheduleInfoDAO.setSchedule_conf(scheConClob);
+      scheduleInfoDAO.setScheduleConf(scheConClob);
     } catch (SQLException e) {
       throw new GrillException("Error setting clob.", e);
     }
@@ -73,12 +127,12 @@ public class GrillSchedulerDAO extends GrillServerDAO {
         "INSERT into schedule_info(schedule_id, execution, start_spec, resource_path, schedule_conf, start_time, end_time, username, status, created_on) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', now())";
     QueryRunner runner = new QueryRunner(ds);
     try {
-      runner.update(sql, scheduleInfoDAO.getSchedule_id(),
-          scheduleInfoDAO.getExecution(), scheduleInfoDAO.getStart_spec(),
-          scheduleInfoDAO.getResource_path(),
-          scheduleInfoDAO.getSchedule_conf(), scheduleInfoDAO.getStart_time(),
-          scheduleInfoDAO.getEnd_time(), scheduleInfoDAO.getUsername(),
-          scheduleInfoDAO.getStatus(), scheduleInfoDAO.getCreated_on());
+      runner.update(sql, scheduleInfoDAO.getScheduleId(),
+          scheduleInfoDAO.getExecution(), scheduleInfoDAO.getStartSpec(),
+          scheduleInfoDAO.getResourcePath(), scheduleInfoDAO.getScheduleConf(),
+          scheduleInfoDAO.getStartTime(), scheduleInfoDAO.getEndTime(),
+          scheduleInfoDAO.getUsername(), scheduleInfoDAO.getStatus(),
+          scheduleInfoDAO.getCreated_on());
     } catch (SQLException e) {
       throw new GrillException("Error inserting schedule task in DB", e);
     }
@@ -180,21 +234,19 @@ public class GrillSchedulerDAO extends GrillServerDAO {
       scheduleInfoDAO = runner.query(sql, rsh, schedule_id);
       schedule.setExecution(gson.fromJson(scheduleInfoDAO.getExecution()
           .getCharacterStream(), XExecution.class));
-      schedule.setStartSpec(gson.fromJson(scheduleInfoDAO.getStart_spec()
+      schedule.setStartSpec(gson.fromJson(scheduleInfoDAO.getStartSpec()
           .getCharacterStream(), XStartSpec.class));
       schedule.getResourcePath().addAll(
-          gson.fromJson(
-              scheduleInfoDAO.getResource_path().getCharacterStream(),
+          gson.fromJson(scheduleInfoDAO.getResourcePath().getCharacterStream(),
               List.class));
       schedule.getScheduleConf().addAll(
-          gson.fromJson(
-              scheduleInfoDAO.getSchedule_conf().getCharacterStream(),
+          gson.fromJson(scheduleInfoDAO.getScheduleConf().getCharacterStream(),
               List.class));
       GregorianCalendar xc = new GregorianCalendar();
-      xc.setTimeInMillis(scheduleInfoDAO.getStart_time());
+      xc.setTimeInMillis(scheduleInfoDAO.getStartTime());
       schedule.setStartTime(DatatypeFactory.newInstance()
           .newXMLGregorianCalendar(xc));
-      xc.setTimeInMillis(scheduleInfoDAO.getEnd_time());
+      xc.setTimeInMillis(scheduleInfoDAO.getEndTime());
       schedule.setEndTime(DatatypeFactory.newInstance()
           .newXMLGregorianCalendar(xc));
     } catch (SQLException e) {
@@ -307,7 +359,8 @@ public class GrillSchedulerDAO extends GrillServerDAO {
         return stringBuilder.toString();
       }
     };
-    ScheduleInfo scheduleInfo = new ScheduleInfo();
+    ScheduleInfo scheduleInfo =
+        new ScheduleInfo(schedule_id, new XSchedule(), "", "", "", "");
     XSchedule schedule = getScheduleDefn(schedule_id);
     String query =
         "SELECT username, status from schedule_info where schedule_id=?";
@@ -329,14 +382,12 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     } catch (SQLException e) {
       throw new GrillException("Error in getting scheduleInfo.", e);
     }
-    scheduleInfo.setScheduleHandle(schedule_id);
     scheduleInfo.setSchedule(schedule);
     return scheduleInfo;
   }
 
   public ScheduleRunInfo getRunInfo(String scheduleId, String runHandle)
       throws GrillException {
-    ScheduleRunInfo runInfo = new ScheduleRunInfo();
     ResultSetHandler<ScheduleRunInfo> rsh =
         new BeanHandler<ScheduleRunInfo>(ScheduleRunInfo.class);
     String runDataQuery =
@@ -344,10 +395,10 @@ public class GrillSchedulerDAO extends GrillServerDAO {
             + " from schedule_run_info where schedule_id=? and run_handle=?";
     QueryRunner runner = new QueryRunner(ds);
     try {
-      runInfo = runner.query(runDataQuery, rsh, scheduleId, runHandle);
+      return runner.query(runDataQuery, rsh, scheduleId, runHandle);
     } catch (SQLException e) {
-      throw new GrillException("Error in getting scheduleInfo.", e);
+      Log.error("Error in getting scheduleInfo.", e);
     }
-    return runInfo;
+    return null;
   }
 }

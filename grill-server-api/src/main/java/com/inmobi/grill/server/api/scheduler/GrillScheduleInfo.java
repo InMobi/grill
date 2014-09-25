@@ -28,8 +28,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Class to represent the Schedule Info table which is serialized to
- * database.
+ * Class to represent the Schedule Info table which is serialized to database.
  */
 @EqualsAndHashCode
 @ToString
@@ -37,34 +36,34 @@ public class GrillScheduleInfo {
 
   @Getter
   @Setter
-  String schedule_id;
+  private String scheduleId;
   @Getter
   @Setter
-  Clob execution;
+  private Clob execution;
   @Getter
   @Setter
-  Clob start_spec;
+  private Clob startSpec;
   @Getter
   @Setter
-  Clob resource_path;
+  private Clob resourcePath;
   @Getter
   @Setter
-  Clob schedule_conf;
+  private Clob scheduleConf;
   @Getter
   @Setter
-  int start_time;
+  private long startTime;
   @Getter
   @Setter
-  int end_time;
+  private long endTime;
   @Getter
   @Setter
-  String username;
+  private String username;
   @Getter
   @Setter
-  String status;
+  private String status;
   @Getter
   @Setter
-  Long created_on;
+  private long created_on;
 
   public GrillScheduleInfo() {
   }

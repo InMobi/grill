@@ -46,7 +46,7 @@ public class TestGrillDAO extends GrillJerseyTest {
   @BeforeClass
   public void setup() {
     Configuration conf = new Configuration();
-    GrillQueryDAO dao = new GrillQueryDAO();
+    dao = new GrillQueryDAO();
     dao.init(conf);
   }
 

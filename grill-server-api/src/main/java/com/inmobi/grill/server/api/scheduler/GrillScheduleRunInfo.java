@@ -35,28 +35,28 @@ public class GrillScheduleRunInfo {
 
   @Getter
   @Setter
-  String scheduleId;
+  private String scheduleId;
   @Getter
   @Setter
-  String sessionHandle;
+  private String sessionHandle;
   @Getter
   @Setter
-  String runHandle;
+  private String runHandle;
   @Getter
   @Setter
-  Long startTime;
+  private long startTime;
   @Getter
   @Setter
-  Long endTime;
+  private long endTime;
   @Getter
   @Setter
-  String status;
+  private String status;
   @Getter
   @Setter
-  String resultPath;
+  private String resultPath;
   @Getter
   @Setter
-  String query;
+  private String query;
 
   public GrillScheduleRunInfo() {
   }

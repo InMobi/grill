@@ -11,31 +11,31 @@ import lombok.Setter;
 
 @XmlRootElement
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleRunInfo {
   // Gives insights of an instance of a schedule to user
-  @XmlElement
   @Getter
   @Setter
-  String scheduleid;
   @XmlElement
+  private String scheduleid;
   @Getter
   @Setter
-  String runHandle;
   @XmlElement
+  private String runHandle;
   @Getter
   @Setter
-  String startTime;
   @XmlElement
+  private long startTime;
   @Getter
   @Setter
-  String endTime;
   @XmlElement
+  private long endTime;
   @Getter
   @Setter
-  String resultSetPath;
   @XmlElement
+  private String resultSetPath;
   @Getter
   @Setter
-  String taskStatus;
+  @XmlElement
+  private String taskStatus;
 }
