@@ -63,8 +63,9 @@ public class GrillClient {
     conf.setUser(username);
     this.password = password;
     try {
-      String user = ShimLoader.getHadoopShims().getUGIForConf(conf).getUserName();
-      this.conf.set("grill.session.cluster.user", user);
+      if(this.conf.get(GrillClientConfig.GRILL_SESSION_CLUSTER_USER) == null) {
+        this.conf.set(GrillClientConfig.GRILL_SESSION_CLUSTER_USER, ShimLoader.getHadoopShims().getUGIForConf(conf).getUserName());
+      }
     } catch (LoginException e) {
       LOG.error(e);
     } catch (IOException e) {

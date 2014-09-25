@@ -103,7 +103,7 @@ public class TestQueryService extends GrillJerseyTest {
     metricsSvc = (MetricsService)GrillServices.get().getService(MetricsService.NAME);
     Map<String, String> sessionconf = new HashMap<String, String>();
     sessionconf.put("test.session.key", "svalue");
-    grillSessionId = queryService.openSession("foo", "bar", sessionconf);
+    grillSessionId = queryService.openSession("foo@localhost", "bar", sessionconf); //@localhost should be removed automatically
     createTable(testTable);
     loadData(testTable, TEST_DATA_FILE);
   }

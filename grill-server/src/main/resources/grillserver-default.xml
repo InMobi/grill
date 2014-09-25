@@ -356,4 +356,67 @@
     <description>Implementation class for Grill Application Listener</description>
 </property>
 
+<property>
+  <name>grill.session.user.resolver.type</name>
+  <value>FIXED</value>
+  <description>Type of user config resolver. allowed values are FIXED, PROPERTYBASED, DATABASE, CUSTOM.</description>
+</property>
+
+<property>
+  <name>grill.session.user.resolver.fixed.value</name>
+  <value>grilluser</value>
+  <description>when grill.session.user.resolver.type=FIXED, This will be the value cluster user will resolve to.</description>
+</property>
+
+<property>
+  <name>grill.session.user.resolver.propertybased.filename</name>
+  <value>/path/to/propertyfile</value>
+  <description>when grill.session.user.resolver.type is PROPERTYBASED, then this file will be read and parsed to
+      determine cluster user. example schema of the file is:
+      user1, user2, user3 = clusteruser1
+      user4, user5 = clusteruser2
+      * = clusteruser3
+  </description>
+</property>
+
+<property>
+  <name>grill.server.user.resolver.db.driver.name</name>
+  <value>org.hsqldb.jdbcDriver</value>
+  <description>For database based user config loader, the database driver class</description>
+</property>
+<property>
+  <name>grill.server.user.resolver.db.jdbc.url</name>
+  <value>jdbc:hsqldb:/tmp/grill_user_config_loader.db</value>
+  <description>For database based user config loader, jdbc url of the database</description>
+</property>
+<property>
+  <name>grill.server.user.resolver.db.jdbc.username</name>
+  <value>org.hsqldb.jdbcDriver</value>
+  <description>For database based user config loader, the jdbc username</description>
+</property>
+<property>
+  <name>grill.server.user.resolver.db.jdbc.password</name>
+  <value>org.hsqldb.jdbcDriver</value>
+  <description>For database based user config loader, the jdbc password</description>
+</property>
+<property>
+  <name>grill.server.user.resolver.db.keys</name>
+  <value>grill.session.cluster.user,grill.session.queue</value>
+  <description>For database based user config loader, the conf keys that will be loaded from database.</description>
+</property>
+<property>
+  <name>grill.server.user.resolver.db.query</name>
+  <value>select clusteruser,queue from user_config_table where username=?</value>
+  <description>For database based user config loader, this query will be run with single argument = logged in user
+    and the result columns will be assigned to grill.server.user.resolver.db.keys in order.
+  </description>
+</property>
+
+<property>
+  <name>grill.session.user.resolver.custom.class</name>
+  <value>full.package.name.Classname</value>
+  <description>In case the provided implementations are not sufficient for user config resolver,
+      a custom classname can be provided. Class should extend com.inmobi.grill.server.user.UserConfigLoader
+  </description>
+</property>
 </configuration>
