@@ -24,10 +24,7 @@ import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.driver.cube.CubeGrillDriver;
 import com.inmobi.grill.server.api.driver.GrillDriver;
 import com.inmobi.grill.server.api.query.*;
-import com.inmobi.grill.server.api.query.rewrite.CubeQLCommand;
-import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
-import com.inmobi.grill.server.api.query.rewrite.NonSQLCommand;
-import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+import com.inmobi.grill.server.api.query.rewrite.*;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
 import org.apache.commons.logging.Log;
@@ -71,24 +68,29 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
 
     final QueryCommand.Type type = queryCmd.getType();
     Preconditions.checkNotNull(type, "Unable to parse Query Command " + queryCmd.getCommand());
-    if(QueryCommand.Type.NONSQL.equals(type)) {
-      doNonSQLRewrites((NonSQLCommand)queryCmd, drivers);
-    }
 
-    //Rewrite to CubeQL if needed
-    QueryCommand rewrittenQL = null;
-    if (QueryCommand.Type.DOMAIN.equals(type)) {
-      DSLCommand dslCommand = (DSLCommand) queryCmd;
-      rewrittenQL = dslCommand.rewrite();
-      if(rewrittenQL.getType() == QueryCommand.Type.DOMAIN) {
-        throw new DSLSemanticException("DSL query rewrite failed. Expected it to be rewritten to CubeQL/HQL but found DSL");
-      }
-      return rewrite(rewrittenQL, drivers);
-    } else if (QueryCommand.Type.CUBE.equals(type)) {
-      CubeQLCommand cubeQL = (CubeQLCommand) queryCmd;
-      return doCubeRewrites(cubeQL, drivers);
+    switch (type) {
+      case NONSQL:
+        return doNonSQLRewrites((NonSQLCommand) queryCmd, drivers);
+      case DOMAIN:
+        DSLCommand dslCommand = (DSLCommand) queryCmd;
+        //Rewrite to CubeQL if needed
+        QueryCommand rewrittenQL = dslCommand.rewrite();
+        if (rewrittenQL.getType() == QueryCommand.Type.DOMAIN) {
+          throw new DSLSemanticException("DSL query rewrite failed. Expected it to be rewritten to CubeQL/HQL but found DSL");
+        }
+        return rewrite(rewrittenQL, drivers);
+      case CUBE:
+        CubeQLCommand cubeQL = (CubeQLCommand) queryCmd;
+        return doCubeRewrites(cubeQL, drivers);
+      case HQL:
+        Map<GrillDriver, HQLCommand> driverSpecificHQLs = new HashMap<GrillDriver, HQLCommand>();
+        for(GrillDriver driver : drivers) {
+          driverSpecificHQLs.put(driver, (HQLCommand)queryCmd);
+        }
+        return driverSpecificHQLs;
     }
-    return null;
+    throw new DriverSpecificRewriteException("Could not parse the given query. Aborting");
   }
 
   private  Map<GrillDriver, HQLCommand> doNonSQLRewrites(NonSQLCommand cmd, Collection<GrillDriver> drivers) throws GrillException {

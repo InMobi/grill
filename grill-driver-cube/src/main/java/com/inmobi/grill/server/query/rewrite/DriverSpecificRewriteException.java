@@ -54,7 +54,7 @@ public class DriverSpecificRewriteException extends RewriteException {
 
   @Override
   public String getMessage() {
-    StringBuilder errorMessage = new StringBuilder(super.getMessage() + " : ");
+    StringBuilder errorMessage = new StringBuilder(super.getMessage());
      if(driverErrorMessages != null) {
        for(Map.Entry<GrillDriver, String> driver: driverErrorMessages.entrySet()) {
          errorMessage.append(" Driver :").append(driver.getClass().getName());

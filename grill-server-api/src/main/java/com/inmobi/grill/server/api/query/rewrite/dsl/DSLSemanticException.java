@@ -21,6 +21,7 @@ package com.inmobi.grill.server.api.query.rewrite.dsl;
  */
 
 import com.inmobi.grill.api.GrillException;
+import com.inmobi.grill.server.api.query.rewrite.RewriteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * Thrown when there is a DSL syntax/semantic Error during the DSL rewrite
  */
-public class DSLSemanticException extends GrillException {
+public class DSLSemanticException extends RewriteException {
 
   List<String> dslRwriteErrors = new ArrayList<String>(1);
 
