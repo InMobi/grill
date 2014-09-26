@@ -30,14 +30,9 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class DSLCommandImpl extends DSLCommand {
-
-  static Pattern domainPattern = Pattern.compile(".*DOMAIN\\sSELECT.*",
-      Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-  static Matcher matcher = null;
 
   public static final Log LOG = LogFactory.getLog(DSLCommandImpl.class);
 
@@ -48,22 +43,6 @@ public class DSLCommandImpl extends DSLCommand {
   public DSLCommandImpl(String command, String submittedUser, Configuration conf) {
     super(command, submittedUser, conf);
   }
-
-  @Override
-  public boolean matches(String line) {
-    if (matcher == null) {
-      matcher = domainPattern.matcher(line);
-    } else {
-      matcher.reset(line);
-    }
-    return matcher.matches();
-  }
-
-  @Override
-  public Type getType() {
-    return Type.DOMAIN;
-  }
-
 
   @Override
   public QueryCommand rewrite() throws DSLSemanticException {

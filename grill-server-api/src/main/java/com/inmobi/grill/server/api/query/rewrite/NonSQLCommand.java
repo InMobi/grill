@@ -20,6 +20,7 @@ package com.inmobi.grill.server.api.query.rewrite;
  * #L%
  */
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 /**
@@ -37,6 +38,12 @@ public abstract class NonSQLCommand extends QueryCommand {
   @Override
   public Type getType() {
     return Type.NONSQL;
+  }
+
+  @Override
+  public boolean matches(String cmd) {
+   return StringUtils.startsWithIgnoreCase(cmd, "add") ||
+        StringUtils.startsWithIgnoreCase(cmd, "set");
   }
 
   public static NonSQLCommand get(String input, String userName, Configuration conf) {

@@ -48,9 +48,9 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   private static final long serialVersionUID = 1L;
 
   @Getter @Setter private QueryHandle queryHandle;
-  // User provides three query types - NonSQL, CubeQL, DSL
+  // User provides these query types - <pre>QueryCommand.Type<pre>
   @Getter final private String userQuery;
-  // Cube query will be the same as User query whne CubeQL is provided
+  // Cube query will be the same as User query when CubeQL is provided
   @Getter @Setter private String cubeQuery;
   @Getter final private String submittedUser;
   transient @Getter @Setter private Configuration conf;
@@ -59,7 +59,7 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   @Getter final private boolean isPersistent;
   @Getter final private boolean isDriverPersistent;
   transient @Getter @Setter private GrillDriver selectedDriver;
-  // CubeQL is rewritten to a chosen Driver Specific QL
+  // The user query is rewritten to a chosen Driver Specific QL
   @Getter @Setter private String driverQuery;
   @Getter private QueryStatus status;
   @Getter @Setter private String resultSetPath;

@@ -20,9 +20,12 @@ package com.inmobi.grill.server.api.query.rewrite.dsl;
  * #L%
  */
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 public abstract class DSLCommand extends QueryCommand {
+
+  public static final String DSL_PREFIX = "DOMAIN";
 
   protected DSLCommand(String input, String userName, Configuration conf) {
     super(input, userName, conf);
@@ -50,4 +53,10 @@ public abstract class DSLCommand extends QueryCommand {
 
      };
   }
+
+  @Override
+  public boolean matches(String line) {
+    return StringUtils.startsWithIgnoreCase(command, DSL_PREFIX);
+  }
+
 }

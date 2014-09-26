@@ -35,16 +35,6 @@ public class NonSQLCommandImpl extends NonSQLCommand {
   }
 
   @Override
-  public boolean matches(String cmd) {
-    String line = cmd.toLowerCase();
-    if (line.startsWith("add") ||
-        line.startsWith("set")) {
-      return true;
-    }
-    return false;
-  }
-
-  @Override
   public HQLCommand rewrite() throws RewriteException {
     HQLCommand driverQL = new HQLCommandImpl(this);
     return driverQL;
