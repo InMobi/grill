@@ -28,13 +28,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.DelayQueue;
@@ -48,6 +42,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import com.inmobi.grill.server.GrillService;
+import com.inmobi.grill.server.GrillServices;
+import com.inmobi.grill.server.api.query.*;
+import com.inmobi.grill.server.session.GrillSessionImpl;
+import com.inmobi.grill.server.stats.StatisticsService;
+import com.inmobi.grill.server.api.driver.*;
+import com.inmobi.grill.server.api.events.GrillEventListener;
+import com.inmobi.grill.server.api.events.GrillEventService;
+import com.inmobi.grill.server.api.metrics.MetricsService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,20 +61,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.cli.CLIService;
-import org.apache.hive.service.cli.ColumnDescriptor;
-import org.apache.hive.service.cli.TypeDescriptor;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.ObjectCodec;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.module.SimpleModule;
 
 import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
@@ -84,41 +74,17 @@ import com.inmobi.grill.api.query.QueryPrepareHandle;
 import com.inmobi.grill.api.query.QueryResult;
 import com.inmobi.grill.api.query.QueryResultSetMetadata;
 import com.inmobi.grill.api.query.QueryStatus;
-import com.inmobi.grill.api.query.QueryStatus.Status;
 import com.inmobi.grill.api.query.SubmitOp;
+import com.inmobi.grill.api.query.QueryStatus.Status;
 import com.inmobi.grill.driver.cube.CubeGrillDriver;
 import com.inmobi.grill.driver.cube.RewriteUtil;
 import com.inmobi.grill.driver.hive.HiveDriver;
-import com.inmobi.grill.server.GrillService;
-import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
-import com.inmobi.grill.server.api.driver.DriverSelector;
-import com.inmobi.grill.server.api.driver.GrillDriver;
-import com.inmobi.grill.server.api.driver.GrillResultSet;
-import com.inmobi.grill.server.api.driver.GrillResultSetMetadata;
-import com.inmobi.grill.server.api.driver.PersistentResultSet;
-import com.inmobi.grill.server.api.driver.QueryCompletionListener;
-import com.inmobi.grill.server.api.events.GrillEventListener;
-import com.inmobi.grill.server.api.events.GrillEventService;
-import com.inmobi.grill.server.api.metrics.MetricsService;
-import com.inmobi.grill.server.api.query.FinishedGrillQuery;
-import com.inmobi.grill.server.api.query.PreparedQueryContext;
-import com.inmobi.grill.server.api.query.QueryAccepted;
-import com.inmobi.grill.server.api.query.QueryAcceptor;
-import com.inmobi.grill.server.api.query.QueryCancelled;
-import com.inmobi.grill.server.api.query.QueryClosed;
-import com.inmobi.grill.server.api.query.QueryContext;
-import com.inmobi.grill.server.api.query.QueryEnded;
-import com.inmobi.grill.server.api.query.QueryExecuted;
-import com.inmobi.grill.server.api.query.QueryExecutionService;
-import com.inmobi.grill.server.api.query.QueryFailed;
-import com.inmobi.grill.server.api.query.QueryLaunched;
-import com.inmobi.grill.server.api.query.QueryQueued;
-import com.inmobi.grill.server.api.query.QueryRejected;
-import com.inmobi.grill.server.api.query.QueryRunning;
-import com.inmobi.grill.server.api.query.QuerySuccess;
-import com.inmobi.grill.server.api.query.StatusChange;
-import com.inmobi.grill.server.stats.StatisticsService;
+import org.apache.hive.service.cli.ColumnDescriptor;
+import org.apache.hive.service.cli.TypeDescriptor;
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.module.SimpleModule;
 
 public class QueryExecutionServiceImpl extends GrillService implements QueryExecutionService {
   public static final Log LOG = LogFactory.getLog(QueryExecutionServiceImpl.class);
@@ -162,7 +128,18 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   private MetricsService metricsService;
   private StatisticsService statisticsService;
   private int maxFinishedQueries;
-  private GrillQueryDAO grillQueryDao;
+  GrillQueryDAO grillQueryDao;
+
+  final GrillEventListener<DriverEvent> driverEventListener = new GrillEventListener<DriverEvent>() {
+    @Override
+    public void onEvent(DriverEvent event) {
+      // Need to restore session only in case of hive driver
+      if (event instanceof DriverSessionStarted) {
+        LOG.info("New driver event by driver " + event.getDriver());
+        handleDriverSessionStart(event);
+      }
+    }
+  };
 
   public QueryExecutionServiceImpl(CLIService cliService) throws GrillException {
     super(NAME, cliService);
@@ -192,6 +169,11 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
           Class<?> clazz = Class.forName(driverClass);
           GrillDriver driver = (GrillDriver) clazz.newInstance();
           driver.configure(conf);
+
+          if (driver instanceof HiveDriver) {
+            driver.registerDriverEventListener(driverEventListener);
+          }
+
           drivers.put(driverClass, driver);
           LOG.info("Driver for " + driverClass + " is loaded");
         } catch (Exception e) {
@@ -545,6 +527,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
           }
           try {
             grillQueryDao.insertFinishedQuery(finishedQuery);
+            LOG.info("Saved query " + finishedQuery.getHandle() + " to DB");
           } catch (Exception e) {
             LOG.warn("Exception while purging query ",e);
             finishedQueries.add(finished);
@@ -991,6 +974,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
         finishedCtx.getDriverStatus().setDriverStartTime(query.getDriverStartTime());
         finishedCtx.getDriverStatus().setDriverFinishTime(query.getDriverEndTime());
         finishedCtx.setResultSetPath(query.getResult());
+        finishedCtx.setQueryName(query.getQueryName());
         return finishedCtx;
       }
       updateStatus(queryHandle);
@@ -1316,21 +1300,26 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   public void addResource(GrillSessionHandle sessionHandle, String type, String path) throws GrillException {
     try {
       acquire(sessionHandle);
-      String command = "add " + type.toLowerCase() + " " + path;
       for (GrillDriver driver : drivers.values()) {
         if (driver instanceof HiveDriver) {
-          GrillConf conf = new GrillConf();
-          conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
-          QueryContext addQuery = new QueryContext(command,
-              getSession(sessionHandle).getUserName(),
-              getGrillConf(sessionHandle, conf));
-          addQuery.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
-          driver.execute(addQuery);
+          driver.execute(createAddResourceQuery(sessionHandle, type, path));
         }
       }
     } finally {
       release(sessionHandle);
     }
+  }
+
+  private QueryContext createAddResourceQuery(GrillSessionHandle sessionHandle, String type, String path)
+    throws GrillException {
+    String command = "add " + type.toLowerCase() + " " + path;
+    GrillConf conf = new GrillConf();
+    conf.addProperty(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
+    QueryContext addQuery = new QueryContext(command,
+      getSession(sessionHandle).getUserName(),
+      getGrillConf(sessionHandle, conf));
+    addQuery.setGrillSessionIdentifier(sessionHandle.getPublicId().toString());
+    return addQuery;
   }
 
   public void deleteResource(GrillSessionHandle sessionHandle, String type, String path) throws GrillException {
@@ -1546,5 +1535,47 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
   @Override
   public long getFinishedQueriesCount() {
     return finishedQueries.size();
+  }
+
+  protected void handleDriverSessionStart(DriverEvent event) {
+    DriverSessionStarted sessionStarted = (DriverSessionStarted) event;
+    if (!(event.getDriver() instanceof HiveDriver)) {
+      return;
+    }
+
+    HiveDriver hiveDriver = (HiveDriver) event.getDriver();
+
+    String grillSession = sessionStarted.getGrillSessionID();
+    GrillSessionHandle sessionHandle = getSessionHandle(grillSession);
+    try {
+      GrillSessionImpl session = getSession(sessionHandle);
+      acquire(sessionHandle);
+      // Add resources for this session
+      List<GrillSessionImpl.ResourceEntry> resources = session.getGrillSessionPersistInfo().getResources();
+      if (resources != null && !resources.isEmpty()) {
+        for (GrillSessionImpl.ResourceEntry resource : resources) {
+          LOG.info("Restoring resource " + resource + " for session " + grillSession);
+          try {
+            // Execute add resource query in blocking mode
+            hiveDriver.execute(createAddResourceQuery(sessionHandle, resource.getType(), resource.getLocation()));
+            resource.restoredResource();
+            LOG.info("Restored resource " + resource + " for session " + grillSession);
+          } catch (Exception exc) {
+            LOG.error("Unable to add resource " + resource + " for session " + grillSession, exc);
+          }
+        }
+      } else {
+        LOG.info("No resources to restore for session " + grillSession);
+      }
+    } catch (GrillException e) {
+      LOG.warn("Grill session went away! " + grillSession + " driver session: "
+        + ((DriverSessionStarted) event).getDriverSessionID(), e);
+    } finally {
+      try {
+        release(sessionHandle);
+      } catch (GrillException e) {
+        LOG.error("Error releasing session " + sessionHandle, e);
+      }
+    }
   }
 }

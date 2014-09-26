@@ -32,6 +32,10 @@ import com.inmobi.grill.server.api.scheduler.GrillScheduleRunInfo;
 public class GrillSchedulerDAO extends GrillServerDAO {
   private Gson gson = new Gson();
 
+  public GrillSchedulerDAO() {
+    super();
+  }
+
   /**
    * Method to create ScheduleInfo table, this is required for embedded grill
    * server. For production server we will not be creating tables as it would be
@@ -46,6 +50,7 @@ public class GrillSchedulerDAO extends GrillServerDAO {
             + "createdon bigint)";
     try {
       createTable(sql);
+      ds.getConnection().commit();
     } catch (SQLException e) {
       throw new GrillException("Unable to create ScheduleInfo table.", e);
     }
@@ -72,6 +77,7 @@ public class GrillSchedulerDAO extends GrillServerDAO {
             + "status varchar(255), query varchar(255))";
     try {
       createTable(sql);
+      ds.getConnection().commit();
     } catch (SQLException e) {
       throw new GrillException("Unable to create ScheduleRunInfo table.", e);
     }

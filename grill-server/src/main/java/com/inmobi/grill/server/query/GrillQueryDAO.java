@@ -9,9 +9,9 @@ package com.inmobi.grill.server.query;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,11 +43,16 @@ public class GrillQueryDAO extends GrillServerDAO {
   private static final Logger LOG = LoggerFactory
       .getLogger(GrillQueryDAO.class);
 
-  public void dropFinishedQueriesTable() throws Exception {
+  public GrillQueryDAO() {
+    super();
+  }
+
+  public void dropFinishedQueriesTable() {
+    QueryRunner runner = new QueryRunner(ds);
     try {
-      dropTable("drop table finished_queries");
+      runner.update("drop table finished_queries");
     } catch (SQLException e) {
-      LOG.warn("Unable to drop finished queries table", e);
+      e.printStackTrace();
     }
   }
 
@@ -59,12 +64,22 @@ public class GrillQueryDAO extends GrillServerDAO {
   public void createFinishedQueriesTable() throws Exception {
     String sql =
         "CREATE TABLE if not exists finished_queries (handle varchar(255) not null unique,"
-            + "userquery varchar(255) not null,submitter varchar(255) not null,"
-            + "starttime bigint, endtime bigint,result varchar(255),"
-            + "status varchar(255), metadata varchar(100000), rows int, errormessage varchar(10000), "
-            + "driverstarttime bigint, driverendtime bigint, metadataclass varchar(10000))";
+            + "userquery varchar(255) not null,"
+            + "submitter varchar(255) not null,"
+            + "starttime bigint, "
+            + "endtime bigint,"
+            + "result varchar(255),"
+            + "status varchar(255), "
+            + "metadata varchar(100000), "
+            + "rows int, "
+            + "errormessage varchar(10000), "
+            + "driverstarttime bigint, "
+            + "driverendtime bigint, "
+            + "metadataclass varchar(10000)," + "queryname varchar(255)" + ")";
     try {
       createTable(sql);
+      ds.getConnection().commit();
+      LOG.info("Created finished queries table");
     } catch (SQLException e) {
       LOG.warn("Unable to create finished queries table", e);
     }
@@ -80,14 +95,16 @@ public class GrillQueryDAO extends GrillServerDAO {
     String sql =
         "insert into finished_queries (handle, userquery,submitter,"
             + "starttime,endtime,result,status,metadata,rows,"
-            + "errormessage,driverstarttime,driverendtime, metadataclass) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            + "errormessage,driverstarttime,driverendtime, metadataclass, queryname)"
+            + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     QueryRunner runner = new QueryRunner(ds);
     try {
       runner.update(sql, query.getHandle(), query.getUserQuery(),
           query.getSubmitter(), query.getStartTime(), query.getEndTime(),
           query.getResult(), query.getStatus(), query.getMetadata(),
           query.getRows(), query.getErrorMessage(), query.getDriverStartTime(),
-          query.getDriverEndTime(), query.getMetadataClass());
+          query.getDriverEndTime(), query.getMetadataClass(),
+          query.getQueryName());
     } catch (SQLException e) {
       throw new Exception(e);
     }
@@ -113,9 +130,13 @@ public class GrillQueryDAO extends GrillServerDAO {
     return null;
   }
 
-  public List<QueryHandle> findFinishedQueries(String state, String user, String queryName) throws GrillException {
-    boolean addFilter = StringUtils.isNotBlank(state) || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(queryName);
-    StringBuilder builder = new StringBuilder("SELECT handle FROM finished_queries");
+  public List<QueryHandle> findFinishedQueries(String state, String user,
+      String queryName) throws GrillException {
+    boolean addFilter =
+        StringUtils.isNotBlank(state) || StringUtils.isNotBlank(user)
+            || StringUtils.isNotBlank(queryName);
+    StringBuilder builder =
+        new StringBuilder("SELECT handle FROM finished_queries");
     List<Object> params = null;
     if (addFilter) {
       builder.append(" WHERE ");
@@ -140,21 +161,23 @@ public class GrillQueryDAO extends GrillServerDAO {
       builder.append(StringUtils.join(filters, " AND "));
     }
 
-    ResultSetHandler<List<QueryHandle>> resultSetHandler = new ResultSetHandler<List<QueryHandle>>() {
-      @Override
-      public List<QueryHandle> handle(ResultSet resultSet) throws SQLException {
-        List<QueryHandle> queryHandleList = new ArrayList<QueryHandle>();
-        while (resultSet.next()) {
-          String handle = resultSet.getString(1);
-          try {
-            queryHandleList.add(QueryHandle.fromString(handle));
-          } catch (IllegalArgumentException exc) {
-            LOG.warn("Warning invalid query handle found in DB " + handle);
+    ResultSetHandler<List<QueryHandle>> resultSetHandler =
+        new ResultSetHandler<List<QueryHandle>>() {
+          @Override
+          public List<QueryHandle> handle(ResultSet resultSet)
+              throws SQLException {
+            List<QueryHandle> queryHandleList = new ArrayList<QueryHandle>();
+            while (resultSet.next()) {
+              String handle = resultSet.getString(1);
+              try {
+                queryHandleList.add(QueryHandle.fromString(handle));
+              } catch (IllegalArgumentException exc) {
+                LOG.warn("Warning invalid query handle found in DB " + handle);
+              }
+            }
+            return queryHandleList;
           }
-        }
-        return queryHandleList;
-      }
-    };
+        };
 
     QueryRunner runner = new QueryRunner(ds);
     String query = builder.toString();
@@ -168,4 +191,5 @@ public class GrillQueryDAO extends GrillServerDAO {
       throw new GrillException(e);
     }
   }
+
 }

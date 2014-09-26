@@ -58,6 +58,7 @@ import com.inmobi.grill.server.api.scheduler.SchedulerService;
  * 
  */
 @Path("/scheduler")
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class SchedulerResource {
   public static final Logger LOG = LogManager
       .getLogger(SchedulerResource.class);

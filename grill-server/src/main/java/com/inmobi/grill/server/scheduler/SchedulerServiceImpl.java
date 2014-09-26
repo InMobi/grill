@@ -40,7 +40,7 @@ import com.inmobi.grill.server.api.scheduler.SchedulerService;
 public class SchedulerServiceImpl extends GrillService implements
     SchedulerService {
 
-  private GrillSchedulerDAO grillSchedulerDao;
+  GrillSchedulerDAO grillSchedulerDao;
   private Configuration conf;
 
   public SchedulerServiceImpl(CLIService cliService) {
@@ -51,7 +51,6 @@ public class SchedulerServiceImpl extends GrillService implements
     super.init(hiveConf);
     this.conf = hiveConf;
     initializeTables(conf);
-    LOG.info("Query execution service initialized");
   }
 
   private void initializeTables(Configuration conf) {

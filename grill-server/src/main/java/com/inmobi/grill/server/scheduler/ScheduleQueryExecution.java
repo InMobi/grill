@@ -129,7 +129,8 @@ public class ScheduleQueryExecution implements Execution {
     QueryStatus status = new QueryStatus(0, Status.NEW, "", false, "", "");
     try {
       queryHandle =
-          executionService.executeAsync(sessionHandle, query, queryConf, "Schedule Query: " + scheduleid);
+          executionService.executeAsync(sessionHandle, query, queryConf,
+              "Schedule Query: " + scheduleid);
       while (status.isFinished()) {
         try {
           Thread.sleep(Integer.parseInt(scheduleConf.getProperties().get(
@@ -183,13 +184,13 @@ public class ScheduleQueryExecution implements Execution {
 
   @Override
   public String getOutputURI() throws GrillException {
-    // TODO Auto-generated method stub
-    return null;
+    return executionService.getQuery(sessionHandle, queryHandle)
+        .getResultSetPath();
   }
 
   @Override
   public String getStatus() throws GrillException {
-    // TODO Auto-generated method stub
-    return null;
+    return executionService.getQuery(sessionHandle, queryHandle).getStatus()
+        .toString();
   }
 }
