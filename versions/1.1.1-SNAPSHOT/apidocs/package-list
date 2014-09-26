@@ -32,4 +32,6 @@ com.inmobi.grill.server.stats.event.query
 com.inmobi.grill.server.stats.store
 com.inmobi.grill.server.stats.store.log
 com.inmobi.grill.server.ui
+com.inmobi.grill.server.user
+com.inmobi.grill.server.util
 com.inmobi.grill.storage.db

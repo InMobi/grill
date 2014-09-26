@@ -111,47 +111,7 @@
         </tr>
         <tr>
           <td>
-            queryConf (<a href="ns0_grillConf.html">grillConf</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            driverOpHandle (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            userQuery (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            queryName (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            status (<a href="ns0_queryStatus.html">queryStatus</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            finishTime (long)
+            closedTime (long)
           </td>
           <td>1/1</td>
           <td>
@@ -167,7 +127,7 @@
         </tr>
         <tr>
           <td>
-            priority (<a href="ns0_priority.html">priority</a>)
+            userQuery (string)
           </td>
           <td>0/1</td>
           <td>
@@ -175,7 +135,7 @@
         </tr>
         <tr>
           <td>
-            driverFinishTime (long)
+            finishTime (long)
           </td>
           <td>1/1</td>
           <td>
@@ -183,23 +143,7 @@
         </tr>
         <tr>
           <td>
-            launchTime (long)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            submittedUser (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            resultSetPath (string)
+            queryName (string)
           </td>
           <td>0/1</td>
           <td>
@@ -223,7 +167,39 @@
         </tr>
         <tr>
           <td>
+            driverQuery (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            queryConf (<a href="ns0_grillConf.html">grillConf</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            priority (<a href="ns0_priority.html">priority</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            status (<a href="ns0_queryStatus.html">queryStatus</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -239,7 +215,7 @@
         </tr>
         <tr>
           <td>
-            driverQuery (string)
+            driverOpHandle (string)
           </td>
           <td>0/1</td>
           <td>
@@ -247,7 +223,31 @@
         </tr>
         <tr>
           <td>
-            closedTime (long)
+            submittedUser (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            resultSetPath (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            launchTime (long)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            driverFinishTime (long)
           </td>
           <td>1/1</td>
           <td>
@@ -263,49 +263,9 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>queryConf</td>
+          <td>closedTime</td>
           <td>
-              queryConf (<a href="ns0_grillConf.html">grillConf</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>driverOpHandle</td>
-          <td>
-              driverOpHandle (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>userQuery</td>
-          <td>
-              userQuery (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>queryName</td>
-          <td>
-              queryName (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>status</td>
-          <td>
-              status (<a href="ns0_queryStatus.html">queryStatus</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>finishTime</td>
-          <td>
-              finishTime (long)
+              closedTime (long)
           </td>
           <td>
           </td>
@@ -319,41 +279,25 @@
           </td>
         </tr>
         <tr>
-          <td>priority</td>
+          <td>userQuery</td>
           <td>
-              priority (<a href="ns0_priority.html">priority</a>)
+              userQuery (string)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>driverFinishTime</td>
+          <td>finishTime</td>
           <td>
-              driverFinishTime (long)
+              finishTime (long)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>launchTime</td>
+          <td>queryName</td>
           <td>
-              launchTime (long)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>submittedUser</td>
-          <td>
-              submittedUser (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>resultSetPath</td>
-          <td>
-              resultSetPath (string)
+              queryName (string)
           </td>
           <td>
           </td>
@@ -375,9 +319,41 @@
           </td>
         </tr>
         <tr>
+          <td>driverQuery</td>
+          <td>
+              driverQuery (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
           <td>queryHandle</td>
           <td>
               queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>queryConf</td>
+          <td>
+              queryConf (<a href="ns0_grillConf.html">grillConf</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>priority</td>
+          <td>
+              priority (<a href="ns0_priority.html">priority</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>status</td>
+          <td>
+              status (<a href="ns0_queryStatus.html">queryStatus</a>)
           </td>
           <td>
           </td>
@@ -391,17 +367,41 @@
           </td>
         </tr>
         <tr>
-          <td>driverQuery</td>
+          <td>driverOpHandle</td>
           <td>
-              driverQuery (string)
+              driverOpHandle (string)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>closedTime</td>
+          <td>submittedUser</td>
           <td>
-              closedTime (long)
+              submittedUser (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>resultSetPath</td>
+          <td>
+              resultSetPath (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>launchTime</td>
+          <td>
+              launchTime (long)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>driverFinishTime</td>
+          <td>
+              driverFinishTime (long)
           </td>
           <td>
           </td>
