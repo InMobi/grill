@@ -25,11 +25,6 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 
-/**
- *  Grill server can accept a registered Domain Specific Language.
- *  The Parsing and rewriting of the DSL is the responsibility of the DSL implementation
- *  and can be rewritten to CubeQL/HQL
- */
 
 public class TestDSLRegistry {
    //TODO

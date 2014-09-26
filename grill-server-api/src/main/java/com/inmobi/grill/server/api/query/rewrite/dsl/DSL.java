@@ -39,9 +39,9 @@ public interface DSL {
   /**
    *
    * @param command the query to be rewritten
-   * @return
-   * @throws ParseException
-   * @throws AuthorizationException  thrown when user is not authorized to submit the DSL query
+   * @return false if DSL does not accept the query
+   * @throws ParseException when DSL is not able to parse the given query
+   * @throws AuthorizationException thrown when user is not authorized to submit the DSL query
    */
   boolean accept(DSLCommand command) throws ParseException, AuthorizationException;
 
@@ -50,8 +50,8 @@ public interface DSL {
    * @param command the query to be rewritten
    * @return the rewritten query - CubeQL/HQL
    * @throws ParseException
-   * @throws AuthorizationException  thrown when user is not authorized to submit the DSL query
+   * @throws AuthorizationException thrown when user is not authorized to submit the DSL query
    */
-   QueryCommand rewrite(DSLCommand command) throws ParseException, AuthorizationException;
+   QueryCommand rewrite(DSLCommand command) throws DSLSemanticException;
 
 }

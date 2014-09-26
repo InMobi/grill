@@ -20,6 +20,7 @@ package com.inmobi.grill.server.query.rewrite;
  * #L%
  */
 
+import com.google.common.base.Preconditions;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.driver.cube.CubeGrillDriver;
 import com.inmobi.grill.server.api.driver.GrillDriver;
@@ -29,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-import parquet.Preconditions;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
       case DOMAIN:
         //Rewrite to CubeQL/HQL
         final QueryCommand rewrittenQuery = queryCmd.rewrite();
-        if(! QueryCommand.Type.DOMAIN.getNextValidStates().contains(rewrittenQuery.getType())) {
+        if( !QueryCommand.Type.DOMAIN.getNextValidStates().contains(rewrittenQuery.getType())) {
           throw new DriverSpecificRewriteException("Invalid rewritten query type " + rewrittenQuery.getType());
         }
         return rewrite(rewrittenQuery, drivers);
@@ -103,7 +104,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
       //Validate if rewritten query can be parsed
       ((CubeQLCommand) cubeQL).parse();
     } catch (SemanticException e) {
-      throw new DriverSpecificRewriteException("Could not rewrite cubeQL" , e);
+      throw new DriverSpecificRewriteException("Could not rewrite cubeQL " , e);
     } catch (ParseException e) {
       throw new DriverSpecificRewriteException("Could not parse cubeQL " , e);
     }

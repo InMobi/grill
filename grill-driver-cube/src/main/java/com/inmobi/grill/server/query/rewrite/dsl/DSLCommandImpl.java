@@ -49,7 +49,7 @@ public class DSLCommandImpl extends DSLCommand {
     QueryCommand query = null;
 
     final Collection<DSL> DSLs = DSLRegistry.getInstance().getDSLs();
-    DSLSemanticException dslException = new DSLSemanticException("No Domain accepted the query due to : ");
+    DSLSemanticException dslException = new DSLSemanticException("No DSL accepted the query due to : ");
 
     for (DSL dsl : DSLs) {
       try {
@@ -60,11 +60,12 @@ public class DSLCommandImpl extends DSLCommand {
       } catch (ParseException pe) {
         LOG.warn("Domain could not parse the DSL : " + dsl.getName(), pe);
         dslException.addDSLRewriteError(pe.getLocalizedMessage());
-      }  catch (AuthorizationException pe) {
-        LOG.warn("Domain could not parse the DSL : " + dsl.getName(), pe);
-        dslException.addDSLRewriteError(pe.getLocalizedMessage());
+      }  catch (AuthorizationException ae) {
+        LOG.warn("DSL authorization failed : " + dsl.getName(), ae);
+        dslException.addDSLRewriteError(ae.getLocalizedMessage());
       }
     }
+
     if (query == null) {
       throw dslException;
     }

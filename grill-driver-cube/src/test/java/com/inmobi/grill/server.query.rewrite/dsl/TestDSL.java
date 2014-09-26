@@ -23,6 +23,7 @@ import com.inmobi.grill.server.api.query.rewrite.CubeQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSL;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
+import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
 import org.apache.hadoop.hive.ql.parse.ParseException;
@@ -46,7 +47,7 @@ public class TestDSL implements DSL {
   }
 
   @Override
-  public QueryCommand rewrite(DSLCommand command) throws ParseException, AuthorizationException {
+  public QueryCommand rewrite(DSLCommand command) throws DSLSemanticException {
    return CubeQLCommand.get("cube select name from table", "test", new HiveConf());
   }
 }
