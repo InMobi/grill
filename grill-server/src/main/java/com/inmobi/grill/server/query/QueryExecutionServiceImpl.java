@@ -1276,7 +1276,7 @@ public class QueryExecutionServiceImpl extends GrillService implements QueryExec
       acquire(sessionHandle);
       Configuration qconf = getGrillConf(sessionHandle, grillConf);
       accept(query, qconf, SubmitOp.EXPLAIN);
-      Map<GrillDriver, HQLCommand> driverQueries =
+      Map<GrillDriver, QueryCommand> driverQueries =
           RewriteUtil.rewriteQuery(query,  getSession(sessionHandle).getUsername(), qconf , drivers.values());
 
       // select driver to run the query

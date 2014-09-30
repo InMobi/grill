@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.inmobi.grill.server.api.query.rewrite.HQLCommand;
+import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+import com.inmobi.grill.server.query.rewrite.QueryCommands;
 import org.apache.hadoop.conf.Configuration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -49,7 +51,7 @@ public class TestMinCostSelector {
   public void testMinCostSelector() {
     MinQueryCostSelector selector = new MinQueryCostSelector();
     List<GrillDriver> drivers = new ArrayList<GrillDriver>();
-    Map<GrillDriver, HQLCommand> driverQueries = new HashMap<GrillDriver, HQLCommand>();
+    Map<GrillDriver, QueryCommand> driverQueries = new HashMap<GrillDriver, QueryCommand>();
     Configuration conf = new Configuration();
 
     MockDriver d1 = new MockDriver();
@@ -59,7 +61,7 @@ public class TestMinCostSelector {
     
     drivers.add(d1);
     drivers.add(d2);
-    final HQLCommand hqlCommand = HQLCommand.get("test query", null, conf);
+    final QueryCommand hqlCommand = QueryCommands.get("test query", null, conf);
     driverQueries.put(d1, hqlCommand);
 
     GrillDriver selected = selector.select(drivers, driverQueries, conf);

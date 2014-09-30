@@ -4,7 +4,7 @@ import org.apache.hadoop.hive.conf.HiveConf;
 
 public class GrillServerConf {
 
-  public static HiveConf conf;
+  public static volatile HiveConf conf;
 
   public static HiveConf get() {
     if(conf == null) {

@@ -56,7 +56,7 @@ public abstract class DSLCommand extends QueryCommand {
 
   @Override
   public boolean matches(String line) {
-    return StringUtils.startsWithIgnoreCase(command, DSL_PREFIX);
+    return StringUtils.startsWithIgnoreCase(line, DSL_PREFIX);
   }
 
 }

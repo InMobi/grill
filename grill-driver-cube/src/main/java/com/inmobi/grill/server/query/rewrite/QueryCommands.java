@@ -21,6 +21,7 @@ package com.inmobi.grill.server.query.rewrite;
  */
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.query.rewrite.dsl.DSLCommandImpl;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 public class QueryCommands {
@@ -46,7 +47,7 @@ public class QueryCommands {
   }
 
   public static String preProcessQuery(final String query) {
-    String finalQuery = query.replaceAll("[\\n\\r]", " ")
+    String finalQuery = StringUtils.trim(query).replaceAll("[\\n\\r]", " ")
         .replaceAll("&&", " AND ").replaceAll("\\|\\|", " OR ");
     return finalQuery;
   }

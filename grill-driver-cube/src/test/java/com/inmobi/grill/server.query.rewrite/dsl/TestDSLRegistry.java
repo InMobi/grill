@@ -19,15 +19,35 @@ package com.inmobi.grill.server.query.rewrite.dsl;
  * limitations under the License.
  * #L%
  */
-import com.inmobi.grill.server.api.query.rewrite.CubeQLCommand;
-import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
-import org.apache.hadoop.hive.ql.parse.ParseException;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 
+@Test(alwaysRun=true, groups="unit-test")
 public class TestDSLRegistry {
-   //TODO
+  HiveConf conf;
+  DSLRegistry registry;
 
+  @BeforeTest
+  public void beforeTest() throws Exception {
+    conf = new HiveConf();
+    conf.set("grill.query.dsls", "test");
+    conf.set("grill.query.test.dsl.impl", "com.inmobi.grill.server.query.rewrite.dsl.TestDSL");
+    registry = DSLRegistry.getInstance();
+    registry.init(conf);
+  }
 
+  @AfterTest
+  public void afterTest() throws Exception {
+  }
+
+  @Test
+  public void testDSLRegistry() throws Exception {
+    Assert.assertNotNull(registry.getDSLs());
+    Assert.assertTrue(registry.getDSLs().iterator().next().getClass().equals(com.inmobi.grill.server.query.rewrite.dsl.TestDSL.class));
+  }
 }

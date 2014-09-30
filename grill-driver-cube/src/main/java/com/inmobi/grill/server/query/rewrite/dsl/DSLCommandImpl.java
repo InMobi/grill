@@ -60,7 +60,7 @@ public class DSLCommandImpl extends DSLCommand {
       } catch (ParseException pe) {
         LOG.warn("Domain could not parse the DSL : " + dsl.getName(), pe);
         dslException.addDSLRewriteError(pe.getLocalizedMessage());
-      }  catch (AuthorizationException ae) {
+      } catch (AuthorizationException ae) {
         LOG.warn("DSL authorization failed : " + dsl.getName(), ae);
         dslException.addDSLRewriteError(ae.getLocalizedMessage());
       }
