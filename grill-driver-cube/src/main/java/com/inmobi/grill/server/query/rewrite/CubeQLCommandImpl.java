@@ -56,7 +56,7 @@ public class CubeQLCommandImpl extends CubeQLCommand {
   public HQLCommand rewrite() throws RewriteException {
     HQLCommand hqlCommand = new HQLCommandImpl(this);
     String cubeQuery = getCommand();
-    CubeQueryRewriter rewriter = new CubeQueryRewriter(conf);
+    CubeQueryRewriter rewriter = getRewriter(conf) ;
     StringBuilder builder = new StringBuilder();
     int start = 0;
     try {
@@ -97,8 +97,8 @@ public class CubeQLCommandImpl extends CubeQLCommand {
     return conf;
   }
 
-  public static CubeQueryRewriter getRewriter(GrillDriver driver, Configuration queryConf) throws SemanticException {
-    return new CubeQueryRewriter(getDriverQueryConf(driver, queryConf));
+  public static CubeQueryRewriter getRewriter(Configuration queryConf) {
+    return new CubeQueryRewriter(queryConf);
   }
 
   public List<CubeQueryInfo> parse() throws SemanticException, ParseException {

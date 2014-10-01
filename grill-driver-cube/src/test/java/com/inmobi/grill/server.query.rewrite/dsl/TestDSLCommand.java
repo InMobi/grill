@@ -44,12 +44,11 @@ public class TestDSLCommand {
 
     final String TEST_COMMAND="select * from domain_entity";
     DSLCommand command = new DSLCommandImpl(TEST_COMMAND, null, conf);
-
     Assert.assertFalse(command.matches("check invalid"));
     try {
       command.rewrite();
+      Assert.fail("Expected DSLSemanticException during query rewrite!");
     }catch(DSLSemanticException dse) {
     }
-    Assert.fail("Expected DSlSemanticException during query rewrite!");
   }
 }

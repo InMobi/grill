@@ -70,7 +70,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
       case DOMAIN:
         //Rewrite to CubeQL/HQL
         final QueryCommand rewrittenQuery = queryCmd.rewrite();
-        if( !QueryCommand.Type.DOMAIN.getNextValidStates().contains(rewrittenQuery.getType())) {
+        if( !QueryCommand.Type.DOMAIN.isValid(rewrittenQuery.getType())) {
           throw new DriverSpecificRewriteException("Invalid rewritten query type " + rewrittenQuery.getType());
         }
         return rewrite(rewrittenQuery, drivers);
@@ -90,7 +90,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
     Map<GrillDriver, QueryCommand> driverSpecificHQLs = new HashMap<GrillDriver, QueryCommand>();
     for(GrillDriver driver : drivers) {
       final QueryCommand hqlCommand = cmd.rewrite();
-      if(! QueryCommand.Type.NONSQL.getNextValidStates().contains(hqlCommand.getType())) {
+      if(!QueryCommand.Type.NONSQL.isValid(hqlCommand.getType())) {
         throw new DriverSpecificRewriteException("Invalid rewritten query type " + hqlCommand.getType());
       }
       driverSpecificHQLs.put(driver, hqlCommand);
@@ -119,7 +119,7 @@ public class DriverSpecificQueryRewriterImpl implements DriverSpecificQueryRewri
         //Set Driver specific Query Conf
         cubeQL.setConf(CubeQLCommandImpl.getDriverQueryConf(driver, cubeQL.getConf()));
         final QueryCommand driverSpecificHQL = cubeQL.rewrite();
-        if(! QueryCommand.Type.CUBE.getNextValidStates().contains(driverSpecificHQL.getType())) {
+        if(! QueryCommand.Type.CUBE.isValid(driverSpecificHQL.getType())) {
           throw new DriverSpecificRewriteException("Invalid rewritten query type " + driverSpecificHQL.getType());
         }
         driverSpecificHQLs.put(driver, driverSpecificHQL);

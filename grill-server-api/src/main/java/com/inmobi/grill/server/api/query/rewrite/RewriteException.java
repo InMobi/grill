@@ -34,9 +34,6 @@ public class RewriteException extends GrillException {
     super(message, e);
   }
 
-  public RewriteException() {
-  }
-
   public RewriteException(Throwable th) {
     super(th);
   }

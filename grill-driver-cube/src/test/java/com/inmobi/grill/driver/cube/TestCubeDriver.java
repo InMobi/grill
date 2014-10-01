@@ -26,6 +26,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
+import com.inmobi.grill.server.api.GrillConfConstants;
 import org.apache.hadoop.conf.Configuration;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -48,6 +49,9 @@ public class TestCubeDriver {
   public void beforeTest() throws Exception {
     cubeDriver = new CubeGrillDriver(conf);
     conf.setInt("mock.driver.test.val", 5);
+    conf.set(GrillConfConstants.GRILL_QUERY_REWRITER, "com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl");
+    conf.set(GrillConfConstants.GRILL_QUERY_DSLS, "test");
+    conf.set("grill.query.test.dsl.impl", "com.inmobi.grill.server.query.rewrite.dsl.TestDSL");
   }
 
   @AfterTest

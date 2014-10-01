@@ -31,6 +31,8 @@ import com.inmobi.grill.server.api.driver.DriverQueryStatus.DriverQueryState;
 import com.inmobi.grill.server.api.events.GrillEventListener;
 import com.inmobi.grill.server.api.query.PreparedQueryContext;
 import com.inmobi.grill.server.api.query.QueryContext;
+import com.inmobi.grill.server.api.query.rewrite.CubeQLCommand;
+import com.inmobi.grill.server.query.rewrite.CubeQLCommandImpl;
 import com.inmobi.grill.server.query.rewrite.RewriteUtil;
 
 import org.apache.hadoop.conf.Configuration;
@@ -373,7 +375,7 @@ public class JDBCDriver implements GrillDriver {
   @Override
   public DriverQueryPlan explain(String query, Configuration conf) throws GrillException {
     checkConfigured();
-    conf = RewriteUtil.getFinalQueryConf(this, conf);
+    conf = CubeQLCommandImpl.getDriverQueryConf(this, conf);
     String rewrittenQuery = rewriteQuery(query,conf);
     Configuration explainConf = new Configuration(conf);
     explainConf.setBoolean(GrillConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, false);
@@ -466,7 +468,7 @@ public class JDBCDriver implements GrillDriver {
     checkConfigured();
     //Always use the driver rewritten query not user query. Since the
     //conf we are passing here is query context conf, we need to add jdbc xml in resource path
-    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), RewriteUtil.getFinalQueryConf(this, conf));
+    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), CubeQLCommandImpl.getDriverQueryConf(this, conf));
     LOG.info("Execute " + context.getQueryHandle());
     QueryResult result = executeInternal(context,rewrittenQuery);
     return result.getGrillResultSet(true);
@@ -503,7 +505,7 @@ public class JDBCDriver implements GrillDriver {
     checkConfigured();
     //Always use the driver rewritten query not user query. Since the
     //conf we are passing here is query context conf, we need to add jdbc xml in resource path
-    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), RewriteUtil.getFinalQueryConf(this, conf));
+    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), CubeQLCommandImpl.getDriverQueryConf(this, conf));
     JdbcQueryContext jdbcCtx = new JdbcQueryContext(context);
     jdbcCtx.setRewrittenQuery(rewrittenQuery);
     try {

@@ -44,19 +44,21 @@ public abstract class QueryCommand {
    */
   public static enum Type {
     HQL("HQL", "Hive Query language", null),
-    NONSQL("NonSQL", "Non SQL commands like add/set", HQL),
-    CUBE("CUBEQL", "CubeQL", HQL),
-    DOMAIN("DSL", "Domain specific language", CUBE, HQL, NONSQL);
+    NONSQL("NonSQL", "Non SQL commands like add/set", "HQL"),
+    CUBE("CUBEQL", "CubeQL", "HQL"),
+    DOMAIN("DSL", "Domain specific language", "CUBEQL", "HQL", "NonSQL");
 
     private final String name;
     private final String description;
-    private Set<Type> nextValidStates;
+    private Set<String> nextValidStates;
 
-    private Type(String name, String description, Type... hql) {
+    private Type(String name, String description, String... nextValidStates) {
       this.name=name;
       this.description=description;
-      this.nextValidStates = new HashSet<Type>();
-      nextValidStates.addAll(Arrays.asList(hql));
+      this.nextValidStates = new HashSet<String>();
+      if(nextValidStates != null) {
+        this.nextValidStates.addAll(Arrays.asList(nextValidStates));
+      }
     }
 
     public String getName() {
@@ -67,8 +69,12 @@ public abstract class QueryCommand {
       return description;
     }
 
-    public Set<Type> getNextValidStates() {
-       return nextValidStates;
+    public Set<String> getNextValidStates() {
+      return nextValidStates;
+    }
+
+    public boolean isValid(Type nextState) {
+      return nextValidStates.contains(nextState.getName());
     }
 
   }

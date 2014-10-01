@@ -44,7 +44,7 @@ public final class DSLRegistry {
   }
 
   public void init(HiveConf conf) {
-    final String[] DSLNames = conf.getStrings(GrillConfConstants.DSLS);
+    final String[] DSLNames = conf.getStrings(GrillConfConstants.GRILL_QUERY_DSLS);
     if (DSLNames != null) {
       for (String DSLName : DSLNames) {
         try {

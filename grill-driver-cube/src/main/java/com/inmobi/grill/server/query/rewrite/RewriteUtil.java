@@ -44,9 +44,9 @@ public class RewriteUtil {
     return rewrite(rewriter, ctx.getUserQuery(), ctx.getPreparedUser(), ctx.getConf(), drivers);
   }
 
-  public static  Map<GrillDriver, QueryCommand> rewriteQuery(String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
+  public static  Map<GrillDriver, QueryCommand> rewriteQuery(String query, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
     DriverSpecificQueryRewrite rewriter = getQueryRewriter(conf);
-    return rewrite(rewriter, q1, userName, conf, drivers);
+    return rewrite(rewriter, query, userName, conf, drivers);
   }
 
   private static Map<GrillDriver, QueryCommand> rewrite(DriverSpecificQueryRewrite rewriter, String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
@@ -61,6 +61,31 @@ public class RewriteUtil {
     } catch (InstantiationException e) {
       throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
     } catch (IllegalAccessException e) {
+      throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
+    }
+  }
+
+  /**
+   *
+   * For tests only - Could not get it working with PowerMock without passing in the classloader
+   *
+   */
+
+  static  Map<GrillDriver, QueryCommand> rewriteQuery(String query, String userName, Configuration conf, Collection<GrillDriver> drivers, ClassLoader classLoader) throws GrillException {
+    DriverSpecificQueryRewrite rewriter = getQueryRewriter(conf, classLoader);
+    return rewrite(rewriter, query, userName, conf, drivers);
+  }
+
+   static DriverSpecificQueryRewrite getQueryRewriter(Configuration conf, ClassLoader classLoader) {
+    Class<?> rewriterClass = null;
+    try {
+      rewriterClass = classLoader.loadClass(conf.get(GrillConfConstants.GRILL_QUERY_REWRITER, null));
+      return (DriverSpecificQueryRewrite) rewriterClass.newInstance();
+    } catch (InstantiationException e) {
+      throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
+    } catch (ClassNotFoundException e) {
       throw new IllegalStateException("Could not load query rewriter class " + rewriterClass, e);
     }
   }

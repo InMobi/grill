@@ -24,11 +24,11 @@ import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSL;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
+import com.inmobi.grill.server.query.rewrite.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
-import org.apache.hadoop.hive.ql.parse.ParseException;
 import java.util.Collection;
 
 

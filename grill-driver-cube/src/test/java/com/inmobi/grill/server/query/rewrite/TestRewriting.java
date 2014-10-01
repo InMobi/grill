@@ -1,4 +1,4 @@
-package com.inmobi.grill.driver.cube;
+package com.inmobi.grill.server.query.rewrite;
 
 /*
  * #%L
@@ -23,11 +23,10 @@ package com.inmobi.grill.driver.cube;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
-import com.inmobi.grill.server.query.rewrite.CubeQLCommandImpl;
-import com.inmobi.grill.server.query.rewrite.QueryCommands;
-import com.inmobi.grill.server.query.rewrite.RewriteUtil;
-import org.apache.hadoop.conf.Configuration;
+import com.inmobi.grill.driver.cube.MockDriver;
+import com.inmobi.grill.server.api.GrillConfConstants;
+import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.metastore.api.Database;
 import org.apache.hadoop.hive.ql.Context;
 import org.apache.hadoop.hive.ql.cube.parse.CubeQueryContext;
 import org.apache.hadoop.hive.ql.cube.parse.CubeQueryRewriter;
@@ -37,6 +36,8 @@ import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import static org.mockito.Matchers.any;
+
+import org.apache.hadoop.hive.ql.session.SessionState;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -45,6 +46,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.testng.IObjectFactory;
 import org.testng.annotations.ObjectFactory;
@@ -57,6 +59,23 @@ import com.inmobi.grill.server.api.driver.GrillDriver;
   "com.sun.org.apache.xerces.internal.jaxp.*", "ch.qos.logback.*", "org.slf4j.*", "org.w3c.dom*"})
 public class TestRewriting {
 
+  HiveConf conf = new HiveConf();
+
+  @BeforeTest
+  public void beforeTest() throws Exception {
+//    conf.addResource("hivedriver-site.xml");
+    conf.setInt("mock.driver.test.val", 5);
+    conf.set(GrillConfConstants.GRILL_QUERY_REWRITER, "com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl");
+    conf.set(GrillConfConstants.GRILL_QUERY_DSLS, "test");
+    conf.set("grill.query.test.dsl.impl", "com.inmobi.grill.server.query.rewrite.dsl.TestDSL");
+//    SessionState ss = new SessionState(conf, "testuser");
+//    SessionState.start(ss);
+  }
+
+  @BeforeTest
+  public void afterTest() throws Exception {
+    SessionState.detachSession();
+  }
   /**
    * We need a special {@link IObjectFactory}.
    * 
@@ -124,80 +143,80 @@ public class TestRewriting {
       throws ParseException, SemanticException, GrillException {
     List<GrillDriver> drivers = new ArrayList<GrillDriver>();
     MockDriver driver = new MockDriver();
-    Configuration conf = new Configuration();
     driver.configure(conf);
     drivers.add(driver);
 
     CubeQueryRewriter mockWriter = getMockedRewriter();
+    final ClassLoader mockClassLoader = mockWriter.getClass().getClassLoader();
     PowerMockito.stub(PowerMockito.method(CubeQLCommandImpl.class, "getRewriter")).toReturn(mockWriter);
     String q1 = "select name from table";
     Assert.assertFalse(CubeQLCommandImpl.isCubeQuery(q1));
     List<CubeQLCommandImpl.CubeQueryInfo> cubeQueries = CubeQLCommandImpl.findCubePositions(q1);
     Assert.assertEquals(cubeQueries.size(), 0);
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     String q2 = "cube select name from table";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "insert overwrite directory '/tmp/rewrite' cube select name from table";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "insert overwrite local directory '/tmp/rewrite' cube select name from table";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "insert overwrite local directory '/tmp/example-output' cube select id,name from dim_table";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select id,name from dim_table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "explain cube select name from table";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table) a";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "insert overwrite directory '/tmp/rewrite' select * from (cube select name from table) a";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table)a";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from  (  cube select name from table   )     a";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (      cube select name from table where" +
         " (name = 'ABC'||name = 'XYZ')&&(key=100)   )       a";
@@ -206,7 +225,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from" +
         " table where (name = 'ABC' OR name = 'XYZ') AND (key=100)");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table) a join (cube select" +
         " name2 from table2) b";
@@ -215,7 +234,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q1, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q1, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table) a full outer join" +
         " (cube select name2 from table2) b on a.name=b.name2";
@@ -224,14 +243,14 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table) a join (select name2 from table2) b";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table union all cube select name2 from table2) u";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
@@ -240,7 +259,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "insert overwrite directory '/tmp/rewrite' select * from (cube select name from table union all cube select name2 from table2) u";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
@@ -249,21 +268,21 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select u.* from (select name from table    union all       cube select name2 from table2)   u";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select u.* from (select name from table union all cube select name2 from table2)u";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table union all cube select name2" +
         " from table2 union all cube select name3 from table3) u";
@@ -274,7 +293,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
     Assert.assertEquals(cubeQueries.get(2).query, "cube select name3 from table3");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from   (     cube select name from table    union all   cube" +
         " select name2 from table2   union all  cube select name3 from table3 )  u";
@@ -285,7 +304,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
     Assert.assertEquals(cubeQueries.get(2).query, "cube select name3 from table3");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table union all cube select" +
         " name2 from table2) u group by u.name";
@@ -294,7 +313,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "select * from (cube select name from table union all cube select" +
         " name2 from table2)  u group by u.name";
@@ -304,7 +323,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "create table temp1 as cube select name from table";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
@@ -312,7 +331,7 @@ public class TestRewriting {
     RewriteUtil.rewriteQuery(q2, null, conf, drivers);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "create table temp1 as select * from (cube select name from table union all cube select" +
         " name2 from table2)  u group by u.name";
@@ -322,7 +341,7 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 2);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
     q2 = "create table temp1 as cube select name from table where time_range_in('dt', '2014-06-24-23', '2014-06-25-00')";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
@@ -330,7 +349,7 @@ public class TestRewriting {
     RewriteUtil.rewriteQuery(q2, null, conf, drivers);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table where time_range_in('dt', '2014-06-24-23', '2014-06-25-00')");
-    RewriteUtil.rewriteQuery(q2, null, conf, drivers);
+    RewriteUtil.rewriteQuery(q2, null, conf, drivers, mockClassLoader);
 
   }
 }

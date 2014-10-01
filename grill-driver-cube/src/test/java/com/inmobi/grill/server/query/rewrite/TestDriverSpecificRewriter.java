@@ -2,6 +2,7 @@ package com.inmobi.grill.server.query.rewrite;
 
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.driver.cube.MockDriver;
+import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.driver.GrillDriver;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.query.rewrite.dsl.DSLRegistry;
@@ -29,8 +30,9 @@ public class TestDriverSpecificRewriter {
     rewriter = new DriverSpecificQueryRewriterImpl();
     driver.configure(conf);
     drivers.add(driver);
-    conf.set("grill.server.query.rewriter", "com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl");
-    conf.set("grill.query.dsls", "com.inmobi.grill.server.query.rewrite.dsl.TestDSL");
+    conf.set(GrillConfConstants.GRILL_QUERY_REWRITER, "com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl");
+    conf.set(GrillConfConstants.GRILL_QUERY_DSLS, "test");
+    conf.set("grill.query.test.dsl.impl", "com.inmobi.grill.server.query.rewrite.dsl.TestDSL");
     registry = DSLRegistry.getInstance();
     registry.init(conf);
   }
@@ -61,20 +63,6 @@ public class TestDriverSpecificRewriter {
   }
 
   @Test
-  public void testInvalidCommand() throws Exception {
-    final String TEST_COMMAND="check invalid";
-    final QueryCommand queryCommand = QueryCommands.get(TEST_COMMAND, null, conf);
-    Assert.assertEquals(queryCommand.getType(), QueryCommand.Type.HQL);
-
-    try {
-      rewriter.rewrite(queryCommand, drivers);
-    } catch(GrillException pe) {
-      Assert.assertTrue(pe.getCause().getClass().equals(ParseException.class));
-    }
-    Assert.fail("Expected ParseException for invalid command " + TEST_COMMAND);
-  }
-
-  @Test
   public void testCubeRewrite() throws Exception {
     final String TEST_COMMAND="cube select * from table";
     final String REWRITTEN_COMMAND="select * from cube_table";
@@ -95,7 +83,7 @@ public class TestDriverSpecificRewriter {
     final String TEST_COMMAND="select * from table";
     final String REWRITTEN_COMMAND="select * from table";
     final QueryCommand queryCommand = QueryCommands.get(TEST_COMMAND, null, conf);
-    Assert.assertEquals(queryCommand.getType(), QueryCommand.Type.CUBE);
+    Assert.assertEquals(queryCommand.getType(), QueryCommand.Type.HQL);
 
     final Map<GrillDriver, QueryCommand> rewrittenQuery = rewriter.rewrite(queryCommand, drivers);
     Assert.assertEquals(rewrittenQuery.get(driver).getCommand(), REWRITTEN_COMMAND);

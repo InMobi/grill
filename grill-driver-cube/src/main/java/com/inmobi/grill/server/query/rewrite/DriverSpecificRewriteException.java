@@ -36,10 +36,6 @@ public class DriverSpecificRewriteException extends RewriteException {
     super(msg, th);
   }
 
-  public DriverSpecificRewriteException() {
-    super();
-  }
-
   public DriverSpecificRewriteException(Throwable th) {
     super(th);
   }

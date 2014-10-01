@@ -20,8 +20,8 @@ package com.inmobi.grill.server.api.query.rewrite.dsl;
  * #L%
  */
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
+import com.inmobi.grill.server.query.rewrite.ParseException;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
-import org.apache.hadoop.hive.ql.parse.ParseException;
 
 /**
  *  Grill server can accept a registered Domain Specific Language.

@@ -19,14 +19,14 @@ package com.inmobi.grill.server.query.rewrite.dsl;
  * limitations under the License.
  * #L%
  */
-import com.inmobi.grill.server.api.query.rewrite.CubeQLCommand;
 import com.inmobi.grill.server.api.query.rewrite.QueryCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSL;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLCommand;
 import com.inmobi.grill.server.api.query.rewrite.dsl.DSLSemanticException;
+import com.inmobi.grill.server.query.rewrite.CubeQLCommandImpl;
+import com.inmobi.grill.server.query.rewrite.ParseException;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
-import org.apache.hadoop.hive.ql.parse.ParseException;
 
 /**
  *  Grill server can accept a registered Domain Specific Language.
@@ -43,11 +43,11 @@ public class TestDSL implements DSL {
 
   @Override
   public boolean accept(DSLCommand command) throws ParseException, AuthorizationException {
-    return true;
+    return command.matches(command.getCommand());
   }
 
   @Override
   public QueryCommand rewrite(DSLCommand command) throws DSLSemanticException {
-   return CubeQLCommand.get("cube select name from table", "test", new HiveConf());
+    return new CubeQLCommandImpl("cube select name from table", "test", new HiveConf());
   }
 }
