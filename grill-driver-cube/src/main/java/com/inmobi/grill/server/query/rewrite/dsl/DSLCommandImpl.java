@@ -53,6 +53,7 @@ public class DSLCommandImpl extends DSLCommand {
 
     for (DSL dsl : DSLs) {
       try {
+        //TODO - Strip DOMAIN keyword from query string and pass to the underlying DSL handler
         if (dsl.accept(this)) {
           query = dsl.rewrite(this);
           break;

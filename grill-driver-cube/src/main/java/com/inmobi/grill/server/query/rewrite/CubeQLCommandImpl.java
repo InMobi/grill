@@ -97,7 +97,7 @@ public class CubeQLCommandImpl extends CubeQLCommand {
     return conf;
   }
 
-  public static CubeQueryRewriter getRewriter(Configuration queryConf) {
+  private static CubeQueryRewriter getRewriter(Configuration queryConf) {
     return new CubeQueryRewriter(queryConf);
   }
 

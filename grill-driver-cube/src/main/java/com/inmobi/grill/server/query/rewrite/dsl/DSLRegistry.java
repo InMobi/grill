@@ -63,6 +63,28 @@ public final class DSLRegistry {
     }
   }
 
+  public void init(HiveConf conf, ClassLoader classLoader) {
+    final String[] DSLNames = conf.getStrings(GrillConfConstants.GRILL_QUERY_DSLS);
+    if (DSLNames != null) {
+      for (String DSLName : DSLNames) {
+        try {
+          final Class<?> dslClass = classLoader.loadClass(conf.get(GrillConfConstants.DSL_QUERY_PFX + DSLName + GrillConfConstants.DSL_IMPL_SUFFIX, null));
+          if(dslClass == null) {
+            throw new IllegalStateException("DSL class could not be loaded " + conf.get(GrillConfConstants.DSL_QUERY_PFX + DSLName + GrillConfConstants.DSL_IMPL_SUFFIX));
+          }
+          final DSL dslInstance = (DSL) dslClass.newInstance();
+          register(dslInstance);
+        } catch (InstantiationException e) {
+          throw new IllegalStateException("DSL " + DSLName + " could not be loaded ", e);
+        } catch (IllegalAccessException e) {
+          throw new IllegalStateException("DSL " + DSLName + " could not be loaded ", e);
+        } catch (ClassNotFoundException e) {
+          throw new IllegalStateException("DSL " + DSLName + " could not be loaded ", e);
+        }
+      }
+    }
+  }
+
   public static DSLRegistry getInstance() {
     return INSTANCE;
   }

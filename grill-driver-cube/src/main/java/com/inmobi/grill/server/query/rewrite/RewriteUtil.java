@@ -49,7 +49,7 @@ public class RewriteUtil {
     return rewrite(rewriter, query, userName, conf, drivers);
   }
 
-  private static Map<GrillDriver, QueryCommand> rewrite(DriverSpecificQueryRewrite rewriter, String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
+  static Map<GrillDriver, QueryCommand> rewrite(DriverSpecificQueryRewrite rewriter, String q1, String userName, Configuration conf, Collection<GrillDriver> drivers) throws GrillException {
     final QueryCommand queryCommand = QueryCommands.get(q1, userName, conf);
     return rewriter.rewrite(queryCommand, drivers);
   }
@@ -70,11 +70,6 @@ public class RewriteUtil {
    * For tests only - Could not get it working with PowerMock without passing in the classloader
    *
    */
-
-  static  Map<GrillDriver, QueryCommand> rewriteQuery(String query, String userName, Configuration conf, Collection<GrillDriver> drivers, ClassLoader classLoader) throws GrillException {
-    DriverSpecificQueryRewrite rewriter = getQueryRewriter(conf, classLoader);
-    return rewrite(rewriter, query, userName, conf, drivers);
-  }
 
    static DriverSpecificQueryRewrite getQueryRewriter(Configuration conf, ClassLoader classLoader) {
     Class<?> rewriterClass = null;
