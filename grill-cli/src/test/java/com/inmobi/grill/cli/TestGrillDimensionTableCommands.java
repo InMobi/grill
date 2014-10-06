@@ -62,7 +62,7 @@ public class TestGrillDimensionTableCommands extends GrillCliApplicationTest {
   public static void addDim1Table(String tableName,String specName, String storageSpecName, String storageName) {
     GrillDimensionTableCommands command = getCommand();
     String dimList = command.showDimensionTables();
-    Assert.assertEquals("No Dimensions Found", dimList,
+    Assert.assertEquals(dimList, "No Dimensions Found",
         "Dim tables should not be found");
     //add local storage before adding fact table
     TestGrillStorageCommands.addLocalStorage(storageName);

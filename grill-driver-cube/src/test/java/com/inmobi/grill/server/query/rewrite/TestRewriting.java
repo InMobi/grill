@@ -295,13 +295,14 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.get(2).query, "cube select name3 from table3");
     RewriteUtil.rewrite(rewriter, q2, null, conf, drivers);
 
-    q2 = "select * from   (     cube select name from table    union all   cube" +
+    //multiple whietspace betwween cube and select
+    q2 = "select * from   (     cube          select name from table    union all   cube" +
         " select name2 from table2   union all  cube select name3 from table3 )  u";
     Assert.assertTrue(CubeQLCommandImpl.isCubeQuery(q2));
     cubeQueries = CubeQLCommandImpl.findCubePositions(q2);
     RewriteUtil.rewrite(rewriter, q2, null, conf, drivers);
     Assert.assertEquals(cubeQueries.size(), 3);
-    Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table");
+    Assert.assertEquals(cubeQueries.get(0).query, "cube          select name from table");
     Assert.assertEquals(cubeQueries.get(1).query, "cube select name2 from table2");
     Assert.assertEquals(cubeQueries.get(2).query, "cube select name3 from table3");
     RewriteUtil.rewrite(rewriter, q2, null, conf, drivers);
@@ -350,6 +351,5 @@ public class TestRewriting {
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from table where time_range_in('dt', '2014-06-24-23', '2014-06-25-00')");
     RewriteUtil.rewrite(rewriter, q2, null, conf, drivers);
-
   }
 }
