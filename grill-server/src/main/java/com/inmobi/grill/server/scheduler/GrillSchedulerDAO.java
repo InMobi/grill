@@ -1,6 +1,7 @@
 package com.inmobi.grill.server.scheduler;
 
 import java.sql.Clob;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
@@ -111,19 +112,19 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     scheduleInfoDAO.setEndTime(schedule.getEndTime().getMillisecond());
     try {
       Clob execClob = ds.getConnection().createClob();
-      execClob.setString(0, execJson);
+      execClob.setString(1, execJson);
       scheduleInfoDAO.setExecution(execClob);
 
       Clob startSpecClob = ds.getConnection().createClob();
-      startSpecClob.setString(0, startSpecJson);
+      startSpecClob.setString(1, startSpecJson);
       scheduleInfoDAO.setStartSpec(startSpecClob);
 
       Clob resPathClob = ds.getConnection().createClob();
-      resPathClob.setString(0, resPathJson);
+      resPathClob.setString(1, resPathJson);
       scheduleInfoDAO.setResourcePath(resPathClob);
 
       Clob scheConClob = ds.getConnection().createClob();
-      scheConClob.setString(0, scheConJson);
+      scheConClob.setString(1, scheConJson);
       scheduleInfoDAO.setScheduleConf(scheConClob);
     } catch (SQLException e) {
       throw new GrillException("Error setting clob.", e);
@@ -131,14 +132,23 @@ public class GrillSchedulerDAO extends GrillServerDAO {
 
     String sql =
         "INSERT into schedule_info(schedule_id, execution, start_spec, resource_path, schedule_conf, start_time, end_time, username, status, created_on) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', now())";
+//    PreparedStatement stmt = ds.getConnection().prepareStatement(sql);
     QueryRunner runner = new QueryRunner(ds);
     try {
       runner.update(sql, scheduleInfoDAO.getScheduleId(),
           scheduleInfoDAO.getExecution(), scheduleInfoDAO.getStartSpec(),
           scheduleInfoDAO.getResourcePath(), scheduleInfoDAO.getScheduleConf(),
           scheduleInfoDAO.getStartTime(), scheduleInfoDAO.getEndTime(),
-          scheduleInfoDAO.getUsername(), scheduleInfoDAO.getStatus(),
-          scheduleInfoDAO.getCreated_on());
+          scheduleInfoDAO.getUsername());
+//      stmt.setString(1, scheduleInfoDAO.getScheduleId());
+//      stmt.setClob(2, scheduleInfoDAO.getExecution());
+//      stmt.setClob(3, scheduleInfoDAO.getStartSpec());
+//      stmt.setClob(4, scheduleInfoDAO.getResourcePath());
+//      stmt.setClob(5, scheduleInfoDAO.getScheduleConf());
+//      stmt.setLong(6, scheduleInfoDAO.getStartTime());
+//      stmt.setLong(7, scheduleInfoDAO.getEndTime());
+//      stmt.setscheduleInfoDAO.getUsername());
+//          scheduleInfoDAO.getCreated_on());
     } catch (SQLException e) {
       throw new GrillException("Error inserting schedule task in DB", e);
     }
@@ -188,6 +198,13 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return null;
   }
 
+  /**
+   * Get all scheduleIds for a particulat username
+   * 
+   * @param user
+   * @return
+   * @throws Exception
+   */
   public List<String> getScheduleIds(String user) throws Exception {
     ResultSetHandler<List<String>> rsh =
         new BeanListHandler<String>(String.class);
@@ -201,6 +218,13 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return null;
   }
 
+  /**
+   * Get all scheduleIds for particular status
+   * 
+   * @param status
+   * @return
+   * @throws Exception
+   */
   public List<String> getScheduleIds(ScheduleStatus.Status status)
       throws Exception {
     ResultSetHandler<List<String>> rsh =
@@ -215,6 +239,12 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return null;
   }
 
+  /**
+   * Get all scheduleIds
+   * 
+   * @return
+   * @throws Exception
+   */
   public List<String> getScheduleIds() throws Exception {
     ResultSetHandler<List<String>> rsh =
         new BeanListHandler<String>(String.class);
@@ -228,6 +258,13 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return null;
   }
 
+  /**
+   * Get scheduleDefn for a scheduleId
+   * 
+   * @param schedule_id
+   * @return
+   * @throws GrillException
+   */
   @SuppressWarnings("unchecked")
   public XSchedule getScheduleDefn(String schedule_id) throws GrillException {
     ResultSetHandler<GrillScheduleInfo> rsh =
@@ -263,6 +300,14 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return schedule;
   }
 
+  /**
+   * Update status of existing schedule in DB.
+   * 
+   * @param scheduleid
+   * @param newStatus
+   * @return
+   * @throws GrillException
+   */
   public boolean updateStatus(String scheduleid, Status newStatus)
       throws GrillException {
     boolean status = true;
@@ -294,6 +339,13 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return status;
   }
 
+  /**
+   * Update a particular schedule with new scheduleDefn
+   * 
+   * @param scheduleid
+   * @param newSchedule
+   * @throws GrillException
+   */
   public void updateSchedule(String scheduleid, XSchedule newSchedule)
       throws GrillException {
     String execJson = gson.toJson(newSchedule.getExecution());
@@ -325,6 +377,12 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     }
   }
 
+  /**
+   * Get all the run Ids for a particular schedule
+   * 
+   * @param scheduleId
+   * @return
+   */
   public List<String> getScheduleRunIds(String scheduleId) {
     ResultSetHandler<List<String>> rsh =
         new BeanListHandler<String>(String.class);
@@ -339,6 +397,11 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     return null;
   }
 
+  /**
+   * Delete a schedule from DB
+   * 
+   * @param scheduleId
+   */
   public void deleteSchedule(String scheduleId) {
     String deleteScheduleInfo = "DELETE from schedule_info where schedule_id=?";
     String deleteScheduleRunInfo =
@@ -352,6 +415,13 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     }
   }
 
+  /**
+   * Get User Specific details of a schedule
+   * 
+   * @param schedule_id
+   * @return
+   * @throws GrillException
+   */
   public ScheduleInfo getScheduleDetails(String schedule_id)
       throws GrillException {
     ResultSetHandler<String> rsh = new ResultSetHandler<String>() {
@@ -380,7 +450,7 @@ public class GrillSchedulerDAO extends GrillServerDAO {
     }
 
     String runDataQuery =
-        "SELECT run_id, result_path from schedule_run_info where schedule_id=?";
+        "SELECT run_id, result_path from schedule_run_info where schedule_id=? order by created_on desc limit 1";
     try {
       String result = runner.query(runDataQuery, rsh, schedule_id);
       scheduleInfo.setLastRunInstanceId(result.split("#")[0]);

@@ -300,7 +300,7 @@
 <property>
     <name>grill.scheduler.ws.resource.impl</name>
     <value>com.inmobi.grill.server.scheduler.SchedulerResource</value>
-    <description>Implementation class for query scheduler resource</description>
+    <description>Implementation class for scheduler resource</description>
 </property>
 
 <property>
