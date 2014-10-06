@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public abstract class CubeQLCommand extends QueryCommand {
 
-  static Pattern cubePattern = Pattern.compile(".*CUBE\\sSELECT(.*)",
+  static Pattern cubePattern = Pattern.compile(".*CUBE\\s+SELECT(.*)",
       Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
   static Matcher matcher = null;
 
