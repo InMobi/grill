@@ -117,7 +117,7 @@ public class GrillRDDClient {
    * API for non blocking use
    **/
   public QueryHandle createGrillRDDAsync(String query) throws GrillException {
-    return getClient().executeQueryAsynch(query);
+    return getClient().executeQueryAsynch(query, "");
   }
 
   /**
@@ -144,7 +144,7 @@ public class GrillRDDClient {
       throw new GrillException(queryHandle.getHandleId() + " query not finished or result unavailable");
     }
 
-    GrillClient.GrillClientResultSetWithStats result = getClient().getPersistentResultSet(queryHandle);
+    GrillClient.GrillClientResultSetWithStats result = getClient().getAsyncResults(queryHandle);
 
     if (result.getResultSet() == null) {
       throw new GrillException("Result set not available for query " + queryHandle.getHandleId());

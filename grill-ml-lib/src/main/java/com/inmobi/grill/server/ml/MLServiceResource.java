@@ -6,9 +6,9 @@ import com.inmobi.grill.api.StringList;
 import com.inmobi.grill.api.ml.ModelMetadata;
 import com.inmobi.grill.api.ml.TestReport;
 import com.inmobi.grill.ml.ModelLoader;
-import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.ml.MLModel;
 import com.inmobi.grill.ml.MLTestReport;
+import com.inmobi.grill.server.api.ServiceProvider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,11 +28,11 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 public class MLServiceResource {
   public static final Log LOG = LogFactory.getLog(MLServiceResource.class);
   MLService mlService;
-
+  ServiceProvider serviceProvider;
 
   private MLService getMlService() {
     if (mlService == null) {
-      mlService = (MLService) GrillServices.get().getService(MLService.NAME);
+      mlService = (MLService) serviceProvider.getService(MLService.NAME);
     }
     return mlService;
   }

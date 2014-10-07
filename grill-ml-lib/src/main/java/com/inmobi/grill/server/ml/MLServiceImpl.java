@@ -7,21 +7,20 @@ import com.inmobi.grill.api.query.GrillQuery;
 import com.inmobi.grill.api.query.QueryHandle;
 import com.inmobi.grill.api.query.QueryStatus;
 import com.inmobi.grill.ml.*;
-import com.inmobi.grill.server.GrillService;
-import com.inmobi.grill.server.GrillServices;
 import com.inmobi.grill.server.api.GrillConfConstants;
+import com.inmobi.grill.server.api.ServiceProvider;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.CompositeService;
-import org.apache.hive.service.cli.CLIService;
 
 import java.util.*;
 
 public class MLServiceImpl extends CompositeService implements MLService {
   public static final Log LOG = LogFactory.getLog(GrillMLImpl.class);
   private GrillMLImpl ml;
+  private ServiceProvider serviceProvider;
 
   public MLServiceImpl(String name) {
     super(name);
@@ -129,7 +128,7 @@ public class MLServiceImpl extends CompositeService implements MLService {
     @Override
     public QueryHandle runQuery(String testQuery) throws GrillException {
       // Run the query in query executions service
-      QueryExecutionService queryService = (QueryExecutionService) GrillServices.get().getService("query");
+      QueryExecutionService queryService = (QueryExecutionService) serviceProvider.getService("query");
 
       GrillConf queryConf = new GrillConf();
       queryConf.addProperty(GrillConfConstants.GRILL_PERSISTENT_RESULT_SET, false + "");
@@ -137,7 +136,8 @@ public class MLServiceImpl extends CompositeService implements MLService {
 
       QueryHandle testQueryHandle = queryService.executeAsync(sessionHandle,
         testQuery,
-        queryConf
+        queryConf,
+        "ml_test_query"
       );
 
       // Wait for test query to complete
