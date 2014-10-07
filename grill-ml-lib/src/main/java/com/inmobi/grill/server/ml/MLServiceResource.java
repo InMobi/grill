@@ -8,10 +8,13 @@ import com.inmobi.grill.api.ml.TestReport;
 import com.inmobi.grill.ml.ModelLoader;
 import com.inmobi.grill.ml.MLModel;
 import com.inmobi.grill.ml.MLTestReport;
+import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.ServiceProvider;
+import com.inmobi.grill.server.api.ServiceProviderFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
@@ -29,10 +32,30 @@ public class MLServiceResource {
   public static final Log LOG = LogFactory.getLog(MLServiceResource.class);
   MLService mlService;
   ServiceProvider serviceProvider;
+  ServiceProviderFactory serviceProviderFactory = getServiceProviderFactory(new HiveConf());
+
+  private ServiceProvider getServiceProvider() {
+    if (serviceProvider == null) {
+      serviceProvider = serviceProviderFactory.getServiceProvider();
+    }
+    return serviceProvider;
+  }
+
+  private ServiceProviderFactory getServiceProviderFactory(HiveConf conf) {
+    Class<?> spfClass = conf.getClass(GrillConfConstants.GRILL_SERVICE_PROVIDER_FACTORY,
+      ServiceProviderFactory.class);
+    try {
+      return  (ServiceProviderFactory) spfClass.newInstance();
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   private MLService getMlService() {
     if (mlService == null) {
-      mlService = (MLService) serviceProvider.getService(MLService.NAME);
+      mlService = (MLService) getServiceProvider().getService(MLService.NAME);
     }
     return mlService;
   }

@@ -9,6 +9,7 @@ import com.inmobi.grill.api.query.QueryStatus;
 import com.inmobi.grill.ml.*;
 import com.inmobi.grill.server.api.GrillConfConstants;
 import com.inmobi.grill.server.api.ServiceProvider;
+import com.inmobi.grill.server.api.ServiceProviderFactory;
 import com.inmobi.grill.server.api.query.QueryExecutionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +22,7 @@ public class MLServiceImpl extends CompositeService implements MLService {
   public static final Log LOG = LogFactory.getLog(GrillMLImpl.class);
   private GrillMLImpl ml;
   private ServiceProvider serviceProvider;
+  private ServiceProviderFactory serviceProviderFactory;
 
   public MLServiceImpl(String name) {
     super(name);
@@ -51,11 +53,31 @@ public class MLServiceImpl extends CompositeService implements MLService {
     return ml.getModel(algorithm, modelId);
   }
 
+  private ServiceProvider getServiceProvider() {
+    if (serviceProvider == null) {
+      serviceProvider = serviceProviderFactory.getServiceProvider();
+    }
+    return serviceProvider;
+  }
+
+  private ServiceProviderFactory getServiceProviderFactory(HiveConf conf) {
+    Class<?> spfClass = conf.getClass(GrillConfConstants.GRILL_SERVICE_PROVIDER_FACTORY,
+      ServiceProviderFactory.class);
+    try {
+      return  (ServiceProviderFactory) spfClass.newInstance();
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @Override
   public synchronized void init(HiveConf hiveConf) {
     ml = new GrillMLImpl(hiveConf);
     ml.init(hiveConf);
     super.init(hiveConf);
+    serviceProviderFactory = getServiceProviderFactory(hiveConf);
     LOG.info("Inited ML service");
   }
 
@@ -128,7 +150,7 @@ public class MLServiceImpl extends CompositeService implements MLService {
     @Override
     public QueryHandle runQuery(String testQuery) throws GrillException {
       // Run the query in query executions service
-      QueryExecutionService queryService = (QueryExecutionService) serviceProvider.getService("query");
+      QueryExecutionService queryService = (QueryExecutionService) getServiceProvider().getService("query");
 
       GrillConf queryConf = new GrillConf();
       queryConf.addProperty(GrillConfConstants.GRILL_PERSISTENT_RESULT_SET, false + "");
