@@ -20,6 +20,7 @@
     <slf4j.version>1.7.6</slf4j.version>
     <metrics.version>3.0.2</metrics.version>
     <hadoop.version>2.4.0</hadoop.version>
+		<spark.version>1.0.1</spark.version>
   </properties>
 
   <groupId>com.inmobi.grill</groupId>
@@ -689,6 +690,24 @@
        <version>1.5</version>
      </dependency>
 
+     <dependency> <!-- Spark dependency -->
+         <groupId>org.apache.spark</groupId>
+         <artifactId>spark-core_2.10</artifactId>
+         <version>${spark.version}</version>
+         <scope>provided</scope>
+     </dependency>
+     <dependency>
+         <groupId>org.apache.spark</groupId>
+         <artifactId>spark-mllib_2.10</artifactId>
+         <version>${spark.version}</version>
+         <scope>provided</scope>
+     </dependency>
+     <dependency>
+         <groupId>org.apache.hive.hcatalog</groupId>
+         <artifactId>hive-hcatalog-core</artifactId>
+         <version>${hive.version}</version>
+     </dependency>
+
    </dependencies>
 
  </dependencyManagement>
@@ -726,6 +745,8 @@
     <module>grill-examples</module>
     <module>grill-dist</module>
     <module>grill-client-dist</module>
+    <module>grill-ml-lib</module>
+    <module>grill-spark-rdd</module>
   </modules>
 
   <profiles>
