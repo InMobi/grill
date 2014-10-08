@@ -746,6 +746,7 @@
     <module>grill-dist</module>
     <module>grill-client-dist</module>
     <module>grill-ml-lib</module>
+    <module>grill-ml-client</module>
     <module>grill-spark-rdd</module>
   </modules>
 
