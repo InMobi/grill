@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <name>Grill ML Client</name>
+
+    <parent>
+        <artifactId>grill-parent</artifactId>
+        <groupId>com.inmobi.grill</groupId>
+        <version>1.1.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>grill-ml-client</artifactId>
+    <packaging>jar</packaging>
+    <description>Grill ML API Client Module</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.inmobi.grill</groupId>
+            <artifactId>grill-ml-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+                <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+        </dependency>
+    </dependencies>
+
+<build>
+    <plugins>
+   <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+            <execution>
+                <id>copy-dependencies</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/jars</outputDirectory>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    </plugins>
+</build>
+</project>

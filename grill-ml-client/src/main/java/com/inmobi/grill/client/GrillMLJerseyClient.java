@@ -1,0 +1,175 @@
+package com.inmobi.grill.client;
+
+import com.inmobi.grill.api.StringList;
+import com.inmobi.grill.api.ml.ModelMetadata;
+import com.inmobi.grill.api.ml.TestReport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.Map;
+
+/*
+ * Client code to invoke server side ML API
+ */
+public class GrillMLJerseyClient {
+  public static final String GRILL_ML_RESOURCE_PATH = "grill.ml.resource.path";
+  public static final String DEFAULT_ML_RESOURCE_PATH = "ml";
+  public static final Log LOG = LogFactory.getLog(GrillMLJerseyClient.class);
+
+  private final GrillConnection connection;
+
+  public GrillMLJerseyClient(GrillConnection connection) {
+    this.connection = connection;
+  }
+
+  protected WebTarget getMLWebTarget() {
+    Client client = ClientBuilder
+      .newBuilder()
+      .register(MultiPartFeature.class)
+      .build();
+    GrillConnectionParams connParams = connection.getGrillConnectionParams();
+    String baseURI = connParams.getBaseConnectionUrl();
+    String mlURI = connParams.getConf().get(GRILL_ML_RESOURCE_PATH, DEFAULT_ML_RESOURCE_PATH);
+    return client.target(baseURI).path(mlURI);
+  }
+
+
+  public ModelMetadata getModelMetadata(String algorithm, String modelID) {
+    try {
+      return getMLWebTarget()
+        .path("models")
+        .path(algorithm).path(modelID).request().get(ModelMetadata.class);
+    } catch (NotFoundException exc) {
+      return null;
+    }
+  }
+
+  public void deleteModel(String algorithm, String modelID) {
+    getMLWebTarget()
+      .path("models")
+      .path(algorithm)
+      .path(modelID)
+      .request().delete();
+  }
+
+  public List<String> getModelsForAlgorithm(String algorithm) {
+    try {
+      StringList models = getMLWebTarget()
+        .path("models")
+        .path(algorithm)
+        .request().get(StringList.class);
+      return models == null ? null : models.getElements();
+    } catch (NotFoundException exc) {
+      return null;
+    }
+  }
+
+  public List<String> getTrainerNames() {
+    StringList trainerNames = getMLWebTarget()
+      .path("trainers").request().get(StringList.class);
+    return trainerNames == null ? null : trainerNames.getElements();
+  }
+
+  public String trainModel(String algorithm, Map<String, String> params) {
+    Form form = new Form();
+
+    for (Map.Entry<String, String> entry : params.entrySet()) {
+      form.param(entry.getKey(), entry.getValue());
+    }
+
+    return getMLWebTarget()
+      .path(algorithm)
+      .path("train")
+      .request(MediaType.APPLICATION_JSON_TYPE)
+      .post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), String.class);
+  }
+
+  public String testModel(String table, String algorithm, String modelID) {
+    WebTarget modelTestTarget = getMLWebTarget()
+      .path("test")
+      .path(table)
+      .path(algorithm)
+      .path(modelID);
+
+    FormDataMultiPart mp = new FormDataMultiPart();
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
+      connection.getSessionHandle(), MediaType.APPLICATION_XML_TYPE));
+
+    return modelTestTarget.request()
+      .post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), String.class);
+  }
+
+  public List<String> getTestReportsOfAlgorithm(String algorithm) {
+    try {
+      StringList list = getMLWebTarget()
+        .path("reports")
+        .path(algorithm)
+        .request()
+        .get(StringList.class);
+      return list == null ? null : list.getElements();
+    } catch (NotFoundException exc) {
+      return null;
+    }
+  }
+
+  public TestReport getTestReport(String algorithm, String reportID) {
+    try {
+      return getMLWebTarget()
+        .path("reports")
+        .path(algorithm)
+        .path(reportID)
+        .request()
+        .get(TestReport.class);
+    } catch (NotFoundException exc) {
+      return null;
+    }
+  }
+
+  public String deleteTestReport(String algorithm, String reportID) {
+    return getMLWebTarget()
+      .path("reports")
+      .path(algorithm)
+      .path(reportID)
+      .request().delete(String.class);
+  }
+
+  public String predictSingle(String algorithm, String modelID, Map<String,String> features) {
+    WebTarget target = getMLWebTarget()
+      .path("predict")
+      .path(algorithm)
+      .path(modelID);
+
+    for (Map.Entry<String, String> entry : features.entrySet()) {
+      target.queryParam(entry.getKey(), entry.getValue());
+    }
+
+    return target.request().get(String.class);
+  }
+
+  public List<String> getParamDescriptionOfTrainer(String algorithm) {
+    try {
+      StringList paramHelp = getMLWebTarget()
+        .path("trainers")
+        .path(algorithm)
+        .request(MediaType.APPLICATION_XML)
+        .get(StringList.class);
+      return paramHelp.getElements();
+    } catch (NotFoundException exc) {
+      return null;
+    }
+  }
+
+  public Configuration getConf() {
+    return connection.getGrillConnectionParams().getConf();
+  }
+}
