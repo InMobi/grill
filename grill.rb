@@ -184,30 +184,30 @@ module Query
   class GrillPreparedQuery 
 
     # (no documentation provided)
-    attr_accessor :driverQuery
-    # (no documentation provided)
     attr_accessor :prepareHandle
     # (no documentation provided)
-    attr_accessor :preparedTime
-    # (no documentation provided)
     attr_accessor :preparedUser
+    # (no documentation provided)
+    attr_accessor :selectedDriverClassName
+    # (no documentation provided)
+    attr_accessor :preparedTime
     # (no documentation provided)
     attr_accessor :userQuery
     # (no documentation provided)
     attr_accessor :conf
     # (no documentation provided)
-    attr_accessor :selectedDriverClassName
+    attr_accessor :driverQuery
 
     # the json hash for this GrillPreparedQuery
     def to_jaxb_json_hash
       _h = {}
-      _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
       _h['prepareHandle'] = prepareHandle.to_jaxb_json_hash unless prepareHandle.nil?
-      _h['preparedTime'] = preparedTime.to_jaxb_json_hash unless preparedTime.nil?
       _h['preparedUser'] = preparedUser.to_jaxb_json_hash unless preparedUser.nil?
+      _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
+      _h['preparedTime'] = preparedTime.to_jaxb_json_hash unless preparedTime.nil?
       _h['userQuery'] = userQuery.to_jaxb_json_hash unless userQuery.nil?
       _h['conf'] = conf.to_jaxb_json_hash unless conf.nil?
-      _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
+      _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
       return _h
     end
 
@@ -218,13 +218,13 @@ module Query
 
     #initializes this GrillPreparedQuery with a json hash
     def init_jaxb_json_hash(_o)
-      @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
       @prepareHandle = Com::Inmobi::Grill::Api::Query::QueryPrepareHandle.from_json(_o['prepareHandle']) unless _o['prepareHandle'].nil?
-      @preparedTime = Time.from_json(_o['preparedTime']) unless _o['preparedTime'].nil?
       @preparedUser = String.from_json(_o['preparedUser']) unless _o['preparedUser'].nil?
+      @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
+      @preparedTime = Time.from_json(_o['preparedTime']) unless _o['preparedTime'].nil?
       @userQuery = String.from_json(_o['userQuery']) unless _o['userQuery'].nil?
       @conf = Com::Inmobi::Grill::Api::GrillConf.from_json(_o['conf']) unless _o['conf'].nil?
-      @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
+      @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
     end
 
     # constructs a GrillPreparedQuery from a (parsed) JSON hash
@@ -314,63 +314,63 @@ module Query
   class GrillQuery 
 
     # (no documentation provided)
-    attr_accessor :closedTime
-    # (no documentation provided)
     attr_accessor :driverStartTime
-    # (no documentation provided)
-    attr_accessor :userQuery
-    # (no documentation provided)
-    attr_accessor :finishTime
-    # (no documentation provided)
-    attr_accessor :queryName
-    # (no documentation provided)
-    attr_accessor :isPersistent
-    # (no documentation provided)
-    attr_accessor :selectedDriverClassName
-    # (no documentation provided)
-    attr_accessor :driverQuery
-    # (no documentation provided)
-    attr_accessor :queryHandle
-    # (no documentation provided)
-    attr_accessor :queryConf
     # (no documentation provided)
     attr_accessor :priority
     # (no documentation provided)
     attr_accessor :status
     # (no documentation provided)
-    attr_accessor :submissionTime
-    # (no documentation provided)
     attr_accessor :driverOpHandle
     # (no documentation provided)
-    attr_accessor :submittedUser
+    attr_accessor :selectedDriverClassName
     # (no documentation provided)
-    attr_accessor :resultSetPath
+    attr_accessor :finishTime
+    # (no documentation provided)
+    attr_accessor :queryHandle
+    # (no documentation provided)
+    attr_accessor :closedTime
+    # (no documentation provided)
+    attr_accessor :driverFinishTime
+    # (no documentation provided)
+    attr_accessor :queryName
     # (no documentation provided)
     attr_accessor :launchTime
     # (no documentation provided)
-    attr_accessor :driverFinishTime
+    attr_accessor :userQuery
+    # (no documentation provided)
+    attr_accessor :queryConf
+    # (no documentation provided)
+    attr_accessor :resultSetPath
+    # (no documentation provided)
+    attr_accessor :submissionTime
+    # (no documentation provided)
+    attr_accessor :submittedUser
+    # (no documentation provided)
+    attr_accessor :driverQuery
+    # (no documentation provided)
+    attr_accessor :isPersistent
 
     # the json hash for this GrillQuery
     def to_jaxb_json_hash
       _h = {}
-      _h['closedTime'] = closedTime.to_jaxb_json_hash unless closedTime.nil?
       _h['driverStartTime'] = driverStartTime.to_jaxb_json_hash unless driverStartTime.nil?
-      _h['userQuery'] = userQuery.to_jaxb_json_hash unless userQuery.nil?
-      _h['finishTime'] = finishTime.to_jaxb_json_hash unless finishTime.nil?
-      _h['queryName'] = queryName.to_jaxb_json_hash unless queryName.nil?
-      _h['isPersistent'] = isPersistent.to_jaxb_json_hash unless isPersistent.nil?
-      _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
-      _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
-      _h['queryHandle'] = queryHandle.to_jaxb_json_hash unless queryHandle.nil?
-      _h['queryConf'] = queryConf.to_jaxb_json_hash unless queryConf.nil?
       _h['priority'] = priority.to_jaxb_json_hash unless priority.nil?
       _h['status'] = status.to_jaxb_json_hash unless status.nil?
-      _h['submissionTime'] = submissionTime.to_jaxb_json_hash unless submissionTime.nil?
       _h['driverOpHandle'] = driverOpHandle.to_jaxb_json_hash unless driverOpHandle.nil?
-      _h['submittedUser'] = submittedUser.to_jaxb_json_hash unless submittedUser.nil?
-      _h['resultSetPath'] = resultSetPath.to_jaxb_json_hash unless resultSetPath.nil?
-      _h['launchTime'] = launchTime.to_jaxb_json_hash unless launchTime.nil?
+      _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
+      _h['finishTime'] = finishTime.to_jaxb_json_hash unless finishTime.nil?
+      _h['queryHandle'] = queryHandle.to_jaxb_json_hash unless queryHandle.nil?
+      _h['closedTime'] = closedTime.to_jaxb_json_hash unless closedTime.nil?
       _h['driverFinishTime'] = driverFinishTime.to_jaxb_json_hash unless driverFinishTime.nil?
+      _h['queryName'] = queryName.to_jaxb_json_hash unless queryName.nil?
+      _h['launchTime'] = launchTime.to_jaxb_json_hash unless launchTime.nil?
+      _h['userQuery'] = userQuery.to_jaxb_json_hash unless userQuery.nil?
+      _h['queryConf'] = queryConf.to_jaxb_json_hash unless queryConf.nil?
+      _h['resultSetPath'] = resultSetPath.to_jaxb_json_hash unless resultSetPath.nil?
+      _h['submissionTime'] = submissionTime.to_jaxb_json_hash unless submissionTime.nil?
+      _h['submittedUser'] = submittedUser.to_jaxb_json_hash unless submittedUser.nil?
+      _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
+      _h['isPersistent'] = isPersistent.to_jaxb_json_hash unless isPersistent.nil?
       return _h
     end
 
@@ -381,24 +381,24 @@ module Query
 
     #initializes this GrillQuery with a json hash
     def init_jaxb_json_hash(_o)
-      @closedTime = Bignum.from_json(_o['closedTime']) unless _o['closedTime'].nil?
       @driverStartTime = Bignum.from_json(_o['driverStartTime']) unless _o['driverStartTime'].nil?
-      @userQuery = String.from_json(_o['userQuery']) unless _o['userQuery'].nil?
-      @finishTime = Bignum.from_json(_o['finishTime']) unless _o['finishTime'].nil?
-      @queryName = String.from_json(_o['queryName']) unless _o['queryName'].nil?
-      @isPersistent = Boolean.from_json(_o['isPersistent']) unless _o['isPersistent'].nil?
-      @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
-      @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
-      @queryHandle = Com::Inmobi::Grill::Api::Query::QueryHandle.from_json(_o['queryHandle']) unless _o['queryHandle'].nil?
-      @queryConf = Com::Inmobi::Grill::Api::GrillConf.from_json(_o['queryConf']) unless _o['queryConf'].nil?
       @priority = String.from_json(_o['priority']) unless _o['priority'].nil?
       @status = Com::Inmobi::Grill::Api::Query::QueryStatus.from_json(_o['status']) unless _o['status'].nil?
-      @submissionTime = Bignum.from_json(_o['submissionTime']) unless _o['submissionTime'].nil?
       @driverOpHandle = String.from_json(_o['driverOpHandle']) unless _o['driverOpHandle'].nil?
-      @submittedUser = String.from_json(_o['submittedUser']) unless _o['submittedUser'].nil?
-      @resultSetPath = String.from_json(_o['resultSetPath']) unless _o['resultSetPath'].nil?
-      @launchTime = Bignum.from_json(_o['launchTime']) unless _o['launchTime'].nil?
+      @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
+      @finishTime = Bignum.from_json(_o['finishTime']) unless _o['finishTime'].nil?
+      @queryHandle = Com::Inmobi::Grill::Api::Query::QueryHandle.from_json(_o['queryHandle']) unless _o['queryHandle'].nil?
+      @closedTime = Bignum.from_json(_o['closedTime']) unless _o['closedTime'].nil?
       @driverFinishTime = Bignum.from_json(_o['driverFinishTime']) unless _o['driverFinishTime'].nil?
+      @queryName = String.from_json(_o['queryName']) unless _o['queryName'].nil?
+      @launchTime = Bignum.from_json(_o['launchTime']) unless _o['launchTime'].nil?
+      @userQuery = String.from_json(_o['userQuery']) unless _o['userQuery'].nil?
+      @queryConf = Com::Inmobi::Grill::Api::GrillConf.from_json(_o['queryConf']) unless _o['queryConf'].nil?
+      @resultSetPath = String.from_json(_o['resultSetPath']) unless _o['resultSetPath'].nil?
+      @submissionTime = Bignum.from_json(_o['submissionTime']) unless _o['submissionTime'].nil?
+      @submittedUser = String.from_json(_o['submittedUser']) unless _o['submittedUser'].nil?
+      @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
+      @isPersistent = Boolean.from_json(_o['isPersistent']) unless _o['isPersistent'].nil?
     end
 
     # constructs a GrillQuery from a (parsed) JSON hash
@@ -437,15 +437,15 @@ module Query
   class QueryCost 
 
     # (no documentation provided)
-    attr_accessor :estimatedResourceUsage
-    # (no documentation provided)
     attr_accessor :estimatedExecTimeMillis
+    # (no documentation provided)
+    attr_accessor :estimatedResourceUsage
 
     # the json hash for this QueryCost
     def to_jaxb_json_hash
       _h = {}
-      _h['estimatedResourceUsage'] = estimatedResourceUsage.to_jaxb_json_hash unless estimatedResourceUsage.nil?
       _h['estimatedExecTimeMillis'] = estimatedExecTimeMillis.to_jaxb_json_hash unless estimatedExecTimeMillis.nil?
+      _h['estimatedResourceUsage'] = estimatedResourceUsage.to_jaxb_json_hash unless estimatedResourceUsage.nil?
       return _h
     end
 
@@ -456,8 +456,8 @@ module Query
 
     #initializes this QueryCost with a json hash
     def init_jaxb_json_hash(_o)
-      @estimatedResourceUsage = Float.from_json(_o['estimatedResourceUsage']) unless _o['estimatedResourceUsage'].nil?
       @estimatedExecTimeMillis = Bignum.from_json(_o['estimatedExecTimeMillis']) unless _o['estimatedExecTimeMillis'].nil?
+      @estimatedResourceUsage = Float.from_json(_o['estimatedResourceUsage']) unless _o['estimatedResourceUsage'].nil?
     end
 
     # constructs a QueryCost from a (parsed) JSON hash
@@ -624,11 +624,11 @@ module Query
     # (no documentation provided)
     attr_accessor :statusMessage
     # (no documentation provided)
-    attr_accessor :status
+    attr_accessor :errorMessage
     # (no documentation provided)
     attr_accessor :isResultSetAvailable
     # (no documentation provided)
-    attr_accessor :errorMessage
+    attr_accessor :status
 
     # the json hash for this QueryStatus
     def to_jaxb_json_hash
@@ -636,9 +636,9 @@ module Query
       _h['progress'] = progress.to_jaxb_json_hash unless progress.nil?
       _h['progressMessage'] = progressMessage.to_jaxb_json_hash unless progressMessage.nil?
       _h['statusMessage'] = statusMessage.to_jaxb_json_hash unless statusMessage.nil?
-      _h['status'] = status.to_jaxb_json_hash unless status.nil?
-      _h['isResultSetAvailable'] = isResultSetAvailable.to_jaxb_json_hash unless isResultSetAvailable.nil?
       _h['errorMessage'] = errorMessage.to_jaxb_json_hash unless errorMessage.nil?
+      _h['isResultSetAvailable'] = isResultSetAvailable.to_jaxb_json_hash unless isResultSetAvailable.nil?
+      _h['status'] = status.to_jaxb_json_hash unless status.nil?
       return _h
     end
 
@@ -652,9 +652,9 @@ module Query
       @progress = Float.from_json(_o['progress']) unless _o['progress'].nil?
       @progressMessage = String.from_json(_o['progressMessage']) unless _o['progressMessage'].nil?
       @statusMessage = String.from_json(_o['statusMessage']) unless _o['statusMessage'].nil?
-      @status = String.from_json(_o['status']) unless _o['status'].nil?
-      @isResultSetAvailable = Boolean.from_json(_o['isResultSetAvailable']) unless _o['isResultSetAvailable'].nil?
       @errorMessage = String.from_json(_o['errorMessage']) unless _o['errorMessage'].nil?
+      @isResultSetAvailable = Boolean.from_json(_o['isResultSetAvailable']) unless _o['isResultSetAvailable'].nil?
+      @status = String.from_json(_o['status']) unless _o['status'].nil?
     end
 
     # constructs a QueryStatus from a (parsed) JSON hash
@@ -864,15 +864,15 @@ module Api
   class APIResult 
 
     # (no documentation provided)
-    attr_accessor :message
-    # (no documentation provided)
     attr_accessor :status
+    # (no documentation provided)
+    attr_accessor :message
 
     # the json hash for this APIResult
     def to_jaxb_json_hash
       _h = {}
-      _h['message'] = message.to_jaxb_json_hash unless message.nil?
       _h['status'] = status.to_jaxb_json_hash unless status.nil?
+      _h['message'] = message.to_jaxb_json_hash unless message.nil?
       return _h
     end
 
@@ -883,8 +883,8 @@ module Api
 
     #initializes this APIResult with a json hash
     def init_jaxb_json_hash(_o)
-      @message = String.from_json(_o['message']) unless _o['message'].nil?
       @status = String.from_json(_o['status']) unless _o['status'].nil?
+      @message = String.from_json(_o['message']) unless _o['message'].nil?
     end
 
     # constructs a APIResult from a (parsed) JSON hash
@@ -976,23 +976,23 @@ module Query
   class QueryHandleWithResultSet < Com::Inmobi::Grill::Api::Query::QuerySubmitResult 
 
     # (no documentation provided)
-    attr_accessor :result
-    # (no documentation provided)
     attr_accessor :queryHandle
+    # (no documentation provided)
+    attr_accessor :result
 
     # the json hash for this QueryHandleWithResultSet
     def to_jaxb_json_hash
       _h = super
-      _h['result'] = result.to_jaxb_json_hash unless result.nil?
       _h['queryHandle'] = queryHandle.to_jaxb_json_hash unless queryHandle.nil?
+      _h['result'] = result.to_jaxb_json_hash unless result.nil?
       return _h
     end
 
     #initializes this QueryHandleWithResultSet with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @result = Com::Inmobi::Grill::Api::Query::QueryResult.from_json(_o['result']) unless _o['result'].nil?
       @queryHandle = Com::Inmobi::Grill::Api::Query::QueryHandle.from_json(_o['queryHandle']) unless _o['queryHandle'].nil?
+      @result = Com::Inmobi::Grill::Api::Query::QueryResult.from_json(_o['result']) unless _o['result'].nil?
     end
 
     # constructs a QueryHandleWithResultSet from a (parsed) JSON hash
@@ -1031,119 +1031,119 @@ module Query
   class QueryPlan < Com::Inmobi::Grill::Api::Query::QuerySubmitResult 
 
     # (no documentation provided)
-    attr_accessor :numSelDi
-    # (no documentation provided)
-    attr_accessor :prepareHandle
-    # (no documentation provided)
-    attr_accessor :gbyWeight
-    # (no documentation provided)
-    attr_accessor :numJoins
-    # (no documentation provided)
-    attr_accessor :hasSubQuery
-    # (no documentation provided)
-    attr_accessor :scanMode
-    # (no documentation provided)
-    attr_accessor :selectWeight
-    # (no documentation provided)
-    attr_accessor :havingWeight
-    # (no documentation provided)
-    attr_accessor :numFilters
-    # (no documentation provided)
-    attr_accessor :numObys
-    # (no documentation provided)
-    attr_accessor :numSels
-    # (no documentation provided)
-    attr_accessor :obyWeight
-    # (no documentation provided)
-    attr_accessor :filterWeight
-    # (no documentation provided)
-    attr_accessor :queryCost
-    # (no documentation provided)
-    attr_accessor :tableWeights
-    # (no documentation provided)
-    attr_accessor :execMode
-    # (no documentation provided)
-    attr_accessor :joinWeight
-    # (no documentation provided)
-    attr_accessor :tablesQueried
+    attr_accessor :hasError
     # (no documentation provided)
     attr_accessor :numAggrExprs
     # (no documentation provided)
-    attr_accessor :planString
+    attr_accessor :errorMsg
     # (no documentation provided)
-    attr_accessor :numGbys
+    attr_accessor :execMode
+    # (no documentation provided)
+    attr_accessor :numSels
+    # (no documentation provided)
+    attr_accessor :gbyWeight
     # (no documentation provided)
     attr_accessor :numHaving
     # (no documentation provided)
-    attr_accessor :hasError
+    attr_accessor :numGbys
     # (no documentation provided)
-    attr_accessor :errorMsg
+    attr_accessor :obyWeight
+    # (no documentation provided)
+    attr_accessor :numFilters
+    # (no documentation provided)
+    attr_accessor :tableWeights
+    # (no documentation provided)
+    attr_accessor :numObys
+    # (no documentation provided)
+    attr_accessor :tablesQueried
+    # (no documentation provided)
+    attr_accessor :numJoins
+    # (no documentation provided)
+    attr_accessor :queryCost
+    # (no documentation provided)
+    attr_accessor :planString
+    # (no documentation provided)
+    attr_accessor :hasSubQuery
+    # (no documentation provided)
+    attr_accessor :filterWeight
+    # (no documentation provided)
+    attr_accessor :scanMode
+    # (no documentation provided)
+    attr_accessor :prepareHandle
+    # (no documentation provided)
+    attr_accessor :selectWeight
+    # (no documentation provided)
+    attr_accessor :joinWeight
+    # (no documentation provided)
+    attr_accessor :havingWeight
+    # (no documentation provided)
+    attr_accessor :numSelDi
 
     # the json hash for this QueryPlan
     def to_jaxb_json_hash
       _h = super
-      _h['numSelDi'] = numSelDi.to_jaxb_json_hash unless numSelDi.nil?
-      _h['prepareHandle'] = prepareHandle.to_jaxb_json_hash unless prepareHandle.nil?
-      _h['gbyWeight'] = gbyWeight.to_jaxb_json_hash unless gbyWeight.nil?
-      _h['numJoins'] = numJoins.to_jaxb_json_hash unless numJoins.nil?
-      _h['hasSubQuery'] = hasSubQuery.to_jaxb_json_hash unless hasSubQuery.nil?
-      _h['scanMode'] = scanMode.to_jaxb_json_hash unless scanMode.nil?
-      _h['selectWeight'] = selectWeight.to_jaxb_json_hash unless selectWeight.nil?
-      _h['havingWeight'] = havingWeight.to_jaxb_json_hash unless havingWeight.nil?
-      _h['numFilters'] = numFilters.to_jaxb_json_hash unless numFilters.nil?
-      _h['numObys'] = numObys.to_jaxb_json_hash unless numObys.nil?
-      _h['numSels'] = numSels.to_jaxb_json_hash unless numSels.nil?
-      _h['obyWeight'] = obyWeight.to_jaxb_json_hash unless obyWeight.nil?
-      _h['filterWeight'] = filterWeight.to_jaxb_json_hash unless filterWeight.nil?
-      _h['queryCost'] = queryCost.to_jaxb_json_hash unless queryCost.nil?
-      _h['tableWeights'] = tableWeights.to_jaxb_json_hash unless tableWeights.nil?
+      _h['hasError'] = hasError.to_jaxb_json_hash unless hasError.nil?
+      _h['numAggrExprs'] = numAggrExprs.to_jaxb_json_hash unless numAggrExprs.nil?
+      _h['errorMsg'] = errorMsg.to_jaxb_json_hash unless errorMsg.nil?
       _h['execMode'] = execMode.to_jaxb_json_hash unless execMode.nil?
-      _h['joinWeight'] = joinWeight.to_jaxb_json_hash unless joinWeight.nil?
+      _h['numSels'] = numSels.to_jaxb_json_hash unless numSels.nil?
+      _h['gbyWeight'] = gbyWeight.to_jaxb_json_hash unless gbyWeight.nil?
+      _h['numHaving'] = numHaving.to_jaxb_json_hash unless numHaving.nil?
+      _h['numGbys'] = numGbys.to_jaxb_json_hash unless numGbys.nil?
+      _h['obyWeight'] = obyWeight.to_jaxb_json_hash unless obyWeight.nil?
+      _h['numFilters'] = numFilters.to_jaxb_json_hash unless numFilters.nil?
+      _h['tableWeights'] = tableWeights.to_jaxb_json_hash unless tableWeights.nil?
+      _h['numObys'] = numObys.to_jaxb_json_hash unless numObys.nil?
       if !tablesQueried.nil?
         _ha = Array.new
         tablesQueried.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['tablesQueried'] = _ha
       end
-      _h['numAggrExprs'] = numAggrExprs.to_jaxb_json_hash unless numAggrExprs.nil?
+      _h['numJoins'] = numJoins.to_jaxb_json_hash unless numJoins.nil?
+      _h['queryCost'] = queryCost.to_jaxb_json_hash unless queryCost.nil?
       _h['planString'] = planString.to_jaxb_json_hash unless planString.nil?
-      _h['numGbys'] = numGbys.to_jaxb_json_hash unless numGbys.nil?
-      _h['numHaving'] = numHaving.to_jaxb_json_hash unless numHaving.nil?
-      _h['hasError'] = hasError.to_jaxb_json_hash unless hasError.nil?
-      _h['errorMsg'] = errorMsg.to_jaxb_json_hash unless errorMsg.nil?
+      _h['hasSubQuery'] = hasSubQuery.to_jaxb_json_hash unless hasSubQuery.nil?
+      _h['filterWeight'] = filterWeight.to_jaxb_json_hash unless filterWeight.nil?
+      _h['scanMode'] = scanMode.to_jaxb_json_hash unless scanMode.nil?
+      _h['prepareHandle'] = prepareHandle.to_jaxb_json_hash unless prepareHandle.nil?
+      _h['selectWeight'] = selectWeight.to_jaxb_json_hash unless selectWeight.nil?
+      _h['joinWeight'] = joinWeight.to_jaxb_json_hash unless joinWeight.nil?
+      _h['havingWeight'] = havingWeight.to_jaxb_json_hash unless havingWeight.nil?
+      _h['numSelDi'] = numSelDi.to_jaxb_json_hash unless numSelDi.nil?
       return _h
     end
 
     #initializes this QueryPlan with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @numSelDi = Fixnum.from_json(_o['numSelDi']) unless _o['numSelDi'].nil?
-      @prepareHandle = Com::Inmobi::Grill::Api::Query::QueryPrepareHandle.from_json(_o['prepareHandle']) unless _o['prepareHandle'].nil?
-      @gbyWeight = Float.from_json(_o['gbyWeight']) unless _o['gbyWeight'].nil?
-      @numJoins = Fixnum.from_json(_o['numJoins']) unless _o['numJoins'].nil?
-      @hasSubQuery = Boolean.from_json(_o['hasSubQuery']) unless _o['hasSubQuery'].nil?
-      @scanMode = String.from_json(_o['scanMode']) unless _o['scanMode'].nil?
-      @selectWeight = Float.from_json(_o['selectWeight']) unless _o['selectWeight'].nil?
-      @havingWeight = Float.from_json(_o['havingWeight']) unless _o['havingWeight'].nil?
-      @numFilters = Fixnum.from_json(_o['numFilters']) unless _o['numFilters'].nil?
-      @numObys = Fixnum.from_json(_o['numObys']) unless _o['numObys'].nil?
-      @numSels = Fixnum.from_json(_o['numSels']) unless _o['numSels'].nil?
-      @obyWeight = Float.from_json(_o['obyWeight']) unless _o['obyWeight'].nil?
-      @filterWeight = Float.from_json(_o['filterWeight']) unless _o['filterWeight'].nil?
-      @queryCost = Com::Inmobi::Grill::Api::Query::QueryCost.from_json(_o['queryCost']) unless _o['queryCost'].nil?
-      @tableWeights = Hash.from_json(_o['tableWeights']) unless _o['tableWeights'].nil?
+      @hasError = Boolean.from_json(_o['hasError']) unless _o['hasError'].nil?
+      @numAggrExprs = Fixnum.from_json(_o['numAggrExprs']) unless _o['numAggrExprs'].nil?
+      @errorMsg = String.from_json(_o['errorMsg']) unless _o['errorMsg'].nil?
       @execMode = String.from_json(_o['execMode']) unless _o['execMode'].nil?
-      @joinWeight = Float.from_json(_o['joinWeight']) unless _o['joinWeight'].nil?
+      @numSels = Fixnum.from_json(_o['numSels']) unless _o['numSels'].nil?
+      @gbyWeight = Float.from_json(_o['gbyWeight']) unless _o['gbyWeight'].nil?
+      @numHaving = Fixnum.from_json(_o['numHaving']) unless _o['numHaving'].nil?
+      @numGbys = Fixnum.from_json(_o['numGbys']) unless _o['numGbys'].nil?
+      @obyWeight = Float.from_json(_o['obyWeight']) unless _o['obyWeight'].nil?
+      @numFilters = Fixnum.from_json(_o['numFilters']) unless _o['numFilters'].nil?
+      @tableWeights = Hash.from_json(_o['tableWeights']) unless _o['tableWeights'].nil?
+      @numObys = Fixnum.from_json(_o['numObys']) unless _o['numObys'].nil?
       if !_o['tablesQueried'].nil?
         @tablesQueried = Array.new
         _oa = _o['tablesQueried']
         _oa.each { | _item | @tablesQueried.push String.from_json(_item) }
       end
-      @numAggrExprs = Fixnum.from_json(_o['numAggrExprs']) unless _o['numAggrExprs'].nil?
+      @numJoins = Fixnum.from_json(_o['numJoins']) unless _o['numJoins'].nil?
+      @queryCost = Com::Inmobi::Grill::Api::Query::QueryCost.from_json(_o['queryCost']) unless _o['queryCost'].nil?
       @planString = String.from_json(_o['planString']) unless _o['planString'].nil?
-      @numGbys = Fixnum.from_json(_o['numGbys']) unless _o['numGbys'].nil?
-      @numHaving = Fixnum.from_json(_o['numHaving']) unless _o['numHaving'].nil?
-      @hasError = Boolean.from_json(_o['hasError']) unless _o['hasError'].nil?
-      @errorMsg = String.from_json(_o['errorMsg']) unless _o['errorMsg'].nil?
+      @hasSubQuery = Boolean.from_json(_o['hasSubQuery']) unless _o['hasSubQuery'].nil?
+      @filterWeight = Float.from_json(_o['filterWeight']) unless _o['filterWeight'].nil?
+      @scanMode = String.from_json(_o['scanMode']) unless _o['scanMode'].nil?
+      @prepareHandle = Com::Inmobi::Grill::Api::Query::QueryPrepareHandle.from_json(_o['prepareHandle']) unless _o['prepareHandle'].nil?
+      @selectWeight = Float.from_json(_o['selectWeight']) unless _o['selectWeight'].nil?
+      @joinWeight = Float.from_json(_o['joinWeight']) unless _o['joinWeight'].nil?
+      @havingWeight = Float.from_json(_o['havingWeight']) unless _o['havingWeight'].nil?
+      @numSelDi = Fixnum.from_json(_o['numSelDi']) unless _o['numSelDi'].nil?
     end
 
     # constructs a QueryPlan from a (parsed) JSON hash

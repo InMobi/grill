@@ -504,6 +504,16 @@ of the current user.]]>
               <![CDATA[returns queries matching the query name]]>
             </wadl:doc>
           </wadl:param>
+          <wadl:param name="fromDate" style="query">
+            <wadl:doc>
+              <![CDATA[start time for filtering prepared queries by preparation time]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="toDate" style="query">
+            <wadl:doc>
+              <![CDATA[end time for filtering prepared queries by preparation time]]>
+            </wadl:doc>
+          </wadl:param>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
@@ -551,6 +561,8 @@ of the current user.]]>
               <![CDATA[destroys queries matching the query name]]>
             </wadl:doc>
           </wadl:param>
+          <wadl:param name="fromDate" style="query"/>
+          <wadl:param name="toDate" style="query"/>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
@@ -593,6 +605,16 @@ otherwise all the queries will be returned]]>
             <wadl:doc>
               <![CDATA[Returns queries submitted by this user. If set to "all", returns queries of all users. By default, returns
 queries of the current user.]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="fromDate" style="query">
+            <wadl:doc>
+              <![CDATA[from date to search queries in a time range]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="toDate" style="query">
+            <wadl:doc>
+              <![CDATA[to date to search queries in a time range]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -650,6 +672,8 @@ otherwise all the queries will be cancelled]]>
               <![CDATA[Cancel queries matching the query name]]>
             </wadl:doc>
           </wadl:param>
+          <wadl:param name="fromDate" style="query"/>
+          <wadl:param name="toDate" style="query"/>
         </wadl:request>
         <wadl:response>
           <wadl:doc>

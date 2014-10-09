@@ -105,17 +105,27 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;grillQuery&gt;
-  &lt;closedTime&gt;...&lt;/closedTime&gt;
   &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
-  &lt;userQuery&gt;...&lt;/userQuery&gt;
-  &lt;finishTime&gt;...&lt;/finishTime&gt;
-  &lt;queryName&gt;...&lt;/queryName&gt;
-  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
+  &lt;priority&gt;...&lt;/priority&gt;
+  &lt;status&gt;
+    &lt;progress&gt;...&lt;/progress&gt;
+    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
+    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
+    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
+    &lt;status&gt;...&lt;/status&gt;
+  &lt;/status&gt;
+  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
   &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
-  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;finishTime&gt;...&lt;/finishTime&gt;
   &lt;queryHandle&gt;
     &lt;handleId&gt;...&lt;/handleId&gt;
   &lt;/queryHandle&gt;
+  &lt;closedTime&gt;...&lt;/closedTime&gt;
+  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
+  &lt;queryName&gt;...&lt;/queryName&gt;
+  &lt;launchTime&gt;...&lt;/launchTime&gt;
+  &lt;userQuery&gt;...&lt;/userQuery&gt;
   &lt;queryConf&gt;
     &lt;properties&gt;
       &lt;entry&gt;
@@ -133,56 +143,46 @@
       &lt;!--...more entries...--&gt;
     &lt;/properties&gt;
   &lt;/queryConf&gt;
-  &lt;priority&gt;...&lt;/priority&gt;
-  &lt;status&gt;
-    &lt;progress&gt;...&lt;/progress&gt;
-    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
-    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
-    &lt;status&gt;...&lt;/status&gt;
-    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
-    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
-  &lt;/status&gt;
-  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
-  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
-  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
   &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
-  &lt;launchTime&gt;...&lt;/launchTime&gt;
-  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
+  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
+  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
+  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
 &lt;/grillQuery&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;closedTime&quot; : ...,
   &quot;driverStartTime&quot; : ...,
-  &quot;userQuery&quot; : &quot;...&quot;,
-  &quot;finishTime&quot; : ...,
-  &quot;queryName&quot; : &quot;...&quot;,
-  &quot;isPersistent&quot; : false,
+  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
+  &quot;status&quot; : {
+    &quot;progress&quot; : ...,
+    &quot;progressMessage&quot; : &quot;...&quot;,
+    &quot;statusMessage&quot; : &quot;...&quot;,
+    &quot;errorMessage&quot; : &quot;...&quot;,
+    &quot;isResultSetAvailable&quot; : false,
+    &quot;status&quot; : &quot;NEW&quot;
+  },
+  &quot;driverOpHandle&quot; : &quot;...&quot;,
   &quot;selectedDriverClassName&quot; : &quot;...&quot;,
-  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;finishTime&quot; : ...,
   &quot;queryHandle&quot; : {
     &quot;handleId&quot; : &quot;...&quot;
   },
+  &quot;closedTime&quot; : ...,
+  &quot;driverFinishTime&quot; : ...,
+  &quot;queryName&quot; : &quot;...&quot;,
+  &quot;launchTime&quot; : ...,
+  &quot;userQuery&quot; : &quot;...&quot;,
   &quot;queryConf&quot; : {
     &quot;properties&quot; : {
       &quot;...&quot; : &quot;...&quot;,
       &quot;---&quot; : ...
     }
   },
-  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
-  &quot;status&quot; : {
-    &quot;progress&quot; : ...,
-    &quot;progressMessage&quot; : &quot;...&quot;,
-    &quot;statusMessage&quot; : &quot;...&quot;,
-    &quot;status&quot; : &quot;NEW&quot;,
-    &quot;isResultSetAvailable&quot; : false,
-    &quot;errorMessage&quot; : &quot;...&quot;
-  },
-  &quot;submissionTime&quot; : ...,
-  &quot;driverOpHandle&quot; : &quot;...&quot;,
-  &quot;submittedUser&quot; : &quot;...&quot;,
   &quot;resultSetPath&quot; : &quot;...&quot;,
-  &quot;launchTime&quot; : ...,
-  &quot;driverFinishTime&quot; : ...
+  &quot;submissionTime&quot; : ...,
+  &quot;submittedUser&quot; : &quot;...&quot;,
+  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;isPersistent&quot; : false
 }</code>
 
       <div class="clear" />
