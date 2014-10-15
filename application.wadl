@@ -3,8 +3,9 @@
   <wadl:doc xmlns:enunciate="http://enunciate.codehaus.org/" enunciate:generatedBy="Enunciate-1.28"/>
   <wadl:grammars>
     <wadl:include href="ns0.xsd"/>
+    <wadl:include href="ns1.xsd"/>
   </wadl:grammars>
-  <wadl:resources base="https://github.com/pages/InMobi/grill/wsdocs">
+  <wadl:resources base="https://github.com/pages/InMobi/lens/wsdocs">
     <wadl:resource path="/metastore">
       <wadl:method name="GET">
         <wadl:doc>
@@ -59,21 +60,21 @@
       </wadl:method>
       <wadl:method name="POST">
         <wadl:doc>
-          <![CDATA[Create a new session with Grill server]]>
+          <![CDATA[Create a new session with Lens server]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
           <wadl:doc>
             <![CDATA[A Session handle unique to this session]]>
           </wadl:doc>
-          <wadl:representation mediaType="application/xml" element="grillSessionHandle"/>
+          <wadl:representation mediaType="application/xml" element="lensSessionHandle"/>
           <wadl:representation mediaType="text/plain"/>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
       <wadl:method name="DELETE">
         <wadl:doc>
-          <![CDATA[Close a Grill server session]]>
+          <![CDATA[Close a Lens server session]]>
         </wadl:doc>
         <wadl:request>
           <wadl:param name="sessionid" style="query">
@@ -1109,6 +1110,32 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
+    <wadl:resource path="/metastore/flattened/{tableName}">
+      <wadl:param name="tableName" style="template">
+        <wadl:doc>
+          <![CDATA[name of the table]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get flattened list of columns reachable from a cube or a dimension]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[session id]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[list of measures, expressions or dimension attributes]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="ns1:flattened_columns" xmlns:ns1="uri:lens:cube:0.1"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
     <wadl:resource path="/metastore/nativetables/{tableName}">
       <wadl:param name="tableName" style="template">
         <wadl:doc>
@@ -1232,9 +1259,9 @@ APIResult with state Status#FAILED, if drop has failed]]>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
-            <![CDATA[GrillPreparedQuery]]>
+            <![CDATA[LensPreparedQuery]]>
           </wadl:doc>
-          <wadl:representation mediaType="application/xml" element="grillPreparedQuery"/>
+          <wadl:representation mediaType="application/xml" element="lensPreparedQuery"/>
           <wadl:representation mediaType="text/plain"/>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -1300,7 +1327,7 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
       </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Get grill query and its current status]]>
+          <![CDATA[Get lens query and its current status]]>
         </wadl:doc>
         <wadl:request>
           <wadl:param name="sessionid" style="query">
@@ -1311,9 +1338,9 @@ QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
-            <![CDATA[GrillQuery]]>
+            <![CDATA[LensQuery]]>
           </wadl:doc>
-          <wadl:representation mediaType="application/xml" element="grillQuery"/>
+          <wadl:representation mediaType="application/xml" element="lensQuery"/>
           <wadl:representation mediaType="text/plain"/>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -1358,11 +1385,11 @@ APIResult with state Status#FAILED in case of udpate failure.]]>
     <wadl:resource path="/session/resources/add">
       <wadl:method name="PUT">
         <wadl:doc>
-          <![CDATA[Add a resource to the session to all GrillServices running in this Grill server
+          <![CDATA[Add a resource to the session to all LensServices running in this Lens server
 
 <p>
 The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation
-was successful for all services running in this Grill server.
+was successful for all services running in this Lens server.
 </p>]]>
         </wadl:doc>
         <wadl:request/>
@@ -1381,7 +1408,7 @@ APIResult with state Status#FAILED, if add has failed]]>
     <wadl:resource path="/session/resources/delete">
       <wadl:method name="PUT">
         <wadl:doc>
-          <![CDATA[Delete a resource from sesssion from all the @{link GrillService}s running in this Grill server
+          <![CDATA[Delete a resource from sesssion from all the @{link LensService}s running in this Lens server
 <p>
 Similar to addResource, this call is successful only if resource was deleted from all services.
 </p>]]>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="1.0" targetNamespace="uri:lens:cube:0.1" elementFormDefault="qualified" xmlns:ns1="uri:lens:cube:0.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="flattened_columns">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="measure" type="ns1:x_measure"/>
+          <xs:element name="expression" type="ns1:x_expr_column"/>
+          <xs:element name="dim_attribute" type="ns1:x_dim_attribute"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="x_dim_attribute">
+    <xs:sequence>
+      <xs:element name="references" type="ns1:x_tablereferences" minOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="name" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+    <xs:attribute name="description" type="xs:string"/>
+    <xs:attribute name="display_string" type="xs:string"/>
+    <xs:attribute name="start_time" type="xs:dateTime"/>
+    <xs:attribute name="end_time" type="xs:dateTime"/>
+    <xs:attribute name="cost" type="xs:double"/>
+    <xs:attribute name="expr" type="xs:string"/>
+    <xs:attribute name="cube_table" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="x_expr_column">
+    <xs:attribute name="name" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+    <xs:attribute name="description" type="xs:string"/>
+    <xs:attribute name="display_string" type="xs:string"/>
+    <xs:attribute name="expr" type="xs:string"/>
+    <xs:attribute name="cube_table" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="x_measure">
+    <xs:attribute name="name" use="required" type="xs:string"/>
+    <xs:attribute name="type" use="required" type="xs:string"/>
+    <xs:attribute name="description" type="xs:string"/>
+    <xs:attribute name="display_string" type="xs:string"/>
+    <xs:attribute name="default_aggr" type="xs:string"/>
+    <xs:attribute name="format_string" type="xs:string"/>
+    <xs:attribute name="start_time" type="xs:dateTime"/>
+    <xs:attribute name="end_time" type="xs:dateTime"/>
+    <xs:attribute name="cost" type="xs:double"/>
+    <xs:attribute name="unit" type="xs:string"/>
+    <xs:attribute name="cube_table" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="x_tablereference">
+    <xs:attribute name="dest_table" use="required" type="xs:string"/>
+    <xs:attribute name="dest_column" use="required" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="x_tablereferences">
+    <xs:sequence>
+      <xs:element name="table_references" type="ns1:x_tablereference" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

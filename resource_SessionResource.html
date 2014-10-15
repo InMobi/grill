@@ -117,7 +117,7 @@ This provides api for all things in session.</p>
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Create a new session with Grill server
+            Create a new session with Lens server
           </p>
       <h3>Parameters</h3>
       <table>
@@ -130,7 +130,7 @@ This provides api for all things in session.</p>
         <tr>
           <td>username</td>
           <td>
-            User name of the Grill server user
+            User name of the Lens server user
           </td>
           <td>formdata</td>
           <td></td>
@@ -138,7 +138,7 @@ This provides api for all things in session.</p>
         <tr>
           <td>password</td>
           <td>
-            Password of the Grill server user
+            Password of the Lens server user
           </td>
           <td>formdata</td>
           <td></td>
@@ -156,7 +156,7 @@ This provides api for all things in session.</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td><a href="el_ns0_grillSessionHandle.html">grillSessionHandle</a></td>
+          <td><a href="el_ns0_lensSessionHandle.html">lensSessionHandle</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -167,7 +167,7 @@ This provides api for all things in session.</p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
-            Close a Grill server session
+            Close a Lens server session
           </p>
       <h3>Parameters</h3>
       <table>
@@ -314,11 +314,11 @@ If no prefix is attached, the parameter is set as configuration.
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
-            Add a resource to the session to all GrillServices running in this Grill server
+            Add a resource to the session to all LensServices running in this Lens server
 
 <p>
 The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation
-was successful for all services running in this Grill server.
+was successful for all services running in this Lens server.
 </p>
           </p>
       <h3>Parameters</h3>
@@ -374,7 +374,7 @@ APIResult with state Status#FAILED, if add has failed</p>
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
-            Delete a resource from sesssion from all the @{link GrillService}s running in this Grill server
+            Delete a resource from sesssion from all the @{link LensService}s running in this Lens server
 <p>
 Similar to addResource, this call is successful only if resource was deleted from all services.
 </p>

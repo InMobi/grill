@@ -137,6 +137,9 @@ This provides api for all things metastore.</p>
         <a href="#path__metastore_facts_-factName-_storages_-storage-_partitions.html">/metastore/facts/{factName}/storages/{storage}/partitions</a>
         </li>
         <li>
+        <a href="#path__metastore_flattened_-tableName-.html">/metastore/flattened/{tableName}</a>
+        </li>
+        <li>
         <a href="#path__metastore_nativetables.html">/metastore/nativetables</a>
         </li>
         <li>
@@ -2584,6 +2587,51 @@ APIResult with state Status#FAILED, if drop has failed</p>
       </table>
       <p>APIResult with state Status#SUCCEEDED, if add was successful.
 APIResult with state Status#FAILED, if add has failed</p>
+        <a name="path__metastore_flattened_-tableName-.html"></a>
+      <h1>/metastore/flattened/{tableName}</h1>
+      <p class="note">Mount Point: <a href="../metastore/flattened/{tableName}">/metastore/flattened/{tableName}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get flattened list of columns reachable from a cube or a dimension
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            session id
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>tableName</td>
+          <td>
+            name of the table
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns1_flattened_columns.html">flattened_columns</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>list of measures, expressions or dimension attributes</p>
         <a name="path__metastore_nativetables.html"></a>
       <h1>/metastore/nativetables</h1>
       <p class="note">Mount Point: <a href="../metastore/nativetables">/metastore/nativetables</a></p>
