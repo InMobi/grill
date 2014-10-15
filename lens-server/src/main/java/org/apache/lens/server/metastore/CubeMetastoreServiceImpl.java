@@ -2,9 +2,9 @@ package org.apache.lens.server.metastore;
 
 /*
  * #%L
- * Lens Server
+ * Grill Server
  * %%
- * Copyright (C) 2014 Apache Software Foundation
+ * Copyright (C) 2014 Inmobi
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hive.service.cli.CLIService;
 import org.apache.hive.service.cli.HiveSQLException;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.server.LensService;
+import org.apache.lens.api.GrillException;
+import org.apache.lens.api.GrillSessionHandle;
+import org.apache.lens.server.GrillService;
 import org.apache.lens.server.api.metastore.CubeMetastoreService;
-import org.apache.lens.server.session.LensSessionImpl;
+import org.apache.lens.server.session.GrillSessionImpl;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
@@ -51,16 +51,17 @@ import java.util.*;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import javax.xml.bind.JAXB;
 
-public class CubeMetastoreServiceImpl extends LensService implements CubeMetastoreService {
+public class CubeMetastoreServiceImpl extends GrillService implements CubeMetastoreService {
   public static final Logger LOG = LogManager.getLogger(CubeMetastoreServiceImpl.class);
 
   public CubeMetastoreServiceImpl(CLIService cliService) {
     super("metastore", cliService);
   }
 
-  synchronized CubeMetastoreClient getClient(LensSessionHandle sessionid) throws LensException {
-    return ((LensSessionImpl)getSession(sessionid)).getCubeMetastoreClient();
+  synchronized CubeMetastoreClient getClient(GrillSessionHandle sessionid) throws GrillException {
+    return ((GrillSessionImpl)getSession(sessionid)).getCubeMetastoreClient();
   }
 
 
@@ -70,7 +71,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * @return database name
    */
   @Override
-  public String getCurrentDatabase(LensSessionHandle sessionid) throws LensException {
+  public String getCurrentDatabase(GrillSessionHandle sessionid) throws GrillException {
     try {
       acquire(sessionid);
       return getSession(sessionid).getCurrentDatabase();
@@ -85,7 +86,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * @param database
    */
   @Override
-  public void setCurrentDatabase(LensSessionHandle sessionid, String database) throws LensException {
+  public void setCurrentDatabase(GrillSessionHandle sessionid, String database) throws GrillException {
     try {
       acquire(sessionid);
       if (!Hive.get(getSession(sessionid).getHiveConf()).databaseExists(database)) {
@@ -94,7 +95,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       LOG.info("Set database " + database);
       getSession(sessionid).setCurrentDatabase(database);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -107,15 +108,15 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * @param cascade  flag indicating if the tables in the database should be dropped as well
    */
   @Override
-  public void dropDatabase(LensSessionHandle sessionid, String database, boolean cascade) throws LensException {
+  public void dropDatabase(GrillSessionHandle sessionid, String database, boolean cascade) throws GrillException {
     try {
       acquire(sessionid);
       Hive.get(getSession(sessionid).getHiveConf()).dropDatabase(database, false, true, cascade);
       LOG.info("Database dropped " + database + " cascade? " + true);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (NoSuchObjectException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -125,19 +126,19 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * Create a database in Hive metastore
    * @param database database name
    * @param ignore ignore if database already exists
-   * @throws LensException
+   * @throws GrillException
    */
   @Override
-  public void createDatabase(LensSessionHandle sessionid, String database, boolean ignore) throws LensException {
+  public void createDatabase(GrillSessionHandle sessionid, String database, boolean ignore) throws GrillException {
     try {
       acquire(sessionid);
       Database db = new Database();
       db.setName(database);
       Hive.get(getSession(sessionid).getHiveConf()).createDatabase(db, ignore);
     } catch (AlreadyExistsException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -148,12 +149,12 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * @return get all database names
    */
   @Override
-  public List<String> getAllDatabases(LensSessionHandle sessionid) throws LensException{
+  public List<String> getAllDatabases(GrillSessionHandle sessionid) throws GrillException{
     try {
       acquire(sessionid);
       return Hive.get(getSession(sessionid).getHiveConf()).getAllDatabases();
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -164,10 +165,10 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * 
    * @return List of cube names
    * 
-   * @throws LensException
+   * @throws GrillException
    */
   @Override
-  public List<String> getAllCubeNames(LensSessionHandle sessionid) throws LensException {
+  public List<String> getAllCubeNames(GrillSessionHandle sessionid) throws GrillException {
     try {
       acquire(sessionid);
       List<CubeInterface> cubes = getClient(sessionid).getAllCubes();
@@ -179,7 +180,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return names;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -189,19 +190,19 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   /**
    * Create cube based on the JAXB cube object
    * @param cube
-   * @throws LensException
+   * @throws GrillException
    */
   @Override
-  public void createCube(LensSessionHandle sessionid, XCube cube) throws LensException {
+  public void createCube(GrillSessionHandle sessionid, XCube cube) throws GrillException {
     try {
       acquire(sessionid);
       Cube parent = cube.isDerived() ? (Cube)getClient(sessionid).getCube(cube.getParent()) : null;
       getClient(sessionid).createCube(JAXBUtils.hiveCubeFromXCube(cube, parent));
       LOG.info("Created cube " + cube.getName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (ParseException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -213,10 +214,10 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * @param cubeName
    * 
    * @return The cube object as {@link XCube}
-   * @throws LensException
+   * @throws GrillException
    */
   @Override
-  public XCube getCube(LensSessionHandle sessionid, String cubeName) throws LensException {
+  public XCube getCube(GrillSessionHandle sessionid, String cubeName) throws GrillException {
     try {
       acquire(sessionid);
       CubeInterface c = getClient(sessionid).getCube(cubeName);
@@ -224,7 +225,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return JAXBUtils.xCubeFromHiveCube(c);
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -236,13 +237,13 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
    * 
    * @param cubeName
    */
-  public void dropCube(LensSessionHandle sessionid, String cubeName) throws LensException {
+  public void dropCube(GrillSessionHandle sessionid, String cubeName) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).dropCube(cubeName);
       LOG.info("Dropped cube " + cubeName);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -251,19 +252,19 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   /**
    * Update cube
    * @param cube JAXB Cube object
-   * @throws LensException
+   * @throws GrillException
    */
   @Override
-  public void updateCube(LensSessionHandle sessionid, XCube cube) throws LensException {
+  public void updateCube(GrillSessionHandle sessionid, XCube cube) throws GrillException {
     try {
       acquire(sessionid);
       Cube parent = cube.isDerived() ? (Cube)getClient(sessionid).getCube(cube.getParent()) : null;
       getClient(sessionid).alterCube(cube.getName(), JAXBUtils.hiveCubeFromXCube(cube, parent));
       LOG.info("Cube updated " + cube.getName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (ParseException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -272,10 +273,10 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   /**
    * Create a cube dimension table based on JAXB object
    * @param xDimTable
-   * @throws LensException
+   * @throws GrillException
    */
   @Override
-  public void createCubeDimensionTable(LensSessionHandle sessionid, DimensionTable xDimTable, XStorageTables storageTables) throws LensException {
+  public void createCubeDimensionTable(GrillSessionHandle sessionid, DimensionTable xDimTable, XStorageTables storageTables) throws GrillException {
     String dimTblName = xDimTable.getTableName();
     List<FieldSchema> columns = JAXBUtils.fieldSchemaListFromColumns(xDimTable.getColumns());
     Map<String, UpdatePeriod> updatePeriodMap =
@@ -296,61 +297,61 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
           storageDesc);
       LOG.info("Dimension Table created " + xDimTable.getTableName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropDimensionTable(LensSessionHandle sessionid, String dimTblName, boolean cascade) throws LensException {
+  public void dropDimensionTable(GrillSessionHandle sessionid, String dimTblName, boolean cascade) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).dropDimensionTable(dimTblName, cascade);
       LOG.info("Dropped dimension table " + dimTblName + " cascade? " + cascade);
     } catch (HiveException e) {
       LOG.error("@@@@ Got HiveException: >>>>>>>" + e.getMessage() + "<<<<<<<<<");
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public DimensionTable getDimensionTable(LensSessionHandle sessionid, String dimTblName) throws LensException {
+  public DimensionTable getDimensionTable(GrillSessionHandle sessionid, String dimTblName) throws GrillException {
     try {
       acquire(sessionid);
       CubeDimensionTable cubeDimTable = getClient(sessionid).getDimensionTable(dimTblName);
       return JAXBUtils.dimTableFromCubeDimTable(cubeDimTable);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void updateDimensionTable(LensSessionHandle sessionid, DimensionTable dimensionTable) throws LensException {
+  public void updateDimensionTable(GrillSessionHandle sessionid, DimensionTable dimensionTable) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).alterCubeDimensionTable(dimensionTable.getTableName(), 
           JAXBUtils.cubeDimTableFromDimTable(dimensionTable));
       LOG.info("Updated dimension table " + dimensionTable.getTableName());
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public List<String> getDimTableStorages(LensSessionHandle sessionid, String dimension) throws LensException {
+  public List<String> getDimTableStorages(GrillSessionHandle sessionid, String dimension) throws GrillException {
     try {
       acquire(sessionid);
       CubeDimensionTable dimTable = getClient(sessionid).getDimensionTable(dimension);
       return new ArrayList<String>(dimTable.getStorages());
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
@@ -358,8 +359,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
 
 
   @Override
-  public void createDimTableStorage(LensSessionHandle sessionid,
-      String dimTblName, XStorageTableElement storageTable) throws LensException {
+  public void createDimTableStorage(GrillSessionHandle sessionid,
+      String dimTblName, XStorageTableElement storageTable) throws GrillException {
     try {
       acquire(sessionid);
       CubeDimensionTable dimTable = getClient(sessionid).getDimensionTable(dimTblName);
@@ -372,14 +373,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       LOG.info("Added storage " + storageTable.getStorageName() + " for dimension table " + dimTblName
           + " with update period " + period);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropAllStoragesOfDimTable(LensSessionHandle sessionid, String dimTblName) throws LensException {
+  public void dropAllStoragesOfDimTable(GrillSessionHandle sessionid, String dimTblName) throws GrillException {
     try {
       acquire(sessionid);
       CubeDimensionTable tab = getClient(sessionid).getDimensionTable(dimTblName);
@@ -393,14 +394,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       LOG.info("Dropped " + total + " storages from dimension table " + dimTblName);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropAllStoragesOfFact(LensSessionHandle sessionid, String factName) throws LensException {
+  public void dropAllStoragesOfFact(GrillSessionHandle sessionid, String factName) throws GrillException {
     try {
       acquire(sessionid);
       CubeFactTable tab = getClient(sessionid).getFactTable(factName);
@@ -414,14 +415,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       LOG.info("Dropped " + total + " storages from fact table " + factName);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropStorageOfDimTable(LensSessionHandle sessionid, String dimTblName, String storage) throws LensException {
+  public void dropStorageOfDimTable(GrillSessionHandle sessionid, String dimTblName, String storage) throws GrillException {
     try {
       acquire(sessionid);
       CubeDimensionTable tab = getClient(sessionid).getDimensionTable(dimTblName);
@@ -432,14 +433,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       getClient(sessionid).dropStorageFromDim(dimTblName, storage);
       LOG.info("Dropped storage " + storage + " from dimension table " + dimTblName);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public List<FactTable> getAllFactsOfCube(LensSessionHandle sessionid, String cubeName) throws LensException {
+  public List<FactTable> getAllFactsOfCube(GrillSessionHandle sessionid, String cubeName) throws GrillException {
     try {
       acquire(sessionid);
       List<CubeFactTable> cubeFacts = getClient(sessionid).getAllFactTables(getClient(sessionid).getCube(cubeName));
@@ -451,7 +452,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return facts;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -459,19 +460,19 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public FactTable getFactTable(LensSessionHandle sessionid, String fact) throws LensException {
+  public FactTable getFactTable(GrillSessionHandle sessionid, String fact) throws GrillException {
     try {
       acquire(sessionid);
       return JAXBUtils.factTableFromCubeFactTable(getClient(sessionid).getFactTable(fact));
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void createFactTable(LensSessionHandle sessionid, FactTable fact, XStorageTables storageTables) throws LensException {
+  public void createFactTable(GrillSessionHandle sessionid, FactTable fact, XStorageTables storageTables) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).createCubeFactTable(fact.getCubeName(),
@@ -483,40 +484,40 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
           JAXBUtils.storageTableMapFromXStorageTables(storageTables));
       LOG.info("Created fact table " + fact.getName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void updateFactTable(LensSessionHandle sessionid, FactTable fact) throws LensException {
+  public void updateFactTable(GrillSessionHandle sessionid, FactTable fact) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).alterCubeFactTable(fact.getName(), JAXBUtils.cubeFactFromFactTable(fact));
       LOG.info("Updated fact table " + fact.getName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }		
   }
 
   @Override
-  public void dropFactTable(LensSessionHandle sessionid, String fact, boolean cascade) throws LensException {
+  public void dropFactTable(GrillSessionHandle sessionid, String fact, boolean cascade) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).dropFact(fact, cascade);
       LOG.info("Dropped fact table " + fact + " cascade? " + cascade);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public List<String> getAllFactNames(LensSessionHandle sessionid) throws LensException {
+  public List<String> getAllFactNames(GrillSessionHandle sessionid) throws GrillException {
     try {
       acquire(sessionid);
       List<CubeFactTable> facts = getClient(sessionid).getAllFacts();
@@ -526,14 +527,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       return factNames;
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public List<String> getAllDimTableNames(LensSessionHandle sessionid) throws LensException {
+  public List<String> getAllDimTableNames(GrillSessionHandle sessionid) throws GrillException {
     try {
       acquire(sessionid);
       List<CubeDimensionTable> dims = getClient(sessionid).getAllDimensionTables();
@@ -543,14 +544,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       return dimNames;
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public List<String> getStoragesOfFact(LensSessionHandle sessionid, String fact) throws LensException {
+  public List<String> getStoragesOfFact(GrillSessionHandle sessionid, String fact) throws GrillException {
     try {
       acquire(sessionid);
       if (!getClient(sessionid).isFactTable(fact)) {
@@ -564,13 +565,13 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         throw new NotFoundException("Could not get fact table " + fact);
       }
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
-  public XStorageTableElement getStorageOfFact(LensSessionHandle sessionid, String fact, String storageName) throws LensException {
+  public XStorageTableElement getStorageOfFact(GrillSessionHandle sessionid, String fact, String storageName) throws GrillException {
     try {
       CubeFactTable factTable = getClient(sessionid).getFactTable(fact);
       Set<UpdatePeriod> updatePeriods = factTable.getUpdatePeriods().get(storageName);
@@ -582,13 +583,13 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       return tblElement;
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
-  public XStorageTableElement getStorageOfDim(LensSessionHandle sessionid, String dimTblName, String storageName) throws LensException {
+  public XStorageTableElement getStorageOfDim(GrillSessionHandle sessionid, String dimTblName, String storageName) throws GrillException {
     try {
       CubeDimensionTable dimTable = getClient(sessionid).getDimensionTable(dimTblName);
       XStorageTableElement tblElement =  JAXBUtils.getXStorageTableFromHiveTable(
@@ -600,14 +601,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       return tblElement;
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void addStorageToFact(LensSessionHandle sessionid, String fact, XStorageTableElement storageTable) throws LensException {
+  public void addStorageToFact(GrillSessionHandle sessionid, String fact, XStorageTableElement storageTable) throws GrillException {
     Set<UpdatePeriod> updatePeriods = new TreeSet<UpdatePeriod>();
     for (String sup : storageTable.getUpdatePeriods()) {
       updatePeriods.add(UpdatePeriod.valueOf(sup.toUpperCase()));
@@ -619,27 +620,27 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
           JAXBUtils.storageTableDescFromXStorageTableElement(storageTable));
       LOG.info("Added storage " + storageTable.getStorageName() + ":" + updatePeriods + " for fact " + fact);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropStorageOfFact(LensSessionHandle sessionid, String fact, String storage) throws LensException {
+  public void dropStorageOfFact(GrillSessionHandle sessionid, String fact, String storage) throws GrillException {
     try {
       acquire(sessionid);
       checkFactStorage(sessionid, fact, storage);
       getClient(sessionid).dropStorageFromFact(fact, storage);
       LOG.info("Dropped storage " + storage + " from fact " + fact);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
-  private CubeFactTable checkFactStorage(LensSessionHandle sessionid, String fact, String storage) throws HiveException, LensException {
+  private CubeFactTable checkFactStorage(GrillSessionHandle sessionid, String fact, String storage) throws HiveException, GrillException {
     CubeMetastoreClient client = getClient(sessionid);
     if (!client.isFactTable(fact)) {
       throw new NotFoundException("Fact table not found: " + fact);
@@ -655,8 +656,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
 
   @Override
   public List<XPartition> getAllPartitionsOfFactStorage(
-      LensSessionHandle sessionid, String fact, String storageName,
-      String filter) throws LensException {
+      GrillSessionHandle sessionid, String fact, String storageName,
+      String filter) throws GrillException {
     try {
       acquire(sessionid);
       checkFactStorage(sessionid, fact, storageName);
@@ -673,14 +674,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return new ArrayList<XPartition>();
       }
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void addPartitionToFactStorage(LensSessionHandle sessionid, String fact, String storageName, XPartition partition) throws LensException {
+  public void addPartitionToFactStorage(GrillSessionHandle sessionid, String fact, String storageName, XPartition partition) throws GrillException {
     try {
       acquire(sessionid);
       CubeFactTable factTable = checkFactStorage(sessionid, fact, storageName);
@@ -691,14 +692,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
           + " dates: " + partition.getTimePartitionSpec() + " spec:" +
           partition.getNonTimePartitionSpec() + " update period: " + partition.getUpdatePeriod());
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
-  private CubeDimensionTable checkDimensionStorage(LensSessionHandle sessionid, String dimension, String storage)
-      throws HiveException, LensException {
+  private CubeDimensionTable checkDimensionStorage(GrillSessionHandle sessionid, String dimension, String storage)
+      throws HiveException, GrillException {
     CubeMetastoreClient client = getClient(sessionid);
     if (!client.isDimensionTable(dimension)) {
       throw new NotFoundException("Dimension table not found: " + dimension);
@@ -712,8 +713,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
 
   @Override
   public List<XPartition> getAllPartitionsOfDimTableStorage(
-      LensSessionHandle sessionid, String dimension, String storageName, String filter)
-          throws LensException {
+      GrillSessionHandle sessionid, String dimension, String storageName, String filter)
+          throws GrillException {
     try {
       acquire(sessionid);
       checkDimensionStorage(sessionid, dimension, storageName);
@@ -731,15 +732,15 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return new ArrayList<XPartition>();
       }
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void addPartitionToDimStorage(LensSessionHandle sessionid,
-      String dimTblName, String storageName, XPartition partition) throws LensException {
+  public void addPartitionToDimStorage(GrillSessionHandle sessionid,
+      String dimTblName, String storageName, XPartition partition) throws GrillException {
     try {
       acquire(sessionid);
       CubeDimensionTable dim = checkDimensionStorage(sessionid, dimTblName, storageName);
@@ -748,16 +749,16 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
           storageName);
       LOG.info("Added partition for dimension: " + dimTblName + " storage: " + storageName);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropPartitionFromStorage(LensSessionHandle sessionid,
+  public void dropPartitionFromStorage(GrillSessionHandle sessionid,
       String cubeTableName, String storageName, XTimePartSpec timePartSpec,
-      XPartSpec nonTimePartSpec, String updatePeriod) throws LensException {
+      XPartSpec nonTimePartSpec, String updatePeriod) throws GrillException {
     try {
       acquire(sessionid);
       checkDimensionStorage(sessionid, cubeTableName, storageName);
@@ -769,7 +770,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       LOG.info("Dropped partition  for dimension: " + cubeTableName +
           "storage: " + storageName + " partition:" + timePartSpec + " " + nonTimePartSpec);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }
@@ -824,8 +825,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
     return period;
   }
 
-  public void dropPartitionFromStorageByValues(LensSessionHandle sessionid,
-      String cubeTableName, String storageName, String values) throws LensException {
+  public void dropPartitionFromStorageByValues(GrillSessionHandle sessionid,
+      String cubeTableName, String storageName, String values) throws GrillException {
     try {
       acquire(sessionid);
       String tableName = MetastoreUtil.getStorageTableName(cubeTableName,
@@ -848,14 +849,14 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       LOG.info("Dropped partition  for dimension: " + cubeTableName +
           " storage: " + storageName + " values:" + values);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     }    
   }
 
-  public void dropPartitionFromStorageByFilter(LensSessionHandle sessionid, String cubeTableName,
-      String storageName, String filter) throws LensException {
+  public void dropPartitionFromStorageByFilter(GrillSessionHandle sessionid, String cubeTableName,
+      String storageName, String filter) throws GrillException {
     try {
       acquire(sessionid);
       String tableName = MetastoreUtil.getStorageTableName(cubeTableName,
@@ -873,21 +874,21 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       LOG.info("Dropped partition  for cube table: " + cubeTableName +
           " storage: " + storageName + " by filter:" + filter);
     } catch (HiveException exc) {
-      throw new LensException(exc);
+      throw new GrillException(exc);
     } finally {
       release(sessionid);
     } 
   }
 
   @Override
-  public void createStorage(LensSessionHandle sessionid, XStorage storage)
-      throws LensException {
+  public void createStorage(GrillSessionHandle sessionid, XStorage storage)
+      throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).createStorage(JAXBUtils.storageFromXStorage(storage));
       LOG.info("Created storage " + storage.getName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -895,50 +896,50 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public void dropStorage(LensSessionHandle sessionid, String storageName)
-      throws LensException {
+  public void dropStorage(GrillSessionHandle sessionid, String storageName)
+      throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).dropStorage(storageName);
       LOG.info("Dropped storage " + storageName);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }    
   }
 
   @Override
-  public void alterStorage(LensSessionHandle sessionid, String storageName,
-      XStorage storage) throws LensException {
+  public void alterStorage(GrillSessionHandle sessionid, String storageName,
+      XStorage storage) throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).alterStorage(storageName,
           JAXBUtils.storageFromXStorage(storage));
       LOG.info("Altered storage " + storageName);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }        
   }
 
   @Override
-  public XStorage getStorage(LensSessionHandle sessionid, String storageName)
-      throws LensException {
+  public XStorage getStorage(GrillSessionHandle sessionid, String storageName)
+      throws GrillException {
     try {
       acquire(sessionid);
       return JAXBUtils.xstorageFromStorage(getClient(sessionid).getStorage(storageName));
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }        
   }
 
   @Override
-  public List<String> getAllStorageNames(LensSessionHandle sessionid)
-      throws LensException {
+  public List<String> getAllStorageNames(GrillSessionHandle sessionid)
+      throws GrillException {
     try {
       acquire(sessionid);
       List<Storage> storages = getClient(sessionid).getAllStorages();
@@ -950,7 +951,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return names;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -958,8 +959,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public List<String> getAllBaseCubeNames(LensSessionHandle sessionid)
-      throws LensException {
+  public List<String> getAllBaseCubeNames(GrillSessionHandle sessionid)
+      throws GrillException {
     try {
       acquire(sessionid);
       List<CubeInterface> cubes = getClient(sessionid).getAllCubes();
@@ -973,7 +974,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return names;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -981,8 +982,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public List<String> getAllDerivedCubeNames(LensSessionHandle sessionid)
-      throws LensException {
+  public List<String> getAllDerivedCubeNames(GrillSessionHandle sessionid)
+      throws GrillException {
     try {
       acquire(sessionid);
       List<CubeInterface> cubes = getClient(sessionid).getAllCubes();
@@ -996,7 +997,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return names;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -1004,8 +1005,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public List<String> getAllQueryableCubeNames(LensSessionHandle sessionid)
-      throws LensException {
+  public List<String> getAllQueryableCubeNames(GrillSessionHandle sessionid)
+      throws GrillException {
     try {
       acquire(sessionid);
       List<CubeInterface> cubes = getClient(sessionid).getAllCubes();
@@ -1019,7 +1020,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return names;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -1027,68 +1028,68 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public void createDimension(LensSessionHandle sessionid, XDimension dimension)
-      throws LensException {
+  public void createDimension(GrillSessionHandle sessionid, XDimension dimension)
+      throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).createDimension(JAXBUtils.dimensionFromXDimension(dimension));
       LOG.info("Created dimension " + dimension.getName());
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (ParseException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public XDimension getDimension(LensSessionHandle sessionid, String dimName)
-      throws LensException {
+  public XDimension getDimension(GrillSessionHandle sessionid, String dimName)
+      throws GrillException {
     try {
       acquire(sessionid);
       return JAXBUtils.xdimensionFromDimension(getClient(sessionid).getDimension(dimName));
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void dropDimension(LensSessionHandle sessionid, String dimName)
-      throws LensException {
+  public void dropDimension(GrillSessionHandle sessionid, String dimName)
+      throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).dropDimension(dimName);
       LOG.info("Dropped dimension " + dimName);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public void updateDimension(LensSessionHandle sessionid, String dimName, XDimension dimension)
-      throws LensException {
+  public void updateDimension(GrillSessionHandle sessionid, String dimName, XDimension dimension)
+      throws GrillException {
     try {
       acquire(sessionid);
       getClient(sessionid).alterDimension(dimName,
           JAXBUtils.dimensionFromXDimension(dimension));
       LOG.info("Altered dimension " + dimName);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (ParseException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
   @Override
-  public List<String> getAllDimensionNames(LensSessionHandle sessionid)
-      throws LensException {
+  public List<String> getAllDimensionNames(GrillSessionHandle sessionid)
+      throws GrillException {
     try {
       acquire(sessionid);
       List<Dimension> dimensions = getClient(sessionid).getAllDimensions();
@@ -1100,7 +1101,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         return names;
       }
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
@@ -1108,8 +1109,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public NativeTable getNativeTable(LensSessionHandle sessionid, String name)
-      throws LensException {
+  public NativeTable getNativeTable(GrillSessionHandle sessionid, String name)
+      throws GrillException {
     try {
       acquire(sessionid);
       Table tbl = getClient(sessionid).getHiveTable(name);
@@ -1118,15 +1119,15 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       return JAXBUtils.nativeTableFromMetaTable(tbl);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
-  private List<String> getTablesFromDB(LensSessionHandle sessionid,
+  private List<String> getTablesFromDB(GrillSessionHandle sessionid,
       String dbName, boolean prependDbName)
-          throws MetaException, UnknownDBException, HiveSQLException, TException, LensException {
+          throws MetaException, UnknownDBException, HiveSQLException, TException, GrillException {
     List<String> tables = getSession(sessionid).getMetaStoreClient().getAllTables(
         dbName);
     List<String> result = new ArrayList<String>();
@@ -1149,8 +1150,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-  public List<String> getAllNativeTableNames(LensSessionHandle sessionid,
-      String dbOption, String dbName) throws LensException {
+  public List<String> getAllNativeTableNames(GrillSessionHandle sessionid,
+      String dbOption, String dbName) throws GrillException {
     try {
       acquire(sessionid);
       if (!StringUtils.isBlank(dbName)) {
@@ -1177,28 +1178,29 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       }
       return tables;
     } catch (HiveSQLException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (MetaException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (UnknownDBException e) {
       throw new NotFoundException("Database " + dbName + " does not exist");
     } catch (TException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } catch (HiveException e) {
-      throw new LensException(e);
+      throw new GrillException(e);
     } finally {
       release(sessionid);
     }
   }
 
-  public void getFlattenedColumnView(GrillSessionHandle sessionHandle, String tableName) throws GrillException {
-    // First check if the table is a cube or dimension
+  @Override
+  public FlattenedColumns getFlattenedColumns(GrillSessionHandle sessionHandle, String tableName) throws GrillException {
     try {
       acquire(sessionHandle);
       CubeMetastoreClient client = getClient(sessionHandle);
 
       boolean isCube = false;
       AbstractCubeTable cubeTbl = null;
+      // check if the table is a cube or dimension
       if (client.isCube(tableName)) {
         isCube = true;
         CubeInterface cube = client.getCube(tableName);
@@ -1213,7 +1215,32 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         throw new BadRequestException("Can't get reachable columns. '"
           + tableName + "' is neither a cube nor a dimension");
       }
-      getFlattenedColumnView(client, cubeTbl, isCube);
+
+      Map<String, CubeColumn> columnMap = getFlattenedColumnView(client, cubeTbl, isCube);
+      // Convert this to the JAXB collection
+      ObjectFactory objectFactory = new ObjectFactory();
+      FlattenedColumns flattenedColumns = objectFactory.createFlattenedColumns();
+      List<Object> columnList = flattenedColumns.getMeasureOrExpressionOrDimAttribute();
+
+      for (Map.Entry<String, CubeColumn> entry : columnMap.entrySet()) {
+        String colName = entry.getKey();
+        CubeColumn column = entry.getValue();
+        String table = colName.substring(0, colName.indexOf('.'));
+        if (column instanceof CubeMeasure) {
+          XMeasure xmeasure = JAXBUtils.xMeasureFromHiveMeasure((CubeMeasure) column);
+          xmeasure.setCubeTable(table);
+          columnList.add(xmeasure);
+        } else if (column instanceof CubeDimAttribute) {
+          XDimAttribute xDimAttribute = JAXBUtils.xDimAttrFromHiveDimAttr((CubeDimAttribute)column);
+          xDimAttribute.setCubeTable(table);
+          columnList.add(xDimAttribute);
+        } else if (column instanceof ExprColumn) {
+          XExprColumn xExprColumn = JAXBUtils.xExprColumnFromHiveExprColumn((ExprColumn) column);
+          xExprColumn.setCubeTable(table);
+          columnList.add(xExprColumn);
+        }
+      }
+      return flattenedColumns;
     } catch (GrillException exc) {
       throw exc;
     } catch (HiveException e) {
@@ -1233,7 +1260,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
     return graph;
   }
 
-  private void getFlattenedColumnView(CubeMetastoreClient client,
+  private Map<String, CubeColumn> getFlattenedColumnView(CubeMetastoreClient client,
                                       AbstractCubeTable table,
                                       boolean isCube) throws HiveException {
     SchemaGraph schemaGraph = getSchemaGraph(client);
@@ -1242,22 +1269,23 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
     Map<String, CubeColumn> columnMap = new LinkedHashMap<String, CubeColumn>();
 
     // Do a BFS over the schema graph
-    Queue<AbstractCubeTable> toVisit = new LinkedList<AbstractCubeTable>();
+    LinkedList<AbstractCubeTable> toVisit = new LinkedList<AbstractCubeTable>();
     Set<AbstractCubeTable> visited = new HashSet<AbstractCubeTable>();
-    toVisit.offer(table);
+    toVisit.add(table);
 
-    while (toVisit.isEmpty()) {
-      AbstractCubeTable node = toVisit.poll();
+    while (!toVisit.isEmpty()) {
+      AbstractCubeTable node = toVisit.removeFirst();
       visited.add(node);
       String nodeName = node.getName();
-
-      if (table instanceof CubeInterface) {
+      if (node instanceof CubeInterface) {
         Cube cube = null;
 
-        if (table instanceof Cube) {
+        if (node instanceof Cube) {
           cube = (Cube) node;
-        } else if (table instanceof DerivedCube) {
+        } else if (node instanceof DerivedCube) {
           cube = ((DerivedCube) node).getParent();
+        } else {
+          continue;
         }
 
         // Add columns of the cube
@@ -1272,23 +1300,26 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         for (ExprColumn expression : cube.getExpressions()) {
           columnMap.put(nodeName + "." + expression.getName(), expression);
         }
-      } else if (table instanceof Dimension) {
-        Dimension dim = (Dimension) table;
+      } else if (node instanceof Dimension) {
+        Dimension dim = (Dimension) node;
         for (CubeDimAttribute dimAttribute : dim.getAttributes()) {
           columnMap.put(nodeName + "." + dimAttribute.getName(), dimAttribute);
         }
+      } else {
+        LOG.warn("Neither cube nor dimension " + node.getName());
       }
 
       // Add referenced tables to visited list
-      for (SchemaGraph.TableRelationship edge : graph.get(table)) {
+      for (SchemaGraph.TableRelationship edge : graph.get(node)) {
         if (!visited.contains(edge.getFromTable())) {
-          toVisit.offer(edge.getFromTable());
+          toVisit.addLast(edge.getFromTable());
         }
         if (!visited.contains(edge.getToTable())) {
-          toVisit.offer(edge.getToTable());
+          toVisit.addLast(edge.getToTable());
         }
       }
     } // end bfs
     // columnMap now contains flattened view
+    return columnMap;
   }
 }
