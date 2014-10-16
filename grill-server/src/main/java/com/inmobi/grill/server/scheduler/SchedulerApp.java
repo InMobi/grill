@@ -27,18 +27,20 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import com.inmobi.grill.server.GrillApplicationListener;
 
-@ApplicationPath("/queryscheduler")
+@ApplicationPath("/scheduler")
 public class SchedulerApp extends Application {
   @Override
   public Set<Class<?>> getClasses() {
-      final Set<Class<?>> classes = new HashSet<Class<?>>();
-      // register root resource
-      classes.add(SchedulerResource.class);
-      classes.add(GrillApplicationListener.class);
-      classes.add(LoggingFilter.class);
-      return classes;
+    final Set<Class<?>> classes = new HashSet<Class<?>>();
+    // register root resource
+    classes.add(SchedulerResource.class);
+    classes.add(GrillApplicationListener.class);
+    classes.add(LoggingFilter.class);
+    classes.add(MultiPartFeature.class);
+    return classes;
   }
 }

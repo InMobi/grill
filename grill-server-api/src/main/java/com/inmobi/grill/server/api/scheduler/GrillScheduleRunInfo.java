@@ -1,17 +1,17 @@
-package com.inmobi.grill.api.schedule;
+package com.inmobi.grill.server.api.scheduler;
 
 /*
  * #%L
- * Grill API
+ * Grill Hive Driver
  * %%
  * Copyright (C) 2014 Inmobi
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,33 +20,44 @@ package com.inmobi.grill.api.schedule;
  * #L%
  */
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ScheduleInfo {
-  // Schedule Info gives insights to user about a schedule ID
+/**
+ * Class to represent the Schedule Run Info table which is serialized to
+ * database.
+ */
+@EqualsAndHashCode
+@ToString
+public class GrillScheduleRunInfo {
+
   @Getter
   @Setter
-  private String scheduleHandle;
-  // XSD object Schedule
+  private String scheduleId;
   @Getter
   @Setter
-  private XSchedule schedule; // A schedule task
+  private String sessionHandle;
   @Getter
   @Setter
-  private String submittedUser;
+  private String runHandle;
   @Getter
   @Setter
-  private String lastRunInstanceId;
+  private long startTime;
   @Getter
   @Setter
-  private String latestResultSetPath;
+  private long endTime;
   @Getter
   @Setter
-  private String scheduleStatus;
+  private String status;
+  @Getter
+  @Setter
+  private String resultPath;
+  @Getter
+  @Setter
+  private String query;
+
+  public GrillScheduleRunInfo() {
+  }
 }

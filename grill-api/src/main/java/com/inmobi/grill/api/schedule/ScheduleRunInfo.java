@@ -1,23 +1,31 @@
 package com.inmobi.grill.api.schedule;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@XmlRootElement
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleRunInfo {
   // Gives insights of an instance of a schedule to user
-  @XmlElement @Getter GrillScheduleHandle scheduleHandle;
-  @XmlElement @Getter GrillScheduleRunHandle scheduleRunHandle;
-  @XmlElement @Getter Object task;
-  @XmlElement @Getter String startTime;
-  @XmlElement @Getter String endTime;
-  @XmlElement @Getter String resultSetPath;
-  @XmlElement @Getter ScheduleTaskStatus taskStatus;
+  @Getter
+  @Setter
+  private String scheduleid;
+  @Getter
+  @Setter
+  private String runHandle;
+  @Getter
+  @Setter
+  private long startTime;
+  @Getter
+  @Setter
+  private long endTime;
+  @Getter
+  @Setter
+  private String resultSetPath;
+  @Getter
+  @Setter
+  private String taskStatus;
 }

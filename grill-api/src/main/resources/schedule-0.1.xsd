@@ -25,7 +25,8 @@
             <xs:element type="x_start_spec" name="start_spec" />
             <xs:element type="xs:string" name="resource_path"
                 minOccurs="0" maxOccurs="unbounded" />
-            <xs:element type="map_type" name="schedule_conf" />
+            <xs:element type="map_type" name="schedule_conf"
+                minOccurs="0" maxOccurs="unbounded" />
             <xs:element type="xs:time" name="start_time" />
             <xs:element type="xs:time" name="end_time" />
         </xs:sequence>
@@ -39,7 +40,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="query" type="x_schedule_query" />
+            <xs:element name="query_type" type="x_schedule_query" />
         </xs:choice>
     </xs:complexType>
 
@@ -54,7 +55,8 @@
             <xs:element name="query_conf" type="map_type"
                 minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="session_db" type="xs:string" />
-            <xs:element name="session_conf" type="map_type" />
+            <xs:element name="session_conf" type="map_type"
+                minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
 

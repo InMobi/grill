@@ -1,17 +1,17 @@
-package com.inmobi.grill.api.schedule;
+package com.inmobi.grill.server.api.scheduler;
 
 /*
  * #%L
- * Grill API
+ * Grill Hive Driver
  * %%
  * Copyright (C) 2014 Inmobi
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,33 +20,51 @@ package com.inmobi.grill.api.schedule;
  * #L%
  */
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.sql.Clob;
 
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ScheduleInfo {
-  // Schedule Info gives insights to user about a schedule ID
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * Class to represent the Schedule Info table which is serialized to database.
+ */
+@EqualsAndHashCode
+@ToString
+public class GrillScheduleInfo {
+
   @Getter
   @Setter
-  private String scheduleHandle;
-  // XSD object Schedule
+  private String scheduleId;
   @Getter
   @Setter
-  private XSchedule schedule; // A schedule task
+  private Clob execution;
   @Getter
   @Setter
-  private String submittedUser;
+  private Clob startSpec;
   @Getter
   @Setter
-  private String lastRunInstanceId;
+  private Clob resourcePath;
   @Getter
   @Setter
-  private String latestResultSetPath;
+  private Clob scheduleConf;
   @Getter
   @Setter
-  private String scheduleStatus;
+  private long startTime;
+  @Getter
+  @Setter
+  private long endTime;
+  @Getter
+  @Setter
+  private String username;
+  @Getter
+  @Setter
+  private String status;
+  @Getter
+  @Setter
+  private long created_on;
+
+  public GrillScheduleInfo() {
+  }
 }

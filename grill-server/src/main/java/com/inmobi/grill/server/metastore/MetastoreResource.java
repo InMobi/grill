@@ -54,7 +54,7 @@ public class MetastoreResource {
   public static final ObjectFactory xCubeObjectFactory = new ObjectFactory();
 
   public CubeMetastoreService getSvc() {
-    return (CubeMetastoreService)GrillServices.get().getService("metastore");
+    return (CubeMetastoreService)GrillServices.get().getService(CubeMetastoreService.NAME);
   }
 
   private void checkSessionId(GrillSessionHandle sessionHandle) {

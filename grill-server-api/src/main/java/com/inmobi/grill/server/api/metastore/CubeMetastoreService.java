@@ -28,6 +28,7 @@ import java.util.List;
 
 
 public interface CubeMetastoreService {
+  public static final String NAME = "metastore";
   /**
    * Get current database used by the CubeMetastoreClient
    * 

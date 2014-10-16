@@ -2,14 +2,10 @@ package com.inmobi.grill.server.api.scheduler;
 
 import java.util.List;
 
-import com.inmobi.grill.api.GrillConf;
 import com.inmobi.grill.api.GrillException;
 import com.inmobi.grill.api.GrillSessionHandle;
-import com.inmobi.grill.api.schedule.GrillScheduleHandle;
-import com.inmobi.grill.api.schedule.GrillScheduleRunHandle;
 import com.inmobi.grill.api.schedule.ScheduleInfo;
 import com.inmobi.grill.api.schedule.ScheduleRunInfo;
-import com.inmobi.grill.api.schedule.ScheduleStatus;
 import com.inmobi.grill.api.schedule.XSchedule;
 
 /*
@@ -45,9 +41,8 @@ public interface SchedulerService {
    * @return List of ScheduleHandles
    * @throws GrillException
    */
-  public List<GrillScheduleHandle> getAllSchedules(
-      GrillSessionHandle sessionHandle, GrillScheduleHandle scheduleid,
-      String state, String user, String type) throws GrillException;
+  public List<String> getAllSchedules(GrillSessionHandle sessionHandle,
+      String status, String user) throws GrillException;
 
   /**
    * 
@@ -57,7 +52,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public XSchedule getScheduleDefn(GrillSessionHandle sessionHandle,
-      GrillScheduleHandle scheduleid) throws GrillException;
+      String scheduleid) throws GrillException;
 
   /**
    * 
@@ -67,20 +62,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public ScheduleInfo getGrillSchedule(GrillSessionHandle sessionHandle,
-      GrillScheduleHandle scheduleid) throws GrillException;
-
-  /**
-   * 
-   * @param newtask
-   * @param conf
-   * @param jarpath
-   * @param schedulertype
-   * @param frequencyparam
-   * @return true/false
-   * @throws GrillException
-   */
-  public boolean updateSchedule(Object newtask, GrillConf conf, String jarpath,
-      String schedulertype, String frequencyparam) throws GrillException;
+      String scheduleid) throws GrillException;
 
   /**
    * 
@@ -89,8 +71,8 @@ public interface SchedulerService {
    * @return
    * @throws GrillException
    */
-  public boolean delete(GrillSessionHandle sessionid,
-      GrillScheduleHandle scheduleid) throws GrillException;
+  public boolean delete(GrillSessionHandle sessionid, String scheduleid)
+      throws GrillException;
 
   /**
    * 
@@ -99,9 +81,8 @@ public interface SchedulerService {
    * @return List of RunHandles for a schedule
    * @throws GrillException
    */
-  public List<GrillScheduleRunHandle> getScheduleRuns(
-      GrillSessionHandle sessionid, GrillScheduleHandle scheduleid)
-      throws GrillException;
+  public List<String> getScheduleRuns(GrillSessionHandle sessionid,
+      String scheduleid) throws GrillException;
 
   /**
    * 
@@ -112,8 +93,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public ScheduleRunInfo getScheduleRunDetail(GrillSessionHandle sessionid,
-      GrillScheduleHandle scheduleid, GrillScheduleRunHandle runHandle)
-      throws GrillException;
+      String scheduleid, String runHandle) throws GrillException;
 
   /**
    * 
@@ -122,8 +102,8 @@ public interface SchedulerService {
    * @return true/false, based of schedule success or not
    * @throws GrillException
    */
-  public boolean scheduleTask(GrillSessionHandle sessionid,
-      XSchedule schedule) throws GrillException;
+  public String scheduleTask(GrillSessionHandle sessionid, XSchedule schedule)
+      throws GrillException;
 
   /**
    * 
@@ -134,8 +114,7 @@ public interface SchedulerService {
    * @throws GrillException
    */
   public boolean updateSchedule(GrillSessionHandle sessionid,
-      GrillScheduleHandle scheduleid, XSchedule newSchedule)
-      throws GrillException;
+      String scheduleid, XSchedule newSchedule) throws GrillException;
 
   /**
    * 
@@ -145,9 +124,8 @@ public interface SchedulerService {
    * @return
    * @throws GrillException
    */
-  public boolean updateStatus(GrillSessionHandle sessionid,
-      GrillScheduleHandle scheduleid, ScheduleStatus newstatus)
-      throws GrillException;
+  public void updateStatus(GrillSessionHandle sessionid, String scheduleid,
+      String newstatus) throws GrillException;
 
   /**
    * 
@@ -157,8 +135,7 @@ public interface SchedulerService {
    * @return
    * @throws GrillException
    */
-  public boolean rerun(GrillSessionHandle sessionHandle,
-      GrillScheduleHandle scheduleid, GrillScheduleRunHandle runid)
-      throws GrillException;
+  public boolean rerun(GrillSessionHandle sessionHandle, String scheduleid,
+      String runid) throws GrillException;
 
 }
