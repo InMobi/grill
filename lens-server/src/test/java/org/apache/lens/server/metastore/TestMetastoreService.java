@@ -9,9 +9,9 @@ package org.apache.lens.server.metastore;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,11 +31,20 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.lens.api.metastore.*;
-import org.apache.lens.cube.metadata.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.TableType;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
+import org.apache.hadoop.hive.ql.cube.metadata.AbstractCubeTable;
+import org.apache.hadoop.hive.ql.cube.metadata.Cube;
+import org.apache.hadoop.hive.ql.cube.metadata.CubeDimensionTable;
+import org.apache.hadoop.hive.ql.cube.metadata.CubeFactTable;
+import org.apache.hadoop.hive.ql.cube.metadata.CubeInterface;
+import org.apache.hadoop.hive.ql.cube.metadata.DerivedCube;
+import org.apache.hadoop.hive.ql.cube.metadata.Dimension;
+import org.apache.hadoop.hive.ql.cube.metadata.HDFSStorage;
+import org.apache.hadoop.hive.ql.cube.metadata.MetastoreConstants;
+import org.apache.hadoop.hive.ql.cube.metadata.UpdatePeriod;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.lens.api.APIResult;
 import org.apache.lens.api.LensSessionHandle;
@@ -451,7 +460,7 @@ public class TestMetastoreService extends LensJerseyTest {
       // Create a non queryable cube
       final XCube qcube = createTestCube("testNoQueryCube");
       XProperty xp = new XProperty();
-      xp.setName(MetastoreConstants.CUBE_ALL_FIELDS_QUERIABLE);
+      xp.setName(MetastoreConstants.CUBE_CAN_BE_QUERIED);
       xp.setValue("false");
       qcube.getProperties().getProperties().add(xp);
 
@@ -786,7 +795,7 @@ public class TestMetastoreService extends LensJerseyTest {
       assertEquals(JAXBUtils.mapFromXProperties(store1.getProperties()).get("prop1.name"), "prop1.value");
       assertTrue(JAXBUtils.mapFromXProperties(store1.getProperties()).containsKey("prop2.name"));
       assertEquals(JAXBUtils.mapFromXProperties(store1.getProperties()).get("prop2.name"), "prop2.value");
-      
+
       // drop the storage
       dropStorage("store1");
     }
@@ -1089,7 +1098,7 @@ public class TestMetastoreService extends LensJerseyTest {
     }
   }
 
-  @Test 
+  @Test
   public void testGetAndUpdateDimensionTable() throws Exception {
     final String table = "test_get_dim";
     final String DB = dbPFX + "test_get_dim_db";
@@ -1143,7 +1152,7 @@ public class TestMetastoreService extends LensJerseyTest {
       List<Column> colList = cols.getColumns();
       boolean foundCol = false;
       for (Column col : colList) {
-        if (col.getName().equals("col3") && col.getType().equals("string") && 
+        if (col.getName().equals("col3") && col.getType().equals("string") &&
             "Added column".equalsIgnoreCase(col.getComment())) {
           foundCol = true;
           break;
@@ -1910,21 +1919,21 @@ public class TestMetastoreService extends LensJerseyTest {
       // Create cube
       final WebTarget cubeTarget = target().path("metastore").path("cubes");
       APIResult result =
-        cubeTarget.queryParam("sessionid", grillSessionId).request(mediaType)
+          cubeTarget.queryParam("sessionid", lensSessionId).request(mediaType)
           .post(Entity.xml(cubeObjectFactory.createXCube(flatTestCube)), APIResult.class);
       assertNotNull(result);
       assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
 
       // Dim1
       final WebTarget dimTarget = target().path("metastore").path("dimensions");
-      result = dimTarget.queryParam("sessionid", grillSessionId).request(
-        mediaType).post(Entity.xml(cubeObjectFactory.createXDimension(dim1)), APIResult.class);
+      result = dimTarget.queryParam("sessionid", lensSessionId).request(
+          mediaType).post(Entity.xml(cubeObjectFactory.createXDimension(dim1)), APIResult.class);
       assertNotNull(result);
       assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
 
       // Dim2
-      result = dimTarget.queryParam("sessionid", grillSessionId).request(
-        mediaType).post(Entity.xml(cubeObjectFactory.createXDimension(dim2)), APIResult.class);
+      result = dimTarget.queryParam("sessionid", lensSessionId).request(
+          mediaType).post(Entity.xml(cubeObjectFactory.createXDimension(dim2)), APIResult.class);
       assertNotNull(result);
       assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
 
@@ -1933,7 +1942,7 @@ public class TestMetastoreService extends LensJerseyTest {
       FlattenedColumns flattenedColumns = null;
       try {
         flattenedColumns =
-          flatCubeTarget.queryParam("sessionid", grillSessionId).request().get(FlattenedColumns.class);
+            flatCubeTarget.queryParam("sessionid", lensSessionId).request().get(FlattenedColumns.class);
       } catch (Exception exc) {
         exc.printStackTrace();
         throw exc;
@@ -1963,17 +1972,17 @@ public class TestMetastoreService extends LensJerseyTest {
 
       assertEquals(tables, new HashSet<String>(Arrays.asList("flattestcube", "flattestdim1", "flattestdim2")));
       assertEquals(colSet,new HashSet<String>(Arrays.asList(
-                                      "flattestcube.msr1",
-                                      "flattestcube.msr2",
-                                      "flattestcube.dim1",
-                                      "flattestcube.dim2",
-                                      "flattestcube.cubetodim1ref",
-                                      "flattestcube.expr1",
-                                      "flattestdim1.dim1todim2ref",
-                                      "flattestdim1.col2",
-                                      "flattestdim1.col1",
-                                      "flattestdim2.col2",
-                                      "flattestdim2.col1")));
+          "flattestcube.msr1",
+          "flattestcube.msr2",
+          "flattestcube.dim1",
+          "flattestcube.dim2",
+          "flattestcube.cubetodim1ref",
+          "flattestcube.expr1",
+          "flattestdim1.dim1todim2ref",
+          "flattestdim1.col2",
+          "flattestdim1.col1",
+          "flattestdim2.col2",
+          "flattestdim2.col1")));
     } finally {
       dropDatabase(DB);
       setCurrentDatabase(prevDb);
