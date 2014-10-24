@@ -21,9 +21,6 @@ package org.apache.lens.driver.jdbc;
  */
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.antlr.runtime.CommonToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
@@ -42,8 +39,6 @@ import org.apache.lens.cube.metadata.CubeMetastoreClient;
 import org.apache.lens.cube.parse.CubeSemanticAnalyzer;
 import org.apache.lens.cube.parse.HQLParser;
 import org.apache.lens.server.api.LensConfConstants;
-import org.apache.log4j.Logger;
-
 import static org.apache.hadoop.hive.ql.parse.HiveParser.*;
 
 public class ColumnarSQLRewriter implements QueryRewriter {
