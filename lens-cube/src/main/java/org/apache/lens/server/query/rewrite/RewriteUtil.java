@@ -29,20 +29,58 @@ import org.apache.lens.server.api.query.rewrite.QueryCommand;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lens.server.api.driver.LensDriver;
 
+/**
+ * The Class RewriteUtil.
+ */
 public class RewriteUtil {
 
+  /**
+   * Rewrite query.
+   *
+   * @param  ctx
+   *          the query context
+   * @param drivers
+   *          the drivers
+   * @return the map of trwritten queries for each driver
+   * @throws LensException
+   *           the lens exception
+   */
   public static Map<LensDriver, QueryCommand> rewriteQuery(QueryContext ctx, Collection<LensDriver> drivers) throws LensException {
     DriverSpecificQueryRewrite rewriter = getQueryRewriter(ctx.getConf());
     rewriter.init(ctx);
     return rewrite(rewriter, ctx.getUserQuery(), ctx.getSubmittedUser(), ctx.getConf(), drivers);
   }
 
+  /**
+   * Rewrite query.
+   *
+   * @param  ctx
+   *          the prepared query context
+   * @param drivers
+   *          the drivers
+   * @return the map of trwritten queries for each driver
+   * @throws LensException
+   *           the lens exception
+   */
   public static Map<LensDriver, QueryCommand> rewriteQuery(PreparedQueryContext ctx, Collection<LensDriver> drivers) throws LensException {
     DriverSpecificQueryRewrite rewriter = getQueryRewriter(ctx.getConf());
     rewriter.init(ctx);
     return rewrite(rewriter, ctx.getUserQuery(), ctx.getPreparedUser(), ctx.getConf(), drivers);
   }
 
+  /**
+   * Rewrite query.
+   *
+   * @param  query
+   *          the query
+   * @param  userName
+   *          the user name
+   * @param drivers
+   *          the drivers
+   * @return the map of trwritten queries for each driver
+   * @throws LensException
+   *           the lens exception
+   */
   public static  Map<LensDriver, QueryCommand> rewriteQuery(String query, String userName, Configuration conf, Collection<LensDriver> drivers) throws LensException {
     DriverSpecificQueryRewrite rewriter = getQueryRewriter(conf);
     return rewrite(rewriter, query, userName, conf, drivers);
@@ -53,6 +91,15 @@ public class RewriteUtil {
     return rewriter.rewrite(queryCommand, drivers);
   }
 
+  /**
+   * Gets the rewriter.
+   *
+   * @param conf
+   *          the query conf
+   * @return the rewriter
+   * @throws org.apache.hadoop.hive.ql.parse.SemanticException
+   *           the semantic exception
+   */
   private static DriverSpecificQueryRewrite getQueryRewriter(Configuration conf) {
     Class<?> rewriterClass = conf.getClass(LensConfConstants.QUERY_REWRITER, null);
     try {
