@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+<property>
+  <name>lens.server.drivers</name>
+  <value>org.apache.lens.driver.hive.HiveDriver,org.apache.lens.driver.jdbc.JDBCDriver</value>
+</property>
+</configuration>

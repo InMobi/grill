@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+  #%L
+  Lens Server
+  %%
+  Copyright (C) 2014 Apache Software Foundation
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+<property>
+  <name>lens.server.drivers</name>
+  <value>org.apache.lens.driver.hive.HiveDriver</value>
+</property>
+
+<property>
+  <name>test.lens.site.key</name>
+  <value>gsvalue</value>
+</property>
+
+<property>
+  <name>lens.server.enable.console.metrics</name>
+  <value>true</value>
+  <description>Enable metrics to be reported on console</description>
+</property>
+
+<property>
+  <name>lens.server.persist.location</name>
+  <value>target/persist-dir</value>
+</property>
+
+<property>
+  <name>lens.query.result.parent.dir</name>
+  <value>target/lens-results</value>
+</property>
+
+<property>
+  <name>hive.server2.query.log.dir</name>
+  <value>target/query-logs</value>
+</property>
+
+<property>
+  <name>hive.server2.authentication</name>
+  <value>CUSTOM</value>
+</property>
+
+<property>
+  <name>hive.server2.custom.authentication.class</name>
+  <value>org.apache.lens.server.auth.FooBarAuthenticationProvider</value>
+</property>
+
+
+<property>
+  <name>lens.query.whether.mail.notify</name>
+  <value>true</value>
+  <description>When a query ends, whether to notify the submitter by mail or not.</description>
+</property>
+
+<property>
+  <name>lens.server.mail.from.address</name>
+  <value>blah@company.com</value>
+  <description>The from field in the notifier mail to the submitter.</description>
+</property>
+
+<property>
+  <name>lens.server.mail.host</name>
+  <value>localhost</value>
+  <description>SMTP Host for sending mail</description>
+</property>
+
+<property>
+  <name>lens.server.mail.port</name>
+  <value>25000</value>
+  <description>SMTP Port</description>
+</property>
+
+<property>
+  <name>lens.server.ws.resourcenames</name>
+  <value>session,metastore,query,quota,scheduler,index,test</value>
+  <description>These JAX-RS resources would be started in the specified order when lens-server starts up</description>
+</property>
+
+<property>
+  <name>lens.server.test.ws.resource.impl</name>
+  <value>org.apache.lens.server.TestResource</value>
+  <description>Implementation class for Test Resource</description>
+</property>
+
+<property>
+  <name>lens.server.user.resolver.type</name>
+  <value>FIXED</value>
+</property>
+<property>
+  <name>lens.server.user.resolver.fixed.value</name>
+  <value>testlensuser</value>
+</property>
+<property>
+  <name>lens.server.domain</name>
+  <value>localhost</value>
+</property>
+
+<property>
+    <!-- Immediately insert all finished queries to DB -->
+    <name>lens.server.max.finished.queries</name>
+    <value>1</value>
+</property>
+
+<property>
+    <name>lens.server.db.jdbc.url</name>
+    <value>jdbc:hsqldb:target/queries.db</value>
+</property>
+
+<property>
+  <name>lens.server.servicenames</name>
+  <value>session,query,metastore,scheduler,quota,mocknonlens</value>
+</property>
+
+
+<property>
+  <name>lens.server.mocknonlens.service.impl</name>
+  <value>org.apache.lens.server.MockNonLensService</value>
+  <description>Implementation class for session service</description>
+</property>
+
+<property>
+  <name>grill.query.dsls</name>
+  <value>test</value>
+  <description>These DSLs should be registered when Grill Server starts up</description>
+</property>
+
+<property>
+  <name>grill.query.test.dsl.impl</name>
+  <value>com.inmobi.grill.server.query.rewrite.dsl.TestDSL</value>
+  <description>These DSLs should be registered when Grill Server starts up</description>
+</property>
+
+<property>
+  <name>grill.server.query.rewriter</name>
+  <value>com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl</value>
+<description>Rewriter Class which implements the query rewrites for each driver</description>
+
+</configuration>

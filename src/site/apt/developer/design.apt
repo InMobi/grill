@@ -1,8 +1,8 @@
 ~~~
 ~~ #%L
-~~ Grill
+~~ Lens
 ~~ %%
-~~ Copyright (C) 2014 Inmobi
+~~ Copyright (C) 2014 Apache Software Foundation
 ~~ %%
 ~~ Licensed under the Apache License, Version 2.0 (the "License");
 ~~ you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 ~~ limitations under the License.
 ~~ #L%
 ~~~
-Grill Design Docs
+Lens Design Docs
 
-	Following figure shows the main componenents inside a Grill server
+	Following figure shows the main componenents inside a Lens server
 
-[../figures/serverdesign.png] Grill Server Modules 
+[../figures/serverdesign.png] Lens Server Modules 

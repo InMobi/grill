@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-
-<configuration>
-<property>
-  <name>grill.drivers</name>
-  <value>com.inmobi.grill.driver.hive.HiveDriver,com.inmobi.grill.driver.jdbc.JDBCDriver</value>
-</property>
-</configuration>

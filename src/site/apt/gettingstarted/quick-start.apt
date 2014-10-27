@@ -1,8 +1,8 @@
 ~~~
 ~~ #%L
-~~ Grill
+~~ Lens
 ~~ %%
-~~ Copyright (C) 2014 Inmobi
+~~ Copyright (C) 2014 Apache Software Foundation
 ~~ %%
 ~~ Licensed under the Apache License, Version 2.0 (the "License");
 ~~ you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 ~~ limitations under the License.
 ~~ #L%
 ~~~
-Getting started with Grill
+Getting started with Lens
 
   Start with installation steps described {{{./install-steps.html}here}} and try out 
   {{{./pseudo-distributed-setup.html}pseudo distributed setup}}. Refer to 

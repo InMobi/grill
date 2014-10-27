@@ -1,0 +1,82 @@
+package org.apache.lens.driver.cube;
+
+/*
+ * #%L
+ * Lens Cube
+ * %%
+ * Copyright (C) 2014 Apache Software Foundation
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.lens.api.LensException;
+import org.apache.lens.driver.cube.CubeDriver.MinQueryCostSelector;
+import org.apache.lens.server.api.driver.DriverQueryPlan;
+import org.apache.lens.server.api.driver.LensDriver;
+import org.apache.lens.server.api.query.rewrite.QueryCommand;
+import org.apache.lens.server.query.rewrite.QueryCommands;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+
+public class TestMinCostSelector {
+
+  static class MockFailDriver extends MockDriver {
+    public DriverQueryPlan explain(String query, Configuration conf)
+        throws LensException {
+      throw new LensException("failing!");
+    }
+  }
+
+  @Test
+  public void testMinCostSelector() {
+    MinQueryCostSelector selector = new MinQueryCostSelector();
+    List<LensDriver> drivers = new ArrayList<LensDriver>();
+    Map<LensDriver, QueryCommand> driverQueries = new HashMap<LensDriver, QueryCommand>();
+    Configuration conf = new Configuration();
+
+    MockDriver d1 = new MockDriver();
+    MockDriver d2 = new MockDriver();
+    MockFailDriver fd1 = new MockFailDriver();
+    MockFailDriver fd2 = new MockFailDriver();
+    
+    drivers.add(d1);
+    drivers.add(d2);
+    final QueryCommand hqlCommand = QueryCommands.get("test query", null, conf);
+    driverQueries.put(d1, hqlCommand);
+
+    LensDriver selected = selector.select(drivers, driverQueries, conf);
+    Assert.assertEquals(d1, selected);
+    driverQueries.put(d2, hqlCommand);
+    driverQueries.remove(d1);
+    selected = selector.select(drivers, driverQueries, conf);
+    Assert.assertEquals(d2, selected);
+
+    drivers.add(fd1);
+    driverQueries.put(fd1, hqlCommand);
+    selected = selector.select(drivers, driverQueries, conf);
+    Assert.assertEquals(d2, selected);
+
+    drivers.add(fd2);
+    driverQueries.put(fd2, hqlCommand);
+    selected = selector.select(drivers, driverQueries, conf);
+    Assert.assertEquals(d2, selected);
+  }
+}
