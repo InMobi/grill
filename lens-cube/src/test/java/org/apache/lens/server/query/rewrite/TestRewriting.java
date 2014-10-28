@@ -36,6 +36,7 @@ import org.apache.lens.api.LensException;
 import org.apache.lens.driver.cube.MockDriver;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.driver.LensDriver;
+import org.apache.lens.server.query.rewrite.dsl.TestDSL;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -63,9 +64,9 @@ public class TestRewriting {
   @BeforeTest
   public void beforeTest() throws Exception {
     conf.setInt("mock.driver.test.val", 5);
-    conf.set(LensConfConstants.QUERY_REWRITER, "com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl");
+    conf.set(LensConfConstants.QUERY_REWRITER, DriverSpecificQueryRewriterImpl.class.getCanonicalName());
     conf.set(LensConfConstants.QUERY_DSLS, "test");
-    conf.set("grill.query.test.dsl.impl", "com.inmobi.grill.server.query.rewrite.dsl.TestDSL");
+    conf.set("grill.query.test.dsl.impl", TestDSL.class.getCanonicalName());
   }
 
   @BeforeTest
@@ -81,7 +82,7 @@ public class TestRewriting {
     return new org.powermock.modules.testng.PowerMockObjectFactory();
   }
 
-  private CubeQueryRewriter getMockedRewriter() throws SemanticException, ParseException {
+  static CubeQueryRewriter getMockedRewriter() throws SemanticException, ParseException {
     CubeQueryRewriter mockwriter = Mockito.mock(CubeQueryRewriter.class);
     Mockito.when(mockwriter.rewrite(any(String.class))).thenAnswer(new Answer<CubeQueryContext>() {
       @Override
@@ -111,7 +112,7 @@ public class TestRewriting {
    * @throws ParseException
    *           the parse exception
    */
-  private CubeQueryContext getMockedCubeContext(String query) throws SemanticException, ParseException {
+  static CubeQueryContext getMockedCubeContext(String query) throws SemanticException, ParseException {
     CubeQueryContext context = Mockito.mock(CubeQueryContext.class);
     Mockito.when(context.toHQL()).thenReturn(query.substring(4));
     Mockito.when(context.toAST(any(Context.class))).thenReturn(HQLParser.parseHQL(query.substring(4)));
@@ -129,7 +130,7 @@ public class TestRewriting {
    * @throws ParseException
    *           the parse exception
    */
-  private CubeQueryContext getMockedCubeContext(ASTNode ast) throws SemanticException, ParseException {
+  static CubeQueryContext getMockedCubeContext(ASTNode ast) throws SemanticException, ParseException {
     CubeQueryContext context = Mockito.mock(CubeQueryContext.class);
     if (ast.getToken().getType() == HiveParser.TOK_QUERY) {
       if (((ASTNode) ast.getChild(0)).getToken().getType() == HiveParser.KW_CUBE) {

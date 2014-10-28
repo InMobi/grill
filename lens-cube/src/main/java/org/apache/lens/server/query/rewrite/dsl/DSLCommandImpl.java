@@ -18,11 +18,11 @@
  */
 package org.apache.lens.server.query.rewrite.dsl;
 
+import org.apache.lens.server.api.query.rewrite.ParseException;
 import org.apache.lens.server.api.query.rewrite.QueryCommand;
 import org.apache.lens.server.api.query.rewrite.dsl.DSL;
 import org.apache.lens.server.api.query.rewrite.dsl.DSLCommand;
 import org.apache.lens.server.api.query.rewrite.dsl.DSLSemanticException;
-import org.apache.lens.server.query.rewrite.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -51,7 +51,6 @@ public class DSLCommandImpl extends DSLCommand {
 
     for (DSL dsl : DSLs) {
       try {
-        //TODO - Strip DOMAIN keyword from query string and pass to the underlying DSL handler
         if (dsl.accept(this)) {
           query = dsl.rewrite(this);
           break;

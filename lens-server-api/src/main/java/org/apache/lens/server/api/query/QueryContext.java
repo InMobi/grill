@@ -57,6 +57,12 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   @Getter
   final private String userQuery;
 
+  /** Cube query translated from DSL.
+   *  Same as userQuery when cubeQL is directly specified by user */
+  @Getter
+  @Setter
+  private String cubeQuery;
+
   /** The submitted user. */
   @Getter
   final private String submittedUser; // Logged in user.
@@ -389,4 +395,5 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   public String getClusterUser() {
     return conf.get(LensConfConstants.SESSION_CLUSTER_USER, submittedUser);
   }
+
 }
