@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.query.rewrite.dsl.DSLRegistry;
 import org.apache.lens.server.ui.UIApp;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.servlet.ServletRegistration;
@@ -112,6 +113,7 @@ public class LensServer {
   public void startServices(HiveConf conf) {
     LensServices.get().init(conf);
     LensServices.get().start();
+    DSLRegistry.getInstance().init(conf);
   }
 
   /**

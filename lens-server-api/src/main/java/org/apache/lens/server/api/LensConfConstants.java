@@ -506,4 +506,10 @@ public class LensConfConstants {
 
   /** The Constant SERVICE_PROVIDER_FACTORY. */
   public static final String SERVICE_PROVIDER_FACTORY = SERVER_PFX + "service.provider.factory";
+
+  //Query Rewrite
+  public static final String QUERY_DSLS = "grill.query.dsls";
+  public static final String DSL_QUERY_PFX = "grill.query.";
+  public static final String DSL_IMPL_SUFFIX = ".dsl.impl";
+  public static final String QUERY_REWRITER = "grill.server.query.rewriter";
 }

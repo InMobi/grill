@@ -16,29 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.api.driver;
+package org.apache.lens.server.api.query.rewrite.dsl;
 
-import java.util.Collection;
-import java.util.Map;
+import org.apache.lens.server.api.query.rewrite.RewriteException;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.lens.server.api.query.rewrite.QueryCommand;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The Interface DriverSelector.
+ * Thrown when there is a DSL syntax/semantic Error during the DSL rewrite
  */
-public interface DriverSelector {
-  /**
-   * Select.
-   *
-   * @param drivers
-   *          the drivers
-   * @param queries
-   *          the queries
-   * @param conf
-   *          the conf
-   * @return the lens driver
-   */
-  public LensDriver select(Collection<LensDriver> drivers, Map<LensDriver, QueryCommand> queries, Configuration conf);
+public class DSLSemanticException extends RewriteException {
 
+  List<String> dslRwriteErrors = new ArrayList<String>(1);
+
+  public DSLSemanticException(String s) {
+    super(s);
+  }
+
+  public DSLSemanticException(String s, Throwable e) {
+    super(s, e);
+  }
+
+  public void addDSLRewriteError(String message) {
+    this.dslRwriteErrors.add(message);
+  }
 }

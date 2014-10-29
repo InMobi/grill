@@ -16,29 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.api.driver;
 
-import java.util.Collection;
-import java.util.Map;
+package org.apache.lens.server.api.query.rewrite;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.lens.server.api.query.rewrite.QueryCommand;
 
-/**
- * The Interface DriverSelector.
- */
-public interface DriverSelector {
+public abstract class HQLCommand extends QueryCommand {
+
+  protected HQLCommand(String input, String userName, Configuration conf) {
+    super(input, userName, conf);
+  }
+
+  protected HQLCommand() {
+  }
+
+  @Override
+  public Type getType() {
+    return Type.HQL;
+  }
+
+  public static HQLCommand get(String input, String userName, Configuration conf) {
+    return new HQLCommand(input, userName, conf) {
+      @Override
+      public boolean matches(String line) {
+        return true;
+      }
+
+      @Override
+      public QueryCommand rewrite() throws RewriteException {
+        return null;
+      }
+    };
+  }
+
   /**
-   * Select.
-   *
-   * @param drivers
-   *          the drivers
-   * @param queries
-   *          the queries
-   * @param conf
-   *          the conf
-   * @return the lens driver
+   * Any command that is not matched by CubeQL, DSL, NonSQL is assumed to be HQL by default
+   * @param line
+   * @return
    */
-  public LensDriver select(Collection<LensDriver> drivers, Map<LensDriver, QueryCommand> queries, Configuration conf);
-
+  @Override
+  public boolean matches(String line) {
+    return true;
+  }
 }

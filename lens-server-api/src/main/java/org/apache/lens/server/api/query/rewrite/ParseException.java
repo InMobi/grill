@@ -16,29 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.api.driver;
+package org.apache.lens.server.api.query.rewrite;
 
-import java.util.Collection;
-import java.util.Map;
+public class ParseException extends Exception {
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.lens.server.api.query.rewrite.QueryCommand;
+  public ParseException(String message) {
+    super(message);
+  }
 
-/**
- * The Interface DriverSelector.
- */
-public interface DriverSelector {
-  /**
-   * Select.
-   *
-   * @param drivers
-   *          the drivers
-   * @param queries
-   *          the queries
-   * @param conf
-   *          the conf
-   * @return the lens driver
-   */
-  public LensDriver select(Collection<LensDriver> drivers, Map<LensDriver, QueryCommand> queries, Configuration conf);
+  public ParseException(String message, Throwable e) {
+    super(message, e);
+  }
 
+  public ParseException(Throwable th) {
+    super(th);
+  }
 }

@@ -124,7 +124,6 @@
     <value>jdbc:hsqldb:target/queries.db</value>
 </property>
 
-
 <property>
   <name>lens.server.servicenames</name>
   <value>session,query,metastore,scheduler,quota,mocknonlens</value>
@@ -136,5 +135,22 @@
   <value>org.apache.lens.server.MockNonLensService</value>
   <description>Implementation class for session service</description>
 </property>
+
+<property>
+  <name>grill.query.dsls</name>
+  <value>test</value>
+  <description>These DSLs should be registered when Grill Server starts up</description>
+</property>
+
+<property>
+  <name>grill.query.test.dsl.impl</name>
+  <value>com.inmobi.grill.server.query.rewrite.dsl.TestDSL</value>
+  <description>These DSLs should be registered when Grill Server starts up</description>
+</property>
+
+<property>
+  <name>grill.server.query.rewriter</name>
+  <value>com.inmobi.grill.server.query.rewrite.DriverSpecificQueryRewriterImpl</value>
+<description>Rewriter Class which implements the query rewrites for each driver</description>
 
 </configuration>

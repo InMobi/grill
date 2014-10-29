@@ -38,6 +38,8 @@ import org.apache.lens.server.api.driver.*;
 import org.apache.lens.server.api.events.LensEventListener;
 import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
+import org.apache.lens.server.api.query.rewrite.QueryCommand;
+import org.apache.lens.server.query.rewrite.RewriteUtil;
 import org.apache.log4j.Logger;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -47,31 +49,43 @@ import org.apache.hadoop.hive.conf.HiveConf;
  */
 public class CubeDriver implements LensDriver {
 
-  /** The Constant LOG. */
+  /**
+   * The Constant LOG.
+   */
   public static final Logger LOG = Logger.getLogger(CubeDriver.class);
 
-  /** The drivers. */
+  /**
+   * The drivers.
+   */
   private final List<LensDriver> drivers;
 
-  /** The driver selector. */
+  /**
+   * The driver selector.
+   */
   private final DriverSelector driverSelector;
 
-  /** The conf. */
+  /**
+   * The conf.
+   */
   private Configuration conf;
 
-  /** The query contexts. */
+  /**
+   * The query contexts.
+   */
   private Map<QueryHandle, QueryContext> queryContexts = new HashMap<QueryHandle, QueryContext>();
 
-  /** The prepared queries. */
+  /**
+   * The prepared queries.
+   */
   private Map<QueryPrepareHandle, PreparedQueryContext> preparedQueries = new HashMap<QueryPrepareHandle, PreparedQueryContext>();
 
   /**
    * Instantiates a new cube driver.
    *
    * @param conf
-   *          the conf
+   *     the conf
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   public CubeDriver(Configuration conf) throws LensException {
     this(conf, new MinQueryCostSelector());
@@ -81,11 +95,11 @@ public class CubeDriver implements LensDriver {
    * Instantiates a new cube driver.
    *
    * @param conf
-   *          the conf
+   *     the conf
    * @param driverSelector
-   *          the driver selector
+   *     the driver selector
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   public CubeDriver(Configuration conf, DriverSelector driverSelector) throws LensException {
     this.conf = new HiveConf(conf, CubeDriver.class);
@@ -98,7 +112,7 @@ public class CubeDriver implements LensDriver {
    * Load drivers.
    *
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   private void loadDrivers() throws LensException {
     String[] driverClasses = conf.getStrings(LensConfConstants.DRIVER_CLASSES);
@@ -120,16 +134,18 @@ public class CubeDriver implements LensDriver {
     }
   }
 
+
   /**
    * Select driver.
    *
    * @param queries
-   *          the queries
+   *     the queries
    * @param conf
-   *          the conf
+   *     the conf
    * @return the lens driver
    */
-  protected LensDriver selectDriver(Map<LensDriver, String> queries, Configuration conf) {
+  protected LensDriver selectDriver(Map<LensDriver,
+      QueryCommand> queries, Configuration conf) {
     return driverSelector.select(drivers, queries, conf);
   }
 
@@ -142,16 +158,16 @@ public class CubeDriver implements LensDriver {
      * Returns the driver that has the minimum query cost.
      *
      * @param drivers
-     *          the drivers
+     *     the drivers
      * @param driverQueries
-     *          the driver queries
+     *     the driver queries
      * @param conf
-     *          the conf
+     *     the conf
      * @return the lens driver
      */
     @Override
-    public LensDriver select(Collection<LensDriver> drivers, final Map<LensDriver, String> driverQueries,
-        final Configuration conf) {
+    public LensDriver select(Collection<LensDriver> drivers, final Map<LensDriver, QueryCommand> driverQueries,
+                             final Configuration conf) {
       return Collections.min(drivers, new Comparator<LensDriver>() {
         @Override
         public int compare(LensDriver d1, LensDriver d2) {
@@ -166,13 +182,13 @@ public class CubeDriver implements LensDriver {
             return -1;
           }
           try {
-            c1 = d1.explain(driverQueries.get(d1), conf);
+            c1 = d1.explain(driverQueries.get(d1).getCommand(), conf);
           } catch (LensException e) {
             LOG.warn("Explain query:" + driverQueries.get(d1) + " on Driver:" + d1.getClass().getSimpleName()
                 + " failed", e);
           }
           try {
-            c2 = d2.explain(driverQueries.get(d2), conf);
+            c2 = d2.explain(driverQueries.get(d2).getCommand(), conf);
           } catch (LensException e) {
             LOG.warn("Explain query:" + driverQueries.get(d2) + " on Driver:" + d2.getClass().getSimpleName()
                 + " failed", e);
@@ -194,12 +210,12 @@ public class CubeDriver implements LensDriver {
    * Execute.
    *
    * @param query
-   *          the query
+   *     the query
    * @param conf
-   *          the conf
+   *     the conf
    * @return the lens result set
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   public LensResultSet execute(String query, Configuration conf) throws LensException {
     QueryContext ctx = createQueryContext(query, conf);
@@ -223,28 +239,29 @@ public class CubeDriver implements LensDriver {
    * Rewrite and select.
    *
    * @param ctx
-   *          the ctx
+   *     the ctx
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   private void rewriteAndSelect(QueryContext ctx) throws LensException {
     queryContexts.put(ctx.getQueryHandle(), ctx);
-    Map<LensDriver, String> driverQueries = RewriteUtil.rewriteQuery(ctx.getUserQuery(), drivers, ctx.getConf());
+    //1. Rewrite to driver specific query
+    Map<LensDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers);
 
     // 2. select driver to run the query
     LensDriver driver = selectDriver(driverQueries, conf);
 
     ctx.setSelectedDriver(driver);
-    ctx.setDriverQuery(driverQueries.get(driver));
+    ctx.setDriverQuery(driverQueries.get(driver).getCommand());
   }
 
   /**
    * Creates the query context.
    *
    * @param query
-   *          the query
+   *     the query
    * @param conf
-   *          the conf
+   *     the conf
    * @return the query context
    */
   private QueryContext createQueryContext(String query, Configuration conf) {
@@ -255,12 +272,12 @@ public class CubeDriver implements LensDriver {
    * Execute async.
    *
    * @param query
-   *          the query
+   *     the query
    * @param conf
-   *          the conf
+   *     the conf
    * @return the query handle
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   public QueryHandle executeAsync(String query, Configuration conf) throws LensException {
     QueryContext ctx = createQueryContext(query, conf);
@@ -283,10 +300,10 @@ public class CubeDriver implements LensDriver {
    * Gets the status.
    *
    * @param handle
-   *          the handle
+   *     the handle
    * @return the status
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   public QueryStatus getStatus(QueryHandle handle) throws LensException {
     updateStatus(getContext(handle));
@@ -359,7 +376,7 @@ public class CubeDriver implements LensDriver {
    * Add a listener for driver events.
    *
    * @param driverEventListener
-   *          the driver event listener
+   *     the driver event listener
    */
   @Override
   public void registerDriverEventListener(LensEventListener<DriverEvent> driverEventListener) {
@@ -381,10 +398,10 @@ public class CubeDriver implements LensDriver {
    * Gets the context.
    *
    * @param handle
-   *          the handle
+   *     the handle
    * @return the context
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   private QueryContext getContext(QueryHandle handle) throws LensException {
     QueryContext ctx = queryContexts.get(handle);
@@ -402,19 +419,21 @@ public class CubeDriver implements LensDriver {
    * Rewrite and select for prepare.
    *
    * @param ctx
-   *          the ctx
+   *     the ctx
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   private void rewriteAndSelectForPrepare(PreparedQueryContext ctx) throws LensException {
     preparedQueries.put(ctx.getPrepareHandle(), ctx);
-    Map<LensDriver, String> driverQueries = RewriteUtil.rewriteQuery(ctx.getUserQuery(), drivers, ctx.getConf());
+
+    //1. Rewrite to driver specific query
+    Map<LensDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers);
 
     // 2. select driver to run the query
     LensDriver driver = selectDriver(driverQueries, conf);
 
     ctx.setSelectedDriver(driver);
-    ctx.setDriverQuery(driverQueries.get(driver));
+    ctx.setDriverQuery(driverQueries.get(driver).getCommand());
   }
 
   /*
@@ -424,21 +443,22 @@ public class CubeDriver implements LensDriver {
    */
   @Override
   public DriverQueryPlan explain(String query, Configuration conf) throws LensException {
-    Map<LensDriver, String> driverQueries = RewriteUtil.rewriteQuery(query, drivers, conf);
+    Map<LensDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(query, null, conf, drivers);
+    ;
     LensDriver driver = selectDriver(driverQueries, conf);
-    return driver.explain(driverQueries.get(driver), conf);
+    return driver.explain(driverQueries.get(driver).getCommand(), conf);
   }
 
   /**
    * Execute prepare.
    *
    * @param handle
-   *          the handle
+   *     the handle
    * @param conf
-   *          the conf
+   *     the conf
    * @return the lens result set
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   @Deprecated
   public LensResultSet executePrepare(QueryHandle handle, Configuration conf) throws LensException {
@@ -452,11 +472,11 @@ public class CubeDriver implements LensDriver {
    * Execute prepare async.
    *
    * @param handle
-   *          the handle
+   *     the handle
    * @param conf
-   *          the conf
+   *     the conf
    * @throws LensException
-   *           the lens exception
+   *     the lens exception
    */
   @Deprecated
   public void executePrepareAsync(QueryHandle handle, Configuration conf) throws LensException {

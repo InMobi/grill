@@ -16,29 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.api.driver;
+package org.apache.lens.server.query.rewrite;
 
-import java.util.Collection;
-import java.util.Map;
-
+import org.apache.lens.server.api.query.rewrite.HQLCommand;
+import org.apache.lens.server.api.query.rewrite.NonSQLCommand;
+import org.apache.lens.server.api.query.rewrite.RewriteException;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.lens.server.api.query.rewrite.QueryCommand;
 
-/**
- * The Interface DriverSelector.
- */
-public interface DriverSelector {
-  /**
-   * Select.
-   *
-   * @param drivers
-   *          the drivers
-   * @param queries
-   *          the queries
-   * @param conf
-   *          the conf
-   * @return the lens driver
-   */
-  public LensDriver select(Collection<LensDriver> drivers, Map<LensDriver, QueryCommand> queries, Configuration conf);
+public class NonSQLCommandImpl extends NonSQLCommand {
 
+  public NonSQLCommandImpl(String command, String userName, Configuration conf) {
+    super(command, userName, conf);
+  }
+
+  public NonSQLCommandImpl() {
+  }
+
+  @Override
+  public HQLCommand rewrite() throws RewriteException {
+    HQLCommand driverQL = new HQLCommandImpl(this);
+    return driverQL;
+  }
 }

@@ -20,6 +20,7 @@ package org.apache.lens.server.api.query;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,6 +56,12 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   /** The user query. */
   @Getter
   final private String userQuery;
+
+  /** Cube query translated from DSL.
+   *  Same as userQuery when cubeQL is directly specified by user */
+  @Getter
+  @Setter
+  private String cubeQuery;
 
   /** The submitted user. */
   @Getter
@@ -388,4 +395,5 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   public String getClusterUser() {
     return conf.get(LensConfConstants.SESSION_CLUSTER_USER, submittedUser);
   }
+
 }

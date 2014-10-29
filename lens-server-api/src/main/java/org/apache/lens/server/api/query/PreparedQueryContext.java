@@ -37,7 +37,6 @@ import lombok.Setter;
  * The Class PreparedQueryContext.
  */
 public class PreparedQueryContext implements Delayed {
-
   /** The prepare handle. */
   @Getter
   private final QueryPrepareHandle prepareHandle;
@@ -78,6 +77,12 @@ public class PreparedQueryContext implements Delayed {
 
   /** The millis in week. */
   private static long millisInWeek = 7 * 24 * 60 * 60 * 1000;
+
+  /** Cube query translated from DSL.
+   *  Same as userQuery when cubeQL is directly specified by user */
+  @Getter
+  @Setter
+  private String cubeQuery;
 
   /**
    * Instantiates a new prepared query context.
@@ -166,4 +171,11 @@ public class PreparedQueryContext implements Delayed {
         selectedDriver != null ? selectedDriver.getClass().getCanonicalName() : null, driverQuery, qconf);
   }
 
+  public void setCubeQuery(String cubeQuery) {
+    this.cubeQuery = cubeQuery;
+  }
+
+  public String getCubeQuery() {
+    return cubeQuery;
+  }
 }

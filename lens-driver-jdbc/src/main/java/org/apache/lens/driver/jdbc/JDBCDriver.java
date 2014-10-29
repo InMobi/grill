@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.lens.driver.jdbc;
 
 import org.apache.hadoop.conf.Configuration;
@@ -34,6 +35,7 @@ import org.apache.lens.server.api.driver.DriverQueryStatus.DriverQueryState;
 import org.apache.lens.server.api.events.LensEventListener;
 import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
+import org.apache.lens.server.query.rewrite.CubeQLCommandImpl;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -543,7 +545,7 @@ public class JDBCDriver implements LensDriver {
   @Override
   public DriverQueryPlan explain(String query, Configuration conf) throws LensException {
     checkConfigured();
-    conf = RewriteUtil.getFinalQueryConf(this, conf);
+    conf = CubeQLCommandImpl.getDriverQueryConf(this, conf);
     String rewrittenQuery = rewriteQuery(query, conf);
     Configuration explainConf = new Configuration(conf);
     explainConf.setBoolean(LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, false);
@@ -649,9 +651,9 @@ public class JDBCDriver implements LensDriver {
   @Override
   public LensResultSet execute(QueryContext context) throws LensException {
     checkConfigured();
-    // Always use the driver rewritten query not user query. Since the
-    // conf we are passing here is query context conf, we need to add jdbc xml in resource path
-    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), RewriteUtil.getFinalQueryConf(this, conf));
+    //Always use the driver rewritten query not user query. Since the
+    //conf we are passing here is query context conf, we need to add jdbc xml in resource path
+    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), CubeQLCommandImpl.getDriverQueryConf(this, conf));
     LOG.info("Execute " + context.getQueryHandle());
     QueryResult result = executeInternal(context, rewrittenQuery);
     return result.getLensResultSet(true);
@@ -690,9 +692,9 @@ public class JDBCDriver implements LensDriver {
   @Override
   public void executeAsync(QueryContext context) throws LensException {
     checkConfigured();
-    // Always use the driver rewritten query not user query. Since the
-    // conf we are passing here is query context conf, we need to add jdbc xml in resource path
-    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), RewriteUtil.getFinalQueryConf(this, conf));
+    //Always use the driver rewritten query not user query. Since the
+    //conf we are passing here is query context conf, we need to add jdbc xml in resource path
+    String rewrittenQuery = rewriteQuery(context.getDriverQuery(), CubeQLCommandImpl.getDriverQueryConf(this, conf));
     JdbcQueryContext jdbcCtx = new JdbcQueryContext(context);
     jdbcCtx.setRewrittenQuery(rewrittenQuery);
     try {

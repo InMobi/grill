@@ -67,7 +67,8 @@ import org.apache.lens.api.query.QueryStatus;
 import org.apache.lens.api.query.SubmitOp;
 import org.apache.lens.api.query.QueryStatus.Status;
 import org.apache.lens.driver.cube.CubeDriver;
-import org.apache.lens.driver.cube.RewriteUtil;
+import org.apache.lens.server.api.query.rewrite.QueryCommand;
+import org.apache.lens.server.query.rewrite.RewriteUtil;
 import org.apache.lens.driver.hive.HiveDriver;
 import org.apache.lens.server.LensService;
 import org.apache.lens.server.LensServices;
@@ -913,14 +914,13 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
    *           the lens exception
    */
   private void rewriteAndSelect(QueryContext ctx) throws LensException {
-    Map<LensDriver, String> driverQueries = RewriteUtil.rewriteQuery(ctx.getUserQuery(), drivers.values(),
-        ctx.getConf());
+    Map<LensDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
 
     // 2. select driver to run the query
     LensDriver driver = driverSelector.select(drivers.values(), driverQueries, conf);
 
     ctx.setSelectedDriver(driver);
-    ctx.setDriverQuery(driverQueries.get(driver));
+    ctx.setDriverQuery(driverQueries.get(driver).getCommand());
   }
 
   /**
@@ -932,14 +932,13 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
    *           the lens exception
    */
   private void rewriteAndSelect(PreparedQueryContext ctx) throws LensException {
-    Map<LensDriver, String> driverQueries = RewriteUtil.rewriteQuery(ctx.getUserQuery(), drivers.values(),
-        ctx.getConf());
+    Map<LensDriver, QueryCommand> driverQueries = RewriteUtil.rewriteQuery(ctx, drivers.values());
 
     // 2. select driver to run the query
     LensDriver driver = driverSelector.select(drivers.values(), driverQueries, conf);
 
     ctx.setSelectedDriver(driver);
-    ctx.setDriverQuery(driverQueries.get(driver));
+    ctx.setDriverQuery(driverQueries.get(driver).getCommand());
   }
 
   /**
@@ -1790,10 +1789,15 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
       acquire(sessionHandle);
       Configuration qconf = getLensConf(sessionHandle, lensConf);
       accept(query, qconf, SubmitOp.EXPLAIN);
-      Map<LensDriver, String> driverQueries = RewriteUtil.rewriteQuery(query, drivers.values(), qconf);
+
+      Map<LensDriver, QueryCommand> driverQueries =
+          RewriteUtil.rewriteQuery(query,  getSession(sessionHandle).getUsername(), qconf , drivers.values());
+
       // select driver to run the query
-      LensDriver selectedDriver = driverSelector.select(drivers.values(), driverQueries, conf);
-      return selectedDriver.explain(driverQueries.get(selectedDriver), qconf).toQueryPlan();
+      LensDriver selectedDriver = driverSelector.select(drivers.values(),
+          driverQueries, conf);
+      return selectedDriver.explain(driverQueries.get(selectedDriver).getCommand(), qconf)
+          .toQueryPlan();
     } catch (LensException e) {
       QueryPlan plan;
       if (e.getCause() != null && e.getCause().getMessage() != null) {

@@ -29,9 +29,12 @@ import org.apache.lens.api.LensException;
 import org.apache.lens.api.query.QueryHandle;
 import org.apache.lens.api.query.QueryStatus;
 import org.apache.lens.driver.cube.CubeDriver;
+import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.driver.DriverQueryPlan;
 import org.apache.lens.server.api.driver.LensDriver;
 import org.apache.lens.server.api.driver.LensResultSet;
+import org.apache.lens.server.query.rewrite.DriverSpecificQueryRewriterImpl;
+import org.apache.lens.server.query.rewrite.dsl.TestDSL;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -58,6 +61,9 @@ public class TestCubeDriver {
   public void beforeTest() throws Exception {
     cubeDriver = new CubeDriver(conf);
     conf.setInt("mock.driver.test.val", 5);
+    conf.set(LensConfConstants.QUERY_REWRITER, DriverSpecificQueryRewriterImpl.class.getCanonicalName());
+    conf.set(LensConfConstants.QUERY_DSLS, "test");
+    conf.set("grill.query.test.dsl.impl", TestDSL.class.getCanonicalName());
   }
 
   /**

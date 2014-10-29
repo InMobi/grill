@@ -16,29 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.api.driver;
 
-import java.util.Collection;
-import java.util.Map;
+package org.apache.lens.server.api.query.rewrite;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.lens.server.api.query.rewrite.QueryCommand;
+import org.apache.lens.api.LensException;
 
 /**
- * The Interface DriverSelector.
+ * Rewrite Exception thrown upon a query rewrite error
  */
-public interface DriverSelector {
-  /**
-   * Select.
-   *
-   * @param drivers
-   *          the drivers
-   * @param queries
-   *          the queries
-   * @param conf
-   *          the conf
-   * @return the lens driver
-   */
-  public LensDriver select(Collection<LensDriver> drivers, Map<LensDriver, QueryCommand> queries, Configuration conf);
+public class RewriteException extends LensException {
 
+  public RewriteException(String message) {
+    super(message);
+  }
+
+  public RewriteException(String message, Throwable e) {
+    super(message, e);
+  }
+
+  public RewriteException(Throwable th) {
+    super(th);
+  }
 }
