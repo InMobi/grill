@@ -22,6 +22,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,6 +103,6 @@ public abstract class CubeQLCommand extends QueryCommand {
    * @throws SemanticException if there is a semantic error
    * @throws ParseException if there is a syntax error
    */
-  public abstract List<CubeQueryInfo> parse() throws SemanticException, ParseException;
+  public abstract Collection<CubeQueryInfo> parse() throws SemanticException, ParseException;
 
 }

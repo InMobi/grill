@@ -82,8 +82,10 @@ public class CubeDriver implements LensDriver {
   /**
    * Instantiates a new cube driver.
    *
-   * @param conf the conf
-   * @throws LensException the lens exception
+   * @param conf
+   *     the conf
+   * @throws LensException
+   *     the lens exception
    */
   public CubeDriver(Configuration conf) throws LensException {
     this(conf, new MinQueryCostSelector());
@@ -92,9 +94,12 @@ public class CubeDriver implements LensDriver {
   /**
    * Instantiates a new cube driver.
    *
-   * @param conf           the conf
-   * @param driverSelector the driver selector
-   * @throws LensException the lens exception
+   * @param conf
+   *     the conf
+   * @param driverSelector
+   *     the driver selector
+   * @throws LensException
+   *     the lens exception
    */
   public CubeDriver(Configuration conf, DriverSelector driverSelector) throws LensException {
     this.conf = new HiveConf(conf, CubeDriver.class);
@@ -106,7 +111,8 @@ public class CubeDriver implements LensDriver {
   /**
    * Load drivers.
    *
-   * @throws LensException the lens exception
+   * @throws LensException
+   *     the lens exception
    */
   private void loadDrivers() throws LensException {
     String[] driverClasses = conf.getStrings(LensConfConstants.DRIVER_CLASSES);
@@ -132,8 +138,10 @@ public class CubeDriver implements LensDriver {
   /**
    * Select driver.
    *
-   * @param queries the queries
-   * @param conf    the conf
+   * @param queries
+   *     the queries
+   * @param conf
+   *     the conf
    * @return the lens driver
    */
   protected LensDriver selectDriver(Map<LensDriver,
@@ -149,9 +157,12 @@ public class CubeDriver implements LensDriver {
     /**
      * Returns the driver that has the minimum query cost.
      *
-     * @param drivers       the drivers
-     * @param driverQueries the driver queries
-     * @param conf          the conf
+     * @param drivers
+     *     the drivers
+     * @param driverQueries
+     *     the driver queries
+     * @param conf
+     *     the conf
      * @return the lens driver
      */
     @Override
@@ -198,10 +209,13 @@ public class CubeDriver implements LensDriver {
   /**
    * Execute.
    *
-   * @param query the query
-   * @param conf  the conf
+   * @param query
+   *     the query
+   * @param conf
+   *     the conf
    * @return the lens result set
-   * @throws LensException the lens exception
+   * @throws LensException
+   *     the lens exception
    */
   public LensResultSet execute(String query, Configuration conf) throws LensException {
     QueryContext ctx = createQueryContext(query, conf);
@@ -224,8 +238,10 @@ public class CubeDriver implements LensDriver {
   /**
    * Rewrite and select.
    *
-   * @param ctx the ctx
-   * @throws LensException the lens exception
+   * @param ctx
+   *     the ctx
+   * @throws LensException
+   *     the lens exception
    */
   private void rewriteAndSelect(QueryContext ctx) throws LensException {
     queryContexts.put(ctx.getQueryHandle(), ctx);
@@ -242,8 +258,10 @@ public class CubeDriver implements LensDriver {
   /**
    * Creates the query context.
    *
-   * @param query the query
-   * @param conf  the conf
+   * @param query
+   *     the query
+   * @param conf
+   *     the conf
    * @return the query context
    */
   private QueryContext createQueryContext(String query, Configuration conf) {
@@ -253,10 +271,13 @@ public class CubeDriver implements LensDriver {
   /**
    * Execute async.
    *
-   * @param query the query
-   * @param conf  the conf
+   * @param query
+   *     the query
+   * @param conf
+   *     the conf
    * @return the query handle
-   * @throws LensException the lens exception
+   * @throws LensException
+   *     the lens exception
    */
   public QueryHandle executeAsync(String query, Configuration conf) throws LensException {
     QueryContext ctx = createQueryContext(query, conf);
@@ -278,9 +299,11 @@ public class CubeDriver implements LensDriver {
   /**
    * Gets the status.
    *
-   * @param handle the handle
+   * @param handle
+   *     the handle
    * @return the status
-   * @throws LensException the lens exception
+   * @throws LensException
+   *     the lens exception
    */
   public QueryStatus getStatus(QueryHandle handle) throws LensException {
     updateStatus(getContext(handle));
@@ -352,7 +375,8 @@ public class CubeDriver implements LensDriver {
   /**
    * Add a listener for driver events.
    *
-   * @param driverEventListener the driver event listener
+   * @param driverEventListener
+   *     the driver event listener
    */
   @Override
   public void registerDriverEventListener(LensEventListener<DriverEvent> driverEventListener) {
@@ -373,9 +397,11 @@ public class CubeDriver implements LensDriver {
   /**
    * Gets the context.
    *
-   * @param handle the handle
+   * @param handle
+   *     the handle
    * @return the context
-   * @throws LensException the lens exception
+   * @throws LensException
+   *     the lens exception
    */
   private QueryContext getContext(QueryHandle handle) throws LensException {
     QueryContext ctx = queryContexts.get(handle);
@@ -392,8 +418,10 @@ public class CubeDriver implements LensDriver {
   /**
    * Rewrite and select for prepare.
    *
-   * @param ctx the ctx
-   * @throws LensException the lens exception
+   * @param ctx
+   *     the ctx
+   * @throws LensException
+   *     the lens exception
    */
   private void rewriteAndSelectForPrepare(PreparedQueryContext ctx) throws LensException {
     preparedQueries.put(ctx.getPrepareHandle(), ctx);
@@ -424,10 +452,13 @@ public class CubeDriver implements LensDriver {
   /**
    * Execute prepare.
    *
-   * @param handle the handle
-   * @param conf   the conf
+   * @param handle
+   *     the handle
+   * @param conf
+   *     the conf
    * @return the lens result set
-   * @throws LensException the lens exception
+   * @throws LensException
+   *     the lens exception
    */
   @Deprecated
   public LensResultSet executePrepare(QueryHandle handle, Configuration conf) throws LensException {
@@ -440,9 +471,12 @@ public class CubeDriver implements LensDriver {
   /**
    * Execute prepare async.
    *
-   * @param handle the handle
-   * @param conf   the conf
-   * @throws LensException the lens exception
+   * @param handle
+   *     the handle
+   * @param conf
+   *     the conf
+   * @throws LensException
+   *     the lens exception
    */
   @Deprecated
   public void executePrepareAsync(QueryHandle handle, Configuration conf) throws LensException {

@@ -22,9 +22,18 @@ import org.apache.lens.server.api.query.rewrite.QueryCommand;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ *  Domain Specific Language command
+ */
+
 public abstract class DSLCommand extends QueryCommand {
 
-  public static final String DSL_PREFIX = "DOMAIN";
+  static Pattern domainPattern = Pattern.compile(".*DOMAIN\\s+SELECT(.*)",
+      Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+  static Matcher matcher = null;
 
   protected DSLCommand(String input, String userName, Configuration conf) {
     super(input, userName, conf);
@@ -55,7 +64,12 @@ public abstract class DSLCommand extends QueryCommand {
 
   @Override
   public boolean matches(String line) {
-    return StringUtils.startsWithIgnoreCase(line, DSL_PREFIX);
+    if (matcher == null) {
+      matcher = domainPattern.matcher(line);
+    } else {
+      matcher.reset(line);
+    }
+    return matcher.matches();
   }
 
 }

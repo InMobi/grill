@@ -18,6 +18,8 @@
  */
 package org.apache.lens.server.query.rewrite;
 
+import org.apache.lens.cube.parse.CubeQueryRewriter;
+import org.apache.lens.cube.parse.HQLParser;
 import org.apache.lens.driver.cube.CubeDriver;
 import org.apache.lens.server.api.driver.LensDriver;
 import org.apache.lens.server.api.query.rewrite.CubeQLCommand;
@@ -26,18 +28,19 @@ import org.apache.lens.server.api.query.rewrite.RewriteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.ql.cube.parse.CubeQueryRewriter;
-import org.apache.hadoop.hive.ql.cube.parse.HQLParser;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * see @link org.apache.lens.server.api.query.rewrite.CubeQLCommand
+ */
 public class CubeQLCommandImpl extends CubeQLCommand {
 
   public static final Log LOG = LogFactory.getLog(CubeQLCommandImpl.class);
@@ -100,7 +103,8 @@ public class CubeQLCommandImpl extends CubeQLCommand {
     return new CubeQueryRewriter(queryConf);
   }
 
-  public List<CubeQueryInfo> parse() throws SemanticException, ParseException {
+  @Override
+  public Collection<CubeQueryInfo> parse() throws SemanticException, ParseException {
     List<CubeQueryInfo> cubeQueries = findCubePositions(getCommand());
     this.cubeQueries = cubeQueries;
     parsed = true;

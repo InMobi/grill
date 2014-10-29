@@ -109,7 +109,7 @@ public abstract class QueryCommand {
   }
 
   /**
-   * Matches passed command with the expected query pattern
+   * Matches the input command with the expected query pattern
    * @param line
    * @return true if matches
    * @return false if not
@@ -117,7 +117,7 @@ public abstract class QueryCommand {
   public abstract boolean matches(String line);
 
   /**
-   * Rewrite the given command to another type
+   * Rewrite the query command to another type
    *
    * @return the rewritten query command
    * @throws RewriteException if there is an error during rewrite

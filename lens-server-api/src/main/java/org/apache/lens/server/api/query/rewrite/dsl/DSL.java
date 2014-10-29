@@ -30,7 +30,6 @@ import org.apache.hadoop.hive.ql.metadata.AuthorizationException;
 public interface DSL {
 
   /**
-   *
    * @return The DSL identifier
    */
   String getName();
@@ -39,7 +38,7 @@ public interface DSL {
    *
    * @param command the query to be rewritten
    * @return false if DSL does not accept the query
-   * @throws ParseException when DSL is not able to parse the given query
+   * @throws ParseException when DSL instance is not able to parse the given query
    * @throws AuthorizationException thrown when user is not authorized to submit the DSL query
    */
   boolean accept(DSLCommand command) throws ParseException, AuthorizationException;

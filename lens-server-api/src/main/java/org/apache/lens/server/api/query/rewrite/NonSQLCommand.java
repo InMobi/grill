@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 /**
- * NonSQL Commands that is rewritten to Driver specific HQLCommand
+ * NonSQL Commands like add/set
  */
 public abstract class NonSQLCommand extends QueryCommand {
 

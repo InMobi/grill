@@ -20,7 +20,7 @@ package org.apache.lens.server.query.rewrite;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.ql.cube.parse.CubeQueryRewriter;
+import org.apache.lens.cube.parse.CubeQueryRewriter;
 import org.apache.lens.driver.cube.MockDriver;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.driver.LensDriver;
