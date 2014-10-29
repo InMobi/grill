@@ -94,7 +94,7 @@ public class RewriteUtil {
   /**
    * Gets the rewriter.
    *
-   * @param cclonf
+   * @param conf
    *          the query conf
    * @return the rewriter
    * @throws org.apache.hadoop.hive.ql.parse.SemanticException
