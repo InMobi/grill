@@ -106,37 +106,22 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;queryPlan&gt;
-  &lt;numHaving&gt;...&lt;/numHaving&gt;
-  &lt;numGbys&gt;...&lt;/numGbys&gt;
-  &lt;errorMsg&gt;...&lt;/errorMsg&gt;
-  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
-  &lt;filterWeight&gt;...&lt;/filterWeight&gt;
-  &lt;scanMode&gt;...&lt;/scanMode&gt;
-  &lt;numSels&gt;...&lt;/numSels&gt;
-  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
-  &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
-  &lt;planString&gt;...&lt;/planString&gt;
-  &lt;numJoins&gt;...&lt;/numJoins&gt;
-  &lt;numObys&gt;...&lt;/numObys&gt;
   &lt;numFilters&gt;...&lt;/numFilters&gt;
+  &lt;error&gt;...&lt;/error&gt;
+  &lt;planString&gt;...&lt;/planString&gt;
+  &lt;execMode&gt;...&lt;/execMode&gt;
   &lt;tablesQueried&gt;
     &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
     &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
     &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
   &lt;/tablesQueried&gt;
-  &lt;queryCost&gt;
-    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
-    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
-  &lt;/queryCost&gt;
-  &lt;prepareHandle&gt;
-    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
-  &lt;/prepareHandle&gt;
-  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
-  &lt;execMode&gt;...&lt;/execMode&gt;
+  &lt;numJoins&gt;...&lt;/numJoins&gt;
+  &lt;numHaving&gt;...&lt;/numHaving&gt;
+  &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
+  &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
+  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
   &lt;selectWeight&gt;...&lt;/selectWeight&gt;
-  &lt;hasError&gt;...&lt;/hasError&gt;
-  &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
-  &lt;joinWeight&gt;...&lt;/joinWeight&gt;
+  &lt;numSels&gt;...&lt;/numSels&gt;
   &lt;tableWeights&gt;
     &lt;entry&gt;
       &lt;key&gt;...&lt;/key&gt;
@@ -152,42 +137,57 @@
     &lt;/entry&gt;
     &lt;!--...more entries...--&gt;
   &lt;/tableWeights&gt;
-  &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
+  &lt;queryCost&gt;
+    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
+    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
+  &lt;/queryCost&gt;
+  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
+  &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
+  &lt;errorMsg&gt;...&lt;/errorMsg&gt;
+  &lt;numObys&gt;...&lt;/numObys&gt;
+  &lt;filterWeight&gt;...&lt;/filterWeight&gt;
+  &lt;scanMode&gt;...&lt;/scanMode&gt;
+  &lt;prepareHandle&gt;
+    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
+  &lt;/prepareHandle&gt;
+  &lt;joinWeight&gt;...&lt;/joinWeight&gt;
+  &lt;numGbys&gt;...&lt;/numGbys&gt;
+  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
 &lt;/queryPlan&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;numHaving&quot; : ...,
-  &quot;numGbys&quot; : ...,
-  &quot;errorMsg&quot; : &quot;...&quot;,
-  &quot;numSelDi&quot; : ...,
-  &quot;filterWeight&quot; : ...,
-  &quot;scanMode&quot; : &quot;...&quot;,
-  &quot;numSels&quot; : ...,
-  &quot;obyWeight&quot; : ...,
-  &quot;numAggrExprs&quot; : ...,
-  &quot;planString&quot; : &quot;...&quot;,
-  &quot;numJoins&quot; : ...,
-  &quot;numObys&quot; : ...,
   &quot;numFilters&quot; : ...,
-  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
-  &quot;queryCost&quot; : {
-    &quot;estimatedExecTimeMillis&quot; : ...,
-    &quot;estimatedResourceUsage&quot; : ...
-  },
-  &quot;prepareHandle&quot; : {
-    &quot;prepareHandleId&quot; : &quot;...&quot;
-  },
-  &quot;havingWeight&quot; : ...,
+  &quot;error&quot; : false,
+  &quot;planString&quot; : &quot;...&quot;,
   &quot;execMode&quot; : &quot;...&quot;,
+  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
+  &quot;numJoins&quot; : ...,
+  &quot;numHaving&quot; : ...,
+  &quot;numAggrExprs&quot; : ...,
+  &quot;hasSubQuery&quot; : false,
+  &quot;obyWeight&quot; : ...,
   &quot;selectWeight&quot; : ...,
-  &quot;hasError&quot; : false,
-  &quot;gbyWeight&quot; : ...,
-  &quot;joinWeight&quot; : ...,
+  &quot;numSels&quot; : ...,
   &quot;tableWeights&quot; : {
     &quot;...&quot; : ...,
     &quot;---&quot; : ...
   },
-  &quot;hasSubQuery&quot; : false
+  &quot;queryCost&quot; : {
+    &quot;estimatedExecTimeMillis&quot; : ...,
+    &quot;estimatedResourceUsage&quot; : ...
+  },
+  &quot;numSelDi&quot; : ...,
+  &quot;gbyWeight&quot; : ...,
+  &quot;errorMsg&quot; : &quot;...&quot;,
+  &quot;numObys&quot; : ...,
+  &quot;filterWeight&quot; : ...,
+  &quot;scanMode&quot; : &quot;...&quot;,
+  &quot;prepareHandle&quot; : {
+    &quot;prepareHandleId&quot; : &quot;...&quot;
+  },
+  &quot;joinWeight&quot; : ...,
+  &quot;numGbys&quot; : ...,
+  &quot;havingWeight&quot; : ...
 }</code>
 
       <div class="clear" />

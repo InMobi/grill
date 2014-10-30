@@ -22,8 +22,8 @@
   <xs:element name="resultRow" type="resultRow"/>
   <xs:complexType name="APIResult">
     <xs:sequence>
-      <xs:element name="status" type="status" minOccurs="0"/>
       <xs:element name="message" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="status" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="status">
@@ -88,35 +88,35 @@
   </xs:complexType>
   <xs:complexType name="lensPreparedQuery">
     <xs:sequence>
-      <xs:element name="selectedDriverClassName" type="xs:string" minOccurs="0"/>
-      <xs:element name="conf" type="lensConf" minOccurs="0"/>
       <xs:element name="preparedUser" type="xs:string" minOccurs="0"/>
+      <xs:element name="conf" type="lensConf" minOccurs="0"/>
+      <xs:element name="selectedDriverClassName" type="xs:string" minOccurs="0"/>
       <xs:element name="userQuery" type="xs:string" minOccurs="0"/>
-      <xs:element name="driverQuery" type="xs:string" minOccurs="0"/>
-      <xs:element name="prepareHandle" type="queryPrepareHandle" minOccurs="0"/>
       <xs:element name="preparedTime" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="prepareHandle" type="queryPrepareHandle" minOccurs="0"/>
+      <xs:element name="driverQuery" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="lensQuery">
     <xs:sequence>
-      <xs:element name="driverOpHandle" type="xs:string" minOccurs="0"/>
-      <xs:element name="finishTime" type="xs:long" minOccurs="1"/>
-      <xs:element name="submissionTime" type="xs:long" minOccurs="1"/>
-      <xs:element name="closedTime" type="xs:long" minOccurs="1"/>
-      <xs:element name="launchTime" type="xs:long" minOccurs="1"/>
-      <xs:element name="resultSetPath" type="xs:string" minOccurs="0"/>
-      <xs:element name="selectedDriverClassName" type="xs:string" minOccurs="0"/>
-      <xs:element name="driverFinishTime" type="xs:long" minOccurs="1"/>
       <xs:element name="queryConf" type="lensConf" minOccurs="0"/>
-      <xs:element name="userQuery" type="xs:string" minOccurs="0"/>
-      <xs:element name="submittedUser" type="xs:string" minOccurs="0"/>
-      <xs:element name="driverQuery" type="xs:string" minOccurs="0"/>
-      <xs:element name="isPersistent" type="xs:boolean" minOccurs="1"/>
-      <xs:element name="queryName" type="xs:string" minOccurs="0"/>
       <xs:element name="priority" type="priority" minOccurs="0"/>
-      <xs:element name="status" type="queryStatus" minOccurs="0"/>
+      <xs:element name="queryName" type="xs:string" minOccurs="0"/>
       <xs:element name="queryHandle" type="queryHandle" minOccurs="0"/>
+      <xs:element name="finishTime" type="xs:long" minOccurs="1"/>
+      <xs:element name="resultSetPath" type="xs:string" minOccurs="0"/>
+      <xs:element name="driverQuery" type="xs:string" minOccurs="0"/>
       <xs:element name="driverStartTime" type="xs:long" minOccurs="1"/>
+      <xs:element name="userQuery" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="queryStatus" minOccurs="0"/>
+      <xs:element name="submissionTime" type="xs:long" minOccurs="1"/>
+      <xs:element name="launchTime" type="xs:long" minOccurs="1"/>
+      <xs:element name="selectedDriverClassName" type="xs:string" minOccurs="0"/>
+      <xs:element name="closedTime" type="xs:long" minOccurs="1"/>
+      <xs:element name="driverOpHandle" type="xs:string" minOccurs="0"/>
+      <xs:element name="driverFinishTime" type="xs:long" minOccurs="1"/>
+      <xs:element name="submittedUser" type="xs:string" minOccurs="0"/>
+      <xs:element name="isPersistent" type="xs:boolean" minOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="persistentQueryResult">
@@ -148,8 +148,8 @@
     <xs:complexContent>
       <xs:extension base="querySubmitResult">
         <xs:sequence>
-          <xs:element name="queryHandle" type="queryHandle" minOccurs="0"/>
           <xs:element name="result" type="queryResult" minOccurs="0"/>
+          <xs:element name="queryHandle" type="queryHandle" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -158,19 +158,10 @@
     <xs:complexContent>
       <xs:extension base="querySubmitResult">
         <xs:sequence>
-          <xs:element name="numHaving" type="xs:int" minOccurs="1"/>
-          <xs:element name="numGbys" type="xs:int" minOccurs="1"/>
-          <xs:element name="errorMsg" type="xs:string" minOccurs="0"/>
-          <xs:element name="numSelDi" type="xs:int" minOccurs="1"/>
-          <xs:element name="filterWeight" type="xs:double" minOccurs="0"/>
-          <xs:element name="scanMode" type="xs:string" minOccurs="0"/>
-          <xs:element name="numSels" type="xs:int" minOccurs="1"/>
-          <xs:element name="obyWeight" type="xs:double" minOccurs="0"/>
-          <xs:element name="numAggrExprs" type="xs:int" minOccurs="1"/>
-          <xs:element name="planString" type="xs:string" minOccurs="0"/>
-          <xs:element name="numJoins" type="xs:int" minOccurs="1"/>
-          <xs:element name="numObys" type="xs:int" minOccurs="1"/>
           <xs:element name="numFilters" type="xs:int" minOccurs="1"/>
+          <xs:element name="error" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="planString" type="xs:string" minOccurs="0"/>
+          <xs:element name="execMode" type="xs:string" minOccurs="0"/>
           <xs:element name="tablesQueried" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
@@ -178,14 +169,13 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="queryCost" type="queryCost" minOccurs="0"/>
-          <xs:element name="prepareHandle" type="queryPrepareHandle" minOccurs="0"/>
-          <xs:element name="havingWeight" type="xs:double" minOccurs="0"/>
-          <xs:element name="execMode" type="xs:string" minOccurs="0"/>
+          <xs:element name="numJoins" type="xs:int" minOccurs="1"/>
+          <xs:element name="numHaving" type="xs:int" minOccurs="1"/>
+          <xs:element name="numAggrExprs" type="xs:int" minOccurs="1"/>
+          <xs:element name="hasSubQuery" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="obyWeight" type="xs:double" minOccurs="0"/>
           <xs:element name="selectWeight" type="xs:double" minOccurs="0"/>
-          <xs:element name="hasError" type="xs:boolean" minOccurs="1"/>
-          <xs:element name="gbyWeight" type="xs:double" minOccurs="0"/>
-          <xs:element name="joinWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="numSels" type="xs:int" minOccurs="1"/>
           <xs:element name="tableWeights" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
@@ -200,7 +190,17 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="hasSubQuery" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="queryCost" type="queryCost" minOccurs="0"/>
+          <xs:element name="numSelDi" type="xs:int" minOccurs="1"/>
+          <xs:element name="gbyWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="errorMsg" type="xs:string" minOccurs="0"/>
+          <xs:element name="numObys" type="xs:int" minOccurs="1"/>
+          <xs:element name="filterWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="scanMode" type="xs:string" minOccurs="0"/>
+          <xs:element name="prepareHandle" type="queryPrepareHandle" minOccurs="0"/>
+          <xs:element name="joinWeight" type="xs:double" minOccurs="0"/>
+          <xs:element name="numGbys" type="xs:int" minOccurs="1"/>
+          <xs:element name="havingWeight" type="xs:double" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -228,12 +228,12 @@
   </xs:complexType>
   <xs:complexType name="queryStatus">
     <xs:sequence>
-      <xs:element name="progress" type="xs:double" minOccurs="1"/>
-      <xs:element name="status" type="status" minOccurs="0"/>
-      <xs:element name="statusMessage" type="xs:string" minOccurs="0"/>
-      <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
       <xs:element name="progressMessage" type="xs:string" minOccurs="0"/>
       <xs:element name="isResultSetAvailable" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="status" type="status" minOccurs="0"/>
+      <xs:element name="statusMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="progress" type="xs:double" minOccurs="1"/>
+      <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="status">

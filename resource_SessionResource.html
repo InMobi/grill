@@ -117,7 +117,7 @@ This provides api for all things in session.</p>
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Create a new session with Lens server
+            Create a new session with Lens server.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -167,7 +167,7 @@ This provides api for all things in session.</p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
-            Close a Lens server session
+            Close a Lens server session.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -204,7 +204,7 @@ This provides api for all things in session.</p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get a list of key=value parameters set for this session
+            Get a list of key=value parameters set for this session.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -225,8 +225,7 @@ This provides api for all things in session.</p>
         <tr>
           <td>verbose</td>
           <td>
-            If true, all the parameters will be returned.
-If false, configuration parameters will be returned
+            If true, all the parameters will be returned. If false, configuration parameters will be returned
           </td>
           <td>query</td>
           <td>false</td>
@@ -234,8 +233,8 @@ If false, configuration parameters will be returned
         <tr>
           <td>key</td>
           <td>
-            if this is empty, output will contain all parameters and their values,
-if it is non empty parameters will be filtered by key
+            if this is empty, output will contain all parameters and their values, if it is non empty parameters will
+be filtered by key
           </td>
           <td>query</td>
           <td></td>
@@ -258,10 +257,9 @@ if it is non empty parameters will be filtered by key
       <p>
             Set value for a parameter specified by key
 
-The parameters can be a hive variable or a configuration.
-To set key as a hive variable, the key should be prefixed with 'hivevar:'.
-To set key as configuration parameter, the key should be prefixed with 'hiveconf:'
-If no prefix is attached, the parameter is set as configuration.
+The parameters can be a hive variable or a configuration. To set key as a hive variable, the key should be prefixed
+with 'hivevar:'. To set key as configuration parameter, the key should be prefixed with 'hiveconf:' If no prefix is
+attached, the parameter is set as configuration.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -317,8 +315,8 @@ If no prefix is attached, the parameter is set as configuration.
             Add a resource to the session to all LensServices running in this Lens server
 
 <p>
-The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation
-was successful for all services running in this Lens server.
+The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation was successful for all
+services running in this Lens server.
 </p>
           </p>
       <h3>Parameters</h3>
@@ -365,9 +363,9 @@ was successful for all services running in this Lens server.
           <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
-      <p>APIResult with state Status#SUCCEEDED, if add was successful.
-APIResult with state Status#PARTIAL, if add succeeded only for some services.
-APIResult with state Status#FAILED, if add has failed</p>
+      <p>APIResult with state Status#SUCCEEDED, if add was successful. APIResult with state
+Status#PARTIAL, if add succeeded only for some services. APIResult with state
+Status#FAILED, if add has failed</p>
         <a name="path__session_resources_delete.html"></a>
       <h1>/session/resources/delete</h1>
       <p class="note">Mount Point: <a href="../session/resources/delete">/session/resources/delete</a></p>
@@ -423,9 +421,9 @@ Similar to addResource, this call is successful only if resource was deleted fro
           <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
-      <p>APIResult with state Status#SUCCEEDED, if delete was successful.
-APIResult with state Status#PARTIAL, if delete succeeded only for some services.
-APIResult with state Status#FAILED, if delete has failed</p>
+      <p>APIResult with state Status#SUCCEEDED, if delete was successful. APIResult with
+state Status#PARTIAL, if delete succeeded only for some services. APIResult with state
+Status#FAILED, if delete has failed</p>
 
       <div class="clear" />
     </div>
