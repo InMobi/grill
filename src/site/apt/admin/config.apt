@@ -76,7 +76,7 @@ Grill server configuration
 *--+--+---+--+
 |26|grill.scheduler.service.impl|com.inmobi.grill.server.scheduler.SchedulerServiceImpl|Implementation class for scheduler service|
 *--+--+---+--+
-|27|grill.scheduler.ws.resource.impl|com.inmobi.grill.server.scheduler.SchedulerResource|Implementation class for query scheduler resource|
+|27|grill.scheduler.ws.resource.impl|com.inmobi.grill.server.scheduler.SchedulerResource|Implementation class for scheduler resource|
 *--+--+---+--+
 |28|grill.server.base.url|http://localhost:9999/grillapi/|The base url for the grill server|
 *--+--+---+--+

@@ -57,7 +57,7 @@ import com.inmobi.grill.server.api.scheduler.SchedulerService;
  * Grill Scheduler APIs.
  * 
  */
-@Path("/scheduler")
+@Path("scheduler")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class SchedulerResource {
   public static final Logger LOG = LogManager
@@ -85,7 +85,7 @@ public class SchedulerResource {
 
   public SchedulerResource() throws GrillException {
     schedulerService =
-        (SchedulerService) GrillServices.get().getService("scheduler");
+        (SchedulerService) GrillServices.get().getService(SchedulerService.NAME);
   }
 
   SchedulerService getSchedulerService() {
