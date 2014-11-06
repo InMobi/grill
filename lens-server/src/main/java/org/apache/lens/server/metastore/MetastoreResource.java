@@ -1432,23 +1432,25 @@ public class MetastoreResource {
     }
     return SUCCESS;
   }
-
+  
   /**
-   * Get flattened list of columns reachable from a cube or a dimension
-   * @param sessionid session id
-   * @param tableName name of the table
-   * @return list of measures, expressions or dimension attributes
+   * Get the latest date that belong to a cube in the metastore
+   * 
+   * @param sessionid The sessionid in which user is working
+   * @param cubeName name of the base cube or derived cube
+   * 
+   * @return List of {@link FactTable} objects 
+   * 
    */
-  @GET
-  @Path("flattened/{tableName}")
-  public FlattenedColumns getFlattenedColumns(
-      @QueryParam("sessionid") LensSessionHandle sessionid,
-      @PathParam("tableName") String tableName) {
+  @GET @Path("/cubes/{cubeName}/latestdate")
+  public List<FactTable> getLatestDateOfCube(
+      @QueryParam("sessionid") LensSessionHandle sessionid, @PathParam("cubeName") String cubeName)
+      throws LensException {
     checkSessionId(sessionid);
     try {
-      return getSvc().getFlattenedColumns(sessionid, tableName);
+      return getSvc().getLatestDateOfCube(sessionid, cubeName);
     } catch (LensException exc) {
-      throw new WebApplicationException(exc);
+      throw exc;
     }
   }
 }

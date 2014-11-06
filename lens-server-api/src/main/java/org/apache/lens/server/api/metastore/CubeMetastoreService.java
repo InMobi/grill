@@ -304,4 +304,15 @@ public interface CubeMetastoreService {
 
   public FlattenedColumns getFlattenedColumns(LensSessionHandle sessionHandle, String tableName) throws LensException;
 
+  /**
+   * Get all facts of cube. Cube can also be a derived cube
+   *
+   * @param sessionid The session id
+   * @param cubeName The cube name
+   *
+   * @return List of FactTable objects
+   *
+   * @throws GrillException
+   */
+  public List<FactTable> getLatestDateOfCube(LensSessionHandle sessionid, String cubeName) throws LensException;
 }
