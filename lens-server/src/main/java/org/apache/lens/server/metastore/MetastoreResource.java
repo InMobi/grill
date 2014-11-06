@@ -18,26 +18,49 @@
  */
 package org.apache.lens.server.metastore;
 
-import org.apache.lens.api.metastore.*;
+import java.util.Date;
+import java.util.List;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.lens.api.APIResult;
+import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.StringList;
-import org.apache.lens.api.APIResult.Status;
+import org.apache.lens.api.metastore.DimensionTable;
+import org.apache.lens.api.metastore.FactTable;
+import org.apache.lens.api.metastore.FlattenedColumns;
+import org.apache.lens.api.metastore.NativeTable;
+import org.apache.lens.api.metastore.ObjectFactory;
+import org.apache.lens.api.metastore.PartitionList;
+import org.apache.lens.api.metastore.XCube;
+import org.apache.lens.api.metastore.XDimension;
+import org.apache.lens.api.metastore.XPartition;
+import org.apache.lens.api.metastore.XStorage;
+import org.apache.lens.api.metastore.XStorageTableElement;
+import org.apache.lens.api.metastore.XStorageTables;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.metastore.CubeMetastoreService;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBElement;
-
-import java.util.List;
 
 /**
  * metastore resource api
@@ -1435,6 +1458,7 @@ public class MetastoreResource {
 
   /**
    * Get flattened list of columns reachable from a cube or a dimension
+   * 
    * @param sessionid session id
    * @param tableName name of the table
    * @return list of measures, expressions or dimension attributes
@@ -1449,6 +1473,28 @@ public class MetastoreResource {
       return getSvc().getFlattenedColumns(sessionid, tableName);
     } catch (LensException exc) {
       throw new WebApplicationException(exc);
+    }
+  }
+  
+  /**
+   * Get the latest date that belong to a cube in the metastore
+   * 
+   * @param sessionid The sessionid in which user is working
+   * @param cubeName name of the base cube or derived cube
+   * @param partitionColumn time dimension name
+   * 
+   * @return List of {@link FactTable} objects 
+   * 
+   */
+  @GET @Path("/cubes/{cubeName}/latestdate")
+  public Date getLatestDateOfCube(
+      @QueryParam("sessionid") LensSessionHandle sessionid, @PathParam("cubeName") String cubeName, String partitionColumn)
+      throws LensException, HiveException {
+    checkSessionId(sessionid);
+    try {
+      return getSvc().getLatestDateOfCube(sessionid, cubeName, partitionColumn);
+    } catch (LensException exc) {
+      throw exc;
     }
   }
 }

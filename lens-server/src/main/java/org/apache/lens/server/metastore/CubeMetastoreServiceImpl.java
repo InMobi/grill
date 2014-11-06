@@ -1309,4 +1309,39 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         // columnMap now contains flattened view
         return columnMap;
   }
+  
+  @Override
+  public Date getLatestDateOfCube(LensSessionHandle sessionid, String cubeName, String partitionColumn)
+      throws LensException, HiveException {
+    // getting all facts->storages->partitions and iterating over them to get
+    // latest date
+    List<FactTable> factTables = getAllFactsOfCube(sessionid, cubeName);
+    Date latestDate = null;
+    if (factTables != null && !factTables.isEmpty()) {
+      for (FactTable factTable : factTables) {
+        List<String> storages = getStoragesOfFact(sessionid, factTable.getName());
+
+        if (storages != null && !storages.isEmpty()) {
+          for (String storage : storages) {
+            checkFactStorage(sessionid, factTable.getName(), storage);
+            String storageTableName = MetastoreUtil.getFactStorageTableName(factTable.getName(), storage);
+
+            List<Partition> parts =
+                getClient(sessionid).getPartitionsByFilter(storageTableName, partitionColumn + "='latest'");
+
+            if (parts.size() == 1) {
+              Date tmpDate = getClient(sessionid).getLatestTimeStamp(parts.get(0), partitionColumn);
+              if (latestDate == null || latestDate.before(tmpDate)) {
+                latestDate = tmpDate;
+              }
+            } else {
+              throw new LensException("More than 1 partitions returned by CubeMetastoreClient for filter "
+                  + partitionColumn + "='latest'");
+            }
+          }
+        }
+      }
+    }
+    return latestDate;
+  }
 }
