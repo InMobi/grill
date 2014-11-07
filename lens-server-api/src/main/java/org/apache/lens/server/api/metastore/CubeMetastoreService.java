@@ -311,7 +311,7 @@ public interface CubeMetastoreService {
    *
    * @param sessionid The session id
    * @param cubeName The cube name
-   * @param partitionColumn column on the basis of which the latest Date of Cube is needed (impression/event) based
+   * @param partitionColumn time dimension name
    *
    * @return Date
    *

@@ -1481,7 +1481,7 @@ public class MetastoreResource {
    * 
    * @param sessionid The sessionid in which user is working
    * @param cubeName name of the base cube or derived cube
-   * @param partitionColumn column on the basis of which the latest Date of Cube is needed (impression/event) based
+   * @param partitionColumn time dimension name
    * 
    * @return List of {@link FactTable} objects 
    * 
