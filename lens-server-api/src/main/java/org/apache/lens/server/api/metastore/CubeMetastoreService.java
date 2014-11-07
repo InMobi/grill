@@ -307,10 +307,11 @@ public interface CubeMetastoreService {
   public FlattenedColumns getFlattenedColumns(LensSessionHandle sessionHandle, String tableName) throws LensException;
 
   /**
-   * Get all facts of cube. Cube can also be a derived cube
+   * Get the latest date that belong to a cube in the metastore
    *
    * @param sessionid The session id
    * @param cubeName The cube name
+   * @param partitionColumn column on the basis of which the latest Date of Cube is needed (impression/event) based
    *
    * @return Date
    *
