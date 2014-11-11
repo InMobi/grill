@@ -56,6 +56,11 @@ public class QueryContext implements Comparable<QueryContext>, Serializable {
   @Getter
   final private String userQuery;
 
+  /** The rewritten query. */
+  @Getter
+  @Setter
+  private String rewrittenQuery;
+
   /** The submitted user. */
   @Getter
   final private String submittedUser; // Logged in user.

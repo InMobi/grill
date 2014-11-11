@@ -37,6 +37,8 @@ import org.apache.lens.cube.metadata.CubeMetastoreClient;
 import org.apache.lens.cube.parse.CubeSemanticAnalyzer;
 import org.apache.lens.cube.parse.HQLParser;
 import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.api.query.QueryRewriter;
+
 import static org.apache.hadoop.hive.ql.parse.HiveParser.*;
 
 /**
@@ -790,10 +792,10 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   /*
    * (non-Javadoc)
    * 
-   * @see org.apache.lens.driver.jdbc.QueryRewriter#rewrite(org.apache.hadoop.conf.Configuration, java.lang.String)
+   * @see org.apache.lens.server.api.query.QueryRewriter#rewrite(org.apache.hadoop.conf.Configuration, java.lang.String)
    */
   @Override
-  public synchronized String rewrite(Configuration conf, String query) throws LensException {
+  public synchronized String rewrite(String query, Configuration conf) throws LensException {
     this.query = query;
     this.conf = conf;
     StringBuilder mergedQuery = new StringBuilder();

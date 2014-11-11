@@ -34,6 +34,7 @@ import org.apache.lens.server.api.driver.DriverQueryStatus.DriverQueryState;
 import org.apache.lens.server.api.events.LensEventListener;
 import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
+import org.apache.lens.server.api.query.QueryRewriter;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -346,10 +347,10 @@ public class JDBCDriver implements LensDriver {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.lens.driver.jdbc.QueryRewriter#rewrite(org.apache.hadoop.conf.Configuration, java.lang.String)
+     * @see org.apache.lens.server.api.query.QueryRewriter#rewrite(org.apache.hadoop.conf.Configuration, java.lang.String)
      */
     @Override
-    public String rewrite(Configuration conf, String query) throws LensException {
+    public String rewrite(String query, Configuration conf) throws LensException {
       return query;
     }
   }
@@ -506,7 +507,7 @@ public class JDBCDriver implements LensDriver {
     }
 
     QueryRewriter rewriter = getQueryRewriter(conf);
-    String rewrittenQuery = rewriter.rewrite(conf, query);
+    String rewrittenQuery = rewriter.rewrite(query, conf);
     if (LOG.isDebugEnabled()) {
       LOG.debug("Query: " + query + " rewrittenQuery: " + rewrittenQuery);
     }

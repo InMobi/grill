@@ -137,4 +137,10 @@
   <description>Implementation class for session service</description>
 </property>
 
+<property>
+  <name>lens.server.query.rewriters</name>
+  <value>TestQueryRewriter</value>
+  <description>Rewriter Test Impl which rewrites given query to CubeQL</description>
+</property>
+
 </configuration>

@@ -46,6 +46,11 @@ public class PreparedQueryContext implements Delayed {
   @Getter
   private final String userQuery;
 
+  /** The rewritten query. */
+  @Getter
+  @Setter
+  private String rewrittenQuery;
+
   /** The prepared time. */
   @Getter
   private final Date preparedTime;

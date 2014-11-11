@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.driver.jdbc;
+package org.apache.lens.server.api.query;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lens.api.LensException;
@@ -29,13 +29,13 @@ public interface QueryRewriter {
   /**
    * Rewrite.
    *
-   * @param conf
-   *          the conf
    * @param query
    *          the query
+   * @param conf
+   *          configuration pertaining to the query
    * @return the string
    * @throws LensException
    *           the lens exception
    */
-  public String rewrite(Configuration conf, String query) throws LensException;
+  public String rewrite(String query, Configuration conf) throws LensException;
 }

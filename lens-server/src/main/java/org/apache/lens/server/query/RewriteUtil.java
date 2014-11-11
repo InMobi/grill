@@ -16,31 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.driver.cube;
+package org.apache.lens.server.query;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+import org.apache.hive.service.cli.CLIService;
 import org.apache.lens.api.LensException;
 import org.apache.lens.cube.parse.CubeQueryConfUtil;
 import org.apache.lens.cube.parse.CubeQueryRewriter;
 import org.apache.lens.cube.parse.HQLParser;
+import org.apache.lens.driver.cube.CubeDriver;
+import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.driver.LensDriver;
+import org.apache.lens.server.api.query.QueryRewriter;
 
 /**
  * The Class RewriteUtil.
  */
 public class RewriteUtil {
+
+  public static final Log LOG = LogFactory.getLog(RewriteUtil.class);
 
   /** The cube pattern. */
   static Pattern cubePattern = Pattern.compile(".*CUBE(.*)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
@@ -234,6 +245,17 @@ public class RewriteUtil {
     return finalQuery;
   }
 
+  public static String rewriteToCubeQL(final String query,  Configuration queryconf) throws LensException {
+    Collection<QueryRewriter> queryRewriters = RewriteUtil.getQueryRewriter(queryconf);
+    String rewrittenQuery = query;
+    for (QueryRewriter rewriter : queryRewriters) {
+      rewrittenQuery = rewriter.rewrite(rewrittenQuery, queryconf);
+      if (StringUtils.isBlank(rewrittenQuery)) {
+        throw new LensException("Query rewrite failed for " + query);
+      }
+    }
+    return rewrittenQuery;
+  }
   /**
    * Rewrite query.
    *
@@ -247,7 +269,7 @@ public class RewriteUtil {
    * @throws LensException
    *           the lens exception
    */
-  public static Map<LensDriver, String> rewriteQuery(final String query, Collection<LensDriver> drivers,
+  public static Map<LensDriver, String> rewriteToHQL(final String query, Collection<LensDriver> drivers,
       Configuration queryconf) throws LensException {
     try {
       String replacedQuery = getReplacedQuery(query);
@@ -319,6 +341,87 @@ public class RewriteUtil {
       matcher.reset(query);
     }
     return matcher.matches();
+  }
+
+  /**
+   * Returns the rewriter chain implementations in the specified order in configuration.
+   *
+   * @param conf
+   *          the query conf
+   * @return the rewriter chain
+   *         empty list if no rewriters configured
+   */
+  public static Collection<QueryRewriter> getQueryRewriter(Configuration conf) {
+    String[] rewriterNames = conf.getStrings(LensConfConstants.QUERY_REWRITERS);
+    if(rewriterNames == null || rewriterNames.length == 0) {
+      return Collections.emptyList();
+    }
+    List<QueryRewriter> rewriterInsts = new ArrayList<QueryRewriter>(rewriterNames.length);
+    for (String rName : rewriterNames) {
+      QueryRewriter rewriterInst = loadRewriterImpl(rName, conf, Thread.currentThread().getContextClassLoader());
+      if(rewriterInst != null) {
+        rewriterInsts.add(rewriterInst);
+      }
+    }
+    return rewriterInsts;
+  }
+
+
+  /**
+   * Returns the rewriter chain implementations in the specified order in configuration and loads them through the
+   * specified classloader.
+   * @param conf
+   *          the query conf
+   * @param classLoader
+   * @return
+   */
+
+  public static Collection<QueryRewriter> getQueryRewriter(Configuration conf, ClassLoader classLoader) {
+    String[] rewriterNames = conf.getStrings(LensConfConstants.QUERY_REWRITERS);
+    if(rewriterNames == null || rewriterNames.length == 0) {
+      return Collections.emptyList();
+    }
+    List<QueryRewriter> rewriterInsts = new ArrayList<QueryRewriter>(rewriterNames.length);
+    for (String rName : rewriterNames) {
+      QueryRewriter rewriterInst = loadRewriterImpl(rName, conf, classLoader);
+      if(rewriterInst != null) {
+        rewriterInsts.add(rewriterInst);
+      }
+    }
+    return rewriterInsts;
+  }
+
+  /**
+   * Internal class loader for a given rewriter
+   * @param rewriterName
+   * @param conf
+   * @param classLoader
+   * @return
+   */
+  private static QueryRewriter loadRewriterImpl(String rewriterName, Configuration conf, ClassLoader classLoader) {
+    try {
+      String rewriterClassName = conf.get(LensConfConstants.getRewriterImplConfKey(rewriterName));
+
+      if (StringUtils.isBlank(rewriterClassName)) {
+        LOG.warn("Invalid class for rewriter " + rewriterName + " class=" + rewriterClassName);
+        return null;
+      }
+
+      Class<?> cls = classLoader.loadClass(rewriterClassName);
+
+      if (QueryRewriter.class.isAssignableFrom(cls)) {
+        Class<? extends QueryRewriter> rewriterClass = (Class<? extends QueryRewriter>) cls;
+        LOG.info("Adding " + rewriterName + " service with " + rewriterClass);
+        Constructor<?> constructor = rewriterClass.getConstructor(CLIService.class);
+        return (QueryRewriter) constructor.newInstance();
+      } else {
+        LOG.warn("Unsupported rewriter class " + rewriterClassName + " for rewriter " + rewriterName);
+      }
+    } catch (Exception e) {
+      LOG.warn("Could not add rewriter:" + rewriterName, e);
+      throw new RuntimeException("Could not add rewriter:" + rewriterName, e);
+    }
+    return null;
   }
 
 }
