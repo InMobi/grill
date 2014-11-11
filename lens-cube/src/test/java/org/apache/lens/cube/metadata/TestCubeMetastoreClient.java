@@ -104,7 +104,6 @@ public class TestCubeMetastoreClient {
   @BeforeClass
   public static void setup() throws HiveException, AlreadyExistsException, ParseException {
     SessionState.start(conf);
-    client = CubeMetastoreClient.getInstance(conf);
     now = new Date();
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.HOUR_OF_DAY, 1);
@@ -112,7 +111,8 @@ public class TestCubeMetastoreClient {
     Database database = new Database();
     database.setName(TestCubeMetastoreClient.class.getSimpleName());
     Hive.get(conf).createDatabase(database);
-    client.setCurrentDatabase(TestCubeMetastoreClient.class.getSimpleName());
+    SessionState.get().setCurrentDatabase(TestCubeMetastoreClient.class.getSimpleName());
+    client = CubeMetastoreClient.getInstance(conf);
     defineCube(cubeName, cubeNameWithProps, derivedCubeName, derivedCubeNameWithProps);
     defineUberDims();
   }
@@ -131,7 +131,7 @@ public class TestCubeMetastoreClient {
   private static void defineCube(String cubeName, String cubeNameWithProps, String derivedCubeName,
       String derivedCubeNameWithProps) throws ParseException {
     cubeMeasures = new HashSet<CubeMeasure>();
-    cubeMeasures.add(new ColumnMeasure(new FieldSchema("msr1", "int", "first measure")));
+    cubeMeasures.add(new ColumnMeasure(new FieldSchema("msr1", "int", "first measure"), null, null, null, null, null, null, null, 0.0, 9999.0));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msr2", "float", "second measure"), "Measure2", null, "SUM",
         "RS"));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msr3", "double", "third measure"), "Measure3", null, "MAX",
@@ -139,13 +139,13 @@ public class TestCubeMetastoreClient {
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msr4", "bigint", "fourth measure"), "Measure4", null, "COUNT",
         null));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msrstarttime", "int", "measure with start time"),
-        "Measure With Starttime", null, null, null, now, null, null));
+        "Measure With Starttime", null, null, null, now, null, null, 0.0, 999999.0));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msrendtime", "float", "measure with end time"),
         "Measure With Endtime", null, "SUM", "RS", now, now, null));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msrcost", "double", "measure with cost"), "Measure With cost",
         null, "MAX", null, now, now, 100.0));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("msrcost2", "bigint", "measure with cost"),
-        "Measure With cost2", null, "MAX", null, null, null, 100.0));
+        "Measure With cost2", null, "MAX", null, null, null, 100.0, 0.0, 999999999999999999999999999.0));
 
     cubeDimensions = new HashSet<CubeDimAttribute>();
     List<CubeDimAttribute> locationHierarchy = new ArrayList<CubeDimAttribute>();
@@ -395,7 +395,6 @@ public class TestCubeMetastoreClient {
 
   @Test(priority = 1)
   public void testCube() throws Exception {
-    Assert.assertEquals(client.getCurrentDatabase(), this.getClass().getSimpleName());
     client.createCube(cubeName, cubeMeasures, cubeDimensions, cubeExpressions, new HashMap<String, String>());
     Assert.assertTrue(client.tableExists(cubeName));
     Table cubeTbl = client.getHiveTable(cubeName);

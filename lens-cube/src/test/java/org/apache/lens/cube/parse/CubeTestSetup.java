@@ -1467,11 +1467,11 @@ public class CubeTestSetup {
 
   public void createSources(HiveConf conf, String dbName) throws Exception {
     try {
-      CubeMetastoreClient client = CubeMetastoreClient.getInstance(conf);
       Database database = new Database();
       database.setName(dbName);
       Hive.get(conf).createDatabase(database);
-      client.setCurrentDatabase(dbName);
+      SessionState.get().setCurrentDatabase(dbName);
+      CubeMetastoreClient client = CubeMetastoreClient.getInstance(conf);
       client.createStorage(new HDFSStorage(c1));
       client.createStorage(new HDFSStorage(c2));
       client.createStorage(new HDFSStorage(c3));
@@ -1506,9 +1506,9 @@ public class CubeTestSetup {
     }
   }
 
-  public void dropSources(HiveConf conf) throws Exception {
+  public void dropSources(HiveConf conf, String dbName) throws Exception {
     Hive metastore = Hive.get(conf);
-    metastore.dropDatabase(SessionState.get().getCurrentDatabase(), true, true, true);
+    metastore.dropDatabase(dbName, true, true, true);
   }
 
   private void createCubeFactsWithValidColumns(CubeMetastoreClient client) throws HiveException {
