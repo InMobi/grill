@@ -21,7 +21,10 @@ package org.apache.lens.cube.parse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.Context;
@@ -30,12 +33,14 @@ import org.apache.hadoop.hive.ql.parse.ParseDriver;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.ParseUtils;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+import org.apache.lens.server.api.driver.LensDriver;
 
 /**
  * Rewrites given cube query into simple storage table HQL.
  * 
  */
 public class CubeQueryRewriter {
+  public static final Log LOG = LogFactory.getLog(CubeQueryRewriter.class);
   private final Configuration conf;
   private final List<ContextRewriter> rewriters = new ArrayList<ContextRewriter>();
   private final HiveConf hconf;
@@ -181,5 +186,27 @@ public class CubeQueryRewriter {
 
   public Context getQLContext() {
     return ctx;
+  }
+
+  /**
+   * Gets the final query conf.
+   *
+   * @param driver
+   *          the driver
+   * @param queryConf
+   *          the query conf
+   * @return the final query conf
+   */
+  public static Configuration getFinalQueryConf(LensDriver driver, Configuration queryConf) {
+    Configuration conf = new Configuration(driver.getConf());
+    for (Map.Entry<String, String> entry : queryConf) {
+      if (entry.getKey().equals(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES)) {
+        LOG.warn(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES + " value : " + entry.getValue()
+                   + " from query conf ignored/");
+        continue;
+      }
+      conf.set(entry.getKey(), entry.getValue());
+    }
+    return conf;
   }
 }

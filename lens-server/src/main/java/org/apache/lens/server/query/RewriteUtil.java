@@ -38,21 +38,16 @@ import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hive.service.cli.CLIService;
 import org.apache.lens.api.LensException;
-import org.apache.lens.cube.parse.CubeQueryConfUtil;
 import org.apache.lens.cube.parse.CubeQueryRewriter;
 import org.apache.lens.cube.parse.HQLParser;
-import org.apache.lens.driver.cube.CubeDriver;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.driver.LensDriver;
 import org.apache.lens.server.api.query.QueryRewriter;
-import org.apache.log4j.Logger;
 
 /**
  * The Class RewriteUtil.
  */
 public class RewriteUtil {
-  public static final Logger LOG = Logger.getLogger(RewriteUtil.class);
-
   public static final Log LOG = LogFactory.getLog(RewriteUtil.class);
 
   /** The cube pattern. */
@@ -198,28 +193,6 @@ public class RewriteUtil {
   }
 
   /**
-   * Gets the final query conf.
-   *
-   * @param driver
-   *          the driver
-   * @param queryConf
-   *          the query conf
-   * @return the final query conf
-   */
-  public static Configuration getFinalQueryConf(LensDriver driver, Configuration queryConf) {
-    Configuration conf = new Configuration(driver.getConf());
-    for (Map.Entry<String, String> entry : queryConf) {
-      if (entry.getKey().equals(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES)) {
-        LOG.warn(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES + " value : " + entry.getValue()
-            + " from query conf ignored/");
-        continue;
-      }
-      conf.set(entry.getKey(), entry.getValue());
-    }
-    return conf;
-  }
-
-  /**
    * Gets the rewriter.
    *
    * @param driver
@@ -231,7 +204,7 @@ public class RewriteUtil {
    *           the semantic exception
    */
   static CubeQueryRewriter getRewriter(LensDriver driver, Configuration queryConf) throws SemanticException {
-    return new CubeQueryRewriter(getFinalQueryConf(driver, queryConf));
+    return new CubeQueryRewriter(CubeQueryRewriter.getFinalQueryConf(driver, queryConf));
   }
 
   /**
@@ -394,7 +367,7 @@ public class RewriteUtil {
   }
 
   /**
-   * Internal class loader for a given rewriter
+   * Loads the specified class for a rewriter
    * @param rewriterName
    * @param conf
    * @param classLoader
@@ -405,7 +378,7 @@ public class RewriteUtil {
       String rewriterClassName = conf.get(LensConfConstants.getRewriterImplConfKey(rewriterName));
 
       if (StringUtils.isBlank(rewriterClassName)) {
-        LOG.warn("Invalid class for rewriter " + rewriterName + " class=" + rewriterClassName);
+        LOG.warn("Invalid class configured for rewriter " + rewriterName);
         return null;
       }
 
@@ -414,7 +387,7 @@ public class RewriteUtil {
       if (QueryRewriter.class.isAssignableFrom(cls)) {
         Class<? extends QueryRewriter> rewriterClass = (Class<? extends QueryRewriter>) cls;
         LOG.info("Adding " + rewriterName + " service with " + rewriterClass);
-        Constructor<?> constructor = rewriterClass.getConstructor(CLIService.class);
+        Constructor<?> constructor = rewriterClass.getConstructor();
         return (QueryRewriter) constructor.newInstance();
       } else {
         LOG.warn("Unsupported rewriter class " + rewriterClassName + " for rewriter " + rewriterName);

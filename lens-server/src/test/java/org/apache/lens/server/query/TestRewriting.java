@@ -33,8 +33,6 @@ import org.apache.lens.api.LensException;
 import org.apache.lens.cube.parse.CubeQueryContext;
 import org.apache.lens.cube.parse.CubeQueryRewriter;
 import org.apache.lens.cube.parse.HQLParser;
-import org.apache.lens.driver.cube.MockDriver;
-import org.apache.lens.driver.cube.RewriteUtil;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.driver.LensDriver;
 
@@ -68,7 +66,7 @@ public class TestRewriting {
   public void beforeTest() throws Exception {
     conf.setInt("mock.driver.test.val", 5);
     conf.set(LensConfConstants.QUERY_REWRITERS, "test");
-    conf.set(LensConfConstants.SERVER_PFX + "test" + LensConfConstants.REWRITER_IMPL_SFX,
+    conf.set(LensConfConstants.getRewriterImplConfKey("test"),
       TestQueryRewriter.class.getCanonicalName());
 
   }
@@ -382,8 +380,8 @@ public class TestRewriting {
    */
   @Test
   public void testUserQueryRewrite() throws ParseException, SemanticException, LensException {
-    final Collection<QueryRewriter> queryRewriters = RewriteUtil.getQueryRewriter(conf);
-    final QueryRewriter rewriter = queryRewriters.iterator().next();
+    final Collection<QueryRewriter> queryRewriters = RewriteUtil.getQueryRewriter(conf,
+      getObjectFactory().getClass().getClassLoader());
     final String query = "cube select name from table";
     Assert.assertEquals(queryRewriters.iterator().next().rewrite(query, conf), query);
   }
