@@ -68,6 +68,7 @@ import org.apache.lens.api.query.SubmitOp;
 import org.apache.lens.api.query.QueryStatus.Status;
 import org.apache.lens.driver.cube.RewriteUtil;
 import org.apache.lens.driver.hive.HiveDriver;
+import org.apache.lens.server.EventServiceImpl;
 import org.apache.lens.server.LensService;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.LensConfConstants;
@@ -324,12 +325,15 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
    * The Class FinishedQuery.
    */
   private class FinishedQuery implements Delayed {
+    public static final int PURGE_MAX_TIMEOUT = 1000;
+    public int purgeDelay = 0;
 
     /** The ctx. */
     private final QueryContext ctx;
 
     /** The finish time. */
     private final Date finishTime;
+    private long startTime;
 
     /**
      * Instantiates a new finished query.
@@ -359,13 +363,8 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
      * @see java.util.concurrent.Delayed#getDelay(java.util.concurrent.TimeUnit)
      */
     @Override
-    public long getDelay(TimeUnit units) {
-      int size = finishedQueries.size();
-      if (size > maxFinishedQueries) {
-        return 0;
-      } else {
-        return Integer.MAX_VALUE;
-      }
+    public long getDelay(TimeUnit unit) {
+      return unit.convert(purgeDelay * 1000 - (System.currentTimeMillis() - startTime), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -380,6 +379,16 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
      */
     public QueryContext getCtx() {
       return ctx;
+    }
+
+    public int getPurgeDelay() {
+      return purgeDelay;
+    }
+
+    public void exponentialBackoffForPurgeDelay() {
+      purgeDelay += 5;
+      purgeDelay *= 2;
+      startTime = System.currentTimeMillis();
     }
   }
 
@@ -719,7 +728,12 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
             LOG.info("Saved query " + finishedQuery.getHandle() + " to DB");
           } catch (Exception e) {
             LOG.warn("Exception while purging query ", e);
-            finishedQueries.add(finished);
+            finished.exponentialBackoffForPurgeDelay();
+            if(finished.getPurgeDelay() <= FinishedQuery.PURGE_MAX_TIMEOUT) {
+              finishedQueries.offer(finished, finished.getPurgeDelay(), TimeUnit.SECONDS);
+            } else {
+              getEventService().notifyEvent(new QueryPurgeFailed(finished.getCtx(), e));
+            }
             continue;
           }
 
@@ -736,7 +750,7 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
             resultSets.remove(finished.getCtx().getQueryHandle());
           }
           fireStatusChangeEvent(finished.getCtx(),
-              new QueryStatus(1f, Status.CLOSED, "Query purged", false, null, null), finished.getCtx().getStatus());
+            new QueryStatus(1f, Status.CLOSED, "Query purged", false, null, null), finished.getCtx().getStatus());
           LOG.info("Query purged: " + finished.getCtx().getQueryHandle());
         } catch (LensException e) {
           incrCounter(QUERY_PURGER_COUNTER);
@@ -833,12 +847,12 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
     module.addDeserializer(ColumnDescriptor.class, new JsonDeserializer<ColumnDescriptor>() {
       @Override
       public ColumnDescriptor deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-          throws IOException, JsonProcessingException {
+        throws IOException, JsonProcessingException {
         ObjectCodec oc = jsonParser.getCodec();
         JsonNode node = oc.readTree(jsonParser);
         org.apache.hive.service.cli.Type t = org.apache.hive.service.cli.Type.getType(node.get("type").asText());
         return new ColumnDescriptor(node.get("name").asText(), node.get("comment").asText(), new TypeDescriptor(t),
-            node.get("position").asInt());
+          node.get("position").asInt());
       }
     });
     mapper.registerModule(module);
