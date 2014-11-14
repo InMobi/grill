@@ -45,6 +45,8 @@
     <xs:attribute name="cost" type="xs:double"/>
     <xs:attribute name="unit" type="xs:string"/>
     <xs:attribute name="cube_table" type="xs:string"/>
+    <xs:attribute name="min" type="xs:double"/>
+    <xs:attribute name="max" type="xs:double"/>
   </xs:complexType>
   <xs:complexType name="x_tablereference">
     <xs:attribute name="dest_table" use="required" type="xs:string"/>

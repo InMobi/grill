@@ -62,6 +62,7 @@
               <a href="ns0_lensPreparedQuery.html">lensPreparedQuery</a>
               <ul>
                 <li><a href="ns0_APIResult.html">APIResult</a></li>
+                <li><a href="ns0_dateTime.html">dateTime</a></li>
                 <li><a href="ns0_inMemoryQueryResult.html">inMemoryQueryResult</a></li>
                 <li><a href="ns0_lensConf.html">lensConf</a></li>
                 <li><a href="ns0_lensPreparedQuery.html">lensPreparedQuery</a></li>
@@ -112,7 +113,7 @@
         </tr>
         <tr>
           <td>
-            preparedUser (string)
+            preparedTime (dateTime)
           </td>
           <td>0/1</td>
           <td>
@@ -120,7 +121,7 @@
         </tr>
         <tr>
           <td>
-            conf (<a href="ns0_lensConf.html">lensConf</a>)
+            preparedUser (string)
           </td>
           <td>0/1</td>
           <td>
@@ -136,6 +137,14 @@
         </tr>
         <tr>
           <td>
+            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
             userQuery (string)
           </td>
           <td>0/1</td>
@@ -144,15 +153,7 @@
         </tr>
         <tr>
           <td>
-            preparedTime (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+            conf (<a href="ns0_lensConf.html">lensConf</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -176,17 +177,17 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>preparedUser</td>
+          <td>preparedTime</td>
           <td>
-              preparedUser (string)
+              preparedTime (dateTime)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>conf</td>
+          <td>preparedUser</td>
           <td>
-              conf (<a href="ns0_lensConf.html">lensConf</a>)
+              preparedUser (string)
           </td>
           <td>
           </td>
@@ -200,6 +201,14 @@
           </td>
         </tr>
         <tr>
+          <td>prepareHandle</td>
+          <td>
+              prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
           <td>userQuery</td>
           <td>
               userQuery (string)
@@ -208,17 +217,9 @@
           </td>
         </tr>
         <tr>
-          <td>preparedTime</td>
+          <td>conf</td>
           <td>
-              preparedTime (dateTime)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>prepareHandle</td>
-          <td>
-              prepareHandle (<a href="ns0_queryPrepareHandle.html">queryPrepareHandle</a>)
+              conf (<a href="ns0_lensConf.html">lensConf</a>)
           </td>
           <td>
           </td>

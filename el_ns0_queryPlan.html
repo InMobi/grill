@@ -62,6 +62,7 @@
               <a href="el_ns0_queryPlan.html">queryPlan element</a>
               <ul>
                 <li><a href="el_ns0_conf.html">conf element</a></li>
+                <li><a href="el_ns0_dateTime.html">dateTime element</a></li>
                 <li><a href="el_ns0_inMemoryQueryResult.html">inMemoryQueryResult element</a></li>
                 <li><a href="el_ns0_lensPreparedQuery.html">lensPreparedQuery element</a></li>
                 <li><a href="el_ns0_lensQuery.html">lensQuery element</a></li>
@@ -108,20 +109,27 @@
 &lt;queryPlan&gt;
   &lt;numFilters&gt;...&lt;/numFilters&gt;
   &lt;error&gt;...&lt;/error&gt;
+  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
+  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
   &lt;planString&gt;...&lt;/planString&gt;
-  &lt;execMode&gt;...&lt;/execMode&gt;
-  &lt;tablesQueried&gt;
-    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
-    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
-    &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
-  &lt;/tablesQueried&gt;
-  &lt;numJoins&gt;...&lt;/numJoins&gt;
-  &lt;numHaving&gt;...&lt;/numHaving&gt;
+  &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
+  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
+  &lt;prepareHandle&gt;
+    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
+  &lt;/prepareHandle&gt;
   &lt;numAggrExprs&gt;...&lt;/numAggrExprs&gt;
   &lt;hasSubQuery&gt;...&lt;/hasSubQuery&gt;
-  &lt;obyWeight&gt;...&lt;/obyWeight&gt;
-  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
+  &lt;joinWeight&gt;...&lt;/joinWeight&gt;
+  &lt;numObys&gt;...&lt;/numObys&gt;
   &lt;numSels&gt;...&lt;/numSels&gt;
+  &lt;numHaving&gt;...&lt;/numHaving&gt;
+  &lt;queryCost&gt;
+    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
+    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
+  &lt;/queryCost&gt;
+  &lt;execMode&gt;...&lt;/execMode&gt;
+  &lt;scanMode&gt;...&lt;/scanMode&gt;
+  &lt;numJoins&gt;...&lt;/numJoins&gt;
   &lt;tableWeights&gt;
     &lt;entry&gt;
       &lt;key&gt;...&lt;/key&gt;
@@ -137,57 +145,50 @@
     &lt;/entry&gt;
     &lt;!--...more entries...--&gt;
   &lt;/tableWeights&gt;
-  &lt;queryCost&gt;
-    &lt;estimatedExecTimeMillis&gt;...&lt;/estimatedExecTimeMillis&gt;
-    &lt;estimatedResourceUsage&gt;...&lt;/estimatedResourceUsage&gt;
-  &lt;/queryCost&gt;
-  &lt;numSelDi&gt;...&lt;/numSelDi&gt;
-  &lt;gbyWeight&gt;...&lt;/gbyWeight&gt;
-  &lt;errorMsg&gt;...&lt;/errorMsg&gt;
-  &lt;numObys&gt;...&lt;/numObys&gt;
+  &lt;selectWeight&gt;...&lt;/selectWeight&gt;
+  &lt;tablesQueried&gt;
+    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
+    &lt;tablesQueried&gt;...&lt;/tablesQueried&gt;
+    &lt;!--...more &quot;tablesQueried&quot; elements...--&gt;
+  &lt;/tablesQueried&gt;
   &lt;filterWeight&gt;...&lt;/filterWeight&gt;
-  &lt;scanMode&gt;...&lt;/scanMode&gt;
-  &lt;prepareHandle&gt;
-    &lt;prepareHandleId&gt;...&lt;/prepareHandleId&gt;
-  &lt;/prepareHandle&gt;
-  &lt;joinWeight&gt;...&lt;/joinWeight&gt;
+  &lt;errorMsg&gt;...&lt;/errorMsg&gt;
   &lt;numGbys&gt;...&lt;/numGbys&gt;
-  &lt;havingWeight&gt;...&lt;/havingWeight&gt;
 &lt;/queryPlan&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
   &quot;numFilters&quot; : ...,
   &quot;error&quot; : false,
+  &quot;havingWeight&quot; : ...,
+  &quot;obyWeight&quot; : ...,
   &quot;planString&quot; : &quot;...&quot;,
-  &quot;execMode&quot; : &quot;...&quot;,
-  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
-  &quot;numJoins&quot; : ...,
-  &quot;numHaving&quot; : ...,
+  &quot;gbyWeight&quot; : ...,
+  &quot;numSelDi&quot; : ...,
+  &quot;prepareHandle&quot; : {
+    &quot;prepareHandleId&quot; : &quot;...&quot;
+  },
   &quot;numAggrExprs&quot; : ...,
   &quot;hasSubQuery&quot; : false,
-  &quot;obyWeight&quot; : ...,
-  &quot;selectWeight&quot; : ...,
+  &quot;joinWeight&quot; : ...,
+  &quot;numObys&quot; : ...,
   &quot;numSels&quot; : ...,
+  &quot;numHaving&quot; : ...,
+  &quot;queryCost&quot; : {
+    &quot;estimatedResourceUsage&quot; : ...,
+    &quot;estimatedExecTimeMillis&quot; : ...
+  },
+  &quot;execMode&quot; : &quot;...&quot;,
+  &quot;scanMode&quot; : &quot;...&quot;,
+  &quot;numJoins&quot; : ...,
   &quot;tableWeights&quot; : {
     &quot;...&quot; : ...,
     &quot;---&quot; : ...
   },
-  &quot;queryCost&quot; : {
-    &quot;estimatedExecTimeMillis&quot; : ...,
-    &quot;estimatedResourceUsage&quot; : ...
-  },
-  &quot;numSelDi&quot; : ...,
-  &quot;gbyWeight&quot; : ...,
-  &quot;errorMsg&quot; : &quot;...&quot;,
-  &quot;numObys&quot; : ...,
+  &quot;selectWeight&quot; : ...,
+  &quot;tablesQueried&quot; : [ &quot;...&quot;, ... ],
   &quot;filterWeight&quot; : ...,
-  &quot;scanMode&quot; : &quot;...&quot;,
-  &quot;prepareHandle&quot; : {
-    &quot;prepareHandleId&quot; : &quot;...&quot;
-  },
-  &quot;joinWeight&quot; : ...,
-  &quot;numGbys&quot; : ...,
-  &quot;havingWeight&quot; : ...
+  &quot;errorMsg&quot; : &quot;...&quot;,
+  &quot;numGbys&quot; : ...
 }</code>
 
       <div class="clear" />

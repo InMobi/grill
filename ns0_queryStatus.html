@@ -62,6 +62,7 @@
               <a href="ns0_queryStatus.html">queryStatus</a>
               <ul>
                 <li><a href="ns0_APIResult.html">APIResult</a></li>
+                <li><a href="ns0_dateTime.html">dateTime</a></li>
                 <li><a href="ns0_inMemoryQueryResult.html">inMemoryQueryResult</a></li>
                 <li><a href="ns0_lensConf.html">lensConf</a></li>
                 <li><a href="ns0_lensPreparedQuery.html">lensPreparedQuery</a></li>
@@ -112,7 +113,15 @@
         </tr>
         <tr>
           <td>
-            progressMessage (string)
+            statusMessage (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            status (<a href="ns0_status.html">status</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -128,7 +137,7 @@
         </tr>
         <tr>
           <td>
-            status (<a href="ns0_status.html">status</a>)
+            progressMessage (string)
           </td>
           <td>0/1</td>
           <td>
@@ -136,7 +145,7 @@
         </tr>
         <tr>
           <td>
-            statusMessage (string)
+            errorMessage (string)
           </td>
           <td>0/1</td>
           <td>
@@ -150,14 +159,6 @@
           <td>
           </td>
         </tr>
-        <tr>
-          <td>
-            errorMessage (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
       </table>
 
       <h2>JSON</h2>
@@ -168,17 +169,9 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>progressMessage</td>
+          <td>statusMessage</td>
           <td>
-              progressMessage (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>isResultSetAvailable</td>
-          <td>
-              isResultSetAvailable (boolean)
+              statusMessage (string)
           </td>
           <td>
           </td>
@@ -192,17 +185,17 @@
           </td>
         </tr>
         <tr>
-          <td>statusMessage</td>
+          <td>isResultSetAvailable</td>
           <td>
-              statusMessage (string)
+              isResultSetAvailable (boolean)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>progress</td>
+          <td>progressMessage</td>
           <td>
-              progress (double)
+              progressMessage (string)
           </td>
           <td>
           </td>
@@ -211,6 +204,14 @@
           <td>errorMessage</td>
           <td>
               errorMessage (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>progress</td>
+          <td>
+              progress (double)
           </td>
           <td>
           </td>

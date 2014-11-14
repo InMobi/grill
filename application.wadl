@@ -1465,6 +1465,37 @@ Status#FAILED, if delete has failed]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
+    <wadl:resource path="/metastore/cubes/{cubeName}/latestdate">
+      <wadl:param name="cubeName" style="template">
+        <wadl:doc>
+          <![CDATA[name of the base cube]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get the latest available date upto which data is available for the base cubes, for the time dimension.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="sessionid" style="query">
+            <wadl:doc>
+              <![CDATA[The sessionid in which user is working]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="timeDimension" style="query">
+            <wadl:doc>
+              <![CDATA[time dimension name]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[DateTime object which has Date in it.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="dateTime"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
     <wadl:resource path="/metastore/dimtables/{dimTableName}/storages">
       <wadl:param name="dimTableName" style="template">
         <wadl:doc>

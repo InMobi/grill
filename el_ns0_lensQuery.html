@@ -62,6 +62,7 @@
               <a href="el_ns0_lensQuery.html">lensQuery element</a>
               <ul>
                 <li><a href="el_ns0_conf.html">conf element</a></li>
+                <li><a href="el_ns0_dateTime.html">dateTime element</a></li>
                 <li><a href="el_ns0_inMemoryQueryResult.html">inMemoryQueryResult element</a></li>
                 <li><a href="el_ns0_lensPreparedQuery.html">lensPreparedQuery element</a></li>
                 <li><a href="el_ns0_lensQuery.html">lensQuery element</a></li>
@@ -106,6 +107,18 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;lensQuery&gt;
+  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
+  &lt;finishTime&gt;...&lt;/finishTime&gt;
+  &lt;queryName&gt;...&lt;/queryName&gt;
+  &lt;status&gt;
+    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+    &lt;status&gt;...&lt;/status&gt;
+    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
+    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
+    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
+    &lt;progress&gt;...&lt;/progress&gt;
+  &lt;/status&gt;
+  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
   &lt;queryConf&gt;
     &lt;properties&gt;
       &lt;entry&gt;
@@ -123,67 +136,55 @@
       &lt;!--...more entries...--&gt;
     &lt;/properties&gt;
   &lt;/queryConf&gt;
+  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
+  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
+  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
+  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
+  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;userQuery&gt;...&lt;/userQuery&gt;
+  &lt;launchTime&gt;...&lt;/launchTime&gt;
   &lt;priority&gt;...&lt;/priority&gt;
-  &lt;queryName&gt;...&lt;/queryName&gt;
+  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
   &lt;queryHandle&gt;
     &lt;handleId&gt;...&lt;/handleId&gt;
   &lt;/queryHandle&gt;
-  &lt;finishTime&gt;...&lt;/finishTime&gt;
-  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
-  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
-  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
-  &lt;userQuery&gt;...&lt;/userQuery&gt;
-  &lt;status&gt;
-    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
-    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
-    &lt;status&gt;...&lt;/status&gt;
-    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
-    &lt;progress&gt;...&lt;/progress&gt;
-    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
-  &lt;/status&gt;
-  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
-  &lt;launchTime&gt;...&lt;/launchTime&gt;
-  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
   &lt;closedTime&gt;...&lt;/closedTime&gt;
-  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
-  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
-  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
-  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
+  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
 &lt;/lensQuery&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
+  &quot;driverOpHandle&quot; : &quot;...&quot;,
+  &quot;finishTime&quot; : ...,
+  &quot;queryName&quot; : &quot;...&quot;,
+  &quot;status&quot; : {
+    &quot;statusMessage&quot; : &quot;...&quot;,
+    &quot;status&quot; : &quot;NEW&quot;,
+    &quot;isResultSetAvailable&quot; : false,
+    &quot;progressMessage&quot; : &quot;...&quot;,
+    &quot;errorMessage&quot; : &quot;...&quot;,
+    &quot;progress&quot; : ...
+  },
+  &quot;submittedUser&quot; : &quot;...&quot;,
   &quot;queryConf&quot; : {
     &quot;properties&quot; : {
       &quot;...&quot; : &quot;...&quot;,
       &quot;---&quot; : ...
     }
   },
+  &quot;submissionTime&quot; : ...,
+  &quot;resultSetPath&quot; : &quot;...&quot;,
+  &quot;driverStartTime&quot; : ...,
+  &quot;isPersistent&quot; : false,
+  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;userQuery&quot; : &quot;...&quot;,
+  &quot;launchTime&quot; : ...,
   &quot;priority&quot; : &quot;VERY_HIGH&quot;,
-  &quot;queryName&quot; : &quot;...&quot;,
+  &quot;driverFinishTime&quot; : ...,
   &quot;queryHandle&quot; : {
     &quot;handleId&quot; : &quot;...&quot;
   },
-  &quot;finishTime&quot; : ...,
-  &quot;resultSetPath&quot; : &quot;...&quot;,
-  &quot;driverQuery&quot; : &quot;...&quot;,
-  &quot;driverStartTime&quot; : ...,
-  &quot;userQuery&quot; : &quot;...&quot;,
-  &quot;status&quot; : {
-    &quot;progressMessage&quot; : &quot;...&quot;,
-    &quot;isResultSetAvailable&quot; : false,
-    &quot;status&quot; : &quot;NEW&quot;,
-    &quot;statusMessage&quot; : &quot;...&quot;,
-    &quot;progress&quot; : ...,
-    &quot;errorMessage&quot; : &quot;...&quot;
-  },
-  &quot;submissionTime&quot; : ...,
-  &quot;launchTime&quot; : ...,
-  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
   &quot;closedTime&quot; : ...,
-  &quot;driverOpHandle&quot; : &quot;...&quot;,
-  &quot;driverFinishTime&quot; : ...,
-  &quot;submittedUser&quot; : &quot;...&quot;,
-  &quot;isPersistent&quot; : false
+  &quot;selectedDriverClassName&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />

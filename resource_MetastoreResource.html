@@ -86,6 +86,9 @@ This provides api for all things metastore.</p>
         <a href="#path__metastore_cubes_-cubeName-_facts.html">/metastore/cubes/{cubeName}/facts</a>
         </li>
         <li>
+        <a href="#path__metastore_cubes_-cubeName-_latestdate.html">/metastore/cubes/{cubeName}/latestdate</a>
+        </li>
+        <li>
         <a href="#path__metastore_databases.html">/metastore/databases</a>
         </li>
         <li>
@@ -508,6 +511,59 @@ APIResult with state Status#FAILED, if drop has failed</p>
         </tr>
       </table>
       <p>List of FactTable objects</p>
+        <a name="path__metastore_cubes_-cubeName-_latestdate.html"></a>
+      <h1>/metastore/cubes/{cubeName}/latestdate</h1>
+      <p class="note">Mount Point: <a href="../metastore/cubes/{cubeName}/latestdate">/metastore/cubes/{cubeName}/latestdate</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get the latest available date upto which data is available for the base cubes, for the time dimension.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>sessionid</td>
+          <td>
+            The sessionid in which user is working
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>cubeName</td>
+          <td>
+            name of the base cube
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>timeDimension</td>
+          <td>
+            time dimension name
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_dateTime.html">dateTime</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/xml<br/>application/json</td>
+        </tr>
+      </table>
+      <p>DateTime object which has Date in it.</p>
         <a name="path__metastore_databases.html"></a>
       <h1>/metastore/databases</h1>
       <p class="note">Mount Point: <a href="../metastore/databases">/metastore/databases</a></p>

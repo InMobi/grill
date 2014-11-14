@@ -87,7 +87,7 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;flattened_columns xmlns=&quot;uri:lens:cube:0.1&quot;&gt;
-  &lt;measure name=&quot;...&quot; type=&quot;...&quot; description=&quot;...&quot; display_string=&quot;...&quot; default_aggr=&quot;...&quot; format_string=&quot;...&quot; start_time=&quot;...&quot; end_time=&quot;...&quot; cost=&quot;...&quot; unit=&quot;...&quot; cube_table=&quot;...&quot; /&gt;
+  &lt;measure name=&quot;...&quot; type=&quot;...&quot; description=&quot;...&quot; display_string=&quot;...&quot; default_aggr=&quot;...&quot; format_string=&quot;...&quot; start_time=&quot;...&quot; end_time=&quot;...&quot; cost=&quot;...&quot; unit=&quot;...&quot; cube_table=&quot;...&quot; min=&quot;...&quot; max=&quot;...&quot; /&gt;
   &lt;expression name=&quot;...&quot; type=&quot;...&quot; description=&quot;...&quot; display_string=&quot;...&quot; expr=&quot;...&quot; cube_table=&quot;...&quot; /&gt;
   &lt;dim_attribute name=&quot;...&quot; type=&quot;...&quot; description=&quot;...&quot; display_string=&quot;...&quot; start_time=&quot;...&quot; end_time=&quot;...&quot; cost=&quot;...&quot; expr=&quot;...&quot; cube_table=&quot;...&quot;&gt;
     &lt;references&gt;
@@ -112,7 +112,9 @@
     &quot;end_time&quot; : ...,
     &quot;cost&quot; : ...,
     &quot;unit&quot; : &quot;...&quot;,
-    &quot;cube_table&quot; : &quot;...&quot;
+    &quot;cube_table&quot; : &quot;...&quot;,
+    &quot;min&quot; : ...,
+    &quot;max&quot; : ...
   }, {
     &quot;name&quot; : &quot;...&quot;,
     &quot;type&quot; : &quot;...&quot;,
