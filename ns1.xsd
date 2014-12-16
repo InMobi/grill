@@ -11,9 +11,14 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:complexType name="x_chaincolumn">
+    <xs:attribute name="chainName" use="required" type="xs:string"/>
+    <xs:attribute name="refcol" use="required" type="xs:string"/>
+  </xs:complexType>
   <xs:complexType name="x_dim_attribute">
     <xs:sequence>
       <xs:element name="references" type="ns1:x_tablereferences" minOccurs="1"/>
+      <xs:element name="chainrefcolumn" type="ns1:x_chaincolumn" minOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="name" use="required" type="xs:string"/>
     <xs:attribute name="type" use="required" type="xs:string"/>

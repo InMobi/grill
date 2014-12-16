@@ -243,8 +243,6 @@ module Query
   class LensPreparedQuery 
 
     # (no documentation provided)
-    attr_accessor :preparedTime
-    # (no documentation provided)
     attr_accessor :preparedUser
     # (no documentation provided)
     attr_accessor :selectedDriverClassName
@@ -255,17 +253,19 @@ module Query
     # (no documentation provided)
     attr_accessor :conf
     # (no documentation provided)
+    attr_accessor :preparedTime
+    # (no documentation provided)
     attr_accessor :driverQuery
 
     # the json hash for this LensPreparedQuery
     def to_jaxb_json_hash
       _h = {}
-      _h['preparedTime'] = preparedTime.to_jaxb_json_hash unless preparedTime.nil?
       _h['preparedUser'] = preparedUser.to_jaxb_json_hash unless preparedUser.nil?
       _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
       _h['prepareHandle'] = prepareHandle.to_jaxb_json_hash unless prepareHandle.nil?
       _h['userQuery'] = userQuery.to_jaxb_json_hash unless userQuery.nil?
       _h['conf'] = conf.to_jaxb_json_hash unless conf.nil?
+      _h['preparedTime'] = preparedTime.to_jaxb_json_hash unless preparedTime.nil?
       _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
       return _h
     end
@@ -277,12 +277,12 @@ module Query
 
     #initializes this LensPreparedQuery with a json hash
     def init_jaxb_json_hash(_o)
-      @preparedTime = Time.from_json(_o['preparedTime']) unless _o['preparedTime'].nil?
       @preparedUser = String.from_json(_o['preparedUser']) unless _o['preparedUser'].nil?
       @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
       @prepareHandle = Org::Apache::Lens::Api::Query::QueryPrepareHandle.from_json(_o['prepareHandle']) unless _o['prepareHandle'].nil?
       @userQuery = String.from_json(_o['userQuery']) unless _o['userQuery'].nil?
       @conf = Org::Apache::Lens::Api::LensConf.from_json(_o['conf']) unless _o['conf'].nil?
+      @preparedTime = Time.from_json(_o['preparedTime']) unless _o['preparedTime'].nil?
       @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
     end
 
@@ -322,63 +322,63 @@ module Query
   class LensQuery 
 
     # (no documentation provided)
-    attr_accessor :driverOpHandle
-    # (no documentation provided)
-    attr_accessor :finishTime
-    # (no documentation provided)
-    attr_accessor :queryName
-    # (no documentation provided)
-    attr_accessor :status
-    # (no documentation provided)
-    attr_accessor :submittedUser
-    # (no documentation provided)
-    attr_accessor :queryConf
+    attr_accessor :closedTime
     # (no documentation provided)
     attr_accessor :submissionTime
     # (no documentation provided)
-    attr_accessor :resultSetPath
+    attr_accessor :status
+    # (no documentation provided)
+    attr_accessor :queryHandle
+    # (no documentation provided)
+    attr_accessor :launchTime
+    # (no documentation provided)
+    attr_accessor :selectedDriverClassName
+    # (no documentation provided)
+    attr_accessor :userQuery
+    # (no documentation provided)
+    attr_accessor :submittedUser
+    # (no documentation provided)
+    attr_accessor :finishTime
     # (no documentation provided)
     attr_accessor :driverStartTime
     # (no documentation provided)
     attr_accessor :isPersistent
     # (no documentation provided)
-    attr_accessor :driverQuery
-    # (no documentation provided)
-    attr_accessor :userQuery
-    # (no documentation provided)
-    attr_accessor :launchTime
+    attr_accessor :driverFinishTime
     # (no documentation provided)
     attr_accessor :priority
     # (no documentation provided)
-    attr_accessor :driverFinishTime
+    attr_accessor :driverQuery
     # (no documentation provided)
-    attr_accessor :queryHandle
+    attr_accessor :queryName
     # (no documentation provided)
-    attr_accessor :closedTime
+    attr_accessor :driverOpHandle
     # (no documentation provided)
-    attr_accessor :selectedDriverClassName
+    attr_accessor :queryConf
+    # (no documentation provided)
+    attr_accessor :resultSetPath
 
     # the json hash for this LensQuery
     def to_jaxb_json_hash
       _h = {}
-      _h['driverOpHandle'] = driverOpHandle.to_jaxb_json_hash unless driverOpHandle.nil?
-      _h['finishTime'] = finishTime.to_jaxb_json_hash unless finishTime.nil?
-      _h['queryName'] = queryName.to_jaxb_json_hash unless queryName.nil?
-      _h['status'] = status.to_jaxb_json_hash unless status.nil?
-      _h['submittedUser'] = submittedUser.to_jaxb_json_hash unless submittedUser.nil?
-      _h['queryConf'] = queryConf.to_jaxb_json_hash unless queryConf.nil?
+      _h['closedTime'] = closedTime.to_jaxb_json_hash unless closedTime.nil?
       _h['submissionTime'] = submissionTime.to_jaxb_json_hash unless submissionTime.nil?
-      _h['resultSetPath'] = resultSetPath.to_jaxb_json_hash unless resultSetPath.nil?
+      _h['status'] = status.to_jaxb_json_hash unless status.nil?
+      _h['queryHandle'] = queryHandle.to_jaxb_json_hash unless queryHandle.nil?
+      _h['launchTime'] = launchTime.to_jaxb_json_hash unless launchTime.nil?
+      _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
+      _h['userQuery'] = userQuery.to_jaxb_json_hash unless userQuery.nil?
+      _h['submittedUser'] = submittedUser.to_jaxb_json_hash unless submittedUser.nil?
+      _h['finishTime'] = finishTime.to_jaxb_json_hash unless finishTime.nil?
       _h['driverStartTime'] = driverStartTime.to_jaxb_json_hash unless driverStartTime.nil?
       _h['isPersistent'] = isPersistent.to_jaxb_json_hash unless isPersistent.nil?
-      _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
-      _h['userQuery'] = userQuery.to_jaxb_json_hash unless userQuery.nil?
-      _h['launchTime'] = launchTime.to_jaxb_json_hash unless launchTime.nil?
-      _h['priority'] = priority.to_jaxb_json_hash unless priority.nil?
       _h['driverFinishTime'] = driverFinishTime.to_jaxb_json_hash unless driverFinishTime.nil?
-      _h['queryHandle'] = queryHandle.to_jaxb_json_hash unless queryHandle.nil?
-      _h['closedTime'] = closedTime.to_jaxb_json_hash unless closedTime.nil?
-      _h['selectedDriverClassName'] = selectedDriverClassName.to_jaxb_json_hash unless selectedDriverClassName.nil?
+      _h['priority'] = priority.to_jaxb_json_hash unless priority.nil?
+      _h['driverQuery'] = driverQuery.to_jaxb_json_hash unless driverQuery.nil?
+      _h['queryName'] = queryName.to_jaxb_json_hash unless queryName.nil?
+      _h['driverOpHandle'] = driverOpHandle.to_jaxb_json_hash unless driverOpHandle.nil?
+      _h['queryConf'] = queryConf.to_jaxb_json_hash unless queryConf.nil?
+      _h['resultSetPath'] = resultSetPath.to_jaxb_json_hash unless resultSetPath.nil?
       return _h
     end
 
@@ -389,24 +389,24 @@ module Query
 
     #initializes this LensQuery with a json hash
     def init_jaxb_json_hash(_o)
-      @driverOpHandle = String.from_json(_o['driverOpHandle']) unless _o['driverOpHandle'].nil?
-      @finishTime = Bignum.from_json(_o['finishTime']) unless _o['finishTime'].nil?
-      @queryName = String.from_json(_o['queryName']) unless _o['queryName'].nil?
-      @status = Org::Apache::Lens::Api::Query::QueryStatus.from_json(_o['status']) unless _o['status'].nil?
-      @submittedUser = String.from_json(_o['submittedUser']) unless _o['submittedUser'].nil?
-      @queryConf = Org::Apache::Lens::Api::LensConf.from_json(_o['queryConf']) unless _o['queryConf'].nil?
+      @closedTime = Bignum.from_json(_o['closedTime']) unless _o['closedTime'].nil?
       @submissionTime = Bignum.from_json(_o['submissionTime']) unless _o['submissionTime'].nil?
-      @resultSetPath = String.from_json(_o['resultSetPath']) unless _o['resultSetPath'].nil?
+      @status = Org::Apache::Lens::Api::Query::QueryStatus.from_json(_o['status']) unless _o['status'].nil?
+      @queryHandle = Org::Apache::Lens::Api::Query::QueryHandle.from_json(_o['queryHandle']) unless _o['queryHandle'].nil?
+      @launchTime = Bignum.from_json(_o['launchTime']) unless _o['launchTime'].nil?
+      @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
+      @userQuery = String.from_json(_o['userQuery']) unless _o['userQuery'].nil?
+      @submittedUser = String.from_json(_o['submittedUser']) unless _o['submittedUser'].nil?
+      @finishTime = Bignum.from_json(_o['finishTime']) unless _o['finishTime'].nil?
       @driverStartTime = Bignum.from_json(_o['driverStartTime']) unless _o['driverStartTime'].nil?
       @isPersistent = Boolean.from_json(_o['isPersistent']) unless _o['isPersistent'].nil?
-      @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
-      @userQuery = String.from_json(_o['userQuery']) unless _o['userQuery'].nil?
-      @launchTime = Bignum.from_json(_o['launchTime']) unless _o['launchTime'].nil?
-      @priority = String.from_json(_o['priority']) unless _o['priority'].nil?
       @driverFinishTime = Bignum.from_json(_o['driverFinishTime']) unless _o['driverFinishTime'].nil?
-      @queryHandle = Org::Apache::Lens::Api::Query::QueryHandle.from_json(_o['queryHandle']) unless _o['queryHandle'].nil?
-      @closedTime = Bignum.from_json(_o['closedTime']) unless _o['closedTime'].nil?
-      @selectedDriverClassName = String.from_json(_o['selectedDriverClassName']) unless _o['selectedDriverClassName'].nil?
+      @priority = String.from_json(_o['priority']) unless _o['priority'].nil?
+      @driverQuery = String.from_json(_o['driverQuery']) unless _o['driverQuery'].nil?
+      @queryName = String.from_json(_o['queryName']) unless _o['queryName'].nil?
+      @driverOpHandle = String.from_json(_o['driverOpHandle']) unless _o['driverOpHandle'].nil?
+      @queryConf = Org::Apache::Lens::Api::LensConf.from_json(_o['queryConf']) unless _o['queryConf'].nil?
+      @resultSetPath = String.from_json(_o['resultSetPath']) unless _o['resultSetPath'].nil?
     end
 
     # constructs a LensQuery from a (parsed) JSON hash
@@ -606,27 +606,27 @@ module Query
   class QueryStatus 
 
     # (no documentation provided)
-    attr_accessor :statusMessage
-    # (no documentation provided)
-    attr_accessor :status
+    attr_accessor :progressMessage
     # (no documentation provided)
     attr_accessor :isResultSetAvailable
     # (no documentation provided)
-    attr_accessor :progressMessage
-    # (no documentation provided)
     attr_accessor :errorMessage
     # (no documentation provided)
+    attr_accessor :statusMessage
+    # (no documentation provided)
     attr_accessor :progress
+    # (no documentation provided)
+    attr_accessor :status
 
     # the json hash for this QueryStatus
     def to_jaxb_json_hash
       _h = {}
-      _h['statusMessage'] = statusMessage.to_jaxb_json_hash unless statusMessage.nil?
-      _h['status'] = status.to_jaxb_json_hash unless status.nil?
-      _h['isResultSetAvailable'] = isResultSetAvailable.to_jaxb_json_hash unless isResultSetAvailable.nil?
       _h['progressMessage'] = progressMessage.to_jaxb_json_hash unless progressMessage.nil?
+      _h['isResultSetAvailable'] = isResultSetAvailable.to_jaxb_json_hash unless isResultSetAvailable.nil?
       _h['errorMessage'] = errorMessage.to_jaxb_json_hash unless errorMessage.nil?
+      _h['statusMessage'] = statusMessage.to_jaxb_json_hash unless statusMessage.nil?
       _h['progress'] = progress.to_jaxb_json_hash unless progress.nil?
+      _h['status'] = status.to_jaxb_json_hash unless status.nil?
       return _h
     end
 
@@ -637,12 +637,12 @@ module Query
 
     #initializes this QueryStatus with a json hash
     def init_jaxb_json_hash(_o)
-      @statusMessage = String.from_json(_o['statusMessage']) unless _o['statusMessage'].nil?
-      @status = String.from_json(_o['status']) unless _o['status'].nil?
-      @isResultSetAvailable = Boolean.from_json(_o['isResultSetAvailable']) unless _o['isResultSetAvailable'].nil?
       @progressMessage = String.from_json(_o['progressMessage']) unless _o['progressMessage'].nil?
+      @isResultSetAvailable = Boolean.from_json(_o['isResultSetAvailable']) unless _o['isResultSetAvailable'].nil?
       @errorMessage = String.from_json(_o['errorMessage']) unless _o['errorMessage'].nil?
+      @statusMessage = String.from_json(_o['statusMessage']) unless _o['statusMessage'].nil?
       @progress = Float.from_json(_o['progress']) unless _o['progress'].nil?
+      @status = String.from_json(_o['status']) unless _o['status'].nil?
     end
 
     # constructs a QueryStatus from a (parsed) JSON hash
@@ -851,7 +851,7 @@ module Api
 module Metastore
 
   # 
-  class XExprColumn 
+  class XDimAttribute 
 
     # (no documentation provided)
     attr_accessor :name
@@ -862,160 +862,58 @@ module Metastore
     # (no documentation provided)
     attr_accessor :displayString
     # (no documentation provided)
+    attr_accessor :startTime
+    # (no documentation provided)
+    attr_accessor :endTime
+    # (no documentation provided)
+    attr_accessor :cost
+    # (no documentation provided)
     attr_accessor :expr
     # (no documentation provided)
     attr_accessor :cubeTable
+    # (no documentation provided)
+    attr_accessor :references
+    # (no documentation provided)
+    attr_accessor :chainrefcolumn
 
-    # the json hash for this XExprColumn
+    # the json hash for this XDimAttribute
     def to_jaxb_json_hash
       _h = {}
       _h['name'] = name.to_jaxb_json_hash unless name.nil?
       _h['type'] = type.to_jaxb_json_hash unless type.nil?
       _h['description'] = description.to_jaxb_json_hash unless description.nil?
       _h['display_string'] = displayString.to_jaxb_json_hash unless displayString.nil?
+      _h['start_time'] = startTime.to_jaxb_json_hash unless startTime.nil?
+      _h['end_time'] = endTime.to_jaxb_json_hash unless endTime.nil?
+      _h['cost'] = cost.to_jaxb_json_hash unless cost.nil?
       _h['expr'] = expr.to_jaxb_json_hash unless expr.nil?
       _h['cube_table'] = cubeTable.to_jaxb_json_hash unless cubeTable.nil?
+      _h['references'] = references.to_jaxb_json_hash unless references.nil?
+      _h['chainrefcolumn'] = chainrefcolumn.to_jaxb_json_hash unless chainrefcolumn.nil?
       return _h
     end
 
-    # the json (string form) for this XExprColumn
+    # the json (string form) for this XDimAttribute
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this XExprColumn with a json hash
+    #initializes this XDimAttribute with a json hash
     def init_jaxb_json_hash(_o)
       @name = String.from_json(_o['name']) unless _o['name'].nil?
       @type = String.from_json(_o['type']) unless _o['type'].nil?
       @description = String.from_json(_o['description']) unless _o['description'].nil?
       @displayString = String.from_json(_o['display_string']) unless _o['display_string'].nil?
+      @startTime = String.from_json(_o['start_time']) unless _o['start_time'].nil?
+      @endTime = String.from_json(_o['end_time']) unless _o['end_time'].nil?
+      @cost = Float.from_json(_o['cost']) unless _o['cost'].nil?
       @expr = String.from_json(_o['expr']) unless _o['expr'].nil?
       @cubeTable = String.from_json(_o['cube_table']) unless _o['cube_table'].nil?
+      @references = Org::Apache::Lens::Api::Metastore::XTablereferences.from_json(_o['references']) unless _o['references'].nil?
+      @chainrefcolumn = Org::Apache::Lens::Api::Metastore::XChaincolumn.from_json(_o['chainrefcolumn']) unless _o['chainrefcolumn'].nil?
     end
 
-    # constructs a XExprColumn from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Apache
-
-module Lens
-
-module Api
-
-module Metastore
-
-  # 
-  class XTablereference 
-
-    # (no documentation provided)
-    attr_accessor :destTable
-    # (no documentation provided)
-    attr_accessor :destColumn
-
-    # the json hash for this XTablereference
-    def to_jaxb_json_hash
-      _h = {}
-      _h['dest_table'] = destTable.to_jaxb_json_hash unless destTable.nil?
-      _h['dest_column'] = destColumn.to_jaxb_json_hash unless destColumn.nil?
-      return _h
-    end
-
-    # the json (string form) for this XTablereference
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this XTablereference with a json hash
-    def init_jaxb_json_hash(_o)
-      @destTable = String.from_json(_o['dest_table']) unless _o['dest_table'].nil?
-      @destColumn = String.from_json(_o['dest_column']) unless _o['dest_column'].nil?
-    end
-
-    # constructs a XTablereference from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Apache
-
-module Lens
-
-module Api
-
-module Metastore
-
-  # 
-  class XTablereferences 
-
-    # (no documentation provided)
-    attr_accessor :tableReferences
-
-    # the json hash for this XTablereferences
-    def to_jaxb_json_hash
-      _h = {}
-      if !tableReferences.nil?
-        _ha = Array.new
-        tableReferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['table_references'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this XTablereferences
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this XTablereferences with a json hash
-    def init_jaxb_json_hash(_o)
-      if !_o['table_references'].nil?
-        @tableReferences = Array.new
-        _oa = _o['table_references']
-        _oa.each { | _item | @tableReferences.push Org::Apache::Lens::Api::Metastore::XTablereference.from_json(_item) }
-      end
-    end
-
-    # constructs a XTablereferences from a (parsed) JSON hash
+    # constructs a XDimAttribute from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1151,7 +1049,129 @@ module Api
 module Metastore
 
   # 
-  class XDimAttribute 
+  class XTablereferences 
+
+    # (no documentation provided)
+    attr_accessor :tableReferences
+
+    # the json hash for this XTablereferences
+    def to_jaxb_json_hash
+      _h = {}
+      if !tableReferences.nil?
+        _ha = Array.new
+        tableReferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['table_references'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this XTablereferences
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this XTablereferences with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['table_references'].nil?
+        @tableReferences = Array.new
+        _oa = _o['table_references']
+        _oa.each { | _item | @tableReferences.push Org::Apache::Lens::Api::Metastore::XTablereference.from_json(_item) }
+      end
+    end
+
+    # constructs a XTablereferences from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Apache
+
+module Lens
+
+module Api
+
+module Metastore
+
+  # 
+  class XTablereference 
+
+    # (no documentation provided)
+    attr_accessor :destTable
+    # (no documentation provided)
+    attr_accessor :destColumn
+
+    # the json hash for this XTablereference
+    def to_jaxb_json_hash
+      _h = {}
+      _h['dest_table'] = destTable.to_jaxb_json_hash unless destTable.nil?
+      _h['dest_column'] = destColumn.to_jaxb_json_hash unless destColumn.nil?
+      return _h
+    end
+
+    # the json (string form) for this XTablereference
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this XTablereference with a json hash
+    def init_jaxb_json_hash(_o)
+      @destTable = String.from_json(_o['dest_table']) unless _o['dest_table'].nil?
+      @destColumn = String.from_json(_o['dest_column']) unless _o['dest_column'].nil?
+    end
+
+    # constructs a XTablereference from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Apache
+
+module Lens
+
+module Api
+
+module Metastore
+
+  # 
+  class XExprColumn 
 
     # (no documentation provided)
     attr_accessor :name
@@ -1162,54 +1182,97 @@ module Metastore
     # (no documentation provided)
     attr_accessor :displayString
     # (no documentation provided)
-    attr_accessor :startTime
-    # (no documentation provided)
-    attr_accessor :endTime
-    # (no documentation provided)
-    attr_accessor :cost
-    # (no documentation provided)
     attr_accessor :expr
     # (no documentation provided)
     attr_accessor :cubeTable
-    # (no documentation provided)
-    attr_accessor :references
 
-    # the json hash for this XDimAttribute
+    # the json hash for this XExprColumn
     def to_jaxb_json_hash
       _h = {}
       _h['name'] = name.to_jaxb_json_hash unless name.nil?
       _h['type'] = type.to_jaxb_json_hash unless type.nil?
       _h['description'] = description.to_jaxb_json_hash unless description.nil?
       _h['display_string'] = displayString.to_jaxb_json_hash unless displayString.nil?
-      _h['start_time'] = startTime.to_jaxb_json_hash unless startTime.nil?
-      _h['end_time'] = endTime.to_jaxb_json_hash unless endTime.nil?
-      _h['cost'] = cost.to_jaxb_json_hash unless cost.nil?
       _h['expr'] = expr.to_jaxb_json_hash unless expr.nil?
       _h['cube_table'] = cubeTable.to_jaxb_json_hash unless cubeTable.nil?
-      _h['references'] = references.to_jaxb_json_hash unless references.nil?
       return _h
     end
 
-    # the json (string form) for this XDimAttribute
+    # the json (string form) for this XExprColumn
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this XDimAttribute with a json hash
+    #initializes this XExprColumn with a json hash
     def init_jaxb_json_hash(_o)
       @name = String.from_json(_o['name']) unless _o['name'].nil?
       @type = String.from_json(_o['type']) unless _o['type'].nil?
       @description = String.from_json(_o['description']) unless _o['description'].nil?
       @displayString = String.from_json(_o['display_string']) unless _o['display_string'].nil?
-      @startTime = String.from_json(_o['start_time']) unless _o['start_time'].nil?
-      @endTime = String.from_json(_o['end_time']) unless _o['end_time'].nil?
-      @cost = Float.from_json(_o['cost']) unless _o['cost'].nil?
       @expr = String.from_json(_o['expr']) unless _o['expr'].nil?
       @cubeTable = String.from_json(_o['cube_table']) unless _o['cube_table'].nil?
-      @references = Org::Apache::Lens::Api::Metastore::XTablereferences.from_json(_o['references']) unless _o['references'].nil?
     end
 
-    # constructs a XDimAttribute from a (parsed) JSON hash
+    # constructs a XExprColumn from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Apache
+
+module Lens
+
+module Api
+
+module Metastore
+
+  # 
+  class XChaincolumn 
+
+    # (no documentation provided)
+    attr_accessor :chainName
+    # (no documentation provided)
+    attr_accessor :refcol
+
+    # the json hash for this XChaincolumn
+    def to_jaxb_json_hash
+      _h = {}
+      _h['chainName'] = chainName.to_jaxb_json_hash unless chainName.nil?
+      _h['refcol'] = refcol.to_jaxb_json_hash unless refcol.nil?
+      return _h
+    end
+
+    # the json (string form) for this XChaincolumn
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this XChaincolumn with a json hash
+    def init_jaxb_json_hash(_o)
+      @chainName = String.from_json(_o['chainName']) unless _o['chainName'].nil?
+      @refcol = String.from_json(_o['refcol']) unless _o['refcol'].nil?
+    end
+
+    # constructs a XChaincolumn from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1477,23 +1540,23 @@ module Query
   class QueryHandleWithResultSet < Org::Apache::Lens::Api::Query::QuerySubmitResult 
 
     # (no documentation provided)
-    attr_accessor :result
-    # (no documentation provided)
     attr_accessor :queryHandle
+    # (no documentation provided)
+    attr_accessor :result
 
     # the json hash for this QueryHandleWithResultSet
     def to_jaxb_json_hash
       _h = super
-      _h['result'] = result.to_jaxb_json_hash unless result.nil?
       _h['queryHandle'] = queryHandle.to_jaxb_json_hash unless queryHandle.nil?
+      _h['result'] = result.to_jaxb_json_hash unless result.nil?
       return _h
     end
 
     #initializes this QueryHandleWithResultSet with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @result = Org::Apache::Lens::Api::Query::QueryResult.from_json(_o['result']) unless _o['result'].nil?
       @queryHandle = Org::Apache::Lens::Api::Query::QueryHandle.from_json(_o['queryHandle']) unless _o['queryHandle'].nil?
+      @result = Org::Apache::Lens::Api::Query::QueryResult.from_json(_o['result']) unless _o['result'].nil?
     end
 
     # constructs a QueryHandleWithResultSet from a (parsed) JSON hash
@@ -1532,119 +1595,119 @@ module Query
   class QueryPlan < Org::Apache::Lens::Api::Query::QuerySubmitResult 
 
     # (no documentation provided)
-    attr_accessor :numFilters
-    # (no documentation provided)
-    attr_accessor :error
-    # (no documentation provided)
-    attr_accessor :havingWeight
-    # (no documentation provided)
-    attr_accessor :obyWeight
-    # (no documentation provided)
-    attr_accessor :planString
-    # (no documentation provided)
-    attr_accessor :gbyWeight
-    # (no documentation provided)
-    attr_accessor :numSelDi
-    # (no documentation provided)
-    attr_accessor :prepareHandle
+    attr_accessor :numHaving
     # (no documentation provided)
     attr_accessor :numAggrExprs
     # (no documentation provided)
-    attr_accessor :hasSubQuery
-    # (no documentation provided)
-    attr_accessor :joinWeight
-    # (no documentation provided)
-    attr_accessor :numObys
-    # (no documentation provided)
-    attr_accessor :numSels
-    # (no documentation provided)
-    attr_accessor :numHaving
-    # (no documentation provided)
-    attr_accessor :queryCost
-    # (no documentation provided)
-    attr_accessor :execMode
-    # (no documentation provided)
-    attr_accessor :scanMode
-    # (no documentation provided)
-    attr_accessor :numJoins
-    # (no documentation provided)
-    attr_accessor :tableWeights
-    # (no documentation provided)
-    attr_accessor :selectWeight
-    # (no documentation provided)
-    attr_accessor :tablesQueried
+    attr_accessor :gbyWeight
     # (no documentation provided)
     attr_accessor :filterWeight
     # (no documentation provided)
+    attr_accessor :numFilters
+    # (no documentation provided)
+    attr_accessor :selectWeight
+    # (no documentation provided)
+    attr_accessor :numObys
+    # (no documentation provided)
+    attr_accessor :queryCost
+    # (no documentation provided)
+    attr_accessor :havingWeight
+    # (no documentation provided)
+    attr_accessor :execMode
+    # (no documentation provided)
+    attr_accessor :error
+    # (no documentation provided)
+    attr_accessor :numSelDi
+    # (no documentation provided)
+    attr_accessor :hasSubQuery
+    # (no documentation provided)
+    attr_accessor :tableWeights
+    # (no documentation provided)
+    attr_accessor :scanMode
+    # (no documentation provided)
+    attr_accessor :prepareHandle
+    # (no documentation provided)
+    attr_accessor :tablesQueried
+    # (no documentation provided)
+    attr_accessor :obyWeight
+    # (no documentation provided)
     attr_accessor :errorMsg
     # (no documentation provided)
+    attr_accessor :numJoins
+    # (no documentation provided)
+    attr_accessor :numSels
+    # (no documentation provided)
+    attr_accessor :planString
+    # (no documentation provided)
     attr_accessor :numGbys
+    # (no documentation provided)
+    attr_accessor :joinWeight
 
     # the json hash for this QueryPlan
     def to_jaxb_json_hash
       _h = super
-      _h['numFilters'] = numFilters.to_jaxb_json_hash unless numFilters.nil?
-      _h['error'] = error.to_jaxb_json_hash unless error.nil?
-      _h['havingWeight'] = havingWeight.to_jaxb_json_hash unless havingWeight.nil?
-      _h['obyWeight'] = obyWeight.to_jaxb_json_hash unless obyWeight.nil?
-      _h['planString'] = planString.to_jaxb_json_hash unless planString.nil?
-      _h['gbyWeight'] = gbyWeight.to_jaxb_json_hash unless gbyWeight.nil?
-      _h['numSelDi'] = numSelDi.to_jaxb_json_hash unless numSelDi.nil?
-      _h['prepareHandle'] = prepareHandle.to_jaxb_json_hash unless prepareHandle.nil?
-      _h['numAggrExprs'] = numAggrExprs.to_jaxb_json_hash unless numAggrExprs.nil?
-      _h['hasSubQuery'] = hasSubQuery.to_jaxb_json_hash unless hasSubQuery.nil?
-      _h['joinWeight'] = joinWeight.to_jaxb_json_hash unless joinWeight.nil?
-      _h['numObys'] = numObys.to_jaxb_json_hash unless numObys.nil?
-      _h['numSels'] = numSels.to_jaxb_json_hash unless numSels.nil?
       _h['numHaving'] = numHaving.to_jaxb_json_hash unless numHaving.nil?
-      _h['queryCost'] = queryCost.to_jaxb_json_hash unless queryCost.nil?
-      _h['execMode'] = execMode.to_jaxb_json_hash unless execMode.nil?
-      _h['scanMode'] = scanMode.to_jaxb_json_hash unless scanMode.nil?
-      _h['numJoins'] = numJoins.to_jaxb_json_hash unless numJoins.nil?
-      _h['tableWeights'] = tableWeights.to_jaxb_json_hash unless tableWeights.nil?
+      _h['numAggrExprs'] = numAggrExprs.to_jaxb_json_hash unless numAggrExprs.nil?
+      _h['gbyWeight'] = gbyWeight.to_jaxb_json_hash unless gbyWeight.nil?
+      _h['filterWeight'] = filterWeight.to_jaxb_json_hash unless filterWeight.nil?
+      _h['numFilters'] = numFilters.to_jaxb_json_hash unless numFilters.nil?
       _h['selectWeight'] = selectWeight.to_jaxb_json_hash unless selectWeight.nil?
+      _h['numObys'] = numObys.to_jaxb_json_hash unless numObys.nil?
+      _h['queryCost'] = queryCost.to_jaxb_json_hash unless queryCost.nil?
+      _h['havingWeight'] = havingWeight.to_jaxb_json_hash unless havingWeight.nil?
+      _h['execMode'] = execMode.to_jaxb_json_hash unless execMode.nil?
+      _h['error'] = error.to_jaxb_json_hash unless error.nil?
+      _h['numSelDi'] = numSelDi.to_jaxb_json_hash unless numSelDi.nil?
+      _h['hasSubQuery'] = hasSubQuery.to_jaxb_json_hash unless hasSubQuery.nil?
+      _h['tableWeights'] = tableWeights.to_jaxb_json_hash unless tableWeights.nil?
+      _h['scanMode'] = scanMode.to_jaxb_json_hash unless scanMode.nil?
+      _h['prepareHandle'] = prepareHandle.to_jaxb_json_hash unless prepareHandle.nil?
       if !tablesQueried.nil?
         _ha = Array.new
         tablesQueried.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['tablesQueried'] = _ha
       end
-      _h['filterWeight'] = filterWeight.to_jaxb_json_hash unless filterWeight.nil?
+      _h['obyWeight'] = obyWeight.to_jaxb_json_hash unless obyWeight.nil?
       _h['errorMsg'] = errorMsg.to_jaxb_json_hash unless errorMsg.nil?
+      _h['numJoins'] = numJoins.to_jaxb_json_hash unless numJoins.nil?
+      _h['numSels'] = numSels.to_jaxb_json_hash unless numSels.nil?
+      _h['planString'] = planString.to_jaxb_json_hash unless planString.nil?
       _h['numGbys'] = numGbys.to_jaxb_json_hash unless numGbys.nil?
+      _h['joinWeight'] = joinWeight.to_jaxb_json_hash unless joinWeight.nil?
       return _h
     end
 
     #initializes this QueryPlan with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @numFilters = Fixnum.from_json(_o['numFilters']) unless _o['numFilters'].nil?
-      @error = Boolean.from_json(_o['error']) unless _o['error'].nil?
-      @havingWeight = Float.from_json(_o['havingWeight']) unless _o['havingWeight'].nil?
-      @obyWeight = Float.from_json(_o['obyWeight']) unless _o['obyWeight'].nil?
-      @planString = String.from_json(_o['planString']) unless _o['planString'].nil?
-      @gbyWeight = Float.from_json(_o['gbyWeight']) unless _o['gbyWeight'].nil?
-      @numSelDi = Fixnum.from_json(_o['numSelDi']) unless _o['numSelDi'].nil?
-      @prepareHandle = Org::Apache::Lens::Api::Query::QueryPrepareHandle.from_json(_o['prepareHandle']) unless _o['prepareHandle'].nil?
-      @numAggrExprs = Fixnum.from_json(_o['numAggrExprs']) unless _o['numAggrExprs'].nil?
-      @hasSubQuery = Boolean.from_json(_o['hasSubQuery']) unless _o['hasSubQuery'].nil?
-      @joinWeight = Float.from_json(_o['joinWeight']) unless _o['joinWeight'].nil?
-      @numObys = Fixnum.from_json(_o['numObys']) unless _o['numObys'].nil?
-      @numSels = Fixnum.from_json(_o['numSels']) unless _o['numSels'].nil?
       @numHaving = Fixnum.from_json(_o['numHaving']) unless _o['numHaving'].nil?
-      @queryCost = Org::Apache::Lens::Api::Query::QueryCost.from_json(_o['queryCost']) unless _o['queryCost'].nil?
-      @execMode = String.from_json(_o['execMode']) unless _o['execMode'].nil?
-      @scanMode = String.from_json(_o['scanMode']) unless _o['scanMode'].nil?
-      @numJoins = Fixnum.from_json(_o['numJoins']) unless _o['numJoins'].nil?
-      @tableWeights = Hash.from_json(_o['tableWeights']) unless _o['tableWeights'].nil?
+      @numAggrExprs = Fixnum.from_json(_o['numAggrExprs']) unless _o['numAggrExprs'].nil?
+      @gbyWeight = Float.from_json(_o['gbyWeight']) unless _o['gbyWeight'].nil?
+      @filterWeight = Float.from_json(_o['filterWeight']) unless _o['filterWeight'].nil?
+      @numFilters = Fixnum.from_json(_o['numFilters']) unless _o['numFilters'].nil?
       @selectWeight = Float.from_json(_o['selectWeight']) unless _o['selectWeight'].nil?
+      @numObys = Fixnum.from_json(_o['numObys']) unless _o['numObys'].nil?
+      @queryCost = Org::Apache::Lens::Api::Query::QueryCost.from_json(_o['queryCost']) unless _o['queryCost'].nil?
+      @havingWeight = Float.from_json(_o['havingWeight']) unless _o['havingWeight'].nil?
+      @execMode = String.from_json(_o['execMode']) unless _o['execMode'].nil?
+      @error = Boolean.from_json(_o['error']) unless _o['error'].nil?
+      @numSelDi = Fixnum.from_json(_o['numSelDi']) unless _o['numSelDi'].nil?
+      @hasSubQuery = Boolean.from_json(_o['hasSubQuery']) unless _o['hasSubQuery'].nil?
+      @tableWeights = Hash.from_json(_o['tableWeights']) unless _o['tableWeights'].nil?
+      @scanMode = String.from_json(_o['scanMode']) unless _o['scanMode'].nil?
+      @prepareHandle = Org::Apache::Lens::Api::Query::QueryPrepareHandle.from_json(_o['prepareHandle']) unless _o['prepareHandle'].nil?
       if !_o['tablesQueried'].nil?
         @tablesQueried = Array.new
         _oa = _o['tablesQueried']
         _oa.each { | _item | @tablesQueried.push String.from_json(_item) }
       end
-      @filterWeight = Float.from_json(_o['filterWeight']) unless _o['filterWeight'].nil?
+      @obyWeight = Float.from_json(_o['obyWeight']) unless _o['obyWeight'].nil?
       @errorMsg = String.from_json(_o['errorMsg']) unless _o['errorMsg'].nil?
+      @numJoins = Fixnum.from_json(_o['numJoins']) unless _o['numJoins'].nil?
+      @numSels = Fixnum.from_json(_o['numSels']) unless _o['numSels'].nil?
+      @planString = String.from_json(_o['planString']) unless _o['planString'].nil?
       @numGbys = Fixnum.from_json(_o['numGbys']) unless _o['numGbys'].nil?
+      @joinWeight = Float.from_json(_o['joinWeight']) unless _o['joinWeight'].nil?
     end
 
     # constructs a QueryPlan from a (parsed) JSON hash
@@ -1869,23 +1932,23 @@ module Query
   class PersistentQueryResult < Org::Apache::Lens::Api::Query::QueryResult 
 
     # (no documentation provided)
-    attr_accessor :numRows
-    # (no documentation provided)
     attr_accessor :persistedURI
+    # (no documentation provided)
+    attr_accessor :numRows
 
     # the json hash for this PersistentQueryResult
     def to_jaxb_json_hash
       _h = super
-      _h['numRows'] = numRows.to_jaxb_json_hash unless numRows.nil?
       _h['persistedURI'] = persistedURI.to_jaxb_json_hash unless persistedURI.nil?
+      _h['numRows'] = numRows.to_jaxb_json_hash unless numRows.nil?
       return _h
     end
 
     #initializes this PersistentQueryResult with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @numRows = Fixnum.from_json(_o['numRows']) unless _o['numRows'].nil?
       @persistedURI = String.from_json(_o['persistedURI']) unless _o['persistedURI'].nil?
+      @numRows = Fixnum.from_json(_o['numRows']) unless _o['numRows'].nil?
     end
 
     # constructs a PersistentQueryResult from a (parsed) JSON hash

@@ -33,6 +33,7 @@ org.apache.lens.server.api.priority
 org.apache.lens.server.api.query
 org.apache.lens.server.api.quota
 org.apache.lens.server.api.scheduler
+org.apache.lens.server.api.session
 org.apache.lens.server.metastore
 org.apache.lens.server.ml
 org.apache.lens.server.query

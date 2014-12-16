@@ -113,15 +113,7 @@
         </tr>
         <tr>
           <td>
-            driverOpHandle (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            finishTime (long)
+            closedTime (long)
           </td>
           <td>1/1</td>
           <td>
@@ -129,7 +121,15 @@
         </tr>
         <tr>
           <td>
-            queryName (string)
+            submissionTime (long)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            status (<a href="ns0_queryStatus.html">queryStatus</a>)
           </td>
           <td>0/1</td>
           <td>
@@ -137,7 +137,31 @@
         </tr>
         <tr>
           <td>
-            status (<a href="ns0_queryStatus.html">queryStatus</a>)
+            queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            launchTime (long)
+          </td>
+          <td>1/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            selectedDriverClassName (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            userQuery (string)
           </td>
           <td>0/1</td>
           <td>
@@ -153,25 +177,9 @@
         </tr>
         <tr>
           <td>
-            queryConf (<a href="ns0_lensConf.html">lensConf</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            submissionTime (long)
+            finishTime (long)
           </td>
           <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            resultSetPath (string)
-          </td>
-          <td>0/1</td>
           <td>
           </td>
         </tr>
@@ -193,23 +201,7 @@
         </tr>
         <tr>
           <td>
-            driverQuery (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            userQuery (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            launchTime (long)
+            driverFinishTime (long)
           </td>
           <td>1/1</td>
           <td>
@@ -225,15 +217,7 @@
         </tr>
         <tr>
           <td>
-            driverFinishTime (long)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+            driverQuery (string)
           </td>
           <td>0/1</td>
           <td>
@@ -241,15 +225,31 @@
         </tr>
         <tr>
           <td>
-            closedTime (long)
+            queryName (string)
           </td>
-          <td>1/1</td>
+          <td>0/1</td>
           <td>
           </td>
         </tr>
         <tr>
           <td>
-            selectedDriverClassName (string)
+            driverOpHandle (string)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            queryConf (<a href="ns0_lensConf.html">lensConf</a>)
+          </td>
+          <td>0/1</td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            resultSetPath (string)
           </td>
           <td>0/1</td>
           <td>
@@ -265,49 +265,9 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>driverOpHandle</td>
+          <td>closedTime</td>
           <td>
-              driverOpHandle (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>finishTime</td>
-          <td>
-              finishTime (long)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>queryName</td>
-          <td>
-              queryName (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>status</td>
-          <td>
-              status (<a href="ns0_queryStatus.html">queryStatus</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>submittedUser</td>
-          <td>
-              submittedUser (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>queryConf</td>
-          <td>
-              queryConf (<a href="ns0_lensConf.html">lensConf</a>)
+              closedTime (long)
           </td>
           <td>
           </td>
@@ -321,9 +281,57 @@
           </td>
         </tr>
         <tr>
-          <td>resultSetPath</td>
+          <td>status</td>
           <td>
-              resultSetPath (string)
+              status (<a href="ns0_queryStatus.html">queryStatus</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>queryHandle</td>
+          <td>
+              queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>launchTime</td>
+          <td>
+              launchTime (long)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>selectedDriverClassName</td>
+          <td>
+              selectedDriverClassName (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>userQuery</td>
+          <td>
+              userQuery (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>submittedUser</td>
+          <td>
+              submittedUser (string)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>finishTime</td>
+          <td>
+              finishTime (long)
           </td>
           <td>
           </td>
@@ -345,25 +353,9 @@
           </td>
         </tr>
         <tr>
-          <td>driverQuery</td>
+          <td>driverFinishTime</td>
           <td>
-              driverQuery (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>userQuery</td>
-          <td>
-              userQuery (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>launchTime</td>
-          <td>
-              launchTime (long)
+              driverFinishTime (long)
           </td>
           <td>
           </td>
@@ -377,33 +369,41 @@
           </td>
         </tr>
         <tr>
-          <td>driverFinishTime</td>
+          <td>driverQuery</td>
           <td>
-              driverFinishTime (long)
+              driverQuery (string)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>queryHandle</td>
+          <td>queryName</td>
           <td>
-              queryHandle (<a href="ns0_queryHandle.html">queryHandle</a>)
+              queryName (string)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>closedTime</td>
+          <td>driverOpHandle</td>
           <td>
-              closedTime (long)
+              driverOpHandle (string)
           </td>
           <td>
           </td>
         </tr>
         <tr>
-          <td>selectedDriverClassName</td>
+          <td>queryConf</td>
           <td>
-              selectedDriverClassName (string)
+              queryConf (<a href="ns0_lensConf.html">lensConf</a>)
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>resultSetPath</td>
+          <td>
+              resultSetPath (string)
           </td>
           <td>
           </td>
