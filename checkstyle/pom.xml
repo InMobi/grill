@@ -22,6 +22,6 @@
     <groupId>org.apache.lens</groupId>
     <artifactId>checkstyle</artifactId>
     <name>Lens Checkstyle Rules</name>
-   <version>1.0</version>
+   <version>1.1-SNAPSHOT</version>
 
 </project>
