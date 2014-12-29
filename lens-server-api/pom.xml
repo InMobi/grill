@@ -24,7 +24,7 @@
     <parent>
         <artifactId>lens-parent</artifactId>
         <groupId>org.apache.lens</groupId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>lens-server-api</artifactId>
