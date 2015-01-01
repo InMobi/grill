@@ -42,6 +42,21 @@
     <hadoop.version>2.4.0</hadoop.version>
     <spark.version>1.1.0</spark.version>
     <test.tmp.dir>${basedir}/target/tmp</test.tmp.dir>
+
+    <!-- maven plugins -->
+    <jaxb2.plugin.version>0.8.0</jaxb2.plugin.version>
+    <jaxb2.basics.plugin.version>0.6.3</jaxb2.basics.plugin.version>
+    <jetty.plugin.version>${jetty.version}</jetty.plugin.version>
+    <exec.plugin.version>1.2.1</exec.plugin.version>
+    <enunciate.plugin.version>1.28</enunciate.plugin.version>
+    <reports.plugin.version>2.7</reports.plugin.version>
+    <javadoc.plugin.version>2.9.1</javadoc.plugin.version>
+    <surefire.plugin.version>2.15</surefire.plugin.version>
+    <jdeb.plugin.version>1.0.1</jdeb.plugin.version>
+    <checkstyle.plugin.version>2.9.1</checkstyle.plugin.version>
+    <war.plugin.version>2.1.1</war.plugin.version>
+    <license.plugin.version>2.6</license.plugin.version>
+    <buildnumber.plugin.version>1.0</buildnumber.plugin.version>
   </properties>
 
   <groupId>org.apache.lens</groupId>
@@ -161,6 +176,11 @@
             <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
             <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>buildnumber-maven-plugin</artifactId>
+          <version>${buildnumber.plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
