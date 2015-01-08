@@ -1,3 +1,7 @@
+[Lens has moved to the ASF](http://incubator.apache.org/projects/lens.html)
+=========================
+
+
 Lens
 =====
 
