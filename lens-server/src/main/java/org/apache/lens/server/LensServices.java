@@ -31,7 +31,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -57,9 +56,6 @@ public class LensServices extends CompositeService implements ServiceProvider {
   /** The Constant LENS_SERVICES_NAME. */
   public static final String LENS_SERVICES_NAME = "lens_services";
 
-  /** Constant for FileSystem auto close on shutdown config */
-  private static final String FS_AUTOMATIC_CLOSE = "fs.automatic.close";
-
   /** The instance. */
   private static LensServices INSTANCE = new LensServices(LENS_SERVICES_NAME);
 
@@ -77,9 +73,6 @@ public class LensServices extends CompositeService implements ServiceProvider {
 
   /** The persist dir. */
   private Path persistDir;
-
-  /** The persistence file system. */
-  private FileSystem persistenceFS;
 
   /** The stopping. */
   private boolean stopping = false;
@@ -197,9 +190,6 @@ public class LensServices extends CompositeService implements ServiceProvider {
           LensConfConstants.DEFAULT_SERVER_STATE_PERSIST_LOCATION);
       persistDir = new Path(persistPathStr);
       try {
-        Configuration configuration = new Configuration(conf);
-        configuration.setBoolean(FS_AUTOMATIC_CLOSE, false);
-        persistenceFS = FileSystem.newInstance(persistDir.toUri(), conf);
         setupPersistedState();
       } catch (Exception e) {
         LOG.error("Could not recover from persisted state", e);
@@ -246,12 +236,13 @@ public class LensServices extends CompositeService implements ServiceProvider {
   private void setupPersistedState() throws IOException, ClassNotFoundException {
     if (conf.getBoolean(LensConfConstants.SERVER_RECOVER_ON_RESTART,
         LensConfConstants.DEFAULT_SERVER_RECOVER_ON_RESTART)) {
+      FileSystem fs = persistDir.getFileSystem(conf);
 
       for (LensService service : lensServices) {
         ObjectInputStream in = null;
         try {
           try {
-            in = new ObjectInputStream(persistenceFS.open(getServicePersistPath(service)));
+            in = new ObjectInputStream(fs.open(getServicePersistPath(service)));
           } catch (FileNotFoundException fe) {
             LOG.warn("No persist path available for service:" + service.getName());
             continue;
@@ -276,6 +267,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
   private synchronized void persistLensServiceState() throws IOException {
     if (conf.getBoolean(LensConfConstants.SERVER_RESTART_ENABLED, LensConfConstants.DEFAULT_SERVER_RESTART_ENABLED)) {
       if (persistDir != null) {
+        FileSystem fs = persistDir.getFileSystem(conf);
         LOG.info("Persisting server state in " + persistDir);
 
         for (LensService service : lensServices) {
@@ -283,7 +275,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
           Path serviceWritePath = new Path(persistDir, service.getName() + ".out");
           ObjectOutputStream out = null;
           try {
-            out = new ObjectOutputStream(persistenceFS.create(serviceWritePath));
+            out = new ObjectOutputStream(fs.create(serviceWritePath));
             service.writeExternal(out);
           } finally {
             if (out != null) {
@@ -291,7 +283,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
             }
           }
           Path servicePath = getServicePersistPath(service);
-          persistenceFS.rename(serviceWritePath, servicePath);
+          fs.rename(serviceWritePath, servicePath);
           LOG.info("Persisted service " + service.getName() + " to " + servicePath);
         }
       }
@@ -331,9 +323,6 @@ public class LensServices extends CompositeService implements ServiceProvider {
       try {
         // persist all the services
         persistLensServiceState();
-
-        persistenceFS.close();
-        LOG.info("Persistence File system object close complete");
       } catch (IOException e) {
         LOG.error("Could not persist server state", e);
         throw new IllegalStateException(e);
