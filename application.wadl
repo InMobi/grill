@@ -617,12 +617,12 @@ queries of the current user.]]>
           </wadl:param>
           <wadl:param name="fromDate" style="query">
             <wadl:doc>
-              <![CDATA[from date to search queries in a time range]]>
+              <![CDATA[from date to search queries in a time range, the range is inclusive(submitTime >= fromDate)]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="toDate" style="query">
             <wadl:doc>
-              <![CDATA[to date to search queries in a time range]]>
+              <![CDATA[to date to search queries in a time range, the range is inclusive(toDate >= submitTime)]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
@@ -665,8 +665,8 @@ SubmitOp#EXECUTE_WITH_TIMEOUT operation.]]>
             <wadl:doc>
               <![CDATA[If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be
 cancelled. Possible states are QueryStatus.Status#values() The queries in
-QueryStatus.Status#FAILED,QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED,
-QueryStatus.Status#UNKNOWN cannot be cancelled]]>
+QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED,
+QueryStatus.Status#SUCCESSFUL cannot be cancelled]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="user" style="query">
@@ -682,12 +682,12 @@ will be cancelled]]>
           </wadl:param>
           <wadl:param name="fromDate" style="query">
             <wadl:doc>
-              <![CDATA[the from date]]>
+              <![CDATA[the from date, inclusive(submitTime>=fromDate)]]>
             </wadl:doc>
           </wadl:param>
           <wadl:param name="toDate" style="query">
             <wadl:doc>
-              <![CDATA[the to date]]>
+              <![CDATA[the to date, inclusive(toDate>=submitTime)]]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>

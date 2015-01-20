@@ -107,7 +107,11 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;lensQuery&gt;
-  &lt;finishTime&gt;...&lt;/finishTime&gt;
+  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
+  &lt;launchTime&gt;...&lt;/launchTime&gt;
+  &lt;priority&gt;...&lt;/priority&gt;
+  &lt;queryName&gt;...&lt;/queryName&gt;
+  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
   &lt;queryConf&gt;
     &lt;properties&gt;
       &lt;entry&gt;
@@ -126,34 +130,34 @@
     &lt;/properties&gt;
   &lt;/queryConf&gt;
   &lt;driverQuery&gt;...&lt;/driverQuery&gt;
-  &lt;userQuery&gt;...&lt;/userQuery&gt;
-  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
+  &lt;status&gt;
+    &lt;progress&gt;...&lt;/progress&gt;
+    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
+    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
+    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
+    &lt;status&gt;...&lt;/status&gt;
+    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+  &lt;/status&gt;
+  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
+  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
+  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
+  &lt;closedTime&gt;...&lt;/closedTime&gt;
   &lt;isPersistent&gt;...&lt;/isPersistent&gt;
+  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
   &lt;queryHandle&gt;
     &lt;handleId&gt;...&lt;/handleId&gt;
   &lt;/queryHandle&gt;
-  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
-  &lt;queryName&gt;...&lt;/queryName&gt;
-  &lt;launchTime&gt;...&lt;/launchTime&gt;
-  &lt;priority&gt;...&lt;/priority&gt;
-  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
-  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
-  &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
-  &lt;closedTime&gt;...&lt;/closedTime&gt;
+  &lt;finishTime&gt;...&lt;/finishTime&gt;
   &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
-  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
-  &lt;status&gt;
-    &lt;status&gt;...&lt;/status&gt;
-    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
-    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
-    &lt;progress&gt;...&lt;/progress&gt;
-    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
-    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
-  &lt;/status&gt;
+  &lt;userQuery&gt;...&lt;/userQuery&gt;
 &lt;/lensQuery&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;finishTime&quot; : ...,
+  &quot;submittedUser&quot; : &quot;...&quot;,
+  &quot;launchTime&quot; : ...,
+  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
+  &quot;queryName&quot; : &quot;...&quot;,
+  &quot;driverOpHandle&quot; : &quot;...&quot;,
   &quot;queryConf&quot; : {
     &quot;properties&quot; : {
       &quot;...&quot; : &quot;...&quot;,
@@ -161,30 +165,26 @@
     }
   },
   &quot;driverQuery&quot; : &quot;...&quot;,
-  &quot;userQuery&quot; : &quot;...&quot;,
-  &quot;submissionTime&quot; : ...,
+  &quot;status&quot; : {
+    &quot;progress&quot; : ...,
+    &quot;errorMessage&quot; : &quot;...&quot;,
+    &quot;progressMessage&quot; : &quot;...&quot;,
+    &quot;isResultSetAvailable&quot; : false,
+    &quot;status&quot; : &quot;NEW&quot;,
+    &quot;statusMessage&quot; : &quot;...&quot;
+  },
+  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
+  &quot;driverFinishTime&quot; : ...,
+  &quot;driverStartTime&quot; : ...,
+  &quot;closedTime&quot; : ...,
   &quot;isPersistent&quot; : false,
+  &quot;submissionTime&quot; : ...,
   &quot;queryHandle&quot; : {
     &quot;handleId&quot; : &quot;...&quot;
   },
-  &quot;driverFinishTime&quot; : ...,
-  &quot;queryName&quot; : &quot;...&quot;,
-  &quot;launchTime&quot; : ...,
-  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
-  &quot;driverStartTime&quot; : ...,
-  &quot;submittedUser&quot; : &quot;...&quot;,
-  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
-  &quot;closedTime&quot; : ...,
+  &quot;finishTime&quot; : ...,
   &quot;resultSetPath&quot; : &quot;...&quot;,
-  &quot;driverOpHandle&quot; : &quot;...&quot;,
-  &quot;status&quot; : {
-    &quot;status&quot; : &quot;NEW&quot;,
-    &quot;errorMessage&quot; : &quot;...&quot;,
-    &quot;progressMessage&quot; : &quot;...&quot;,
-    &quot;progress&quot; : ...,
-    &quot;statusMessage&quot; : &quot;...&quot;,
-    &quot;isResultSetAvailable&quot; : false
-  }
+  &quot;userQuery&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />

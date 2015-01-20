@@ -622,7 +622,7 @@ queries of the current user.
         <tr>
           <td>fromDate</td>
           <td>
-            from date to search queries in a time range
+            from date to search queries in a time range, the range is inclusive(submitTime >= fromDate)
           </td>
           <td>query</td>
           <td>-1</td>
@@ -630,7 +630,7 @@ queries of the current user.
         <tr>
           <td>toDate</td>
           <td>
-            to date to search queries in a time range
+            to date to search queries in a time range, the range is inclusive(toDate >= submitTime)
           </td>
           <td>query</td>
           <td>-1</td>
@@ -703,14 +703,6 @@ and SubmitOp#EXECUTE_WITH_TIMEOUT
           <td>30000</td>
         </tr>
         <tr>
-          <td>user</td>
-          <td>
-            the user
-          </td>
-          <td>formdata</td>
-          <td></td>
-        </tr>
-        <tr>
           <td>queryName</td>
           <td>
             human readable query name set by user (optional parameter)
@@ -759,8 +751,8 @@ SubmitOp#EXECUTE_WITH_TIMEOUT operation.</p>
           <td>
             If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be
 cancelled. Possible states are QueryStatus.Status#values() The queries in
-QueryStatus.Status#FAILED,QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED,
-QueryStatus.Status#UNKNOWN cannot be cancelled
+QueryStatus.Status#FAILED, QueryStatus.Status#CLOSED,
+QueryStatus.Status#SUCCESSFUL cannot be cancelled
           </td>
           <td>query</td>
           <td></td>
@@ -785,7 +777,7 @@ will be cancelled
         <tr>
           <td>fromDate</td>
           <td>
-            the from date
+            the from date, inclusive(submitTime>=fromDate)
           </td>
           <td>query</td>
           <td>-1</td>
@@ -793,7 +785,7 @@ will be cancelled
         <tr>
           <td>toDate</td>
           <td>
-            the to date
+            the to date, inclusive(toDate>=submitTime)
           </td>
           <td>query</td>
           <td>-1</td>
