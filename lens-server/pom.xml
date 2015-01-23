@@ -66,32 +66,37 @@
         <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-driver-hive</artifactId>
-        <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-query-lib</artifactId>
-        <version>${project.version}</version>
-        </dependency>
-        <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-driver-hive</artifactId>
-        <version>${project.version}</version>
-        <type>test-jar</type>
-        <scope>test</scope>
-        </dependency>
     <dependency>
-       <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-       <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-     </dependency>
-     <dependency>
-        <groupId>org.glassfish.jersey.test-framework</groupId>
-        <artifactId>jersey-test-framework-core</artifactId>
-      </dependency>
+      <groupId>org.apache.lens</groupId>
+      <artifactId>lens-driver-hive</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lens</groupId>
+      <artifactId>lens-driver-jdbc</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lens</groupId>
+      <artifactId>lens-query-lib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lens</groupId>
+      <artifactId>lens-driver-hive</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+      <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.test-framework</groupId>
+      <artifactId>jersey-test-framework-core</artifactId>
+    </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
