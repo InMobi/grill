@@ -71,7 +71,7 @@
 
   <groupId>org.apache.lens</groupId>
   <artifactId>lens-parent</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5-SNAPSHOT</version>
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
@@ -110,7 +110,7 @@
     <connection>scm:git:https://github.com/InMobi/grill.git</connection>
     <url>https://github.com/InMobi/grill</url>
     <developerConnection>scm:git:https://github.com/InMobi/grill.git</developerConnection>
-    <tag>lens-parent-1.2.4</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <reporting>
@@ -363,7 +363,7 @@
           <dependency>
             <groupId>org.apache.lens</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>1.4</version>
+            <version>1.5-SNAPSHOT</version>
           </dependency>
         </dependencies>
         <executions>
