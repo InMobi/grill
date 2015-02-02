@@ -116,4 +116,14 @@ public interface SessionService {
    * @return the number of services that the resource has been added to
    */
   public int addResourceToAllServices(LensSessionHandle sessionHandle, String type, String path);
+
+  /**
+   * Lists resources from the session service
+   *
+   * @param sessionHandle the sessionid
+   * @param type          the resource type, can be null, file or jar
+   * @return   Lists resources for a given resource type.
+   *           Lists all resources if resource type is null
+   */
+  List<String> listAllResources(LensSessionHandle sessionHandle, String type);
 }
