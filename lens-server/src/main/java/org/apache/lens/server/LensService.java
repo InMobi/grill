@@ -18,6 +18,26 @@
  */
 package org.apache.lens.server;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.NotAuthorizedException;
+
+import org.apache.lens.api.LensConf;
+import org.apache.lens.api.LensException;
+import org.apache.lens.api.LensSessionHandle;
+import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.session.LensSessionImpl;
+import org.apache.lens.server.user.UserConfigLoaderFactory;
+import org.apache.lens.server.util.UtilityMethods;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,25 +53,6 @@ import org.apache.hive.service.cli.HiveSQLException;
 import org.apache.hive.service.cli.SessionHandle;
 import org.apache.hive.service.cli.session.SessionManager;
 import org.apache.hive.service.cli.thrift.TSessionHandle;
-import org.apache.lens.api.LensConf;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.session.LensSessionImpl;
-import org.apache.lens.server.user.UserConfigLoaderFactory;
-import org.apache.lens.server.util.UtilityMethods;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Class LensService.
@@ -244,7 +245,8 @@ public abstract class LensService extends CompositeService implements Externaliz
       return ((LensSessionImpl) getSessionManager().getSession(getHiveSessionHandle(sessionHandle)));
     } catch (HiveSQLException exc) {
       LOG.warn("Session " + sessionHandle.getPublicId() + " not found", exc);
-      throw new NotFoundException("Session " + sessionHandle.getPublicId() + " not found " + sessionHandle);
+      // throw resource gone exception (410)
+      throw new ClientErrorException("Session " + sessionHandle.getPublicId() + " is invalid " + sessionHandle, 410);
     }
   }
 

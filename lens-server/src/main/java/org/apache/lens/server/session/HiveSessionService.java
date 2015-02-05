@@ -25,18 +25,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.processors.SetProcessor;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.service.cli.*;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.server.LensService;
-import org.apache.lens.server.LensServices;
-import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.api.session.SessionService;
-import org.apache.lens.server.query.QueryExecutionServiceImpl;
-import org.apache.lens.server.session.LensSessionImpl.ResourceEntry;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -45,6 +33,20 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+
+import org.apache.lens.api.LensException;
+import org.apache.lens.api.LensSessionHandle;
+import org.apache.lens.server.LensService;
+import org.apache.lens.server.LensServices;
+import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.api.session.SessionService;
+import org.apache.lens.server.query.QueryExecutionServiceImpl;
+import org.apache.lens.server.session.LensSessionImpl.ResourceEntry;
 
 /**
  * The Class HiveSessionService.
@@ -416,7 +418,7 @@ public class HiveSessionService extends LensService implements SessionService {
           if (session.isActive()) {
             itr.remove();
           }
-        } catch (NotFoundException nfe) {
+        } catch (ClientErrorException nfe) {
           itr.remove();
         }
       }
@@ -427,8 +429,8 @@ public class HiveSessionService extends LensService implements SessionService {
           long lastAccessTime = getSession(sessionHandle).getLastAccessTime();
           closeSession(sessionHandle);
           LOG.info("Closed inactive session " + sessionHandle.getPublicId() + " last accessed at "
-              + new Date(lastAccessTime));
-        } catch (NotFoundException nfe) {
+            + new Date(lastAccessTime));
+        } catch (ClientErrorException nfe) {
           // Do nothing
         } catch (LensException e) {
           LOG.error("Error closing session " + sessionHandle.getPublicId() + " reason " + e.getMessage());
