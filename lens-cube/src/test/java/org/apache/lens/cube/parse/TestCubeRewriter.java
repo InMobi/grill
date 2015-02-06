@@ -128,7 +128,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
     // Error should be no missing partitions with first missing partition populated for each update period
     conf.setBoolean(CubeQueryConfUtil.ADD_NON_EXISTING_PARTITIONS, false);
     th = getSemanticExceptionInRewrite(
-      "select SUM(msr2) from testCube" + " where " + TWO_DAYS_RANGE, conf);
+      "select SUM(msr2) from testCube" + " where " + twoDaysRange, conf);
     Assert.assertEquals(th.getCanonicalErrorMsg().getErrorCode(), ErrorMsg.NO_CANDIDATE_FACT_AVAILABLE.getErrorCode());
     pruneCauses = extractPruneCause(th);
     Assert.assertEquals(
