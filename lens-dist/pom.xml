@@ -27,11 +27,7 @@
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
-<<<<<<< HEAD
-    <version>1.2.6-SNAPSHOT</version>
-=======
     <version>2.1.0-incubating-SNAPSHOT</version>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   </parent>
 
   <artifactId>lens-dist</artifactId>
@@ -168,13 +164,8 @@
               <goal>jdeb</goal>
             </goals>
             <configuration>
-<<<<<<< HEAD
-              <installDir>${mvn.lens.install.dir}</installDir>
-              <controlDir>${mvn.deb.build.dir}/control</controlDir>
-=======
               <installDir>${mvn.lens.install.dir}/server</installDir>
               <controlDir>${mvn.deb.build.dir}/control/server-control</controlDir>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
               <deb>${project.build.directory}/lens-server_${project.version}.deb</deb>
               <dataSet>
                 <data>
@@ -182,11 +173,7 @@
                   <type>directory</type>
                   <mapper>
                     <type>perm</type>
-<<<<<<< HEAD
-                    <prefix>${mvn.lens.install.dir}</prefix>
-=======
                     <prefix>${mvn.lens.install.dir}/server</prefix>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                   </mapper>
                 </data>
                 <data>
@@ -194,11 +181,7 @@
                   <type>directory</type>
                   <mapper>
                     <type>perm</type>
-<<<<<<< HEAD
-                    <prefix>${mvn.lens.bin.dir}</prefix>
-=======
                     <prefix>${mvn.lens.install.dir}/server/bin</prefix>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                     <filemode>755</filemode>
                   </mapper>
                 </data>
@@ -221,9 +204,6 @@
                   <type>directory</type>
                   <mapper>
                     <type>perm</type>
-<<<<<<< HEAD
-                    <prefix>${mvn.lens.webapp.dir}</prefix>
-=======
                     <prefix>${mvn.lens.install.dir}/client</prefix>
                   </mapper>
                 </data>
@@ -244,7 +224,6 @@
                     <type>perm</type>
                     <prefix>/usr/bin/</prefix>
                     <filemode>755</filemode>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                   </mapper>
                 </data>
               </dataSet>
@@ -263,7 +242,3 @@
   </build>
 
 </project>
-<<<<<<< HEAD
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7

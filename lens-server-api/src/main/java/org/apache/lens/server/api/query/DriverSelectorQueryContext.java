@@ -18,11 +18,6 @@
  */
 package org.apache.lens.server.api.query;
 
-<<<<<<< HEAD
-import lombok.Getter;
-import lombok.Setter;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.util.*;
 
 import org.apache.lens.api.LensException;
@@ -30,14 +25,6 @@ import org.apache.lens.api.query.QueryCost;
 import org.apache.lens.server.api.driver.DriverQueryPlan;
 import org.apache.lens.server.api.driver.LensDriver;
 import org.apache.lens.server.api.util.LensUtil;
-<<<<<<< HEAD
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-
-import java.util.*;
-=======
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +32,6 @@ import org.apache.hadoop.conf.Configuration;
 
 import lombok.Getter;
 import lombok.Setter;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 public class DriverSelectorQueryContext {
 
@@ -81,18 +67,6 @@ public class DriverSelectorQueryContext {
   }
 
   public static class DriverQueryContext {
-<<<<<<< HEAD
-
-    @Getter
-    protected LensDriver driver;
-
-    DriverQueryContext(LensDriver driver) {
-      this.driver = driver;
-    }
-
-    /**
-     * Map of driver to query plan
-=======
 
     @Getter
     protected LensDriver driver;
@@ -110,18 +84,13 @@ public class DriverSelectorQueryContext {
 
     /**
      * Driver's query plan
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
      */
     @Getter
     @Setter
     protected DriverQueryPlan driverQueryPlan;
 
     /**
-<<<<<<< HEAD
-     * driver specific query conf
-=======
      * Driver specific query conf
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
      */
     @Getter
     @Setter
@@ -129,14 +98,11 @@ public class DriverSelectorQueryContext {
 
     @Getter
     @Setter
-<<<<<<< HEAD
-=======
     /** exceptions occurred while trying to estimate cost */
     protected Exception driverQueryCostEstimateError;
 
     @Getter
     @Setter
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     /** exceptions occurred while trying to generate plans by explain call */
     protected Exception driverQueryPlanGenerationError;
 
@@ -170,17 +136,6 @@ public class DriverSelectorQueryContext {
    * @param driverQueries
    * @throws LensException
    */
-<<<<<<< HEAD
-  void setDriverQueriesAndPlans(Map<LensDriver, String> driverQueries, AbstractQueryContext qctx)
-    throws LensException {
-    StringBuilder detailedFailureCause = new StringBuilder();
-    String failureCause = null;
-    boolean useBuilder = false;
-    boolean succeededOnAtleastOneDriver = false;
-    for (LensDriver driver : driverQueries.keySet()) {
-      final DriverQueryContext driverQueryContext = driverQueryContextMap.get(driver);
-      driverQueryContext.setQuery(driverQueries.get(driver));
-=======
   void setDriverQueries(Map<LensDriver, String> driverQueries) {
     for (LensDriver driver : driverQueries.keySet()) {
       final DriverQueryContext driverQueryContext = driverQueryContextMap.get(driver);
@@ -204,7 +159,6 @@ public class DriverSelectorQueryContext {
     for (LensDriver driver : driverQueries.keySet()) {
       final DriverQueryContext driverQueryContext = driverQueryContextMap.get(driver);
       driverQueryContext.setQuery(driverQueries.get(driver));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       try {
         driverQueryContext.setDriverQueryPlan(driver.explain(qctx));
         succeededOnAtleastOneDriver = true;
@@ -249,42 +203,6 @@ public class DriverSelectorQueryContext {
     if (driverQueryCtxs.get(getSelectedDriver()).getDriverQueryPlanGenerationError() != null) {
       throw new LensException("Driver Query Plan of the selected driver is null",
           driverQueryCtxs.get(getSelectedDriver()).getDriverQueryPlanGenerationError());
-<<<<<<< HEAD
-    }
-    return driverQueryCtxs.get(getSelectedDriver()).getDriverQueryPlan();
-  }
-
-  public Configuration getSelectedDriverConf() {
-    return getSelectedDriver() == null ? null : driverQueryContextMap.get(getSelectedDriver()).getDriverSpecificConf();
-  }
-
-  public String getSelectedDriverQuery() {
-    return getSelectedDriver() == null ? null : driverQueryContextMap.get(getSelectedDriver()).getQuery();
-  }
-
-  public void setDriverConf(LensDriver driver, Configuration conf) {
-    driverQueryContextMap.get(driver).setDriverSpecificConf(conf);
-  }
-
-  public void setSelectedDriverQuery(String driverQuery) {
-    if (driverQueryContextMap != null && driverQueryContextMap.get(getSelectedDriver()) != null) {
-      driverQueryContextMap.get(getSelectedDriver()).setQuery(driverQuery);
-    }
-  }
-
-  public Collection<LensDriver> getDrivers() {
-    return driverQueryContextMap.keySet();
-  }
-
-  public Collection<String> getDriverQueries() {
-    List<String> queries = new ArrayList<String>();
-    final Collection<DriverQueryContext> values = driverQueryContextMap.values();
-    for (DriverQueryContext ctx : values) {
-      if (ctx.getQuery() != null) {
-        queries.add(ctx.getQuery());
-      }
-    }
-=======
     }
     return driverQueryCtxs.get(getSelectedDriver()).getDriverQueryPlan();
   }
@@ -345,7 +263,6 @@ public class DriverSelectorQueryContext {
         queries.add(ctx.getQuery());
       }
     }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return queries;
   }
 
@@ -362,8 +279,6 @@ public class DriverSelectorQueryContext {
   public String getDriverQuery(LensDriver driver) {
     return driverQueryContextMap.get(driver) != null
         ? driverQueryContextMap.get(driver).getQuery() : null;
-<<<<<<< HEAD
-=======
   }
 
   public QueryCost getDriverQueryCost(LensDriver driver) {
@@ -373,6 +288,5 @@ public class DriverSelectorQueryContext {
 
   public void setDriverQueryPlan(LensDriver driver, DriverQueryPlan qp) {
     driverQueryContextMap.get(driver).setDriverQueryPlan(qp);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 }

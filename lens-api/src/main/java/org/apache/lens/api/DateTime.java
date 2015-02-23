@@ -21,15 +21,11 @@
  */
 package org.apache.lens.api;
 
-import lombok.*;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
-<<<<<<< HEAD
-import java.util.Date;
-=======
 
 import lombok.*;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Class DateTime.

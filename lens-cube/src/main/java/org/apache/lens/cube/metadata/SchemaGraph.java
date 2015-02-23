@@ -18,15 +18,9 @@
  */
 package org.apache.lens.cube.metadata;
 
-<<<<<<< HEAD
-import lombok.Getter;
-import lombok.Setter;
-=======
 import java.util.*;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.hadoop.hive.ql.metadata.HiveException;
-import org.apache.hadoop.hive.ql.parse.JoinType;
 
 import lombok.Getter;
 
@@ -35,12 +29,6 @@ public class SchemaGraph {
    * An edge in the schema graph
    */
   public static class TableRelationship {
-<<<<<<< HEAD
-    @Getter final String fromColumn;
-    @Getter final AbstractCubeTable fromTable;
-    @Getter final String toColumn;
-    @Getter final AbstractCubeTable toTable;
-=======
     @Getter
     final String fromColumn;
     @Getter
@@ -49,7 +37,6 @@ public class SchemaGraph {
     final String toColumn;
     @Getter
     final AbstractCubeTable toTable;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     public TableRelationship(String fromCol, AbstractCubeTable fromTab, String toCol, AbstractCubeTable toTab) {
       fromColumn = fromCol;
@@ -276,15 +263,10 @@ public class SchemaGraph {
     cubeOutGraph = new HashMap<CubeInterface, Map<AbstractCubeTable, Set<TableRelationship>>>();
     cubeInGraph = new HashMap<CubeInterface, Map<AbstractCubeTable, Set<TableRelationship>>>();
     for (CubeInterface cube : metastore.getAllCubes()) {
-<<<<<<< HEAD
-      Map<AbstractCubeTable, Set<TableRelationship>> outGraph = new HashMap<AbstractCubeTable, Set<TableRelationship>>();
-      Map<AbstractCubeTable, Set<TableRelationship>> inGraph = new HashMap<AbstractCubeTable, Set<TableRelationship>>();
-=======
       Map<AbstractCubeTable, Set<TableRelationship>> outGraph
         = new HashMap<AbstractCubeTable, Set<TableRelationship>>();
       Map<AbstractCubeTable, Set<TableRelationship>> inGraph
         = new HashMap<AbstractCubeTable, Set<TableRelationship>>();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       buildGraph((AbstractCubeTable) cube, outGraph, inGraph);
 
       for (Dimension dim : metastore.getAllDimensions()) {

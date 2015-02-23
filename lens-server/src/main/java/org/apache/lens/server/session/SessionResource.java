@@ -18,7 +18,6 @@
  */
 package org.apache.lens.server.session;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +30,10 @@ import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.server.LensService;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.session.SessionService;
-<<<<<<< HEAD
-=======
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
@@ -153,20 +149,6 @@ public class SessionResource {
   /**
    * Lists resources from the session for a given resource type.
    *
-<<<<<<< HEAD
-   * @param sessionid
-   *          session handle object
-   * @param type
-   *          resource type. It can be jar, file or null
-   * @return Lists all resources for a given resource type
-   *         Lists all resources if the resource type is not specified
-   */
-  @GET
-  @Path("resources/list")
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
-  public StringList listResources(@QueryParam("sessionid") LensSessionHandle sessionid,
-      @QueryParam("type") String type) {
-=======
    * @param sessionid session handle object
    * @param type      resource type. It can be jar, file or null
    * @return Lists all resources for a given resource type
@@ -177,7 +159,6 @@ public class SessionResource {
   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public StringList listResources(@QueryParam("sessionid") LensSessionHandle sessionid,
     @QueryParam("type") String type) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     List<String> resources = sessionService.listAllResources(sessionid, type);
     return new StringList(resources);
   }

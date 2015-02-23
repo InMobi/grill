@@ -21,8 +21,6 @@
  */
 package org.apache.lens.api.query;
 
-<<<<<<< HEAD
-=======
 
 import java.util.Date;
 
@@ -31,16 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.lens.api.LensConf;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.lens.api.LensConf;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
 
 
 /**

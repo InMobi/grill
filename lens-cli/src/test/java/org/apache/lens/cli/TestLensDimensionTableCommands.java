@@ -78,13 +78,8 @@ public class TestLensDimensionTableCommands extends LensCliApplicationTest {
    *          the storage name
    * @throws IOException
    */
-<<<<<<< HEAD
-  public synchronized static void addDim1Table(String tableName, String specName, String storageSpecName,
-      String storageName) {
-=======
   public static synchronized void addDim1Table(String tableName, String specName, String storageName)
     throws IOException {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     LensDimensionTableCommands command = getCommand();
     String dimList = command.showDimensionTables();
     // add local storage before adding fact table

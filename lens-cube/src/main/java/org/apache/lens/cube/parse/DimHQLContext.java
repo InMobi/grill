@@ -18,12 +18,8 @@
  */
 package org.apache.lens.cube.parse;
 
-<<<<<<< HEAD
-import java.util.HashSet;
-=======
 import static org.apache.lens.cube.parse.StorageUtil.joinWithAnd;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.util.Map;
 import java.util.Set;
 
@@ -32,22 +28,13 @@ import org.apache.lens.cube.metadata.Dimension;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-
-import static org.apache.lens.cube.parse.StorageUtil.joinWithAnd;
 
 /**
  * Dimension HQLContext.
-<<<<<<< HEAD
- *
- * Contains all the dimensions queried and their candidate dim tables Update
- * where string with storage filters added dimensions queried.
-=======
  * <p/>
  * Contains all the dimensions queried and their candidate dim tables Update where string with storage filters added
  * dimensions queried.
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
  */
 abstract class DimHQLContext extends SimpleHQLContext {
 
@@ -57,15 +44,6 @@ abstract class DimHQLContext extends SimpleHQLContext {
   private final Set<Dimension> queriedDims;
   private String where;
   protected final CubeQueryContext query;
-<<<<<<< HEAD
-
-  public CubeQueryContext getQuery() {
-    return query;
-  }
-
-  DimHQLContext(CubeQueryContext query, Map<Dimension, CandidateDim> dimsToQuery, Set<Dimension> queriedDims, String select, String where,
-      String groupby, String orderby, String having, Integer limit) throws SemanticException {
-=======
 
   public CubeQueryContext getQuery() {
     return query;
@@ -74,7 +52,6 @@ abstract class DimHQLContext extends SimpleHQLContext {
   DimHQLContext(CubeQueryContext query, Map<Dimension, CandidateDim> dimsToQuery,
     Set<Dimension> queriedDims, String select, String where,
     String groupby, String orderby, String having, Integer limit) throws SemanticException {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     super(select, groupby, orderby, having, limit);
     this.query = query;
     this.dimsToQuery = dimsToQuery;
@@ -85,18 +62,10 @@ abstract class DimHQLContext extends SimpleHQLContext {
   protected void setMissingExpressions() throws SemanticException {
     setFrom(getFromString());
     setWhere(joinWithAnd(
-<<<<<<< HEAD
-      getQuery().getHiveConf().getBoolean
-        (CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)
-         ? getPostSelectionWhereClause() : null,
-      genWhereClauseWithDimPartitions(where)
-    ));
-=======
       getQuery().getHiveConf().getBoolean(
         CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)
         ? getPostSelectionWhereClause() : null,
       genWhereClauseWithDimPartitions(where)));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   protected abstract String getPostSelectionWhereClause() throws SemanticException;

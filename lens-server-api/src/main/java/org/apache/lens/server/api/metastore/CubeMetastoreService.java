@@ -18,16 +18,6 @@
  */
 package org.apache.lens.server.api.metastore;
 
-<<<<<<< HEAD
-import org.apache.hadoop.hive.ql.metadata.HiveException;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.metastore.*;
-
-import java.util.Date;
-import java.util.List;
-
-=======
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +26,6 @@ import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.metastore.*;
 
 import org.apache.hadoop.hive.ql.metadata.HiveException;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Server api for OLAP Cube Metastore.
@@ -163,11 +152,7 @@ public interface CubeMetastoreService {
    * @return {@link NativeTable} object
    * @throws LensException
    */
-<<<<<<< HEAD
-  NativeTable getNativeTable(LensSessionHandle sessionid, String name) throws LensException;
-=======
   XNativeTable getNativeTable(LensSessionHandle sessionid, String name) throws LensException;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * Get names of all native tables
@@ -252,11 +237,7 @@ public interface CubeMetastoreService {
    *
    * @throws LensException
    */
-<<<<<<< HEAD
-  void createCubeDimensionTable(LensSessionHandle sessionid, DimensionTable xDimTable, XStorageTables storageTables)
-=======
   void createDimensionTable(LensSessionHandle sessionid, XDimensionTable xDimTable)
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     throws LensException;
 
   /**
@@ -275,29 +256,6 @@ public interface CubeMetastoreService {
    * @param dimTblName
    * @return The {@link DimensionTable}
    */
-<<<<<<< HEAD
-  DimensionTable getDimensionTable(LensSessionHandle sessionid, String dimTblName) throws LensException;
-
-  void updateDimensionTable(LensSessionHandle sessionid, DimensionTable dimensionTable) throws LensException;
-
-  List<String> getDimTableStorages(LensSessionHandle sessionid, String dimTblName) throws LensException;
-
-  void createDimTableStorage(LensSessionHandle sessionid, String dimTblName, XStorageTableElement storageTable)
-    throws LensException;
-
-  void dropAllStoragesOfDimTable(LensSessionHandle sessionid, String dimTblName) throws LensException;
-
-  XStorageTableElement getStorageOfDim(LensSessionHandle sessionid, String dimTblName, String storageName)
-    throws LensException;
-
-  void dropStorageOfDimTable(LensSessionHandle sessionid, String dimTblName, String storage) throws LensException;
-
-  List<String> getAllDimTableNames(LensSessionHandle sessionid) throws LensException;
-
-  List<XPartition> getAllPartitionsOfDimTableStorage(LensSessionHandle sessionid, String dimTblName,
-    String storage, String filter) throws LensException;
-
-=======
   XDimensionTable getDimensionTable(LensSessionHandle sessionid, String dimTblName) throws LensException;
 
   /**
@@ -396,7 +354,6 @@ public interface CubeMetastoreService {
    * @param partition {@link XPartition}
    * @throws LensException
    */
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   void addPartitionToDimStorage(LensSessionHandle sessionid, String dimTblName, String storageName,
     XPartition partition) throws LensException;
 
@@ -406,51 +363,6 @@ public interface CubeMetastoreService {
    * @param sessionid The session id
    * @param cubeName  The cube name
    * @return List of FactTable objects
-<<<<<<< HEAD
-   * @throws LensException
-   */
-  List<FactTable> getAllFactsOfCube(LensSessionHandle sessionid, String cubeName) throws LensException;
-
-  FactTable getFactTable(LensSessionHandle sessionid, String fact) throws LensException;
-
-  void createFactTable(LensSessionHandle sessionid, FactTable fact, XStorageTables storageTables) throws LensException;
-
-  void updateFactTable(LensSessionHandle sessionid, FactTable fact) throws LensException;
-
-  void dropFactTable(LensSessionHandle sessionid, String fact, boolean cascade) throws LensException;
-
-  List<String> getAllFactNames(LensSessionHandle sessionid) throws LensException;
-
-  List<String> getStoragesOfFact(LensSessionHandle sessionid, String fact) throws LensException;
-
-  void dropAllStoragesOfFact(LensSessionHandle sessionid, String factName) throws LensException;
-
-  XStorageTableElement getStorageOfFact(LensSessionHandle sessionid, String fact, String storageName)
-    throws LensException;
-
-  void addStorageToFact(LensSessionHandle sessionid, String fact, XStorageTableElement storageTable)
-    throws LensException;
-
-  void dropStorageOfFact(LensSessionHandle sessionid, String fact, String storage) throws LensException;
-
-  List<XPartition> getAllPartitionsOfFactStorage(LensSessionHandle sessionid, String fact,
-    String storage, String filter) throws LensException;
-
-  void addPartitionToFactStorage(LensSessionHandle sessionid, String fact, String storageName, XPartition partition)
-    throws LensException;
-
-  void dropPartitionFromStorage(LensSessionHandle sessionid,
-    String cubeTableName, String storageName, XTimePartSpec timePartSpec,
-    XPartSpec nonTimePartSpec, String updatePeriod) throws LensException;
-
-  void dropPartitionFromStorageByValues(LensSessionHandle sessionid,
-    String cubeTableName, String storageName, String values) throws LensException;
-
-  void dropPartitionFromStorageByFilter(LensSessionHandle sessionid,
-    String cubeTableName, String storageName, String filter) throws LensException;
-
-  FlattenedColumns getFlattenedColumns(LensSessionHandle sessionHandle, String tableName) throws LensException;
-=======
    * @throws LensException
    */
   List<XFactTable> getAllFactsOfCube(LensSessionHandle sessionid, String cubeName) throws LensException;
@@ -625,7 +537,6 @@ public interface CubeMetastoreService {
    * @throws LensException
    */
   XFlattenedColumns getFlattenedColumns(LensSessionHandle sessionHandle, String tableName) throws LensException;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * Get the latest available date upto which data is available for the base cubes, for the time dimension
@@ -633,10 +544,7 @@ public interface CubeMetastoreService {
    * @param sessionid     The session id
    * @param timeDimension time dimension name
    * @param cubeName      The base cube name
-<<<<<<< HEAD
-=======
    *
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return Date
    * @throws LensException,HiveException
    */

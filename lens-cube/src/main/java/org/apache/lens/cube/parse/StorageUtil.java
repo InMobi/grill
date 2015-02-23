@@ -18,27 +18,17 @@
  */
 package org.apache.lens.cube.parse;
 
-<<<<<<< HEAD
-=======
 import java.util.*;
 
 import org.apache.lens.cube.metadata.StorageConstants;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lens.cube.metadata.StorageConstants;
 
-import java.util.*;
-
-<<<<<<< HEAD
-class StorageUtil {
-=======
 public final class StorageUtil {
   private StorageUtil() {
 
   }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   private static final Log LOG = LogFactory.getLog(StorageUtil.class.getName());
 
   public static String getWherePartClause(String timeDimName, String tableName, List<String> parts) {
@@ -66,11 +56,7 @@ public final class StorageUtil {
     StringBuilder sb = new StringBuilder();
     String sep = "";
     for (String timePartCol : timedDimensions) {
-<<<<<<< HEAD
-      if(!timePartCol.equals(partCol)) {
-=======
       if (!timePartCol.equals(partCol)) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         sb.append(sep).append(alias).append(".").append(timePartCol)
           .append(" != '").append(StorageConstants.LATEST_PARTITION_VALUE).append("'");
         sep = " AND ";
@@ -160,17 +146,11 @@ public final class StorageUtil {
     }
     return Collections.singletonMap(maxCoveringStorage, maxCoveringSet);
   }
-<<<<<<< HEAD
-  public static String getWhereClause(String clause, String alias) {
-    return String.format(clause, alias);
-  }
-=======
 
   public static String getWhereClause(String clause, String alias) {
     return String.format(clause, alias);
   }
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static String getWhereClause(CandidateDim dim, String alias) {
     return getWhereClause(dim.whereClause, alias);
   }

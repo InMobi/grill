@@ -104,23 +104,6 @@ public class QueryServiceResource {
    * queries submitted by the user that has started the session. To get queries of all users, set the searchAllUsers
    * parameter to false.
    *
-<<<<<<< HEAD
-   * @param sessionid
-   *          The sessionid in which queryName is working
-   * @param state
-   *          If any state is passed, all the queries in that state will be returned, otherwise all queries will be
-   *          returned. Possible states are {@value QueryStatus.Status#values()}
-   * @param queryName
-   *          If any queryName is passed, all the queries containing the queryName will be returned, otherwise all the
-   *          queries will be returned
-   * @param user
-   *          Returns queries submitted by this user. If set to "all", returns queries of all users. By default, returns
-   *          queries of the current user.
-   * @param fromDate
-   *          from date to search queries in a time range, the range is inclusive(submitTime >= fromDate)
-   * @param toDate
-   *          to date to search queries in a time range, the range is inclusive(toDate >= submitTime)
-=======
    * @param sessionid The sessionid in which queryName is working
    * @param state     If any state is passed, all the queries in that state will be returned, otherwise all queries will
    *                  be returned. Possible states are {@value QueryStatus.Status#values()}
@@ -130,7 +113,6 @@ public class QueryServiceResource {
    *                  returns queries of the current user.
    * @param fromDate  from date to search queries in a time range, the range is inclusive(submitTime >= fromDate)
    * @param toDate    to date to search queries in a time range, the range is inclusive(toDate >= submitTime)
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return List of {@link QueryHandle} objects
    */
   @GET
@@ -165,24 +147,6 @@ public class QueryServiceResource {
   /**
    * Submit the query for explain or execute or execute with a timeout.
    *
-<<<<<<< HEAD
-   * @param sessionid
-   *          The session in which user is submitting the query. Any configuration set in the session will be picked up.
-   * @param query
-   *          The query to run
-   * @param operation
-   *          The operation on the query. Supported operations are {@value SubmitOp#EXPLAIN}, {@value SubmitOp#EXECUTE}
-   *          and {@value SubmitOp#EXECUTE_WITH_TIMEOUT}
-   * @param conf
-   *          The configuration for the query
-   * @param timeoutmillis
-   *          The timeout for the query, honored only in case of {@value SubmitOp#EXECUTE_WITH_TIMEOUT} operation
-   * @param queryName
-   *          human readable query name set by user (optional parameter)
-   * @return {@link QueryHandle} in case of {@value SubmitOp#EXECUTE} operation. {@link QueryPlan} in case of
-   *         {@value SubmitOp#EXPLAIN} operation. {@link QueryHandleWithResultSet} in case
-   *         {@value SubmitOp#EXECUTE_WITH_TIMEOUT} operation.
-=======
    * @param sessionid     The session in which user is submitting the query. Any configuration set in the session will
    *                      be picked up.
    * @param query         The query to run
@@ -195,22 +159,15 @@ public class QueryServiceResource {
    * @return {@link QueryHandle} in case of {@value SubmitOp#EXECUTE} operation. {@link QueryPlan} in case of {@value
    * SubmitOp#EXPLAIN} operation. {@link QueryHandleWithResultSet} in case {@value SubmitOp#EXECUTE_WITH_TIMEOUT}
    * operation.
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   @POST
   @Path("queries")
   @Consumes({MediaType.MULTIPART_FORM_DATA})
   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public QuerySubmitResult query(@FormDataParam("sessionid") LensSessionHandle sessionid,
-<<<<<<< HEAD
-      @FormDataParam("query") String query, @FormDataParam("operation") String operation,
-      @FormDataParam("conf") LensConf conf, @DefaultValue("30000") @FormDataParam("timeoutmillis") Long timeoutmillis,
-      @DefaultValue("") @FormDataParam("queryName") String queryName) {
-=======
     @FormDataParam("query") String query, @FormDataParam("operation") String operation,
     @FormDataParam("conf") LensConf conf, @DefaultValue("30000") @FormDataParam("timeoutmillis") Long timeoutmillis,
     @DefaultValue("") @FormDataParam("queryName") String queryName) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     checkQuery(query);
     checkSessionId(sessionid);
     try {
@@ -243,24 +200,6 @@ public class QueryServiceResource {
   /**
    * Cancel all the queries in query server; can be filtered with state and user.
    *
-<<<<<<< HEAD
-   * @param sessionid
-   *          The session in which cancel is issued
-   * @param state
-   *          If any state is passed, all the queries in that state will be cancelled, otherwise all queries will be
-   *          cancelled. Possible states are {@value QueryStatus.Status#values()} The queries in
-   *          {@value QueryStatus.Status#FAILED}, {@value QueryStatus.Status#CLOSED},
-   *          {@value QueryStatus.Status#SUCCESSFUL} cannot be cancelled
-   * @param user
-   *          If any user is passed, all the queries submitted by the user will be cancelled, otherwise all the queries
-   *          will be cancelled
-   * @param queryName
-   *          Cancel queries matching the query name
-   * @param fromDate
-   *          the from date, inclusive(submitTime>=fromDate)
-   * @param toDate
-   *          the to date, inclusive(toDate>=submitTime)
-=======
    * @param sessionid The session in which cancel is issued
    * @param state     If any state is passed, all the queries in that state will be cancelled, otherwise all queries
    *                  will be cancelled. Possible states are {@value QueryStatus.Status#values()} The queries in {@value
@@ -271,7 +210,6 @@ public class QueryServiceResource {
    * @param queryName Cancel queries matching the query name
    * @param fromDate  the from date, inclusive(submitTime>=fromDate)
    * @param toDate    the to date, inclusive(toDate>=submitTime)
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return APIResult with state {@value Status#SUCCEEDED} in case of successful cancellation. APIResult with state
    * {@value Status#FAILED} in case of cancellation failure. APIResult with state {@value Status#PARTIAL} in case of
    * partial cancellation.
@@ -733,11 +671,7 @@ public class QueryServiceResource {
   @Path("queries/{queryHandle}/httpresultset")
   @Produces({MediaType.APPLICATION_OCTET_STREAM})
   public Response getHttpResultSet(@QueryParam("sessionid") LensSessionHandle sessionid,
-<<<<<<< HEAD
-      @PathParam("queryHandle") String queryHandle) {
-=======
     @PathParam("queryHandle") String queryHandle) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     try {
       return queryServer.getHttpResultSet(sessionid, getQueryHandle(queryHandle));
     } catch (LensException e) {

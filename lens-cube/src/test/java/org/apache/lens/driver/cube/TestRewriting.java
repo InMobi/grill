@@ -24,15 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-<<<<<<< HEAD
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.ql.Context;
-import org.apache.hadoop.hive.ql.parse.ASTNode;
-import org.apache.hadoop.hive.ql.parse.HiveParser;
-import org.apache.hadoop.hive.ql.parse.ParseException;
-import org.apache.hadoop.hive.ql.parse.SemanticException;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
 import org.apache.lens.cube.parse.CubeQueryContext;
@@ -49,14 +40,9 @@ import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 
-<<<<<<< HEAD
-import org.apache.lens.server.api.driver.MockDriver;
-import org.apache.lens.server.api.query.QueryContext;
-=======
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -70,13 +56,8 @@ import org.testng.annotations.Test;
  * The Class TestRewriting.
  */
 @PrepareForTest(RewriteUtil.class)
-<<<<<<< HEAD
-@PowerMockIgnore({ "org.apache.log4j.*", "javax.management.*", "javax.xml.*",
-  "com.sun.org.apache.xerces.internal.jaxp.*", "ch.qos.logback.*", "org.slf4j.*", "org.w3c.dom*" })
-=======
 @PowerMockIgnore({"org.apache.log4j.*", "javax.management.*", "javax.xml.*",
   "com.sun.org.apache.xerces.internal.jaxp.*", "ch.qos.logback.*", "org.slf4j.*", "org.w3c.dom*"})
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 public class TestRewriting {
 
   /**
@@ -93,12 +74,8 @@ public class TestRewriting {
   // number of successful queries through mock rewriter
   // we use this number to mock failures after successful queries
   // change the number, if more tests for success needs to be added
-<<<<<<< HEAD
-  static int NUM_SUCCESS = 36;
-=======
   static final int NUM_SUCCESS = 36;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   private CubeQueryRewriter getMockedRewriter() throws SemanticException, ParseException {
     CubeQueryRewriter mockwriter = Mockito.mock(CubeQueryRewriter.class);
     Mockito.when(mockwriter.rewrite(any(String.class))).thenAnswer(new Answer<CubeQueryContext>() {
@@ -268,11 +245,7 @@ public class TestRewriting {
     cubeQueries = RewriteUtil.findCubePositions(RewriteUtil.getReplacedQuery(q2));
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query, "cube select name from"
-<<<<<<< HEAD
-        + " table where (name = 'ABC' OR name = 'XYZ') AND (key=100)");
-=======
       + " table where (name = 'ABC' OR name = 'XYZ') AND (key=100)");
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     ctx = new QueryContext(q2, null, lensConf, conf, drivers);
     RewriteUtil.rewriteQuery(ctx);
 
@@ -404,11 +377,7 @@ public class TestRewriting {
     RewriteUtil.rewriteQuery(ctx);
     Assert.assertEquals(cubeQueries.size(), 1);
     Assert.assertEquals(cubeQueries.get(0).query,
-<<<<<<< HEAD
-        "cube select name from table where time_range_in('dt', '2014-06-24-23', '2014-06-25-00')");
-=======
       "cube select name from table where time_range_in('dt', '2014-06-24-23', '2014-06-25-00')");
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     // failing query for second driver
     MockDriver driver2 = new MockDriver();
@@ -429,11 +398,7 @@ public class TestRewriting {
       th = e;
     }
     Assert.assertNotNull(th);
-<<<<<<< HEAD
-    Assert.assertTrue(th.getMessage().contains("Rewriting failed, cause :No driver accepted the query, because Mock fail"));
-=======
     Assert.assertTrue(
       th.getMessage().contains("Rewriting failed, cause :No driver accepted the query, because Mock fail"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 }

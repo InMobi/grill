@@ -189,21 +189,12 @@ public class QueryEndNotifier extends AsyncEventListener<QueryEnded> {
     Session session = Session.getDefaultInstance(props, null);
     try {
       MimeMessage message = new MimeMessage(session);
-<<<<<<< HEAD
-      message.setFrom(new InternetAddress(from));
-      for(String recipient: to.trim().split("\\s*,\\s*")) {
-        message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
-      }
-      if (cc != null && cc.length() > 0) {
-        for(String recipient: cc.trim().split("\\s*,\\s*")) {
-=======
       message.setFrom(new InternetAddress(email.getFrom()));
       for (String recipient : email.getTo().trim().split("\\s*,\\s*")) {
         message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
       }
       if (email.getCc() != null && email.getCc().length() > 0) {
         for (String recipient : email.getCc().trim().split("\\s*,\\s*")) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           message.addRecipients(Message.RecipientType.CC, InternetAddress.parse(recipient));
         }
       }

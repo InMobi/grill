@@ -295,7 +295,6 @@ public class TestMetastoreService extends LensJerseyTest {
     XChainColumn xcc = new XChainColumn();
     xcc.setChainName("chain1");
     xcc.setRefCol("col2");
-
     xd3.setRefSpec(cubeObjectFactory.createXDimAttributeRefSpec());
     xd3.getRefSpec().setChainRefColumn(xcc);
 
@@ -2174,6 +2173,7 @@ public class TestMetastoreService extends LensJerseyTest {
     XFactTable f = createFactTable(tableName, cubeName);
     // Create a storage tables
     f.getStorageTables().getStorageTable().add(createStorageTblElement("S1", tableName, timePartColNames, "HOURLY"));
+
 
     // Call API to create a fact table and storage table
     final FormDataMultiPart mp = new FormDataMultiPart();

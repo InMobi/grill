@@ -54,13 +54,6 @@ public interface CubeInterface extends Named {
   Set<JoinChain> getJoinChains();
 
   /**
-   * Get all joinchains defined on the cube
-   *
-   * @return set {@link JoinChain}
-   */
-  public Set<JoinChain> getJoinChains();
-
-  /**
    * Get dimension attribute given by name
    *
    * @param dimAttrName dimension attribute name
@@ -91,15 +84,6 @@ public interface CubeInterface extends Named {
    * @return A {@link JoinChain} object
    */
   JoinChain getChainByName(String chainName);
-
-  /**
-   * Get joinchain by given by name
-   *
-   * @param chainName Chain name
-   *
-   * @return A {@link JoinChain} object
-   */
-  public JoinChain getChainByName(String chainName);
 
   /**
    * Get cube column given by column name.
@@ -145,13 +129,6 @@ public interface CubeInterface extends Named {
    * @return Set of strings
    */
   Set<String> getJoinChainNames();
-
-  /**
-   * Get all join chain names
-   *
-   * @return Set of strings
-   */
-  public Set<String> getJoinChainNames();
 
   /**
    * Get all expression names

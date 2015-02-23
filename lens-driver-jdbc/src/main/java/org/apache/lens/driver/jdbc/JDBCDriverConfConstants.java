@@ -75,15 +75,6 @@ public final class JDBCDriverConfConstants {
 
   /** The Constant DEFAULT_JDBC_EXPLAIN_KEYWORD. */
   public static final String DEFAULT_JDBC_EXPLAIN_KEYWORD = "explain ";
-<<<<<<< HEAD
- 
-  /** The Constant JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT. */
-  public static final String JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT = JDBC_DRIVER_PFX + "explain.before.select";
-  
-  /** The Constant DEFAULT_JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT. */
-  public static final boolean DEFAULT_JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT = true;
-  
-=======
 
   /** The Constant JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT. */
   public static final String JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT = JDBC_DRIVER_PFX + "explain.before.select";
@@ -91,7 +82,6 @@ public final class JDBCDriverConfConstants {
   /** The Constant DEFAULT_JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT. */
   public static final boolean DEFAULT_JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT = true;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static final String JDBC_ENABLE_RESULTSET_STREAMING_RETRIEVAL =
     JDBC_DRIVER_PFX + "enable.resultset.streaming.retrieval";
   public static final boolean DEFAULT_JDBC_ENABLE_RESULTSET_STREAMING_RETRIEVAL = false;

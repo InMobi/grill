@@ -45,21 +45,14 @@ public class DurationBasedQueryPriorityDecider implements QueryPriorityDecider {
 
   /**
    * Constructor. Takes three weights for partitions.
-<<<<<<< HEAD
-=======
    *
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param ranges
    * @param monthlyPartitoinWeight
    * @param dailyPartitionWeight
    * @param hourlyPartitionWeight
    */
   public DurationBasedQueryPriorityDecider(String ranges,
-<<<<<<< HEAD
-    float monthlyPartitoinWeight, float dailyPartitionWeight, float hourlyPartitionWeight){
-=======
     float monthlyPartitoinWeight, float dailyPartitionWeight, float hourlyPartitionWeight) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     this.costToPriorityRangeMap = new CostToPriorityRangeConf(ranges);
     this.monthlyPartitionWeight = monthlyPartitoinWeight;
     this.dailyPartitionWeight = dailyPartitionWeight;
@@ -90,14 +83,8 @@ public class DurationBasedQueryPriorityDecider implements QueryPriorityDecider {
    */
   protected Map<String, List<String>> extractPartitions(AbstractQueryContext queryContext) throws LensException {
     Map<String, List<String>> partitions = new HashMap<String, List<String>>();
-<<<<<<< HEAD
-    for(Map.Entry<String, List<String>> entry: queryContext.getDriverContext().getSelectedDriverQueryPlan()
-      .getPartitions().entrySet
-      ()) {
-=======
     for (Map.Entry<String, List<String>> entry : queryContext.getDriverContext().getSelectedDriverQueryPlan()
       .getPartitions().entrySet()) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       partitions.put(entry.getKey(), new ArrayList<String>());
       for (String s : entry.getValue()) {
         String[] splits = s.split("\\s+");
@@ -119,19 +106,11 @@ public class DurationBasedQueryPriorityDecider implements QueryPriorityDecider {
     final Map<String, List<String>> partitions = extractPartitions(queryContext);
     LOG.info("partitions picked: " + partitions);
     float cost = 0;
-<<<<<<< HEAD
-    for(String table: partitions.keySet()) {
-      for(String partition: partitions.get(table)) {
-        if(!partition.equals("latest")) {
-          cost += queryContext.getDriverContext().getSelectedDriverQueryPlan().getTableWeight(table)
-              * getNormalizedPartitionCost(partition);
-=======
     for (String table : partitions.keySet()) {
       for (String partition : partitions.get(table)) {
         if (!partition.equals("latest")) {
           cost += queryContext.getDriverContext().getSelectedDriverQueryPlan().getTableWeight(table)
             * getNormalizedPartitionCost(partition);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         }
       }
     }

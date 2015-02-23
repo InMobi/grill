@@ -19,14 +19,6 @@
 
 package org.apache.lens.cube.metadata;
 
-<<<<<<< HEAD
-import org.apache.hadoop.hive.metastore.api.FieldSchema;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-
-=======
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -34,7 +26,6 @@ import org.apache.hadoop.hive.metastore.api.FieldSchema;
 
 import org.testng.annotations.Test;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 public class TestExprColumn {
   @Test
   public void testExprColumnEquality() throws Exception {

@@ -26,11 +26,7 @@
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
-<<<<<<< HEAD
-    <version>1.2.6-SNAPSHOT</version>
-=======
     <version>2.1.0-incubating-SNAPSHOT</version>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   </parent>
 
   <artifactId>lens-examples</artifactId>

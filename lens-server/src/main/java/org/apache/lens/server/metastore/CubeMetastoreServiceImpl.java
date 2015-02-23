@@ -18,8 +18,6 @@
  */
 package org.apache.lens.server.metastore;
 
-<<<<<<< HEAD
-=======
 import java.util.*;
 
 import javax.ws.rs.BadRequestException;
@@ -33,7 +31,6 @@ import org.apache.lens.server.LensService;
 import org.apache.lens.server.api.metastore.CubeMetastoreService;
 import org.apache.lens.server.session.LensSessionImpl;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.*;
 import org.apache.hadoop.hive.ql.metadata.Hive;
@@ -43,27 +40,10 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hive.service.cli.CLIService;
 import org.apache.hive.service.cli.HiveSQLException;
-<<<<<<< HEAD
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.metastore.*;
-import org.apache.lens.cube.metadata.*;
-import org.apache.lens.server.LensService;
-import org.apache.lens.server.api.metastore.CubeMetastoreService;
-import org.apache.lens.server.session.LensSessionImpl;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-<<<<<<< HEAD
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import java.util.*;
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 public class CubeMetastoreServiceImpl extends LensService implements CubeMetastoreService {
   public static final Logger LOG = LogManager.getLogger(CubeMetastoreServiceImpl.class);
 
@@ -208,12 +188,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   public void createCube(LensSessionHandle sessionid, XCube cube) throws LensException {
     try {
       acquire(sessionid);
-<<<<<<< HEAD
-      Cube parent = cube.isDerived() ? (Cube) getClient(sessionid).getCube(cube.getParent()) : null;
-=======
       Cube parent = cube instanceof XDerivedCube ? (Cube) getClient(sessionid).getCube(
         ((XDerivedCube) cube).getParent()) : null;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       getClient(sessionid).createCube(JAXBUtils.hiveCubeFromXCube(cube, parent));
       LOG.info("Created cube " + cube.getName());
     } catch (HiveException e) {
@@ -275,12 +251,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   public void updateCube(LensSessionHandle sessionid, XCube cube) throws LensException {
     try {
       acquire(sessionid);
-<<<<<<< HEAD
-      Cube parent = cube.isDerived() ? (Cube) getClient(sessionid).getCube(cube.getParent()) : null;
-=======
       Cube parent = cube instanceof XDerivedCube ? (Cube) getClient(sessionid).getCube(
         ((XDerivedCube) cube).getParent()) : null;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       getClient(sessionid).alterCube(cube.getName(), JAXBUtils.hiveCubeFromXCube(cube, parent));
       LOG.info("Cube updated " + cube.getName());
     } catch (HiveException e) {
@@ -303,11 +275,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
     String dimTblName = xDimTable.getTableName();
     List<FieldSchema> columns = JAXBUtils.fieldSchemaListFromColumns(xDimTable.getColumns());
     Map<String, UpdatePeriod> updatePeriodMap =
-<<<<<<< HEAD
-      JAXBUtils.dumpPeriodsFromUpdatePeriods(xDimTable.getStorageDumpPeriods());
-=======
       JAXBUtils.dumpPeriodsFromStorageTables(xDimTable.getStorageTables());
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     Map<String, String> properties = JAXBUtils.mapFromXProperties(xDimTable.getProperties());
     Map<String, StorageTableDesc> storageDesc = JAXBUtils.storageTableMapFromXStorageTables(
@@ -316,11 +284,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
     try {
       acquire(sessionid);
       LOG.info("# Columns: " + columns);
-<<<<<<< HEAD
-      getClient(sessionid).createCubeDimensionTable(xDimTable.getDimName(),
-=======
       getClient(sessionid).createCubeDimensionTable(xDimTable.getDimensionName(),
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         dimTblName,
         columns,
         xDimTable.getWeight(),
@@ -379,10 +343,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       acquire(sessionid);
       getClient(sessionid).alterCubeDimensionTable(dimensionTable.getTableName(),
         JAXBUtils.cubeDimTableFromDimTable(dimensionTable));
-<<<<<<< HEAD
-=======
       // TODO alter storage tables
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       LOG.info("Updated dimension table " + dimensionTable.getTableName());
     } catch (HiveException exc) {
       throw new LensException(exc);
@@ -406,11 +367,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
 
 
   @Override
-<<<<<<< HEAD
-  public void createDimTableStorage(LensSessionHandle sessionid,
-=======
   public void addDimTableStorage(LensSessionHandle sessionid,
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     String dimTblName, XStorageTableElement storageTable) throws LensException {
     try {
       acquire(sessionid);
@@ -542,17 +499,10 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       getClient(sessionid).createCubeFactTable(fact.getCubeName(),
         fact.getName(),
         JAXBUtils.fieldSchemaListFromColumns(fact.getColumns()),
-<<<<<<< HEAD
-        JAXBUtils.getFactUpdatePeriodsFromUpdatePeriods(fact.getStorageUpdatePeriods()),
-        fact.getWeight(),
-        JAXBUtils.mapFromXProperties(fact.getProperties()),
-        JAXBUtils.storageTableMapFromXStorageTables(storageTables));
-=======
         JAXBUtils.getFactUpdatePeriodsFromStorageTables(fact.getStorageTables()),
         fact.getWeight(),
         JAXBUtils.mapFromXProperties(fact.getProperties()),
         JAXBUtils.storageTableMapFromXStorageTables(fact.getStorageTables()));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       LOG.info("Created fact table " + fact.getName());
     } catch (HiveException e) {
       throw new LensException(e);
@@ -766,13 +716,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
         JAXBUtils.storagePartSpecFromXPartition(partition),
         storageName);
       LOG.info("Added partition for fact " + fact + " on storage:" + storageName
-<<<<<<< HEAD
-        + " dates: " + partition.getTimePartitionSpec() + " spec:" +
-        partition.getNonTimePartitionSpec() + " update period: " + partition.getUpdatePeriod());
-=======
         + " dates: " + partition.getTimePartitionSpec() + " spec:"
         + partition.getNonTimePartitionSpec() + " update period: " + partition.getUpdatePeriod());
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } catch (HiveException exc) {
       throw new LensException(exc);
     } finally {
@@ -837,30 +782,6 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
     }
   }
 
-<<<<<<< HEAD
-  @Override
-  public void dropPartitionFromStorage(LensSessionHandle sessionid,
-    String cubeTableName, String storageName, XTimePartSpec timePartSpec,
-    XPartSpec nonTimePartSpec, String updatePeriod) throws LensException {
-    try {
-      acquire(sessionid);
-      checkDimensionStorage(sessionid, cubeTableName, storageName);
-      getClient(sessionid).dropPartition(cubeTableName,
-        storageName,
-        JAXBUtils.timePartSpecfromXTimePartSpec(timePartSpec),
-        JAXBUtils.nonTimePartSpecfromXNonTimePartSpec(nonTimePartSpec),
-        UpdatePeriod.valueOf(updatePeriod.toUpperCase()));
-      LOG.info("Dropped partition  for dimension: " + cubeTableName +
-        "storage: " + storageName + " partition:" + timePartSpec + " " + nonTimePartSpec);
-    } catch (HiveException exc) {
-      throw new LensException(exc);
-    } finally {
-      release(sessionid);
-    }
-  }
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   private String getFilter(CubeMetastoreClient client, String tableName,
     String values) throws HiveException {
     List<FieldSchema> cols = client.getHiveTable(tableName).getPartCols();
@@ -931,13 +852,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       UpdatePeriod updatePeriod = populatePartSpec(partitions.get(0), timeSpec, nonTimeSpec);
       getClient(sessionid).dropPartition(cubeTableName,
         storageName, timeSpec, nonTimeSpec, updatePeriod);
-<<<<<<< HEAD
-      LOG.info("Dropped partition  for dimension: " + cubeTableName +
-        " storage: " + storageName + " values:" + values);
-=======
       LOG.info("Dropped partition  for dimension: " + cubeTableName
         + " storage: " + storageName + " values:" + values);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } catch (HiveException exc) {
       throw new LensException(exc);
     } finally {
@@ -967,13 +883,8 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
           }
         }
       }
-<<<<<<< HEAD
-      LOG.info("Dropped partition  for cube table: " + cubeTableName +
-        " storage: " + storageName + " by filter:" + filter);
-=======
       LOG.info("Dropped partition  for cube table: " + cubeTableName
         + " storage: " + storageName + " by filter:" + filter);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } catch (HiveException exc) {
       throw new LensException(exc);
     } finally {
@@ -1210,11 +1121,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   @Override
-<<<<<<< HEAD
-  public NativeTable getNativeTable(LensSessionHandle sessionid, String name)
-=======
   public XNativeTable getNativeTable(LensSessionHandle sessionid, String name)
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     throws LensException {
     try {
       acquire(sessionid);
@@ -1298,15 +1205,9 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   private void addAllMeasuresToFlattenedList(ObjectFactory objectFactory, CubeInterface cube,
-<<<<<<< HEAD
-      List<FlattenedColumn> columnList) {
-    for (CubeMeasure msr : cube.getMeasures()) {
-      FlattenedColumn fcol = objectFactory.createFlattenedColumn();
-=======
     List<XFlattenedColumn> columnList) {
     for (CubeMeasure msr : cube.getMeasures()) {
       XFlattenedColumn fcol = objectFactory.createXFlattenedColumn();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       fcol.setMeasure(JAXBUtils.xMeasureFromHiveMeasure(msr));
       fcol.setTableName(cube.getName());
       columnList.add(fcol);
@@ -1314,19 +1215,11 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   private void addAllDirectAttributesToFlattenedListFromCube(ObjectFactory objectFactory, CubeInterface cube,
-<<<<<<< HEAD
-      List<FlattenedColumn> columnList) {
-    AbstractBaseTable baseTbl = (AbstractBaseTable)(cube instanceof DerivedCube ?
-        ((DerivedCube)cube).getParent() : cube);
-    for (CubeDimAttribute dim : cube.getDimAttributes()) {
-      FlattenedColumn fcol = objectFactory.createFlattenedColumn();
-=======
     List<XFlattenedColumn> columnList) {
     AbstractBaseTable baseTbl = (AbstractBaseTable) (cube instanceof DerivedCube
       ? ((DerivedCube) cube).getParent() : cube);
     for (CubeDimAttribute dim : cube.getDimAttributes()) {
       XFlattenedColumn fcol = objectFactory.createXFlattenedColumn();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       fcol.setDimAttribute(JAXBUtils.xDimAttrFromHiveDimAttr(dim, baseTbl));
       fcol.setTableName(cube.getName());
       columnList.add(fcol);
@@ -1334,15 +1227,9 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   private void addAllDirectAttributesToFlattenedListFromDimension(ObjectFactory objectFactory, Dimension dimension,
-<<<<<<< HEAD
-      List<FlattenedColumn> columnList, String chainName) {
-    for (CubeDimAttribute cd : dimension.getAttributes()) {
-      FlattenedColumn fcol = objectFactory.createFlattenedColumn();
-=======
     List<XFlattenedColumn> columnList, String chainName) {
     for (CubeDimAttribute cd : dimension.getAttributes()) {
       XFlattenedColumn fcol = objectFactory.createXFlattenedColumn();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       fcol.setDimAttribute(JAXBUtils.xDimAttrFromHiveDimAttr(cd, dimension));
       fcol.setTableName(dimension.getName());
       if (chainName != null) {
@@ -1353,15 +1240,9 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   private void addAllDirectExpressionsToFlattenedList(ObjectFactory objectFactory, AbstractBaseTable baseTbl,
-<<<<<<< HEAD
-      List<FlattenedColumn> columnList, String chainName) {
-    for (ExprColumn expr : baseTbl.getExpressions()) {
-      FlattenedColumn fcol = objectFactory.createFlattenedColumn();
-=======
     List<XFlattenedColumn> columnList, String chainName) {
     for (ExprColumn expr : baseTbl.getExpressions()) {
       XFlattenedColumn fcol = objectFactory.createXFlattenedColumn();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       fcol.setExpression(JAXBUtils.xExprColumnFromHiveExprColumn(expr));
       fcol.setTableName(baseTbl.getName());
       if (chainName != null) {
@@ -1372,17 +1253,6 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
   }
 
   private void addAllChainedColsToFlattenedListFromCube(CubeMetastoreClient client, ObjectFactory objectFactory,
-<<<<<<< HEAD
-      CubeInterface cube, List<FlattenedColumn> columnList) throws HiveException {
-    if (cube instanceof DerivedCube) {
-      return;
-    }
-    addAllChainedColsToFlattenedList(client, objectFactory, (AbstractBaseTable)cube, columnList);
-  }
-
-  private void addAllChainedColsToFlattenedList(CubeMetastoreClient client, ObjectFactory objectFactory,
-      AbstractBaseTable baseTbl, List<FlattenedColumn> columnList) throws HiveException {
-=======
     CubeInterface cube, List<XFlattenedColumn> columnList) throws HiveException {
     if (cube instanceof DerivedCube) {
       return;
@@ -1392,7 +1262,6 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
 
   private void addAllChainedColsToFlattenedList(CubeMetastoreClient client, ObjectFactory objectFactory,
     AbstractBaseTable baseTbl, List<XFlattenedColumn> columnList) throws HiveException {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     for (JoinChain chain : baseTbl.getJoinChains()) {
       Dimension dim = client.getDimension(chain.getDestTable());
       addAllDirectAttributesToFlattenedListFromDimension(objectFactory, dim, columnList, chain.getName());
@@ -1407,32 +1276,19 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
       CubeMetastoreClient client = getClient(sessionHandle);
 
       ObjectFactory objectFactory = new ObjectFactory();
-<<<<<<< HEAD
-      FlattenedColumns flattenedColumns = objectFactory.createFlattenedColumns();
-      List<FlattenedColumn> columnList = flattenedColumns.getFlattenedColumn();
-=======
       XFlattenedColumns flattenedColumns = objectFactory.createXFlattenedColumns();
       List<XFlattenedColumn> columnList = flattenedColumns.getFlattenedColumn();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       // check if the table is a cube or dimension
       if (client.isCube(tableName)) {
         CubeInterface cube = client.getCube(tableName);
         addAllMeasuresToFlattenedList(objectFactory, cube, columnList);
         addAllDirectAttributesToFlattenedListFromCube(objectFactory, cube, columnList);
-<<<<<<< HEAD
-        addAllDirectExpressionsToFlattenedList(objectFactory, (AbstractBaseTable)cube, columnList, null);
-=======
         addAllDirectExpressionsToFlattenedList(objectFactory, (AbstractBaseTable) cube, columnList, null);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         addAllChainedColsToFlattenedListFromCube(client, objectFactory, cube, columnList);
       } else if (client.isDimension(tableName)) {
         Dimension dimension = client.getDimension(tableName);
         addAllDirectAttributesToFlattenedListFromDimension(objectFactory, dimension, columnList, null);
-<<<<<<< HEAD
-        addAllDirectExpressionsToFlattenedList(objectFactory, (AbstractBaseTable)dimension, columnList, null);
-=======
         addAllDirectExpressionsToFlattenedList(objectFactory, (AbstractBaseTable) dimension, columnList, null);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         addAllChainedColsToFlattenedList(client, objectFactory, dimension, columnList);
       } else {
         throw new BadRequestException("Can't get reachable columns. '"
@@ -1462,11 +1318,7 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
 
     // getting all facts->storages->partitions and iterating over them to get
     // latest date
-<<<<<<< HEAD
-    List<FactTable> factTables = getAllFactsOfCube(sessionid, cubeName);
-=======
     List<XFactTable> factTables = getAllFactsOfCube(sessionid, cubeName);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     Date latestDate = null;
     if (factTables != null && !factTables.isEmpty()) {
@@ -1478,16 +1330,10 @@ public class CubeMetastoreServiceImpl extends LensService implements CubeMetasto
             String storageTableName = MetastoreUtil.getFactStorageTableName(factTable.getName(), storage);
             List<Partition> parts = new LinkedList<Partition>();
             try {
-<<<<<<< HEAD
-              parts = getClient(sessionid).getPartitionsByFilter(storageTableName, StorageConstants.getLatestPartFilter(partitionColumn));
-            } catch (HiveException e) {
-              LOG.info("Storage Table "+storageTableName+" skipped while finding latestDate due to exception: ",e);
-=======
               parts = getClient(sessionid).getPartitionsByFilter(storageTableName,
                 StorageConstants.getLatestPartFilter(partitionColumn));
             } catch (HiveException e) {
               LOG.info("Storage Table " + storageTableName + " skipped while finding latestDate due to exception: ", e);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             }
             if (parts.size() == 1) {
               Date tmpDate = getClient(sessionid).getLatestTimeStamp(parts.get(0), partitionColumn);

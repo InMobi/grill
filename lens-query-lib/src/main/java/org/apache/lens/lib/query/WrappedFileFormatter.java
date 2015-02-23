@@ -18,20 +18,15 @@
  */
 package org.apache.lens.lib.query;
 
-<<<<<<< HEAD
-=======
 import java.io.IOException;
 
 import org.apache.lens.server.api.driver.LensResultSetMetadata;
 import org.apache.lens.server.api.query.QueryContext;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
-
-import java.io.IOException;
 
 /**
  * Wraps the formatter {@link FileFormatter}, which can have implementations like {@link HadoopFileFormatter} or

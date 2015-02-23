@@ -21,8 +21,6 @@
  */
 package org.apache.lens.doc;
 
-<<<<<<< HEAD
-=======
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,20 +31,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.testng.annotations.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
 
 /**
  * The Class TestGenerateConfigDoc.
@@ -319,11 +307,7 @@ public class TestGenerateConfigDoc {
         entry.description = Arrays.asList(buf.toString().split("\\\\\\r|\\\\\\n"));
         ListIterator<String> iter = entry.description.listIterator();
         int maxLength = -1;
-<<<<<<< HEAD
-        while(iter.hasNext()) {
-=======
         while (iter.hasNext()) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           String descriptionLine = iter.next().replaceAll("\\r|\\n", " ").replaceAll(" +", " ").trim();
           if (descriptionLine.length() > maxLength) {
             maxLength = descriptionLine.length();
@@ -331,11 +315,7 @@ public class TestGenerateConfigDoc {
           iter.set(descriptionLine);
         }
         iter = entry.description.listIterator();
-<<<<<<< HEAD
-        while(iter.hasNext()) {
-=======
         while (iter.hasNext()) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           String descriptionLine = iter.next();
           iter.set(descriptionLine + getSpaces(maxLength - descriptionLine.length()));
         }
@@ -411,11 +391,7 @@ public class TestGenerateConfigDoc {
           apt.println("*--+--+---+--+");
           i++;
           String col;
-<<<<<<< HEAD
-          for(int j = 0; j < entry.description.size(); j++) {
-=======
           for (int j = 0; j < entry.description.size(); j++) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             apt.print("|");
             col = i + "";
             apt.print(j == 0 ? col : col.replaceAll(".", " "));
@@ -454,16 +430,10 @@ public class TestGenerateConfigDoc {
     }
 
   }
-<<<<<<< HEAD
-  public static StringBuilder getSpaces(int num) {
-    StringBuilder sb = new StringBuilder();
-    for(int i = 0; i < num; i++) {
-=======
 
   public static StringBuilder getSpaces(int num) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < num; i++) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       sb.append(" ");
     }
     return sb;

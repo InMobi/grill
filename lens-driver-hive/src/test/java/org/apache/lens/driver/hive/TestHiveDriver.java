@@ -50,22 +50,7 @@ import org.apache.hadoop.hive.ql.HiveDriverRunHookContext;
 import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.service.cli.ColumnDescriptor;
-<<<<<<< HEAD
-import org.apache.lens.api.LensConf;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.Priority;
-import org.apache.lens.api.query.QueryHandle;
-import org.apache.lens.driver.hive.priority.DurationBasedQueryPriorityDecider;
-import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.api.driver.*;
-import org.apache.lens.server.api.driver.DriverQueryStatus.DriverQueryState;
-import org.apache.lens.server.api.query.AbstractQueryContext;
-import org.apache.lens.server.api.query.ExplainQueryContext;
-import org.apache.lens.server.api.query.PreparedQueryContext;
-import org.apache.lens.server.api.query.QueryContext;
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -90,11 +75,7 @@ public class TestHiveDriver {
   /** The driver. */
   protected HiveDriver driver;
 
-<<<<<<< HEAD
-  /** Driver list **/
-=======
   /** Driver list * */
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   protected Collection<LensDriver> drivers;
 
   /** The data base. */
@@ -125,11 +106,7 @@ public class TestHiveDriver {
     sessionid = SessionState.get().getSessionId();
 
     conf.setBoolean(LensConfConstants.QUERY_ADD_INSERT_OVEWRITE, false);
-<<<<<<< HEAD
-    QueryContext context = createContext("USE " + DATA_BASE, conf);
-=======
     QueryContext context = createContext("USE " + dataBase, conf);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     driver.execute(context);
     conf.setBoolean(LensConfConstants.QUERY_ADD_INSERT_OVEWRITE, true);
     conf.setBoolean(LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, true);
@@ -143,16 +120,11 @@ public class TestHiveDriver {
     conf.setBoolean(HiveDriver.HS2_CALCULATE_PRIORITY, false);
     driver = new HiveDriver();
     driver.configure(conf);
-<<<<<<< HEAD
-    drivers = new ArrayList<LensDriver>() {{ add
-      (driver);}};
-=======
     drivers = new ArrayList<LensDriver>() {
       {
         add(driver);
       }
     };
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     System.out.println("TestHiveDriver created");
   }
 
@@ -165,8 +137,6 @@ public class TestHiveDriver {
     QueryContext context = new QueryContext(query, "testuser", new LensConf(), conf, drivers);
     // session id has to be set before calling setDriverQueriesAndPlans
     context.setLensSessionIdentifier(sessionid);
-    context.setDriverQueriesAndPlans(new HashMap<LensDriver, String>() {{ put(driver, query); }} );
-    context.setSelectedDriver(driver);
     return context;
   }
 
@@ -772,13 +742,8 @@ public class TestHiveDriver {
 
     SessionState.setCurrentSessionState(ss);
     DriverQueryPlan plan = driver.explain(createExplainContext("SELECT explain_test_1.ID, count(1) FROM "
-<<<<<<< HEAD
-        + " explain_test_1  join explain_test_2 on explain_test_1.ID = explain_test_2.ID"
-        + " WHERE explain_test_1.ID = 'foo' or explain_test_2.ID = 'bar'" + " GROUP BY explain_test_1.ID", conf));
-=======
       + " explain_test_1  join explain_test_2 on explain_test_1.ID = explain_test_2.ID"
       + " WHERE explain_test_1.ID = 'foo' or explain_test_2.ID = 'bar'" + " GROUP BY explain_test_1.ID", conf));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     Assert.assertEquals(0, driver.getHiveHandleSize());
     assertTrue(plan instanceof HiveQueryPlan);
@@ -838,11 +803,7 @@ public class TestHiveDriver {
       HiveDriver.HOURLY_PARTITION_WEIGHT_DEFAULT
     );
     BufferedReader br = new BufferedReader(new InputStreamReader(
-<<<<<<< HEAD
-      TestHiveDriver.class.getResourceAsStream("/priority_tests.txt")));
-=======
       TestHiveDriver.class.getResourceAsStream("/priority_tests.data")));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     String line;
     while ((line = br.readLine()) != null) {
       String[] kv = line.split("\\s*:\\s*");
@@ -855,19 +816,6 @@ public class TestHiveDriver {
         }
       };
       AbstractQueryContext ctx = new MockQueryContext("driverQuery1", new LensConf(), conf,
-<<<<<<< HEAD
-                                                      driverQuery1.keySet());
-      ctx.setDriverQueriesAndPlans(driverQuery1);
-      ctx.setSelectedDriver(mockDriver);
-
-      ((MockDriver.MockQueryPlan)ctx.getDriverContext().getDriverQueryPlan(mockDriver)).setPartitions
-        (new HashMap<String,
-          List<String>>
-          () {
-          {
-            put("table1", partitions);
-        }});
-=======
         driverQuery1.keySet());
       ctx.getDriverContext().setDriverQueryPlans(driverQuery1, ctx);
       ctx.setSelectedDriver(mockDriver);
@@ -879,7 +827,6 @@ public class TestHiveDriver {
           }
         }
       );
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       Assert.assertEquals(expected, driver.queryPriorityDecider.decidePriority(ctx));
       Assert.assertEquals(Priority.NORMAL, alwaysNormalPriorityDecider.decidePriority(ctx));
     }

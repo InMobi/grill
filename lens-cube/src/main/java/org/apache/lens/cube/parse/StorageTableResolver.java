@@ -36,20 +36,6 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Partition;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.util.ReflectionUtils;
-<<<<<<< HEAD
-import org.apache.lens.cube.metadata.CubeDimensionTable;
-import org.apache.lens.cube.metadata.CubeFactTable;
-import org.apache.lens.cube.metadata.CubeMetastoreClient;
-import org.apache.lens.cube.metadata.Dimension;
-import org.apache.lens.cube.metadata.MetastoreUtil;
-import org.apache.lens.cube.metadata.StorageConstants;
-import org.apache.lens.cube.metadata.UpdatePeriod;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.SkipStorageCode;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.SkipStorageCause;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.SkipUpdatePeriodCode;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Resolve storages and partitions of all candidate tables and prunes candidate tables with missing storages or
@@ -76,14 +62,6 @@ class StorageTableResolver implements ContextRewriter {
 
   static enum PHASE {
     FACT_TABLES, FACT_PARTITIONS, DIM_TABLE_AND_PARTITIONS;
-<<<<<<< HEAD
-    static PHASE first() {
-      return values()[0];
-    }
-    static PHASE last() {
-      return values()[values().length - 1];
-    }
-=======
 
     static PHASE first() {
       return values()[0];
@@ -93,7 +71,6 @@ class StorageTableResolver implements ContextRewriter {
       return values()[values().length - 1];
     }
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     PHASE next() {
       return values()[(this.ordinal() + 1) % values().length];
     }
@@ -139,12 +116,7 @@ class StorageTableResolver implements ContextRewriter {
   }
 
   public boolean isStorageSupported(String storage) {
-<<<<<<< HEAD
-    return allStoragesSupported ||
-      supportedStorages.contains(storage);
-=======
     return allStoragesSupported || supportedStorages.contains(storage);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   Map<String, List<String>> storagePartMap = new HashMap<String, List<String>>();
@@ -153,32 +125,6 @@ class StorageTableResolver implements ContextRewriter {
   public void rewriteContext(CubeQueryContext cubeql) throws SemanticException {
     client = cubeql.getMetastoreClient();
 
-<<<<<<< HEAD
-    switch(phase) {
-      case FACT_TABLES:
-        if (!cubeql.getCandidateFactTables().isEmpty()) {
-          // resolve storage table names
-          resolveFactStorageTableNames(cubeql);
-        }
-        cubeql.pruneCandidateFactSet(CandidateTablePruneCode.NO_CANDIDATE_STORAGES);
-        break;
-      case FACT_PARTITIONS:
-        if (!cubeql.getCandidateFactTables().isEmpty()) {
-          // resolve storage partitions
-          resolveFactStoragePartitions(cubeql);
-        }
-        cubeql.pruneCandidateFactSet(CandidateTablePruneCode.NO_CANDIDATE_STORAGES);
-        break;
-      case DIM_TABLE_AND_PARTITIONS:
-        resolveDimStorageTablesAndPartitions(cubeql);
-        if (cubeql.getAutoJoinCtx() != null) {
-          // After all candidates are pruned after storage resolver, prune join paths.
-          cubeql.getAutoJoinCtx().pruneAllPaths(cubeql.getCube(), cubeql.getCandidateFactTables(), null);
-          cubeql.getAutoJoinCtx().pruneAllPathsForCandidateDims(cubeql.getCandidateDimTables());
-          cubeql.getAutoJoinCtx().refreshJoinPathColumns();
-        }
-        break;
-=======
     switch (phase) {
     case FACT_TABLES:
       if (!cubeql.getCandidateFactTables().isEmpty()) {
@@ -203,7 +149,6 @@ class StorageTableResolver implements ContextRewriter {
         cubeql.getAutoJoinCtx().refreshJoinPathColumns();
       }
       break;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     //Doing this on all three phases. Keep updating cubeql with the current identified missing partitions.
     cubeql.setNonexistingParts(nonExistingPartitions);
@@ -334,11 +279,7 @@ class StorageTableResolver implements ContextRewriter {
         }
         String tableName = getStorageTableName(fact, storage, validFactStorageTables);
         // skip the update period if the storage is not valid
-<<<<<<< HEAD
-        if ((tableName = getStorageTableName(fact, storage, validFactStorageTables)) == null) {
-=======
         if (tableName == null) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           skipStorageCauses.put(storage, new SkipStorageCause(SkipStorageCode.INVALID));
           continue;
         }
@@ -472,24 +413,15 @@ class StorageTableResolver implements ContextRewriter {
     HashMap<String, SkipStorageCause> skipStorageCauses, List<String> nonExistingParts) throws SemanticException {
     try {
       return getPartitions(fact, range, getValidUpdatePeriods(fact), this.populateNonExistingParts, skipStorageCauses,
-<<<<<<< HEAD
-          nonExistingParts);
-=======
         nonExistingParts);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } catch (Exception e) {
       throw new SemanticException(e);
     }
   }
 
   private Set<FactPartition> getPartitions(CubeFactTable fact, TimeRange range, TreeSet<UpdatePeriod> updatePeriods,
-<<<<<<< HEAD
-      boolean addNonExistingParts, HashMap<String, SkipStorageCause> skipStorageCauses, List<String> nonExistingParts)
-      throws Exception {
-=======
     boolean addNonExistingParts, HashMap<String, SkipStorageCause> skipStorageCauses, List<String> nonExistingParts)
     throws Exception {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     Set<FactPartition> partitions = new TreeSet<FactPartition>();
     if (getPartitions(fact, range.getFromDate(), range.getToDate(), range.getPartitionColumn(), null, partitions,
       updatePeriods, addNonExistingParts, skipStorageCauses, nonExistingParts)) {

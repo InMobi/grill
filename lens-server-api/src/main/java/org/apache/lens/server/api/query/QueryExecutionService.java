@@ -18,16 +18,14 @@
  */
 package org.apache.lens.server.api.query;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.query.*;
-<<<<<<< HEAD
-
-import javax.ws.rs.core.Response;
-import java.util.List;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Interface QueryExecutionService.
@@ -38,8 +36,6 @@ public interface QueryExecutionService {
    * The Constant NAME.
    */
   String NAME = "query";
-<<<<<<< HEAD
-=======
 
   /**
    * Estimate the cost of given query.
@@ -54,7 +50,6 @@ public interface QueryExecutionService {
    * @throws LensException the lens exception
    */
   EstimateResult estimate(LensSessionHandle sessionHandle, String query, LensConf conf) throws LensException;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * Explain the given query.

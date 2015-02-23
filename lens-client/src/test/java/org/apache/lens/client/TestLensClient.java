@@ -18,11 +18,6 @@
  */
 package org.apache.lens.client;
 
-<<<<<<< HEAD
-import java.io.IOException;
-import java.net.ServerSocket;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.net.URI;
 import java.util.List;
 
@@ -30,33 +25,22 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.lens.server.LensAllApplicationJerseyTest;
 import org.apache.lens.server.api.LensConfConstants;
-<<<<<<< HEAD
-=======
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.Database;
 import org.apache.hadoop.hive.ql.metadata.Hive;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-<<<<<<< HEAD
-@Test(groups="unit-test")
-public class TestLensClient extends LensAllApplicationJerseyTest {
-
-  @Override
-  protected int getTestPort()  {
-=======
 @Test(groups = "unit-test")
 public class TestLensClient extends LensAllApplicationJerseyTest {
   private static final String TEST_DB = TestLensClient.class.getSimpleName();
 
   @Override
   protected int getTestPort() {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return 10000;
   }
 
@@ -68,42 +52,24 @@ public class TestLensClient extends LensAllApplicationJerseyTest {
   @BeforeTest
   public void setUp() throws Exception {
     super.setUp();
-<<<<<<< HEAD
-=======
 
     Hive hive = Hive.get(new HiveConf());
     Database db = new Database();
     db.setName(TEST_DB);
     hive.createDatabase(db, true);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   @AfterTest
   public void tearDown() throws Exception {
     super.tearDown();
-<<<<<<< HEAD
-=======
 
     Hive hive = Hive.get(new HiveConf());
     hive.dropDatabase(TEST_DB);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   @Test
   public void testClient() throws Exception {
     LensClientConfig lensClientConfig = new LensClientConfig();
-<<<<<<< HEAD
-    lensClientConfig.set(LensConfConstants.SERVER_BASE_URL, "http://localhost:"+getTestPort()+"/lensapi");
-    LensClient client = new LensClient(lensClientConfig);
-    Assert.assertEquals(client.getCurrentDatabae(), "default",
-        "current database");
-    List<String> dbs = client.getAllDatabases();
-    Assert.assertEquals(dbs.size(), 1, "no of databases");
-    client.createDatabase("testclientdb", true);
-    Assert.assertEquals(client.getAllDatabases().size(), 2, " no of databases");
-    client.dropDatabase("testclientdb");
-    Assert.assertEquals(client.getAllDatabases().size(), 1, " no of databases");
-=======
     lensClientConfig.setLensDatabase(TEST_DB);
     Assert.assertEquals(lensClientConfig.getLensDatabase(), TEST_DB);
 
@@ -117,6 +83,5 @@ public class TestLensClient extends LensAllApplicationJerseyTest {
     Assert.assertEquals(client.getAllDatabases().size(), 3, " no of databases");
     client.dropDatabase("testclientdb");
     Assert.assertEquals(client.getAllDatabases().size(), 2, " no of databases");
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 }

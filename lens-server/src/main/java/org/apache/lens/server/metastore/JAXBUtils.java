@@ -91,24 +91,14 @@ public final class JAXBUtils {
       }
 
       Set<JoinChain> joinchains = new LinkedHashSet<JoinChain>();
-<<<<<<< HEAD
-      if (cube.getJoinchains() != null) {
-        for (XJoinChain xj : cube.getJoinchains().getChains()) {
-=======
       if (bcube.getJoinChains() != null && !bcube.getJoinChains().getJoinChain().isEmpty()) {
         for (XJoinChain xj : bcube.getJoinChains().getJoinChain()) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           joinchains.add(joinChainFromXJoinChain(xj));
         }
       }
 
       Map<String, String> properties = mapFromXProperties(cube.getProperties());
-<<<<<<< HEAD
-      double cubeWeight = cube.getWeight() == null ? 0d : cube.getWeight();
-      return new Cube(cube.getName(), measures, dims, expressions, joinchains, properties, cubeWeight);
-=======
       return new Cube(cube.getName(), measures, dims, expressions, joinchains, properties, 0L);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
   }
 
@@ -143,25 +133,11 @@ public final class JAXBUtils {
         xbc.getExpressions().getExpression().add(xExprColumnFromHiveExprColumn(ec));
       }
       for (CubeDimAttribute cd : c.getDimAttributes()) {
-<<<<<<< HEAD
-        xdmList.add(xDimAttrFromHiveDimAttr(cd, (Cube)c));
-      }
-      xc.setDimAttributes(xdm);
-
-      XJoinchains xjc = XCF.createXJoinchains();
-      List<XJoinChain> chainSet = xjc.getChains();
-      for (JoinChain jc : c.getJoinChains()) {
-        chainSet.add(xJoinChainFromJoinChain(jc));
-      }
-      xjc.getChains().addAll(chainSet);
-      xc.setJoinchains(xjc);
-=======
         xbc.getDimAttributes().getDimAttribute().add(xDimAttrFromHiveDimAttr(cd, (Cube) c));
       }
       for (JoinChain jc : c.getJoinChains()) {
         xbc.getJoinChains().getJoinChain().add(getXJoinChainFromJoinChain(jc));
       }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     xc.setName(c.getName());
     xc.setProperties(new XProperties());
@@ -173,10 +149,6 @@ public final class JAXBUtils {
    * Create a hive ql CubeDimension from JAXB counterpart
    *
    * @param xd
-<<<<<<< HEAD
-   *
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return {@link org.apache.lens.cube.metadata.CubeDimAttribute}
    */
   public static CubeDimAttribute hiveDimAttrFromXDimAttr(XDimAttribute xd) {
@@ -195,24 +167,6 @@ public final class JAXBUtils {
         dimRefs.add(new TableReference(xRef.getTable(), xRef.getColumn()));
       }
 
-<<<<<<< HEAD
-      hiveDim = new ReferencedDimAtrribute(new FieldSchema(xd.getName(), xd.getType(), xd.getDescription()),
-          xd.getDisplayString(),
-          dimRefs,
-          startDate,
-          endDate,
-          xd.getCost()
-          );
-    } else if (xd.getChainRefColumn() != null) {
-      hiveDim = new ReferencedDimAtrribute(new FieldSchema(xd.getName(), xd.getType(), xd.getDescription()),
-          xd.getDisplayString(),
-          xd.getChainRefColumn().getChainName(),
-          xd.getChainRefColumn().getRefCol(),
-          startDate,
-          endDate,
-          xd.getCost()
-          );
-=======
       hiveDim = new ReferencedDimAtrribute(new FieldSchema(xd.getName(), xd.getType().toLowerCase(),
         xd.getDescription()),
         xd.getDisplayString(),
@@ -231,7 +185,6 @@ public final class JAXBUtils {
         endDate,
         null
       );
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } else {
       hiveDim = new BaseDimAttribute(new FieldSchema(xd.getName(), xd.getType().toLowerCase(),
         xd.getDescription()),
@@ -318,28 +271,18 @@ public final class JAXBUtils {
     if (cd instanceof ReferencedDimAtrribute) {
       ReferencedDimAtrribute rd = (ReferencedDimAtrribute) cd;
       List<TableReference> dimRefs = rd.getReferences();
-<<<<<<< HEAD
-=======
       XDimAttribute.RefSpec refspec = XCF.createXDimAttributeRefSpec();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       if (rd.getChainName() != null) {
         XChainColumn xcc = new XChainColumn();
         xcc.setChainName(rd.getChainName());
         xcc.setRefCol(rd.getRefColumn());
         xcc.setDestTable(baseTable.getChainByName(rd.getChainName()).getDestTable());
-<<<<<<< HEAD
-        xd.setChainRefColumn(xcc);
-      } else {
-        xd.setReferences(xTabReferenceFromHiveTabReference(dimRefs));
-      }
-=======
         refspec.setChainRefColumn(xcc);
       } else {
         refspec.setTableReferences(new XTableReferences());
         refspec.getTableReferences().getTableReference().addAll(xTabReferencesFromHiveTabReferences(dimRefs));
       }
       xd.setRefSpec(refspec);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       xd.setType(rd.getType());
     } else if (cd instanceof BaseDimAttribute) {
       BaseDimAttribute bd = (BaseDimAttribute) cd;
@@ -351,35 +294,20 @@ public final class JAXBUtils {
   /**
    * Create XJoinChain from cube join chain
    */
-<<<<<<< HEAD
-  public static XJoinChain xJoinChainFromJoinChain(JoinChain jc) {
-=======
   public static XJoinChain getXJoinChainFromJoinChain(JoinChain jc) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     XJoinChain xjc = XCF.createXJoinChain();
     xjc.setName(jc.getName());
     xjc.setDescription(jc.getDescription());
     xjc.setDisplayString(jc.getDisplayString());
     xjc.setDestTable(jc.getDestTable());
-<<<<<<< HEAD
-
-    for (JoinChain.Path path : jc.getPaths()) {
-      xjc.getPaths().add(xTabReferenceFromHiveTabReference(path.getReferences()));
-=======
     xjc.setPaths(new XJoinPaths());
 
     for (JoinChain.Path path : jc.getPaths()) {
       xjc.getPaths().getPath().add(xJoinPathFromJoinPath(path));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     return xjc;
   }
 
-<<<<<<< HEAD
-  public static XTablereferences xTabReferenceFromHiveTabReference(List<TableReference> hiveRefs) {
-    XTablereferences xrefs = XCF.createXTablereferences();
-    List<XTablereference> xrefList = xrefs.getTableReferences();
-=======
   public static XJoinPath xJoinPathFromJoinPath(JoinChain.Path path) {
     XJoinPath xjp = XCF.createXJoinPath();
     xjp.setEdges(new XJoinEdges());
@@ -394,7 +322,6 @@ public final class JAXBUtils {
 
   public static List<XTableReference> xTabReferencesFromHiveTabReferences(List<TableReference> hiveRefs) {
     List<XTableReference> xrefList = new ArrayList<XTableReference>();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     for (TableReference hRef : hiveRefs) {
       xrefList.add(xTabReferenceFromTabReference(hRef));
@@ -418,19 +345,6 @@ public final class JAXBUtils {
   public static CubeMeasure hiveMeasureFromXMeasure(XMeasure xm) {
     Date startDate = xm.getStartTime() == null ? null : xm.getStartTime().toGregorianCalendar().getTime();
     Date endDate = xm.getEndTime() == null ? null : xm.getEndTime().toGregorianCalendar().getTime();
-<<<<<<< HEAD
-    CubeMeasure cm = new ColumnMeasure(new FieldSchema(xm.getName(), xm.getType(), xm.getDescription()),
-        xm.getDisplayString(),
-        xm.getFormatString(),
-        xm.getDefaultAggr(),
-        xm.getUnit(),
-        startDate,
-        endDate,
-        xm.getCost(),
-        xm.getMin(),
-        xm.getMax()
-        );
-=======
     CubeMeasure cm = new ColumnMeasure(new FieldSchema(xm.getName(), xm.getType().name().toLowerCase(),
       xm.getDescription()),
       xm.getDisplayString(),
@@ -443,7 +357,6 @@ public final class JAXBUtils {
       xm.getMin(),
       xm.getMax()
     );
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return cm;
   }
 
@@ -451,22 +364,10 @@ public final class JAXBUtils {
    * Create cube's JoinChain from JAXB counterpart
    *
    * @param xj
-<<<<<<< HEAD
-   *
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return {@link JoinChain}
    */
   public static JoinChain joinChainFromXJoinChain(XJoinChain xj) {
     JoinChain jc = new JoinChain(xj.getName(), xj.getDisplayString(), xj.getDescription());
-<<<<<<< HEAD
-    for (int i = 0; i < xj.getPaths().size(); i++) {
-      XTablereferences xchain = xj.getPaths().get(i);
-      List<TableReference> chain = new ArrayList<TableReference>(xchain.getTableReferences().size());
-
-      for (XTablereference xRef : xchain.getTableReferences()) {
-        chain.add(new TableReference(xRef.getDestTable(), xRef.getDestColumn()));
-=======
     for (int i = 0; i < xj.getPaths().getPath().size(); i++) {
       XJoinPath xchain = xj.getPaths().getPath().get(i);
       List<TableReference> chain = new ArrayList<TableReference>(xchain.getEdges().getEdge().size() * 2);
@@ -474,7 +375,6 @@ public final class JAXBUtils {
       for (XJoinEdge xRef : xchain.getEdges().getEdge()) {
         chain.add(new TableReference(xRef.getFrom().getTable(), xRef.getFrom().getColumn()));
         chain.add(new TableReference(xRef.getTo().getTable(), xRef.getTo().getColumn()));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       }
       jc.addPath(chain);
     }
@@ -878,24 +778,14 @@ public final class JAXBUtils {
     }
 
     Set<JoinChain> joinchains = new LinkedHashSet<JoinChain>();
-<<<<<<< HEAD
-    if (dimension.getJoinchains() != null) {
-      for (XJoinChain xj : dimension.getJoinchains().getChains()) {
-=======
     if (dimension.getJoinChains() != null && !dimension.getJoinChains().getJoinChain().isEmpty()) {
       for (XJoinChain xj : dimension.getJoinChains().getJoinChain()) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         joinchains.add(joinChainFromXJoinChain(xj));
       }
     }
 
     Map<String, String> properties = mapFromXProperties(dimension.getProperties());
-<<<<<<< HEAD
-    double dimWeight = dimension.getWeight() == null ? 0d : dimension.getWeight();
-    return new Dimension(dimension.getName(), dims, expressions, joinchains, properties, dimWeight);
-=======
     return new Dimension(dimension.getName(), dims, expressions, joinchains, properties, 0L);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   public static XDimension xdimensionFromDimension(Dimension dimension) {
@@ -908,11 +798,7 @@ public final class JAXBUtils {
 
     xd.getProperties().getProperty().addAll(xPropertiesFromMap(((AbstractCubeTable) dimension).getProperties()));
     for (CubeDimAttribute cd : dimension.getAttributes()) {
-<<<<<<< HEAD
-      xdmList.add(xDimAttrFromHiveDimAttr(cd, dimension));
-=======
       xd.getAttributes().getDimAttribute().add(xDimAttrFromHiveDimAttr(cd, dimension));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
 
     for (ExprColumn ec : dimension.getExpressions()) {
@@ -922,14 +808,6 @@ public final class JAXBUtils {
     for (JoinChain jc : dimension.getJoinChains()) {
       xd.getJoinChains().getJoinChain().add(getXJoinChainFromJoinChain(jc));
     }
-
-    XJoinchains xjc = XCF.createXJoinchains();
-    List<XJoinChain> chainSet = xjc.getChains();
-    for (JoinChain jc : dimension.getJoinChains()) {
-      chainSet.add(xJoinChainFromJoinChain(jc));
-    }
-    xjc.getChains().addAll(chainSet);
-    xd.setJoinchains(xjc);
 
     return xd;
   }

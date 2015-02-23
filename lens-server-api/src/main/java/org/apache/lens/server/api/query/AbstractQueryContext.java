@@ -18,22 +18,6 @@
  */
 package org.apache.lens.server.api.query;
 
-<<<<<<< HEAD
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.lens.api.LensConf;
-import org.apache.lens.api.LensException;
-import org.apache.lens.server.api.driver.DriverQueryPlan;
-import org.apache.lens.server.api.driver.LensDriver;
-
-=======
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
@@ -53,7 +37,6 @@ import org.apache.hadoop.conf.Configuration;
 import lombok.Getter;
 import lombok.Setter;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 public abstract class AbstractQueryContext implements Serializable {
   private static final long serialVersionUID = 1L;
 
@@ -107,15 +90,6 @@ public abstract class AbstractQueryContext implements Serializable {
   private String lensSessionIdentifier;
 
   /**
-<<<<<<< HEAD
-   * Will be set to true when the selected driver query is set other than user query
-   * This will help avoiding rewrites in case of system restarts.
-   */
-  @Getter private boolean isSelectedDriverQueryExplicitlySet = false;
-
-  protected AbstractQueryContext(final String query, final String user, final LensConf qconf, final Configuration conf,
-      final Collection<LensDriver> drivers) {
-=======
    * Will be set to true when the driver queries are explicitly set
    * This will help avoiding rewrites in case of system restarts.
    */
@@ -130,7 +104,6 @@ public abstract class AbstractQueryContext implements Serializable {
 
   protected AbstractQueryContext(final String query, final String user, final LensConf qconf, final Configuration conf,
     final Collection<LensDriver> drivers) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     driverContext = new DriverSelectorQueryContext(query, conf, drivers);
     userQuery = query;
     this.lensConf = qconf;
@@ -145,20 +118,11 @@ public abstract class AbstractQueryContext implements Serializable {
   }
 
   /**
-<<<<<<< HEAD
-   * Set driver queries, and updates for plan from each driver in the context
-=======
    * Set driver queries
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    *
    * @param driverQueries Map of LensDriver to driver's query
    * @throws LensException
    */
-<<<<<<< HEAD
-  public void setDriverQueriesAndPlans(Map<LensDriver, String> driverQueries) throws LensException {
-    driverContext.setDriverQueriesAndPlans(driverQueries, this);
-    isSelectedDriverQueryExplicitlySet = true;
-=======
   public void setDriverQueries(Map<LensDriver, String> driverQueries) throws LensException {
     driverContext.setDriverQueries(driverQueries);
     isDriverQueryExplicitlySet = true;
@@ -196,7 +160,6 @@ public abstract class AbstractQueryContext implements Serializable {
     if (!succeededOnAtleastOneDriver) {
       throw new LensException(useBuilder ? detailedFailureCause.toString() : failureCause);
     }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   /**
@@ -242,11 +205,7 @@ public abstract class AbstractQueryContext implements Serializable {
     this.selectedDriverQuery = driverQuery;
     if (driverContext != null) {
       driverContext.setSelectedDriverQuery(driverQuery);
-<<<<<<< HEAD
-      isSelectedDriverQueryExplicitlySet = true;
-=======
       isDriverQueryExplicitlySet = true;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
   }
 
@@ -286,8 +245,6 @@ public abstract class AbstractQueryContext implements Serializable {
     }
     return null;
   }
-<<<<<<< HEAD
-=======
 
   public QueryCost getSelectedDriverQueryCost() throws LensException {
     if (driverContext != null) {
@@ -296,5 +253,4 @@ public abstract class AbstractQueryContext implements Serializable {
     return null;
   }
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 }

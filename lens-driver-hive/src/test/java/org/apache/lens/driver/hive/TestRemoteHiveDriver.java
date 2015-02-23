@@ -136,16 +136,11 @@ public class TestRemoteHiveDriver extends TestHiveDriver {
     driver = new HiveDriver();
     conf.setBoolean(HiveDriver.HS2_CALCULATE_PRIORITY, false);
     driver.configure(conf);
-<<<<<<< HEAD
-    drivers = new ArrayList<LensDriver>() {{ add
-      (driver);}};
-=======
     drivers = new ArrayList<LensDriver>() {
       {
         add(driver);
       }
     };
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     System.out.println("TestRemoteHiveDriver created");
   }
 

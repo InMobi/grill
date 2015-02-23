@@ -27,11 +27,7 @@
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
-<<<<<<< HEAD
-    <version>1.2.6-SNAPSHOT</version>
-=======
     <version>2.1.0-incubating-SNAPSHOT</version>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   </parent>
 
   <properties>
@@ -106,36 +102,6 @@
       <artifactId>hive-metastore</artifactId>
     </dependency>
 
-<<<<<<< HEAD
-      <dependency>
-          <groupId>org.apache.hive</groupId>
-          <artifactId>hive-shims</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-server-api</artifactId>
-        <type>test-jar</type>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-=======
     <dependency>
       <groupId>org.apache.hive</groupId>
       <artifactId>hive-shims</artifactId>
@@ -155,7 +121,6 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   </dependencies>
 
 </project>

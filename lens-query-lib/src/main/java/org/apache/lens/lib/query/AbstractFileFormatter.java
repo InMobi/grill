@@ -18,20 +18,12 @@
  */
 package org.apache.lens.lib.query;
 
-<<<<<<< HEAD
-import org.apache.hadoop.fs.Path;
-import org.apache.lens.server.api.driver.LensResultSetMetadata;
-import org.apache.lens.server.api.query.QueryContext;
-
-import java.io.IOException;
-=======
 import java.io.IOException;
 
 import org.apache.lens.server.api.driver.LensResultSetMetadata;
 import org.apache.lens.server.api.query.QueryContext;
 
 import org.apache.hadoop.fs.Path;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Abstract implementation of {@link FileFormatter}, which gets column details from {@link AbstractOutputFormatter}.

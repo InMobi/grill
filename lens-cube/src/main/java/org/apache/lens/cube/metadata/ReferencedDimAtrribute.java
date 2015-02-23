@@ -20,24 +20,9 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 
-<<<<<<< HEAD
-@EqualsAndHashCode(callSuper=true)
-@ToString
-public class ReferencedDimAtrribute extends BaseDimAttribute {
-  @Getter private final List<TableReference> references = new ArrayList<TableReference>();
-  // boolean whether to say the key is only a denormalized variable kept or can
-  // be used in join resolution as well
-  private Boolean isJoinKey = true;
-  @Getter private String chainName = null;
-  @Getter private String refColumn = null;
-=======
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -54,7 +39,6 @@ public class ReferencedDimAtrribute extends BaseDimAttribute {
   private String chainName = null;
   @Getter
   private String refColumn = null;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   public ReferencedDimAtrribute(FieldSchema column, String displayString, TableReference reference) {
     this(column, displayString, reference, null, null, null);
@@ -89,11 +73,7 @@ public class ReferencedDimAtrribute extends BaseDimAttribute {
   }
 
   public ReferencedDimAtrribute(FieldSchema column, String displayString, String chainName, String refColumn,
-<<<<<<< HEAD
-      Date startTime, Date endTime, Double cost) {
-=======
     Date startTime, Date endTime, Double cost) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     super(column, displayString, startTime, endTime, cost);
     this.chainName = chainName.toLowerCase();
     this.refColumn = refColumn.toLowerCase();
@@ -120,11 +100,7 @@ public class ReferencedDimAtrribute extends BaseDimAttribute {
       props.put(MetastoreUtil.getDimRefChainColumnKey(getName()), refColumn);
     } else {
       props.put(MetastoreUtil.getDimensionSrcReferenceKey(getName()),
-<<<<<<< HEAD
-          MetastoreUtil.getReferencesString(references));
-=======
         MetastoreUtil.getReferencesString(references));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       props.put(MetastoreUtil.getDimUseAsJoinKey(getName()), isJoinKey.toString());
     }
   }
@@ -144,11 +120,7 @@ public class ReferencedDimAtrribute extends BaseDimAttribute {
       this.isJoinKey = false;
     } else {
       String refListStr = props.get(MetastoreUtil.getDimensionSrcReferenceKey(getName()));
-<<<<<<< HEAD
-      String refListDims[] = StringUtils.split(refListStr, ",");
-=======
       String[] refListDims = StringUtils.split(refListStr, ",");
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       for (String refDimRaw : refListDims) {
         references.add(new TableReference(refDimRaw));
       }

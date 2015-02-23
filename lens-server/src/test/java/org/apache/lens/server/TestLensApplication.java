@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.List;
 
-import com.codahale.metrics.ScheduledReporter;
-
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;

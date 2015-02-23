@@ -32,10 +32,6 @@ import org.apache.lens.api.LensException;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.session.SessionService;
-<<<<<<< HEAD
-import org.glassfish.jersey.media.multipart.FormDataParam;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,8 +55,6 @@ public class SessionUIResource {
 
   /** The session service. */
   private SessionService sessionService;
-<<<<<<< HEAD
-=======
 
   /**
    * get open session from uuid
@@ -70,7 +64,6 @@ public class SessionUIResource {
   public static LensSessionHandle getOpenSession(UUID id) {
     return openSessions.get(id);
   }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * API to know if session service is up and running
@@ -140,20 +133,12 @@ public class SessionUIResource {
    * @param publicId Session's public id of the session to be closed
    * @return APIResult object indicating if the operation was successful (check result.getStatus())
    */
-<<<<<<< HEAD
-  @DELETE @Path("{publicId}")
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
-  public APIResult closeSession(@PathParam("publicId") UUID publicId) {
-    LOG.info("Closing session with id: " + publicId);
-    LensSessionHandle sessionHandle = openSessions.get(publicId);
-=======
   @DELETE
   @Path("{publicId}")
   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult closeSession(@PathParam("publicId") UUID publicId) {
     LOG.info("Closing session with id: " + publicId);
     LensSessionHandle sessionHandle = getOpenSession(publicId);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     checkSessionHandle(sessionHandle);
     openSessions.remove(publicId);
     try {

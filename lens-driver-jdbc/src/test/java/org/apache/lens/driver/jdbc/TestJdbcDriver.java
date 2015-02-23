@@ -25,39 +25,16 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-<<<<<<< HEAD
-import java.util.HashMap;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-<<<<<<< HEAD
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.ql.session.SessionState;
-import org.apache.hive.service.cli.ColumnDescriptor;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.query.QueryCost;
 import org.apache.lens.api.query.QueryHandle;
 import org.apache.lens.api.query.ResultRow;
-<<<<<<< HEAD
-import org.apache.lens.driver.jdbc.JDBCDriver;
-import org.apache.lens.driver.jdbc.JDBCDriverConfConstants;
-import org.apache.lens.driver.jdbc.JDBCResultSet;
-import org.apache.lens.server.api.driver.LensDriver;
-import org.apache.lens.server.api.driver.LensResultSet;
-import org.apache.lens.server.api.driver.LensResultSetMetadata;
-import org.apache.lens.server.api.driver.InMemoryResultSet;
-import org.apache.lens.server.api.driver.QueryCompletionListener;
-=======
 import org.apache.lens.server.api.driver.*;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.server.api.driver.DriverQueryStatus.DriverQueryState;
 import org.apache.lens.server.api.query.ExplainQueryContext;
 import org.apache.lens.server.api.query.PreparedQueryContext;
@@ -70,14 +47,10 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.service.cli.ColumnDescriptor;
 
 import org.testng.Assert;
-<<<<<<< HEAD
-import org.testng.annotations.*;
-=======
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Class TestJdbcDriver.
@@ -137,15 +110,6 @@ public class TestJdbcDriver {
 
   private QueryContext createQueryContext(final String query) throws LensException {
     QueryContext context = new QueryContext(query, "SA", new LensConf(), baseConf, drivers);
-<<<<<<< HEAD
-    context.setDriverQueriesAndPlans(new HashMap<LensDriver, String>() {
-      {
-        put(driver, query);
-      }
-    });
-    context.setSelectedDriver(driver);
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return context;
   }
 
@@ -360,15 +324,6 @@ public class TestJdbcDriver {
 
     final String query = "SELECT * from prepare_test";
     PreparedQueryContext pContext = new PreparedQueryContext(query, "SA", baseConf, drivers);
-<<<<<<< HEAD
-    pContext.setDriverQueriesAndPlans(new HashMap<LensDriver, String>() {
-      {
-        put(driver, query);
-      }
-    });
-    pContext.setSelectedDriver(driver);
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     driver.prepare(pContext);
   }
 

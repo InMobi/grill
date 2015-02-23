@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-[Lens has moved to the ASF](http://incubator.apache.org/projects/lens.html)
-=========================
-
-
-Lens
-=======
 Apache Lens
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 =====
 
 Apache Lens is a unified Analytics Platform. Lens aims to cut the Data Analytics silos by providing a single view of data

@@ -36,15 +36,6 @@ import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-<<<<<<< HEAD
-import org.apache.lens.api.LensException;
-import org.apache.lens.cube.parse.CubeQueryRewriter;
-import org.apache.lens.cube.parse.HQLParser;
-import org.apache.lens.server.api.driver.LensDriver;
-
-import org.apache.lens.server.api.query.AbstractQueryContext;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.log4j.Logger;
 
 /**
@@ -190,12 +181,7 @@ public final class RewriteUtil {
   /**
    * Gets the rewriter.
    *
-<<<<<<< HEAD
-   * @param queryConf
-   *          the query conf
-=======
    * @param queryConf the query conf
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return the rewriter
    * @throws SemanticException the semantic exception
    */
@@ -217,12 +203,7 @@ public final class RewriteUtil {
   /**
    * Rewrite query.
    *
-<<<<<<< HEAD
-   * @param ctx
-   *          the query context
-=======
    * @param ctx the query context
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return the map
    * @throws LensException the lens exception
    */
@@ -241,10 +222,6 @@ public final class RewriteUtil {
       } else {
         List<RewriteUtil.CubeQueryInfo> cubeQueries = findCubePositions(replacedQuery);
         for (LensDriver driver : ctx.getDriverContext().getDrivers()) {
-<<<<<<< HEAD
-          CubeQueryRewriter rewriter = getCubeRewriter(ctx.getDriverContext().getDriverConf(driver));
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           StringBuilder builder = new StringBuilder();
           int start = 0;
           try {

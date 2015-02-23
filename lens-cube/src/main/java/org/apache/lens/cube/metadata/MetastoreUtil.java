@@ -122,11 +122,7 @@ public class MetastoreUtil {
   }
 
   public static final String getReferencesString(List<TableReference> references) {
-<<<<<<< HEAD
-    String toks[] = new String[references.size()];
-=======
     String[] toks = new String[references.size()];
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     for (int i = 0; i < references.size(); i++) {
       TableReference reference = references.get(i);
@@ -189,10 +185,7 @@ public class MetastoreUtil {
   public static String getCubeJoinChainFullChainKey(String colName, int index) {
     return getCubeJoinChainKey(colName) + FULL_CHAIN_KEY + index;
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static String getCubeJoinChainDescriptionKey(String colName) {
     return getCubeJoinChainKey(colName) + DESC_SFX;
   }
@@ -212,10 +205,7 @@ public class MetastoreUtil {
   public static String getDimensionJoinChainFullChainKey(String colName, int index) {
     return getDimensionJoinChainKey(colName) + FULL_CHAIN_KEY + index;
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static String getDimensionJoinChainDescriptionKey(String colName) {
     return getDimensionJoinChainKey(colName) + DESC_SFX;
   }
@@ -225,10 +215,6 @@ public class MetastoreUtil {
   }
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   // ////////////////////////
   // Dimension table properties //
   // ////////////////////////

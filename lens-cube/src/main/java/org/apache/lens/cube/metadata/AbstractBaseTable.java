@@ -21,8 +21,6 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
-import com.google.common.base.Preconditions;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
@@ -50,11 +48,7 @@ public abstract class AbstractBaseTable extends AbstractCubeTable {
 
   public AbstractBaseTable(String name, Set<ExprColumn> exprs, Set<JoinChain> joinChains, Map<String, String>
     properties, double weight) {
-<<<<<<< HEAD
-    super(name, columns, properties, weight);
-=======
     super(name, COLUMNS, properties, weight);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     exprMap = new HashMap<String, ExprColumn>();
     if (exprs == null) {
@@ -188,11 +182,7 @@ public abstract class AbstractBaseTable extends AbstractCubeTable {
 
   /**
    * Remove the measure with name specified
-<<<<<<< HEAD
-   * 
-=======
    *
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param exprName
    */
   public void removeExpression(String exprName) {
@@ -224,10 +214,6 @@ public abstract class AbstractBaseTable extends AbstractCubeTable {
   }
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public void setJoinChainProperties(Set<JoinChain> chains) {
     for (JoinChain chain : chains) {
       chain.addProperties(this);
@@ -258,20 +244,13 @@ public abstract class AbstractBaseTable extends AbstractCubeTable {
   }
 
   public JoinChain getChainByName(String name) {
-<<<<<<< HEAD
-    Preconditions.checkNotNull(name) ;
-=======
     Preconditions.checkNotNull(name);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return chainMap.get(name.toLowerCase());
   }
 
   /**
    * Returns the property key for Cube/Dimension specific join chain list
-<<<<<<< HEAD
-=======
    *
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param tblname
    * @return
    */
@@ -279,11 +258,7 @@ public abstract class AbstractBaseTable extends AbstractCubeTable {
 
   /**
    * Get join chains from properties
-<<<<<<< HEAD
-   * @param props
-=======
    *
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @return
    */
   public Set<JoinChain> getJoinChains() {

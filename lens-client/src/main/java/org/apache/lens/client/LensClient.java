@@ -18,18 +18,13 @@
  */
 package org.apache.lens.client;
 
-<<<<<<< HEAD
-import com.google.common.collect.Maps;
-=======
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lens.api.APIResult;
 import org.apache.lens.api.metastore.*;
 import org.apache.lens.api.query.*;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
-import org.apache.lens.api.metastore.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

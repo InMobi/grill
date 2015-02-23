@@ -18,12 +18,6 @@
  */
 package org.apache.lens.driver.jdbc;
 
-<<<<<<< HEAD
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.ql.parse.ASTNode;
-import org.apache.hadoop.hive.ql.parse.HiveParser;
-import org.apache.hadoop.hive.ql.parse.ParseException;
-=======
 import static org.apache.lens.driver.jdbc.JDBCDriverConfConstants.*;
 
 import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TMP_FILE;
@@ -36,7 +30,6 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.query.QueryCost;
@@ -51,10 +44,6 @@ import org.apache.lens.server.api.query.AbstractQueryContext;
 import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
 import org.apache.lens.server.api.query.QueryRewriter;
-<<<<<<< HEAD
-import org.apache.log4j.Logger;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
@@ -331,17 +320,9 @@ public class JDBCDriver implements LensDriver {
     /**
      * Create statement used to issue the query
      *
-<<<<<<< HEAD
-     * @param conn
-     *          pre created SQL Connection object
-     * @return statement
-     * @throws SQLException
-     *           the SQL exception
-=======
      * @param conn pre created SQL Connection object
      * @return statement
      * @throws SQLException the SQL exception
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
      */
     public Statement createStatement(Connection conn) throws SQLException {
       Statement stmt;
@@ -381,14 +362,9 @@ public class JDBCDriver implements LensDriver {
 
     /*
      * (non-Javadoc)
-<<<<<<< HEAD
-     * 
-     * @see org.apache.lens.server.api.query.QueryRewriter#rewrite(java.lang.String, org.apache.hadoop.conf.Configuration)
-=======
      *
      * @see org.apache.lens.server.api.query.QueryRewriter#rewrite
      * (java.lang.String, org.apache.hadoop.conf.Configuration)
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
      */
     @Override
     public String rewrite(String query, Configuration queryConf) throws LensException {
@@ -579,8 +555,6 @@ public class JDBCDriver implements LensDriver {
    */
   @Override
   public DriverQueryPlan explain(AbstractQueryContext explainCtx) throws LensException {
-<<<<<<< HEAD
-=======
     if (explainCtx.getDriverQuery(this) == null) {
       throw new NullPointerException("Null driver query for " + explainCtx.getUserQuery());
     }
@@ -588,28 +562,11 @@ public class JDBCDriver implements LensDriver {
       // explain called again and again
       return explainCtx.getDriverContext().getDriverQueryPlan(this);
     }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     checkConfigured();
     String explainQuery;
     String rewrittenQuery = rewriteQuery(explainCtx.getDriverQuery(this), conf);
     Configuration explainConf = new Configuration(explainCtx.getDriverConf(this));
     explainConf.setBoolean(LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER,
-<<<<<<< HEAD
-        false);
-    String explainKeyword = explainConf.get(JDBC_EXPLAIN_KEYWORD_PARAM,
-        DEFAULT_JDBC_EXPLAIN_KEYWORD);
-    boolean explainBeforeSelect = explainConf.getBoolean(JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT,
-        DEFAULT_JDBC_EXPLAIN_KEYWORD_BEFORE_SELECT);
-    
-    if (explainBeforeSelect)
-      explainQuery = explainKeyword + " " + rewrittenQuery;
-    else
-      explainQuery = rewrittenQuery.replaceAll("select ", "select "
-          + explainKeyword + " ");
-    LOG.info("Explain Query : " + explainQuery);
-    QueryContext explainQueryCtx = QueryContext.createContextWithSingleDriver(explainQuery, null,
-        new LensConf(), explainConf, this, explainCtx.getLensSessionIdentifier());
-=======
       false);
     String explainKeyword = explainConf.get(JDBC_EXPLAIN_KEYWORD_PARAM,
       DEFAULT_JDBC_EXPLAIN_KEYWORD);
@@ -625,7 +582,6 @@ public class JDBCDriver implements LensDriver {
     LOG.info("Explain Query : " + explainQuery);
     QueryContext explainQueryCtx = QueryContext.createContextWithSingleDriver(explainQuery, null,
       new LensConf(), explainConf, this, explainCtx.getLensSessionIdentifier());
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     QueryResult result = null;
     try {
       result = executeInternal(explainQueryCtx, explainQuery);

@@ -124,11 +124,7 @@ public class QueryServiceUIResource {
     checkSessionHandle(sessionHandle);
     try {
       return queryServer.getAllQueries(sessionHandle, state, user, queryName, fromDate, toDate == -1L ? Long.MAX_VALUE
-<<<<<<< HEAD
-          : toDate);
-=======
         : toDate);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } catch (LensException e) {
       throw new WebApplicationException(e);
     }

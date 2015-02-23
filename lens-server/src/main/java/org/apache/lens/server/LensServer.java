@@ -43,18 +43,9 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-<<<<<<< HEAD
-import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-=======
 import com.codahale.metrics.servlets.AdminServlet;
 
 import lombok.Getter;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Class LensServer.
@@ -66,12 +57,6 @@ public class LensServer {
 
   private static final String SEP_LINE =
     "\n###############################################################\n";
-<<<<<<< HEAD
-
-  /** The server. */
-  final HttpServer server;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   @Getter
   private final List<HttpServer> serverList = new ArrayList<HttpServer>();
@@ -79,12 +64,8 @@ public class LensServer {
   /** The conf. */
   final HiveConf conf;
 
-<<<<<<< HEAD
-  /** This flag indicates that the lens server can run,
-=======
   /**
    * This flag indicates that the lens server can run,
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * When this is set to false, main thread bails out.
    */
   volatile boolean canRun = true;
@@ -163,28 +144,18 @@ public class LensServer {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   public synchronized void start() throws IOException {
-<<<<<<< HEAD
-    server.start();
-    uiServer.start();
-=======
     for (HttpServer server : serverList) {
       server.start();
     }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   /**
    * Stop.
    */
   public synchronized void stop() {
-<<<<<<< HEAD
-    server.shutdownNow();
-    uiServer.shutdownNow();
-=======
     for (HttpServer server : serverList) {
       server.shutdown();
     }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     LensServices.get().stop();
     printShutdownMessage();
   }
@@ -218,11 +189,7 @@ public class LensServer {
 
     printStartupMessage();
     try {
-<<<<<<< HEAD
-      final LensServer thisServer = new LensServer(LensServerConf.get());
-=======
       final LensServer thisServer = LensServer.createLensServer(LensServerConf.get());
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
       registerShutdownHook(thisServer);
       registerDefaultExceptionHandler();
@@ -253,19 +220,11 @@ public class LensServer {
       try {
         buildProperties.load(buildPropertiesResource);
         for (Map.Entry entry : buildProperties.entrySet()) {
-<<<<<<< HEAD
-              buffer.append('\n').append('\t').append(entry.getKey()).
-                      append(":\t").append(entry.getValue());
-          }
-      } catch (Throwable e) {
-          buffer.append("*** Unable to get build info ***");
-=======
           buffer.append('\n').append('\t').append(entry.getKey()).
             append(":\t").append(entry.getValue());
         }
       } catch (Throwable e) {
         buffer.append("*** Unable to get build info ***");
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       }
     } else {
       buffer.append("*** Unable to get build info ***");
@@ -285,12 +244,8 @@ public class LensServer {
     LOG.info(buffer.toString());
   }
 
-<<<<<<< HEAD
-  /** Registering a shutdown hook to listen to SIGTERM events.
-=======
   /**
    * Registering a shutdown hook to listen to SIGTERM events.
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * Upon receiving a SIGTERM, notify the server, which is put
    * on wait state.
    */

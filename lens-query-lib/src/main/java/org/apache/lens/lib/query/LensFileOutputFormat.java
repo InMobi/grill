@@ -18,8 +18,6 @@
  */
 package org.apache.lens.lib.query;
 
-<<<<<<< HEAD
-=======
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -27,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.lens.server.api.LensConfConstants;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -41,11 +38,6 @@ import org.apache.hadoop.mapred.RecordWriter;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 
 /**
  * File output format which would write Text values in the charset enconding passed.

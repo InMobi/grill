@@ -188,34 +188,7 @@ public class CubeMetastoreClient {
    * @throws HiveException
    */
   public void createCube(String name, Set<CubeMeasure> measures, Set<CubeDimAttribute> dimensions,
-<<<<<<< HEAD
-      Set<ExprColumn> expressions, Map<String, String> properties) throws HiveException {
-    Cube cube = new Cube(name, measures, dimensions, expressions, null, properties, 0L);
-    createCube(cube);
-  }
-
-  /**
-   * Create cube defined by measures, dimensions and properties
-   *
-   * @param name
-   *          Name of the cube
-   * @param measures
-   *          Measures of the cube
-   * @param dimensions
-   *          Dimensions of the cube
-   * @param expressions
-   *          Expressions of the cube
-   * @param chains
-   *          JoinChains of the cube
-   * @param properties
-   *          Properties of the cube
-   * @throws HiveException
-   */
-  public void createCube(String name, Set<CubeMeasure> measures, Set<CubeDimAttribute> dimensions,
-      Set<ExprColumn> expressions, Set<JoinChain> chains, Map<String, String> properties) throws HiveException {
-=======
     Set<ExprColumn> expressions, Set<JoinChain> chains, Map<String, String> properties) throws HiveException {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     Cube cube = new Cube(name, measures, dimensions, expressions, chains, properties, 0L);
     createCube(cube);
   }

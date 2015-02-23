@@ -1436,21 +1436,12 @@ public class MetastoreResource {
    */
   @GET
   @Path("flattened/{tableName}")
-<<<<<<< HEAD
-  public JAXBElement<FlattenedColumns> getFlattenedColumns(
-      @QueryParam("sessionid") LensSessionHandle sessionid,
-      @PathParam("tableName") String tableName) {
-    checkSessionId(sessionid);
-    try {
-      return xCubeObjectFactory.createFlattenedColumns(getSvc().getFlattenedColumns(sessionid, tableName));
-=======
   public JAXBElement<XFlattenedColumns> getFlattenedColumns(
     @QueryParam("sessionid") LensSessionHandle sessionid,
     @PathParam("tableName") String tableName) {
     checkSessionId(sessionid);
     try {
       return X_CUBE_OBJECT_FACTORY.createXFlattenedColumns(getSvc().getFlattenedColumns(sessionid, tableName));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } catch (LensException exc) {
       throw new WebApplicationException(exc);
     }

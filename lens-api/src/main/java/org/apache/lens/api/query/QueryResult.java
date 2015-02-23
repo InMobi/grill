@@ -21,11 +21,11 @@
  */
 package org.apache.lens.api.query;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * The Class QueryResult.

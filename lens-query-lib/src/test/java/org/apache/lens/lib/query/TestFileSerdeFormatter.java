@@ -18,8 +18,6 @@
  */
 package org.apache.lens.lib.query;
 
-<<<<<<< HEAD
-=======
 import java.io.IOException;
 import java.util.*;
 
@@ -27,24 +25,14 @@ import org.apache.lens.api.query.ResultRow;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.query.InMemoryOutputFormatter;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.io.Text;
-<<<<<<< HEAD
-import org.apache.lens.api.query.ResultRow;
-import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.api.query.InMemoryOutputFormatter;
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * The Class TestFileSerdeFormatter.

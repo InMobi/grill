@@ -18,20 +18,15 @@
  */
 package org.apache.lens.lib.query;
 
-<<<<<<< HEAD
-=======
 import java.io.IOException;
 
 import org.apache.lens.lib.query.LensFileOutputFormat.LensRowWriter;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.Reporter;
-
-import java.io.IOException;
 
 /**
  * A hadoop file formatter

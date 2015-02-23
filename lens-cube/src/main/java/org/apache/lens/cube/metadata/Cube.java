@@ -21,8 +21,6 @@ package org.apache.lens.cube.metadata;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-import lombok.Getter;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Table;
@@ -44,20 +42,12 @@ public class Cube extends AbstractBaseTable implements CubeInterface {
   }
 
   public Cube(String name, Set<CubeMeasure> measures, Set<CubeDimAttribute> dimensions, Map<String, String> properties,
-<<<<<<< HEAD
-      double weight) {
-=======
     double weight) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     this(name, measures, dimensions, null, null, properties, weight);
   }
 
   public Cube(String name, Set<CubeMeasure> measures, Set<CubeDimAttribute> dimensions, Set<ExprColumn> expressions,
-<<<<<<< HEAD
-      Set<JoinChain> joinChains, Map<String, String> properties, double weight) {
-=======
     Set<JoinChain> joinChains, Map<String, String> properties, double weight) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     super(name, expressions, joinChains, properties, weight);
     this.measures = measures;
     this.dimensions = dimensions;
@@ -259,11 +249,7 @@ public class Cube extends AbstractBaseTable implements CubeInterface {
    * @param chainName
    */
   public boolean removeJoinChain(String chainName) {
-<<<<<<< HEAD
-    if(super.removeJoinChain(chainName)) {
-=======
     if (super.removeJoinChain(chainName)) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       LOG.info("Removing dimension " + getDimAttributeByName(chainName));
       return true;
     }
@@ -271,14 +257,8 @@ public class Cube extends AbstractBaseTable implements CubeInterface {
   }
 
   /**
-<<<<<<< HEAD
-   * Alters the dimension if already existing or just adds if it is new
-   * dimension
-   * 
-=======
    * Alters the dimension if already existing or just adds if it is new dimension
    *
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param dimension
    * @throws HiveException
    */
@@ -300,10 +280,6 @@ public class Cube extends AbstractBaseTable implements CubeInterface {
   }
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   /**
    * Remove the dimension with name specified
    *

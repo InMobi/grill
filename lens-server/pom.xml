@@ -24,19 +24,11 @@
   <modelVersion>4.0.0</modelVersion>
   <name>Lens Server</name>
 
-<<<<<<< HEAD
-    <parent>
-        <artifactId>lens-parent</artifactId>
-        <groupId>org.apache.lens</groupId>
-        <version>1.2.6-SNAPSHOT</version>
-    </parent>
-=======
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
     <version>2.1.0-incubating-SNAPSHOT</version>
   </parent>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   <properties>
     <mvn.classpath.file>${pom.basedir}/target/classpath</mvn.classpath.file>
@@ -47,35 +39,6 @@
   <packaging>war</packaging>
   <description>Lens server</description>
 
-<<<<<<< HEAD
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.lens</groupId>
-            <artifactId>lens-server-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hive</groupId>
-            <artifactId>hive-exec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hive</groupId>
-            <artifactId>hive-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-moxy</artifactId>
-        </dependency>
-        <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-cube</artifactId>
-        <version>${project.version}</version>
-        </dependency>
-=======
   <dependencies>
     <dependency>
       <groupId>org.apache.lens</groupId>
@@ -99,7 +62,6 @@
       <artifactId>lens-cube</artifactId>
       <version>${project.version}</version>
     </dependency>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     <dependency>
       <groupId>org.apache.lens</groupId>
@@ -110,10 +72,6 @@
       <groupId>org.apache.lens</groupId>
       <artifactId>lens-driver-jdbc</artifactId>
       <version>${project.version}</version>
-<<<<<<< HEAD
-      <scope>test</scope>
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     </dependency>
     <dependency>
       <groupId>org.apache.lens</groupId>
@@ -122,15 +80,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.lens</groupId>
-<<<<<<< HEAD
-=======
       <artifactId>lens-storage-db</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.lens</groupId>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       <artifactId>lens-driver-hive</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -184,192 +139,6 @@
       <artifactId>servlet-api</artifactId>
     </dependency>
 
-<<<<<<< HEAD
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-        </dependency>
-        
-        <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-core</artifactId>
-    		</dependency>
-        <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-ganglia</artifactId>
-    		</dependency>
-        <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-jvm</artifactId>
-    		</dependency>
-        <dependency>
-	        <groupId>com.codahale.metrics</groupId>
-	        <artifactId>metrics-servlets</artifactId>
-    		</dependency>
-        <dependency>
-	        <groupId>org.slf4j</groupId>
-	        <artifactId>jul-to-slf4j</artifactId>
-    		</dependency>
-      <dependency>
-       <groupId>org.slf4j</groupId>
-       <artifactId>slf4j-log4j12</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-client</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.subethamail</groupId>
-        <artifactId>subethasmtp</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>commons-dbutils</groupId>
-        <artifactId>commons-dbutils</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.hsqldb</groupId>
-        <artifactId>hsqldb</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-maven-plugin</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-server-api</artifactId>
-        <type>test-jar</type>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <attachClasses>true</attachClasses>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- build the test JAR (test classes) -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <revisionOnScmFailure>release</revisionOnScmFailure>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
-      </plugin>
-          <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>${jetty.version}</version>
-          </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <configuration>
-                    <mainClass>org.apache.lens.server.LensServer</mainClass>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.15</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <hadoop.bin.path>${pom.basedir}/../lens-driver-hive/testutils/hadoop</hadoop.bin.path>
-                    </systemPropertyVariables>
-                    <environmentVariables>
-                        <MVN_CLASSPATH_FILE>${mvn.classpath.file}</MVN_CLASSPATH_FILE>
-                    </environmentVariables>
-                   <argLine>-Xms256m -Xmx512m -XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>build-classpath</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>build-classpath</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${mvn.classpath.file}</outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-					<plugin>
-						<groupId>org.codehaus.enunciate</groupId>
-						<artifactId>maven-enunciate-plugin</artifactId>
-						<version>1.28</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>docs</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<configFile>enunciate.xml</configFile>
-						</configuration>
-				</plugin>
-        </plugins>
-    </build>
-=======
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
@@ -551,5 +320,4 @@
     </plugins>
   </build>
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 </project>

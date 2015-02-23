@@ -90,11 +90,7 @@ public class HiveQueryPlan extends DriverQueryPlan {
 
     /** CREATE TABLE if destination is a table */
     CREATE
-<<<<<<< HEAD
-  };
-=======
   }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * Instantiates a new hive query plan.

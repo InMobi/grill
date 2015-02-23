@@ -144,17 +144,9 @@ public class ResultFormatter extends AsyncEventListener<QueryExecuted> {
   /**
    * Creates the and set formatter.
    *
-<<<<<<< HEAD
-   * @param ctx
-   *          the ctx
-   * @param isPersistedInDriver
-   * @throws LensException
-   *           the lens exception
-=======
    * @param ctx                 the ctx
    * @param isPersistedInDriver
    * @throws LensException the lens exception
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   @SuppressWarnings("unchecked")
   void createAndSetFormatter(QueryContext ctx, boolean isPersistedInDriver) throws LensException {

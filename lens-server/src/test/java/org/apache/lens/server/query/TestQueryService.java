@@ -1373,7 +1373,6 @@ public class TestQueryService extends LensJerseyTest {
       + " compiling statement: FAILED: SemanticException [Error 10001]: Line 1:32 Table not found 'nonexist'"));
     Assert.assertTrue(result.getErrorMsg().contains("Driver :org.apache.lens.driver.jdbc.JDBCDriver Cause :user"
       + " lacks privilege or object not found: NONEXIST"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
 }

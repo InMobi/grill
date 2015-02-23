@@ -19,26 +19,10 @@
   under the License.
 
 -->
-<<<<<<< HEAD
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-     <modelVersion>4.0.0</modelVersion>
-		 <name>Lens Cube</name>
-   
-     <parent>
-       <artifactId>lens-parent</artifactId>
-       <groupId>org.apache.lens</groupId>
-       <version>1.2.6-SNAPSHOT</version>
-    </parent>
-    
-    <artifactId>lens-cube</artifactId>
-    <packaging>jar</packaging>
-    <description>OLAP cube queries</description>
-=======
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>Lens Cube</name>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   <parent>
     <artifactId>apache-lens</artifactId>
@@ -46,64 +30,6 @@
     <version>2.1.0-incubating-SNAPSHOT</version>
   </parent>
 
-<<<<<<< HEAD
-      <dependency>
-        <groupId>org.apache.hive</groupId>
-        <artifactId>hive-exec</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hive</groupId>
-        <artifactId>hive-service</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-    </dependency>
-     <dependency>
-        <groupId>org.powermock</groupId>
-        <artifactId>powermock-module-testng</artifactId>
-     </dependency>
-     <dependency>
-        <groupId>org.powermock</groupId>
-        <artifactId>powermock-api-mockito</artifactId>
-     </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.lens</groupId>
-        <artifactId>lens-server-api</artifactId>
-        <type>test-jar</type>
-        <version>${project.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-      </dependency>
-    </dependencies>
-=======
   <artifactId>lens-cube</artifactId>
   <packaging>jar</packaging>
   <description>OLAP cube queries</description>
@@ -167,7 +93,6 @@
       <artifactId>guava</artifactId>
     </dependency>
   </dependencies>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   <build>
     <plugins>

@@ -18,21 +18,9 @@
  */
 package org.apache.lens.driver.jdbc;
 
-<<<<<<< HEAD
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-=======
 import static org.testng.Assert.*;
 
 import java.util.*;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import org.apache.lens.api.LensException;
 import org.apache.lens.cube.metadata.MetastoreConstants;
@@ -49,14 +37,7 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.hive.ql.session.SessionState;
-<<<<<<< HEAD
-import org.apache.lens.api.LensException;
-import org.apache.lens.cube.metadata.MetastoreConstants;
-import org.apache.lens.cube.parse.HQLParser;
-import org.apache.lens.server.api.LensConfConstants;
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -131,13 +112,8 @@ public class TestColumnarSQLRewriter {
   /*
    * Star schema used for the queries below
    *
-<<<<<<< HEAD
-   * create table sales_fact (time_key integer, item_key integer, branch_key integer, location_key integer, dollars_sold
-   * double, units_sold integer);
-=======
    * create table sales_fact (time_key integer, item_key integer, branch_key integer, location_key integer,
    * dollars_sold double, units_sold integer);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    *
    * create table time_dim ( time_key integer, day date);
    *
@@ -253,21 +229,6 @@ public class TestColumnarSQLRewriter {
 
     String query3 = "select count(distinct location_dim.id) from  db.location_dim location_dim";
     String actual3 = qtest.rewrite(query3, conf);
-<<<<<<< HEAD
-    String expected3 = "select count( distinct ( location_dim__db_location_dim_location_dim . id )) " +
-    		"from db.location_dim location_dim__db_location_dim_location_dim";
-    compareQueries(expected3, actual3);
-
-    String query4 = "select count(distinct location_dim.id) from  db.location_dim location_dim "
-        + "left outer join db.item_dim item_dim on location_dim.id = item_dim.id "
-        + "right outer join time_dim time_dim on location_dim.id = time_dim.id ";
-    String actual4 = qtest.rewrite(query4, conf);
-    String expected4 = "select count( distinct ( location_dim__db_location_dim_location_dim . id )) "
-        + "from db.location_dim location_dim__db_location_dim_location_dim  left outer join db.item_dim "
-        + "item_dim__db_item_dim_item_dim on (( location_dim__db_location_dim_location_dim . id ) = "
-        + "( item_dim__db_item_dim_item_dim . id ))  right outer join time_dim time_dim___time_dim on "
-        + "(( location_dim__db_location_dim_location_dim . id ) = ( time_dim___time_dim . id ))";
-=======
     String expected3 = "select count( distinct ( location_dim__db_location_dim_location_dim . id )) "
       + "from db.location_dim location_dim__db_location_dim_location_dim";
     compareQueries(expected3, actual3);
@@ -281,7 +242,6 @@ public class TestColumnarSQLRewriter {
       + "item_dim__db_item_dim_item_dim on (( location_dim__db_location_dim_location_dim . id ) = "
       + "( item_dim__db_item_dim_item_dim . id ))  right outer join time_dim time_dim___time_dim on "
       + "(( location_dim__db_location_dim_location_dim . id ) = ( time_dim___time_dim . id ))";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     compareQueries(expected4, actual4);
 
   }
@@ -310,15 +270,9 @@ public class TestColumnarSQLRewriter {
 
     String rwq = qtest.rewrite(query, conf);
     String expected = "inner join time_dim time_dim___time_dim on (( sales_fact___fact . time_key ) = "
-<<<<<<< HEAD
-        + "( time_dim___time_dim . time_key ))  inner join location_dim location_dim___location_dim on "
-        + "((( sales_fact___fact . location_key ) = ( location_dim___location_dim . location_key )) "
-        + "and (( location_dim___location_dim . location_name ) =  'test123' ))";
-=======
       + "( time_dim___time_dim . time_key ))  inner join location_dim location_dim___location_dim on "
       + "((( sales_fact___fact . location_key ) = ( location_dim___location_dim . location_key )) "
       + "and (( location_dim___location_dim . location_name ) =  'test123' ))";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     String actual = qtest.joinCondition.toString();
 
     compareQueries(expected, actual);
@@ -348,13 +302,8 @@ public class TestColumnarSQLRewriter {
 
     String rwq = qtest.rewrite(query, conf);
     String expected = "[(( location_dim___location_dim . location_name ) =  "
-<<<<<<< HEAD
-        + "'test123' ), , , ( time_dim___time_dim . time_key ) between  '2013-01-01'  and  '2013-01-31' "
-        + ", , ( time_dim___time_dim . time_key ) between  '2013-01-01'  and  '2013-01-31' ]";
-=======
       + "'test123' ), , , ( time_dim___time_dim . time_key ) between  '2013-01-01'  and  '2013-01-31' "
       + ", , ( time_dim___time_dim . time_key ) between  '2013-01-01'  and  '2013-01-31' ]";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     String actual = qtest.rightFilter.toString();
 
     compareQueries(expected, actual);
@@ -387,17 +336,10 @@ public class TestColumnarSQLRewriter {
     String rwq = qtest.rewrite(query, conf);
     String actual = qtest.aggColumn.toString();
     String expected = "[sum(( sales_fact___fact . dollars_sold )) as sum_sales_fact___fact_dollars_sold, "
-<<<<<<< HEAD
-        + "sum(( sales_fact___fact . units_sold )) as sum_sales_fact___fact_units_sold, "
-        + "avg(( sales_fact___fact . dollars_sold )) as avg_sales_fact___fact_dollars_sold, "
-        + "min(( sales_fact___fact . dollars_sold )) as min_sales_fact___fact_dollars_sold, "
-        + "max(( sales_fact___fact . dollars_sold )) as max_sales_fact___fact_dollars_sold]";
-=======
       + "sum(( sales_fact___fact . units_sold )) as sum_sales_fact___fact_units_sold, "
       + "avg(( sales_fact___fact . dollars_sold )) as avg_sales_fact___fact_dollars_sold, "
       + "min(( sales_fact___fact . dollars_sold )) as min_sales_fact___fact_dollars_sold, "
       + "max(( sales_fact___fact . dollars_sold )) as max_sales_fact___fact_dollars_sold]";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     Assert.assertEquals(expected, actual);
   }
 
@@ -457,18 +399,11 @@ public class TestColumnarSQLRewriter {
 
     String rwq = qtest.rewrite(query, conf);
     String expected = "sales_fact___fact.time_key in  (  select time_dim .time_key from time_dim where "
-<<<<<<< HEAD
-        + "( time_dim. time_key ) between  '2013-01-01'  and  '2013-01-31'  ) and sales_fact___fact.location_key in  "
-        + "(  select location_dim .location_key from location_dim where (( location_dim. location_name ) =  'test123' ) ) "
-        + "and sales_fact___fact.item_key in  (  select item_dim .item_key from "
-        + "item_dim where (( item_dim. item_name ) =  'item_1' ) ) and";
-=======
       + "( time_dim. time_key ) between  '2013-01-01'  and  '2013-01-31'  ) and sales_fact___fact.location_key in  "
       + "(  select location_dim .location_key from location_dim "
       + "where (( location_dim. location_name ) =  'test123' ) ) "
       + "and sales_fact___fact.item_key in  (  select item_dim .item_key from "
       + "item_dim where (( item_dim. item_name ) =  'item_1' ) ) and";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     String actual = qtest.allSubQueries.toString();
     compareQueries(expected, actual);
   }
@@ -502,34 +437,6 @@ public class TestColumnarSQLRewriter {
     String actual = qtest.rewrite(query, conf);
 
     String expected = "select ( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), "
-<<<<<<< HEAD
-        + "date(( time_dim___time_dim . day )), ( item_dim___item_dim . item_key ),  case  when "
-        + "(sum(sum_sales_fact___fact_dollars_sold) =  0 ) then  0.0  else sum(sum_sales_fact___fact_dollars_sold) "
-        + "end  dollars_sold , format(sum(sum_sales_fact___fact_units_sold),  4 ), format(avg(avg_sales_fact___fact_dollars_sold),  "
-        + "'##################.###' ), min(min_sales_fact___fact_dollars_sold), max(max_sales_fact___fact_dollars_sold) "
-        + "from  (select sales_fact___fact.time_key,sales_fact___fact.location_key,sales_fact___fact.item_key,"
-        + "sum(( sales_fact___fact . dollars_sold )) as sum_sales_fact___fact_dollars_sold, "
-        + "sum(( sales_fact___fact . units_sold )) as sum_sales_fact___fact_units_sold, "
-        + "avg(( sales_fact___fact . dollars_sold )) as avg_sales_fact___fact_dollars_sold, "
-        + "min(( sales_fact___fact . dollars_sold )) as min_sales_fact___fact_dollars_sold, "
-        + "max(( sales_fact___fact . dollars_sold )) as max_sales_fact___fact_dollars_sold "
-        + "from sales_fact sales_fact___fact where sales_fact___fact.time_key in  (  select time_dim .time_key "
-        + "from time_dim where ( time_dim. time_key ) between date_add( '2013-01-01' , interval 1  day) "
-        + "and date_sub( '2013-01-31' , interval 3  day) ) and sales_fact___fact.location_key in  "
-        + "(  select location_dim .location_key from location_dim where (( location_dim. location_name ) =  'test123' ) ) "
-        + "and sales_fact___fact.item_key in  (  select item_dim .item_key from item_dim where "
-        + "(( item_dim. item_name ) =  'item_1' ) )  group by sales_fact___fact.time_key,"
-        + "sales_fact___fact.location_key,sales_fact___fact.item_key) sales_fact___fact  "
-        + "inner join time_dim time_dim___time_dim on (( sales_fact___fact . time_key ) = "
-        + "( time_dim___time_dim . time_key ))  inner join location_dim location_dim___location_dim "
-        + "on (( sales_fact___fact . location_key ) = ( location_dim___location_dim . location_key ))  "
-        + "inner join item_dim item_dim___item_dim on ((( sales_fact___fact . item_key ) = "
-        + "( item_dim___item_dim . item_key )) and (( location_dim___location_dim . location_name ) = "
-        + " 'test123' ))  where (( time_dim___time_dim . time_key ) between date_add( '2013-01-01' , interval 1  day) "
-        + "and date_sub( '2013-01-31' , interval 3  day) and (( item_dim___item_dim . item_name ) =  'item_1' )) "
-        + "group by ( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), "
-        + "( time_dim___time_dim . day ), ( item_dim___item_dim . item_key ) order by dollars_sold  asc";
-=======
       + "date(( time_dim___time_dim . day )), ( item_dim___item_dim . item_key ),  case  when "
       + "(sum(sum_sales_fact___fact_dollars_sold) =  0 ) then  0.0  else sum(sum_sales_fact___fact_dollars_sold) "
       + "end  dollars_sold , format(sum(sum_sales_fact___fact_units_sold),  4 ), "
@@ -558,7 +465,6 @@ public class TestColumnarSQLRewriter {
       + "and date_sub( '2013-01-31' , interval 3  day) and (( item_dim___item_dim . item_name ) =  'item_1' )) "
       + "group by ( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), "
       + "( time_dim___time_dim . day ), ( item_dim___item_dim . item_key ) order by dollars_sold  asc";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     compareQueries(expected, actual);
   }
@@ -601,55 +507,6 @@ public class TestColumnarSQLRewriter {
 
     String actual = qtest.rewrite(query, conf);
     String expected = "select ( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), "
-<<<<<<< HEAD
-        + "( time_dim___time_dim . day ),  case  when (sum(sum_sales_fact___fact_dollars_sold) =  0 ) then  "
-        + "0.0  else sum(sum_sales_fact___fact_dollars_sold) end  dollars_sold  from  (select sales_fact___fact.time_key,"
-        + "sales_fact___fact.location_key,sum(( sales_fact___fact . dollars_sold )) as sum_sales_fact___fact_dollars_sold "
-        + "from sales_fact sales_fact___fact where sales_fact___fact.time_key in  (  select time_dim .time_key from time_dim "
-        + "where ( time_dim. time_key ) between  '2013-01-01'  and  '2013-01-05'  ) and sales_fact___fact.location_key in  "
-        + "(  select location_dim .location_key from location_dim where (( location_dim. location_name ) =  'test123' ) )  "
-        + "group by sales_fact___fact.time_key,sales_fact___fact.location_key) sales_fact___fact  inner join time_dim "
-        + "time_dim___time_dim on (( sales_fact___fact . time_key ) = ( time_dim___time_dim . time_key ))  "
-        + "inner join location_dim location_dim___location_dim on ((( sales_fact___fact . location_key ) = "
-        + "( location_dim___location_dim . location_key )) and (( location_dim___location_dim . location_name ) =  'test123' )) "
-        + " where ( time_dim___time_dim . time_key ) between  '2013-01-01'  and  '2013-01-05'  group by "
-        + "( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), ( time_dim___time_dim . day ) "
-        + "order by dollars_sold  asc  union all select ( sales_fact___fact . time_key ), ( time_dim___time_dim . "
-        + "day_of_week ), ( time_dim___time_dim . day ),  case  when (sum(sum_sales_fact___fact_dollars_sold) =  0 ) "
-        + "then  0.0  else sum(sum_sales_fact___fact_dollars_sold) end  dollars_sold  from  (select sales_fact___fact.time_key,"
-        + "sales_fact___fact.location_key,sum(( sales_fact___fact . dollars_sold )) as sum_sales_fact___fact_dollars_sold "
-        + "from sales_fact sales_fact___fact where sales_fact___fact.time_key in  (  select time_dim .time_key "
-        + "from time_dim where ( time_dim. time_key ) between  '2013-02-01'  and  '2013-02-05'  ) and "
-        + "sales_fact___fact.location_key in  (  select location_dim .location_key from location_dim where "
-        + "(( location_dim. location_name ) =  'test123' ) )  group by sales_fact___fact.time_key,sales_fact___fact.location_key) "
-        + "sales_fact___fact  inner join time_dim time_dim___time_dim on (( sales_fact___fact . time_key ) = "
-        + "( time_dim___time_dim . time_key ))  inner join location_dim location_dim___location_dim on ((( sales_fact___fact . "
-        + "location_key ) = ( location_dim___location_dim . location_key )) and (( location_dim___location_dim . location_name ) =  "
-        + "'test123' ))  where ( time_dim___time_dim . time_key ) between  '2013-02-01'  and  '2013-02-05'  group by "
-        + "( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), ( time_dim___time_dim . day ) "
-        + "order by dollars_sold  asc  union all select ( sales_fact___fact . time_key ), ( time_dim___time_dim . day_of_week ), "
-        + "( time_dim___time_dim . day ),  case  when (sum(sum_sales_fact___fact_dollars_sold) =  0 ) then  0.0  else "
-        + "sum(sum_sales_fact___fact_dollars_sold) end  dollars_sold  from  (select sales_fact___fact.time_key,"
-        + "sales_fact___fact.location_key,sum(( sales_fact___fact . dollars_sold )) as sum_sales_fact___fact_dollars_sold "
-        + "from sales_fact sales_fact___fact where sales_fact___fact.time_key in  (  select time_dim .time_key from time_dim "
-        + "where ( time_dim. time_key ) between  '2013-03-01'  and  '2013-03-05'  ) and sales_fact___fact.location_key in  "
-        + "(  select location_dim .location_key from location_dim where (( location_dim. location_name ) =  'test123' ) ) "
-        + " group by sales_fact___fact.time_key,sales_fact___fact.location_key) sales_fact___fact  "
-        + "inner join time_dim time_dim___time_dim on (( sales_fact___fact . time_key ) = ( time_dim___time_dim . time_key ))  "
-        + "inner join location_dim location_dim___location_dim on ((( sales_fact___fact . location_key ) = "
-        + "( location_dim___location_dim . location_key )) and (( location_dim___location_dim . location_name ) =  'test123' ))  "
-        + "where ( time_dim___time_dim . time_key ) between  '2013-03-01'  and  '2013-03-05'  group by ( sales_fact___fact . time_key ), "
-        + "( time_dim___time_dim . day_of_week ), ( time_dim___time_dim . day ) order by dollars_sold  asc";
-    compareQueries(expected, actual);
-  }
-
-@Test
-  public void testNoAggCol() throws ParseException, SemanticException, LensException {
-
-    String query = "SELECT  distinct ( location_dim . id ) FROM location_dim " +
-        "location_dim join time_dim time_dim on location_dim.time_id = time_dim.id " +
-        "WHERE ( time_dim . full_date ) between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  LIMIT 10 ";
-=======
       + "( time_dim___time_dim . day ),  case  when (sum(sum_sales_fact___fact_dollars_sold) =  0 ) then  "
       + "0.0  else sum(sum_sales_fact___fact_dollars_sold) end  dollars_sold  "
       + "from  (select sales_fact___fact.time_key,"
@@ -716,57 +573,31 @@ public class TestColumnarSQLRewriter {
     String query = "SELECT  distinct ( location_dim . id ) FROM location_dim "
       + "location_dim join time_dim time_dim on location_dim.time_id = time_dim.id "
       + "WHERE ( time_dim . full_date ) between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  LIMIT 10 ";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
-<<<<<<< HEAD
-    String expected = "select  distinct ( location_dim___location_dim . id ) from location_dim location_dim___location_dim  "
-        + "inner join time_dim time_dim___time_dim on (( location_dim___location_dim . time_id ) = ( time_dim___time_dim . id ))  "
-        + "where ( time_dim___time_dim . full_date ) between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  limit 10";
-=======
     String expected = "select  distinct ( location_dim___location_dim . id ) "
       + "from location_dim location_dim___location_dim  "
       + "inner join time_dim time_dim___time_dim on "
       + "(( location_dim___location_dim . time_id ) = ( time_dim___time_dim . id ))  "
       + "where ( time_dim___time_dim . full_date ) "
       + "between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  limit 10";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     compareQueries(expected, actual);
 
   }
 
-<<<<<<< HEAD
-@Test
-public void testCountReplace() throws ParseException, SemanticException, LensException {
-
-  String query = "SELECT  count(location_dim.name) FROM location_dim " +
-      "location_dim join time_dim time_dim on location_dim.time_id = time_dim.id " +
-      "WHERE ( time_dim . full_date ) between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  LIMIT 10 ";
-=======
   @Test
   public void testCountReplace() throws ParseException, SemanticException, LensException {
 
     String query = "SELECT  count(location_dim.name) FROM location_dim "
       + "location_dim join time_dim time_dim on location_dim.time_id = time_dim.id "
       + "WHERE ( time_dim . full_date ) between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  LIMIT 10 ";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
     String expected = "select sum(count_location_dim___location_dim_name) from  "
-<<<<<<< HEAD
-        + "(select location_dim___location_dim.time_id,count(( location_dim___location_dim . name )) as "
-        + "count_location_dim___location_dim_name from location_dim location_dim___location_dim where "
-        + "location_dim___location_dim.time_id in  (  select time_dim .id from time_dim where "
-        + "( time_dim. full_date ) between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  )  "
-        + "group by location_dim___location_dim.time_id) location_dim___location_dim  inner join "
-        + "time_dim time_dim___time_dim on (( location_dim___location_dim . time_id ) = "
-        + "( time_dim___time_dim . id ))  where ( time_dim___time_dim . full_date ) "
-        + "between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  limit 10";
-=======
       + "(select location_dim___location_dim.time_id,count(( location_dim___location_dim . name )) as "
       + "count_location_dim___location_dim_name from location_dim location_dim___location_dim where "
       + "location_dim___location_dim.time_id in  (  select time_dim .id from time_dim where "
@@ -775,7 +606,6 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
       + "time_dim time_dim___time_dim on (( location_dim___location_dim . time_id ) = "
       + "( time_dim___time_dim . id ))  where ( time_dim___time_dim . full_date ) "
       + "between  '2013-01-01 00:00:00'  and  '2013-01-04 00:00:00'  limit 10";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     compareQueries(expected, actual);
   }
 
@@ -783,42 +613,16 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
   public void testReplaceAlias() throws ParseException, SemanticException, LensException {
 
     String query = "select fact.time_key,time_dim.day_of_week,time_dim.day,"
-<<<<<<< HEAD
-        + "case when sum(fact.dollars_sold) = 0 then 0.0 else sum(fact.dollars_sold) end dollars_sold "
-        + "from db.sales_fact as fact " + "inner join time_dim as time_dim on fact.time_key = time_dim.time_key "
-        + "inner join db.location_dim ld on fact.location_key = ld.location_key " + "and ld.location_name = 'test123' "
-        + "where time_dim.time_key between '2013-01-01' and '2013-01-31' "
-        + "group by fact.time_key,time_dim.day_of_week,time_dim.day " + "order by dollars_sold desc ";
-=======
       + "case when sum(fact.dollars_sold) = 0 then 0.0 else sum(fact.dollars_sold) end dollars_sold "
       + "from db.sales_fact as fact " + "inner join time_dim as time_dim on fact.time_key = time_dim.time_key "
       + "inner join db.location_dim ld on fact.location_key = ld.location_key " + "and ld.location_name = 'test123' "
       + "where time_dim.time_key between '2013-01-01' and '2013-01-31' "
       + "group by fact.time_key,time_dim.day_of_week,time_dim.day " + "order by dollars_sold desc ";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
     String expected = "select ( sales_fact__db_sales_fact_fact . time_key ), ( time_dim___time_dim . day_of_week ), "
-<<<<<<< HEAD
-        + "( time_dim___time_dim . day ),  case  when (sum(sum_sales_fact__db_sales_fact_fact_dollars_sold) =  0 ) "
-        + "then  0.0  else sum(sum_sales_fact__db_sales_fact_fact_dollars_sold) end  dollars_sold  from  "
-        + "(select sales_fact__db_sales_fact_fact.location_key, sales_fact__db_sales_fact_fact.time_key,"
-        + "sum(( sales_fact__db_sales_fact_fact . dollars_sold )) as sum_sales_fact__db_sales_fact_fact_dollars_sold "
-        + "from db.sales_fact sales_fact__db_sales_fact_fact where sales_fact__db_sales_fact_fact.time_key in  "
-        + "(  select time_dim .time_key from time_dim where ( time_dim. time_key ) between  '2013-01-01'  and  '2013-01-31'  ) "
-        + "and sales_fact__db_sales_fact_fact.location_key in  (  select location_dim .location_key from "
-        + "location_dim where (( location_dim. location_name ) =  'test123' ) )  group by "
-        + "sales_fact__db_sales_fact_fact.location_key, sales_fact__db_sales_fact_fact.time_key) "
-        + "sales_fact__db_sales_fact_fact  inner join time_dim time_dim___time_dim on "
-        + "(( sales_fact__db_sales_fact_fact . time_key ) = ( time_dim___time_dim . time_key ))  "
-        + "inner join db.location_dim location_dim__db_location_dim_ld on ((( sales_fact__db_sales_fact_fact . location_key ) "
-        + "= ( location_dim__db_location_dim_ld . location_key )) and "
-        + "(( location_dim__db_location_dim_ld . location_name ) =  'test123' ))  where ( time_dim___time_dim . time_key ) "
-        + "between  '2013-01-01'  and  '2013-01-31'  group by ( sales_fact__db_sales_fact_fact . time_key ), "
-        + "( time_dim___time_dim . day_of_week ), ( time_dim___time_dim . day ) order by dollars_sold  desc";
-=======
       + "( time_dim___time_dim . day ),  case  when (sum(sum_sales_fact__db_sales_fact_fact_dollars_sold) =  0 ) "
       + "then  0.0  else sum(sum_sales_fact__db_sales_fact_fact_dollars_sold) end  dollars_sold  from  "
       + "(select sales_fact__db_sales_fact_fact.location_key, sales_fact__db_sales_fact_fact.time_key,"
@@ -838,7 +642,6 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
       + " where ( time_dim___time_dim . time_key ) "
       + "between  '2013-01-01'  and  '2013-01-31'  group by ( sales_fact__db_sales_fact_fact . time_key ), "
       + "( time_dim___time_dim . day_of_week ), ( time_dim___time_dim . day ) order by dollars_sold  desc";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     compareQueries(expected, actual);
   }
@@ -848,35 +651,15 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
   public void testSkipSnowflakeJoinFact() throws ParseException, SemanticException, LensException {
 
     String query = "SELECT (dim1 . date) date , sum((f . msr1)) msr1 , (dim2 . name) dim2_name, "
-<<<<<<< HEAD
-        + "(dim3 . name) dim3_name , (dim4 . name) dim4_name " + "FROM fact f "
-        + "INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id " + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id "
-        + "INNER JOIN dim3 dim3 ON f.dim3_id = dim3.id " + "INNER JOIN dim4 dim4 ON  dim2.id_2 = dim4.id_2 "
-        + "WHERE ((dim1 . date) = '2014-11-25 00:00:00') "
-        + "GROUP BY (dim1 . date),  (dim2 . name), (dim3 . name) , (dim4 . name) ";
-=======
       + "(dim3 . name) dim3_name , (dim4 . name) dim4_name " + "FROM fact f "
       + "INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id " + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id "
       + "INNER JOIN dim3 dim3 ON f.dim3_id = dim3.id " + "INNER JOIN dim4 dim4 ON  dim2.id_2 = dim4.id_2 "
       + "WHERE ((dim1 . date) = '2014-11-25 00:00:00') "
       + "GROUP BY (dim1 . date),  (dim2 . name), (dim3 . name) , (dim4 . name) ";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
-<<<<<<< HEAD
-    String expected = "select ( dim1___dim1 . date ) date , sum(sum_fact___f_msr1) msr1 , ( dim2___dim2 . name ) dim2_name , "
-        + "( dim3___dim3 . name ) dim3_name , ( dim4___dim4 . name ) dim4_name  from  (select fact___f.dim2_id, fact___f.dim1_id, fact___f.dim3_id,"
-        + "sum(( fact___f . msr1 )) as sum_fact___f_msr1 from fact fact___f where fact___f.dim1_id in  "
-        + "(  select dim1 .id from dim1 where (( dim1. date ) =  '2014-11-25 00:00:00' ) )  "
-        + "group by fact___f.dim2_id, fact___f.dim1_id, fact___f.dim3_id) fact___f  inner join dim1 dim1___dim1 on "
-        + "(( fact___f . dim1_id ) = ( dim1___dim1 . id ))  inner join dim2 dim2___dim2 on (( fact___f . dim2_id ) = "
-        + "( dim2___dim2 . id ))  inner join dim3 dim3___dim3 on (( fact___f . dim3_id ) = ( dim3___dim3 . id ))  "
-        + "inner join dim4 dim4___dim4 on (( dim2___dim2 . id_2 ) = ( dim4___dim4 . id_2 ))  "
-        + "where (( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) group by ( dim1___dim1 . date ), ( dim2___dim2 . name ), "
-        + "( dim3___dim3 . name ), ( dim4___dim4 . name ))";
-=======
     String expected = "select ( dim1___dim1 . date ) date , sum(sum_fact___f_msr1) msr1 , "
       + "( dim2___dim2 . name ) dim2_name , "
       + "( dim3___dim3 . name ) dim3_name , ( dim4___dim4 . name ) dim4_name "
@@ -890,7 +673,6 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
       + "where (( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) "
       + "group by ( dim1___dim1 . date ), ( dim2___dim2 . name ), "
       + "( dim3___dim3 . name ), ( dim4___dim4 . name ))";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     compareQueries(expected, actual);
   }
@@ -900,32 +682,14 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
   public void testFactFilterPushDown() throws ParseException, SemanticException, LensException {
 
     String query = "SELECT (dim1 . date) date , sum((f . msr1)) msr1 , (dim2 . name) dim2_name  "
-<<<<<<< HEAD
-        + "FROM fact f  INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id  and f.m2 = '1234' "
-        + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id  and f.m3 > 3000 "
-        + "WHERE ((dim1 . date) = '2014-11-25 00:00:00')  and f.m4  is not null "
-        + "GROUP BY (dim1 . date),  (dim2 . name)";
-=======
       + "FROM fact f  INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id  and f.m2 = '1234' "
       + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id  and f.m3 > 3000 "
       + "WHERE ((dim1 . date) = '2014-11-25 00:00:00')  and f.m4  is not null "
       + "GROUP BY (dim1 . date),  (dim2 . name)";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
-<<<<<<< HEAD
-    String expected = "select ( dim1___dim1 . date ) date , sum(sum_fact___f_msr1) msr1 , ( dim2___dim2 . name ) dim2_name  "
-        + "from  (select fact___f.dim2_id, fact___f.dim1_id, fact___f.m4, fact___f.m3, fact___f.m2,sum(( fact___f . msr1 )) as "
-        + "sum_fact___f_msr1 from fact fact___f where ( fact___f . m4 ) is not null  and (( fact___f . m2 ) =  '1234' ) "
-        + "and (( fact___f . m3 ) >  3000 ) and fact___f.dim1_id in  (  select dim1 .id from dim1 where (( dim1. date ) "
-        + "=  '2014-11-25 00:00:00' ) )  group by fact___f.dim2_id, fact___f.dim1_id, fact___f.m4, fact___f.m3, fact___f.m2) "
-        + "fact___f  inner join dim1 dim1___dim1 on ((( fact___f . dim1_id ) = ( dim1___dim1 . id )) and (( fact___f . m2 ) =  '1234' ))  "
-        + "inner join dim2 dim2___dim2 on ((( fact___f . dim2_id ) = ( dim2___dim2 . id )) and (( fact___f . m3 ) >  3000 ))  "
-        + "where ((( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) and ( fact___f . m4 ) is not null ) "
-        + "group by ( dim1___dim1 . date ), ( dim2___dim2 . name )";
-=======
     String expected = "select ( dim1___dim1 . date ) date , sum(sum_fact___f_msr1) msr1 , "
       + "( dim2___dim2 . name ) dim2_name  from  "
       + "(select fact___f.dim2_id, fact___f.dim1_id, fact___f.m4, fact___f.m3, fact___f.m2,sum(( fact___f . msr1 )) as "
@@ -939,7 +703,6 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
       + "on ((( fact___f . dim2_id ) = ( dim2___dim2 . id )) and (( fact___f . m3 ) >  3000 ))  "
       + "where ((( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) and ( fact___f . m4 ) is not null ) "
       + "group by ( dim1___dim1 . date ), ( dim2___dim2 . name )";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     compareQueries(expected, actual);
   }
@@ -948,32 +711,14 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
   public void testOrderByAlias() throws ParseException, SemanticException, LensException {
 
     String query = "SELECT (dim1 . date) dim1_date , sum((f . msr1)) msr1 , (dim2 . name) dim2_name  "
-<<<<<<< HEAD
-        + "FROM fact f  INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id  and f.m2 = '1234' "
-        + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id  and f.m3 > 3000 "
-        + "WHERE ((dim1 . date) = '2014-11-25 00:00:00')  and f.m4  is not null "
-        + "GROUP BY (dim1 . date),  (dim2 . name) ORDER BY dim1_date";
-=======
       + "FROM fact f  INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id  and f.m2 = '1234' "
       + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id  and f.m3 > 3000 "
       + "WHERE ((dim1 . date) = '2014-11-25 00:00:00')  and f.m4  is not null "
       + "GROUP BY (dim1 . date),  (dim2 . name) ORDER BY dim1_date";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
-<<<<<<< HEAD
-    String expected = "select ( dim1___dim1 . date ) dim1_date , sum(sum_fact___f_msr1) msr1 , ( dim2___dim2 . name ) dim2_name  "
-        + "from  (select fact___f.dim2_id, fact___f.dim1_id, fact___f.m4, fact___f.m3, fact___f.m2,sum(( fact___f . msr1 )) "
-        + "as sum_fact___f_msr1 from fact fact___f where ( fact___f . m4 ) is not null  and (( fact___f . m2 ) =  '1234' ) "
-        + "and (( fact___f . m3 ) >  3000 ) and fact___f.dim1_id in  (  select dim1 .id from dim1 "
-        + "where (( dim1. date ) =  '2014-11-25 00:00:00' ) )  group by fact___f.dim2_id, fact___f.dim1_id, "
-        + "fact___f.m4, fact___f.m3, fact___f.m2) fact___f  inner join dim1 dim1___dim1 on ((( fact___f . dim1_id ) = "
-        + "( dim1___dim1 . id )) and (( fact___f . m2 ) =  '1234' ))  inner join dim2 dim2___dim2 on ((( fact___f . dim2_id ) = "
-        + "( dim2___dim2 . id )) and (( fact___f . m3 ) >  3000 ))  where ((( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) and "
-        + "( fact___f . m4 ) is not null ) group by ( dim1___dim1 . date ), ( dim2___dim2 . name ) order by dim1_date  asc";
-=======
     String expected = "select ( dim1___dim1 . date ) dim1_date , sum(sum_fact___f_msr1) msr1 , "
       + "( dim2___dim2 . name ) dim2_name  from  (select fact___f.dim2_id, "
       + "fact___f.dim1_id, fact___f.m4, fact___f.m3, fact___f.m2,sum(( fact___f . msr1 )) "
@@ -988,7 +733,6 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
       + "where ((( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) and "
       + "( fact___f . m4 ) is not null ) "
       + "group by ( dim1___dim1 . date ), ( dim2___dim2 . name ) order by dim1_date  asc";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     compareQueries(expected, actual);
   }
@@ -997,32 +741,14 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
   public void testExcludeJoinFilterFromFactQuery() throws ParseException, SemanticException, LensException {
 
     String query = "SELECT (dim1 . date) dim1_date , sum((f . msr1)) msr1 , (dim2 . name) dim2_name  "
-<<<<<<< HEAD
-        + "FROM fact f  INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id  and f.m2 = '1234' "
-        + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id  and f.dim3_id = dim2.id "
-        + "WHERE ((dim1 . date) = '2014-11-25 00:00:00')  and f.m4  is not null "
-        + "GROUP BY (dim1 . date),  (dim2 . name) ORDER BY dim1_date";
-=======
       + "FROM fact f  INNER JOIN dim1 dim1 ON f.dim1_id = dim1.id  and f.m2 = '1234' "
       + "INNER JOIN dim2 dim2 ON f.dim2_id = dim2.id  and f.dim3_id = dim2.id "
       + "WHERE ((dim1 . date) = '2014-11-25 00:00:00')  and f.m4  is not null "
       + "GROUP BY (dim1 . date),  (dim2 . name) ORDER BY dim1_date";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     SessionState.start(conf);
 
     String actual = qtest.rewrite(query, conf);
-<<<<<<< HEAD
-    String expected = "select ( dim1___dim1 . date ) dim1_date , sum(sum_fact___f_msr1) msr1 , ( dim2___dim2 . name ) dim2_name  "
-        + "from  (select fact___f.dim2_id, fact___f.dim1_id, fact___f.dim3_id, fact___f.m4, fact___f.m2,sum(( fact___f . msr1 )) "
-        + "as sum_fact___f_msr1 from fact fact___f where ( fact___f . m4 ) is not null  and (( fact___f . m2 ) =  '1234' ) and "
-        + "fact___f.dim1_id in  (  select dim1 .id from dim1 where (( dim1. date ) =  '2014-11-25 00:00:00' ) )  "
-        + "group by fact___f.dim2_id, fact___f.dim1_id, fact___f.dim3_id, fact___f.m4, fact___f.m2) fact___f  inner join dim1 "
-        + "dim1___dim1 on ((( fact___f . dim1_id ) = ( dim1___dim1 . id )) and (( fact___f . m2 ) =  '1234' ))  inner join "
-        + "dim2 dim2___dim2 on ((( fact___f . dim2_id ) = ( dim2___dim2 . id )) and (( fact___f . dim3_id ) = ( dim2___dim2 . id ))) "
-        + " where ((( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) and ( fact___f . m4 ) is not null ) group by ( dim1___dim1 . date ), "
-        + "( dim2___dim2 . name ) order by dim1_date  asc";
-=======
     String expected = "select ( dim1___dim1 . date ) dim1_date , sum(sum_fact___f_msr1) msr1 , "
       + "( dim2___dim2 . name ) dim2_name  from  "
       + "(select fact___f.dim2_id, fact___f.dim1_id, fact___f.dim3_id, fact___f.m4, fact___f.m2,sum((fact___f.msr1)) "
@@ -1037,7 +763,6 @@ public void testCountReplace() throws ParseException, SemanticException, LensExc
       + " where ((( dim1___dim1 . date ) =  '2014-11-25 00:00:00' ) and ( fact___f . m4 ) is not null ) "
       + "group by ( dim1___dim1 . date ), "
       + "( dim2___dim2 . name ) order by dim1_date  asc";
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     compareQueries(expected, actual);
   }

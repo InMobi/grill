@@ -18,14 +18,7 @@
  */
 package org.apache.lens.cube.parse;
 
-<<<<<<< HEAD
-import static org.apache.hadoop.hive.ql.parse.HiveParser.DOT;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.Identifier;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_GROUPBY;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TABLE_OR_COL;
-=======
 import static org.apache.hadoop.hive.ql.parse.HiveParser.*;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -45,10 +38,6 @@ import org.antlr.runtime.tree.Tree;
 
 /**
  * Promotes groupby to select and select to groupby.
-<<<<<<< HEAD
- *
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
  */
 class GroupbyResolver implements ContextRewriter {
   private static final Log LOG = LogFactory.getLog(GroupbyResolver.class.getName());
@@ -65,11 +54,7 @@ class GroupbyResolver implements ContextRewriter {
   }
 
   private void promoteSelect(CubeQueryContext cubeql, List<String> nonMsrNonAggSelExprsWithoutAlias,
-<<<<<<< HEAD
-      List<String> groupByExprs) throws SemanticException {
-=======
     List<String> groupByExprs) throws SemanticException {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     if (!selectPromotionEnabled) {
       return;
     }
@@ -115,22 +100,7 @@ class GroupbyResolver implements ContextRewriter {
    * Check if constants projected
    */
   private boolean isConstantsUsed(ASTNode node) {
-<<<<<<< HEAD
-    if (node == null) {
-      return false;
-    }
-    if (node.getToken() != null) {
-      if (hasTableOrColumn(node)) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-=======
     return node != null && node.getToken() != null && !hasTableOrColumn(node);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
 
@@ -144,14 +114,9 @@ class GroupbyResolver implements ContextRewriter {
       }
     }
     for (int i = 0; i < node.getChildCount(); i++) {
-<<<<<<< HEAD
-      if (hasTableOrColumn((ASTNode) node.getChild(i)))
-        return true;
-=======
       if (hasTableOrColumn((ASTNode) node.getChild(i))) {
         return true;
       }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     return false;
   }
@@ -239,10 +204,6 @@ class GroupbyResolver implements ContextRewriter {
   }
 
   /**
-<<<<<<< HEAD
-   *
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param selectASTNode a select AST Node
    * @param cubeQueryCtx
    * @return List of non measure and non aggregate select expressions in string format without aliases
@@ -250,11 +211,7 @@ class GroupbyResolver implements ContextRewriter {
   private List<String> getNonMsrNonAggSelExprsWithoutAlias(final ASTNode selectASTNode, CubeQueryContext cubeQueryCtx) {
 
     List<String> nonMsrNonAggSelExprsWithoutAlias = new LinkedList<String>();
-<<<<<<< HEAD
-    List<ASTNode> nonMsrNonAggSelASTChildren = filterNonMsrNonAggSelectASTChildren(selectASTNode,cubeQueryCtx);
-=======
     List<ASTNode> nonMsrNonAggSelASTChildren = filterNonMsrNonAggSelectASTChildren(selectASTNode, cubeQueryCtx);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     for (ASTNode nonMsrNonAggSelASTChild : nonMsrNonAggSelASTChildren) {
 
@@ -271,17 +228,6 @@ class GroupbyResolver implements ContextRewriter {
   }
 
   /**
-<<<<<<< HEAD
-   *
-   * @param selectASTNode a select ASTNode
-   * @param cubeQueryCtx
-   * @return list of selectASTNode Children which does not contain a measure or an aggregate.
-   *         Empty list is returned when selectASTNode is not a Select AST Node.
-   *         Empty list is returned when there are no non measure and non aggregate children nodes present in select AST.
-   */
-  private List<ASTNode> filterNonMsrNonAggSelectASTChildren(final ASTNode selectASTNode, CubeQueryContext cubeQueryCtx) {
-
-=======
    * @param selectASTNode a select ASTNode
    * @param cubeQueryCtx
    * @return list of selectASTNode Children which does not contain a measure or an aggregate. Empty list is returned
@@ -290,7 +236,6 @@ class GroupbyResolver implements ContextRewriter {
    */
   private List<ASTNode> filterNonMsrNonAggSelectASTChildren(final ASTNode selectASTNode,
     CubeQueryContext cubeQueryCtx) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     List<ASTNode> nonMsrNonAggSelASTChildren = new LinkedList<ASTNode>();
 
     if (!HQLParser.isSelectASTNode(selectASTNode)) {
@@ -299,11 +244,7 @@ class GroupbyResolver implements ContextRewriter {
 
     for (int i = 0; i < selectASTNode.getChildCount(); i++) {
       ASTNode childNode = (ASTNode) selectASTNode.getChild(i);
-<<<<<<< HEAD
-      if (hasMeasure(childNode,cubeQueryCtx) || HQLParser.hasAggregate(childNode)) {
-=======
       if (hasMeasure(childNode, cubeQueryCtx) || HQLParser.hasAggregate(childNode)) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         continue;
       }
       nonMsrNonAggSelASTChildren.add(childNode);

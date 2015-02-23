@@ -299,6 +299,7 @@ public abstract class LensService extends CompositeService implements Externaliz
    */
   public void addResource(LensSessionHandle sessionHandle, String type, String path) throws LensException {
   }
+
   /**
    * Delete resource.
    *

@@ -36,26 +36,6 @@ import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.BaseSemanticAnalyzer;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-<<<<<<< HEAD
-import org.apache.lens.cube.metadata.CubeMeasure;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
-
-/**
- * <p>
- * Replace select and having columns with default aggregate functions on them,
- * if default aggregate is defined and if there isn't already an aggregate
- * function specified on the columns.
- * </p>
- *
- * <p>
- * Expressions which already contain aggregate sub-expressions will not be
- * changed.
- * </p>
- *
- * <p>
- * At this point it's assumed that aliases have been added to all columns.
- * </p>
-=======
 
 import org.antlr.runtime.CommonToken;
 
@@ -64,7 +44,6 @@ import org.antlr.runtime.CommonToken;
  * if there isn't already an aggregate function specified on the columns. </p> <p/> <p> Expressions which already
  * contain aggregate sub-expressions will not be changed. </p> <p/> <p> At this point it's assumed that aliases have
  * been added to all columns. </p>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
  */
 class AggregateResolver implements ContextRewriter {
   public static final Log LOG = LogFactory.getLog(AggregateResolver.class.getName());
@@ -80,11 +59,7 @@ class AggregateResolver implements ContextRewriter {
 
     boolean nonDefaultAggregates = false;
     boolean aggregateResolverDisabled = cubeql.getHiveConf().getBoolean(CubeQueryConfUtil.DISABLE_AGGREGATE_RESOLVER,
-<<<<<<< HEAD
-        CubeQueryConfUtil.DEFAULT_DISABLE_AGGREGATE_RESOLVER);
-=======
       CubeQueryConfUtil.DEFAULT_DISABLE_AGGREGATE_RESOLVER);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     // Check if the query contains measures
     // 1. not inside default aggregate expressions
     // 2. With no default aggregate defined
@@ -122,20 +97,12 @@ class AggregateResolver implements ContextRewriter {
 
     Configuration distConf = cubeql.getHiveConf();
     boolean isDimOnlyDistinctEnabled = distConf.getBoolean(CubeQueryConfUtil.ENABLE_ATTRFIELDS_ADD_DISTINCT,
-<<<<<<< HEAD
-        CubeQueryConfUtil.DEFAULT_ATTR_FIELDS_ADD_DISTINCT);
-=======
       CubeQueryConfUtil.DEFAULT_ATTR_FIELDS_ADD_DISTINCT);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     if (isDimOnlyDistinctEnabled) {
       // Check if any measure/aggregate columns and distinct clause used in
       // select tree. If not, update selectAST token "SELECT" to "SELECT DISTINCT"
       if (!hasMeasures(cubeql, cubeql.getSelectAST()) && !isDistinctClauseUsed(cubeql.getSelectAST())
-<<<<<<< HEAD
-          && !HQLParser.hasAggregate(cubeql.getSelectAST())) {
-=======
         && !HQLParser.hasAggregate(cubeql.getSelectAST())) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         cubeql.getSelectAST().getToken().setType(HiveParser.TOK_SELECTDI);
       }
     }
@@ -273,38 +240,23 @@ class AggregateResolver implements ContextRewriter {
     return false;
   }
 
-<<<<<<< HEAD
- /*
-  * Check if distinct keyword used in node
-  */
-=======
   /*
    * Check if distinct keyword used in node
    */
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   private boolean isDistinctClauseUsed(ASTNode node) {
     if (node == null) {
       return false;
     }
     if (node.getToken() != null) {
       if (node.getToken().getType() == HiveParser.TOK_FUNCTIONDI
-<<<<<<< HEAD
-          || node.getToken().getType() == HiveParser.TOK_SELECTDI) {
-=======
         || node.getToken().getType() == HiveParser.TOK_SELECTDI) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         return true;
       }
     }
     for (int i = 0; i < node.getChildCount(); i++) {
-<<<<<<< HEAD
-      if (isDistinctClauseUsed((ASTNode) node.getChild(i)))
-        return true;
-=======
       if (isDistinctClauseUsed((ASTNode) node.getChild(i))) {
         return true;
       }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     return false;
   }

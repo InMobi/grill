@@ -26,10 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 public final class LensUtil {
 
   private LensUtil() {
-<<<<<<< HEAD
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   /**

@@ -17,15 +17,6 @@
   limitations under the License.
 -->
 
-<<<<<<< HEAD
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.lens</groupId>
-    <artifactId>checkstyle</artifactId>
-    <name>Lens Checkstyle Rules</name>
-   <version>1.6-SNAPSHOT</version>
-
-=======
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -41,22 +32,15 @@
   <name>Lens Checkstyle Rules</name>
   <version>2.1.0-incubating-SNAPSHOT</version>
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-<<<<<<< HEAD
-        <version>2.15</version>
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         <configuration>
           <failIfNoTests>false</failIfNoTests>
         </configuration>
       </plugin>
-<<<<<<< HEAD
-=======
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
@@ -64,7 +48,6 @@
           <skip>true</skip>
         </configuration>
       </plugin>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     </plugins>
   </build>
 </project>

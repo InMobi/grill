@@ -163,23 +163,13 @@ public class TestCubeMetastoreClient {
       new TableReference("testdim2", "id")));
 
     cubeExpressions.add(new ExprColumn(new FieldSchema("msr5", "double", "fifth measure"), "Avg msr5",
-<<<<<<< HEAD
-        "avg(msr1 + msr2)", "avg(msr2 + msr1)", "avg(msr1 + msr2 - msr1 + msr1)" ));
-=======
       "avg(msr1 + msr2)", "avg(msr2 + msr1)", "avg(msr1 + msr2 - msr1 + msr1)"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     cubeExpressions.add(new ExprColumn(new FieldSchema("msr5start", "double", "expr measure with start and end times"),
       "AVG of SUM", "avg(msr1 + msr2)"));
     cubeExpressions.add(new ExprColumn(new FieldSchema("booleancut", "boolean", "a boolean expression"), "Boolean Cut",
-<<<<<<< HEAD
-        "dim1 != 'x' AND dim2 != 10 ", "dim1 | dim2 AND dim2 = 'XYZ'"));
-    cubeExpressions.add(new ExprColumn(new FieldSchema("substrexpr", "string", "a subt string expression"),
-        "SUBSTR EXPR", "substr(dim1, 3)", "substr(dim2, 3)"));
-=======
       "dim1 != 'x' AND dim2 != 10 ", "dim1 | dim2 AND dim2 = 'XYZ'"));
     cubeExpressions.add(new ExprColumn(new FieldSchema("substrexpr", "string", "a subt string expression"),
       "SUBSTR EXPR", "substr(dim1, 3)", "substr(dim2, 3)"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     List<CubeDimAttribute> locationHierarchyWithStartTime = new ArrayList<CubeDimAttribute>();
     locationHierarchyWithStartTime.add(new ReferencedDimAtrribute(new FieldSchema("zipcode2", "int", "zip"),
@@ -212,11 +202,7 @@ public class TestCubeMetastoreClient {
 
     cubeDimensions.add(new InlineDimAttribute(new FieldSchema("region", "string", "region dim"), regions));
     cubeDimensions.add(new InlineDimAttribute(new FieldSchema("regionstart", "string", "region dim"),
-<<<<<<< HEAD
-        "Region with starttime", now, null, 100.0, regions));
-=======
       "Region with starttime", now, null, 100.0, regions));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     JoinChain zipCity = new JoinChain("cityFromZip", "Zip City", "zip city desc");
     List<TableReference> chain = new ArrayList<TableReference>();
     chain.add(new TableReference(cubeName, "zipcode"));
@@ -238,14 +224,9 @@ public class TestCubeMetastoreClient {
     cityChain.addPath(chain);
     joinChains.add(cityChain);
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("zipcityname", "string", "zip city name"),
-<<<<<<< HEAD
-        "Zip city name", "cityFromZip", "name", null, null, null));
-    cube = new Cube(cubeName, cubeMeasures, cubeDimensions, cubeExpressions, joinChains, new HashMap<String, String>(), 0.0);
-=======
       "Zip city name", "cityFromZip", "name", null, null, null));
     cube = new Cube(cubeName, cubeMeasures, cubeDimensions, cubeExpressions, joinChains,
       new HashMap<String, String>(), 0.0);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     measures = new HashSet<String>();
     measures.add("msr1");
     measures.add("msr2");
@@ -285,11 +266,7 @@ public class TestCubeMetastoreClient {
     cityAttrs.add(new ReferencedDimAtrribute(new FieldSchema("stateid", "int", "state id"), "State refer",
       new TableReference("statedim", "id")));
     dimExpressions.add(new ExprColumn(new FieldSchema("stateAndCountry", "String", "state and country together"),
-<<<<<<< HEAD
-        "State and Country", "concat(statedim.name, \":\", countrydim.name)", "state_and_country"));
-=======
       "State and Country", "concat(statedim.name, \":\", countrydim.name)", "state_and_country"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     dimExpressions.add(new ExprColumn(new FieldSchema("CityAddress", "string", "city with state and city and zip"),
       "City Address", "concat(citydim.name, \":\", statedim.name, \":\", countrydim.name, \":\", zipcode.code)"));
     Map<String, String> dimProps = new HashMap<String, String>();
@@ -380,32 +357,12 @@ public class TestCubeMetastoreClient {
     Assert.assertNotNull(stateAndCountryActual.getExpressions());
     Assert.assertEquals(2, stateAndCountryActual.getExpressions().size());
     Assert.assertTrue(stateAndCountryActual.getExpressions().contains("concat(statedim.name, \"-\", countrydim.name)"));
-<<<<<<< HEAD
-    Assert.assertTrue(stateAndCountryActual.getExpressions().contains("concat(countrydim.name, \"-\", countrydim.name)"));
-=======
     Assert.assertTrue(stateAndCountryActual.getExpressions()
       .contains("concat(countrydim.name, \"-\", countrydim.name)"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     Assert.assertNotNull(city.getExpressionByName("stateAndCountry"));
     Assert.assertEquals(city.getExpressionByName("stateAndCountry").getExpr(),
       "concat(statedim.name, \"-\", countrydim.name)");
-
-    stateAndCountryActual.removeExpression("concat(countrydim.name, \"-\", countrydim.name)");
-    city.alterExpression(stateAndCountryActual);
-    client.alterDimension(city.getName(), city);
-    Dimension cityAltered = client.getDimension(city.getName());
-    Assert.assertEquals(1, cityAltered.getExpressionByName("stateAndCountry").getExpressions().size());
-
-
-    List<TableReference> chain = new ArrayList<TableReference>();
-    chain.add(new TableReference("zipdim", "cityid"));
-    chain.add(new TableReference("citydim", "id"));
-    chain.add(new TableReference("citydim", "stateid"));
-    chain.add(new TableReference("statedim", "id"));
-    JoinChain zipState = new JoinChain("stateFromZip", "Zip State", "zip State desc");
-    zipState.addPath(chain);
-    joinChains.add(zipState);
 
     stateAndCountryActual.removeExpression("concat(countrydim.name, \"-\", countrydim.name)");
     city.alterExpression(stateAndCountryActual);
@@ -437,11 +394,7 @@ public class TestCubeMetastoreClient {
     toAlter.removeAttribute("f1");
     toAlter.getProperties().put("alter.prop", "altered");
     toAlter.alterExpression(new ExprColumn(new FieldSchema("formattedcode", "string", "formatted zipcode"),
-<<<<<<< HEAD
-        "Formatted zipcode", "format_number(code, \"#,###,###\")"));
-=======
       "Formatted zipcode", "format_number(code, \"#,###,###\")"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     toAlter.alterJoinChain(zipState);
 
     client.alterDimension(zipDim.getName(), toAlter);
@@ -515,16 +468,10 @@ public class TestCubeMetastoreClient {
 
   @Test(priority = 1)
   public void testCube() throws Exception {
-<<<<<<< HEAD
-    client.createCube(cubeName, cubeMeasures, cubeDimensions, cubeExpressions, joinChains, new HashMap<String, String>());
-    Assert.assertTrue(client.tableExists(cubeName));
-    Table cubeTbl = client.getHiveTable(cubeName);
-=======
     client.createCube(CUBE_NAME, cubeMeasures, cubeDimensions, cubeExpressions, joinChains,
       new HashMap<String, String>());
     Assert.assertTrue(client.tableExists(CUBE_NAME));
     Table cubeTbl = client.getHiveTable(CUBE_NAME);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     Assert.assertTrue(client.isCube(cubeTbl));
     Cube cube2 = new Cube(cubeTbl);
     Assert.assertTrue(cube.equals(cube2));
@@ -588,14 +535,6 @@ public class TestCubeMetastoreClient {
     Assert.assertEquals(citychain.getPaths().get(0).getReferences().get(0).toString(), "testmetastorecube.cityid");
     Assert.assertEquals(citychain.getPaths().get(0).getReferences().get(1).toString(), "citydim.id");
     Assert.assertNotNull(cube2.getDimAttributeByName("zipcityname"));
-<<<<<<< HEAD
-    Assert.assertEquals(((ReferencedDimAtrribute)cube2.getDimAttributeByName("zipcityname")).getChainName(), "cityfromzip");
-    Assert.assertEquals(((ReferencedDimAtrribute)cube2.getDimAttributeByName("zipcityname")).getRefColumn(), "name");
-
-    client.createDerivedCube(cubeName, derivedCubeName, measures, dimensions, new HashMap<String, String>(), 0L);
-    Assert.assertTrue(client.tableExists(derivedCubeName));
-    Table derivedTbl = client.getHiveTable(derivedCubeName);
-=======
     Assert.assertEquals(((ReferencedDimAtrribute) cube2.getDimAttributeByName("zipcityname")).getChainName(),
       "cityfromzip");
     Assert.assertEquals(((ReferencedDimAtrribute) cube2.getDimAttributeByName("zipcityname")).getRefColumn(),
@@ -604,7 +543,6 @@ public class TestCubeMetastoreClient {
     client.createDerivedCube(CUBE_NAME, DERIVED_CUBE_NAME, measures, dimensions, new HashMap<String, String>(), 0L);
     Assert.assertTrue(client.tableExists(DERIVED_CUBE_NAME));
     Table derivedTbl = client.getHiveTable(DERIVED_CUBE_NAME);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     Assert.assertTrue(client.isCube(derivedTbl));
     DerivedCube dcube2 = new DerivedCube(derivedTbl, cube);
     Assert.assertTrue(derivedCube.equals(dcube2));

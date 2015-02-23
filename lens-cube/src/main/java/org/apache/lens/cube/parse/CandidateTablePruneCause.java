@@ -19,12 +19,6 @@
 package org.apache.lens.cube.parse;
 
 import java.util.*;
-<<<<<<< HEAD
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import org.codehaus.jackson.annotate.JsonWriteNullProperties;
 
@@ -34,21 +28,12 @@ import lombok.NoArgsConstructor;
 /**
  * Contains the cause why a candidate table is not picked for answering the query
  */
-<<<<<<< HEAD
-
-@JsonWriteNullProperties(false)
-@Data
-@NoArgsConstructor
-public class CandidateTablePruneCause {
-
-=======
 // no args constructor Needed for jackson. SUSPEND CHECKSTYLE CHECK HideUtilityClassConstructorCheck
 @JsonWriteNullProperties(false)
 @Data
 @NoArgsConstructor
 
 public class CandidateTablePruneCause {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public enum CandidateTablePruneCode {
     MORE_WEIGHT("Picked table had more weight than minimum."),
     // cube table has more partitions
@@ -58,18 +43,6 @@ public class CandidateTablePruneCause {
     // column not valid in cube table
     COLUMN_NOT_VALID("Column not valid in cube table"),
     // column not found in cube table
-<<<<<<< HEAD
-    COLUMN_NOT_FOUND("%s are not %s"){
-      Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
-        if(causes.size() == 1) {
-          return new String[] {
-            "Columns " + causes.iterator().next().getMissingColumns(),
-            "present in any table"
-          };
-        } else {
-          List<List<String>> columnSets = new ArrayList<List<String>>();
-          for(CandidateTablePruneCause cause: causes) {
-=======
     COLUMN_NOT_FOUND("%s are not %s") {
       Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
         if (causes.size() == 1) {
@@ -80,16 +53,11 @@ public class CandidateTablePruneCause {
         } else {
           List<List<String>> columnSets = new ArrayList<List<String>>();
           for (CandidateTablePruneCause cause : causes) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             columnSets.add(cause.getMissingColumns());
           }
           return new String[]{
             "Column Sets: " + columnSets,
-<<<<<<< HEAD
-            "queriable together"
-=======
             "queriable together",
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           };
         }
       }
@@ -107,11 +75,7 @@ public class CandidateTablePruneCause {
     NO_COLUMN_PART_OF_A_JOIN_PATH("No column part of a join path. Join columns: [%s]") {
       Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
         List<String> columns = new ArrayList<String>();
-<<<<<<< HEAD
-        for(CandidateTablePruneCause cause: causes) {
-=======
         for (CandidateTablePruneCause cause : causes) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           columns.addAll(cause.getJoinColumns());
         }
         return new String[]{columns.toString()};
@@ -119,41 +83,16 @@ public class CandidateTablePruneCause {
     },
     // cube table is an aggregated fact and queried column is not under default
     // aggregate
-<<<<<<< HEAD
-    MISSING_DEFAULT_AGGREGATE("Columns: [%s] are missing default aggregate"){
-      Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
-        List<String> columns = new ArrayList<String>();
-        for(CandidateTablePruneCause cause: causes) {
-=======
     MISSING_DEFAULT_AGGREGATE("Columns: [%s] are missing default aggregate") {
       Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
         List<String> columns = new ArrayList<String>();
         for (CandidateTablePruneCause cause : causes) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           columns.addAll(cause.getColumnsMissingDefaultAggregate());
         }
         return new String[]{columns.toString()};
       }
     },
     // missing partitions for cube table
-<<<<<<< HEAD
-    MISSING_PARTITIONS("Missing partitions for the cube table: %s"){
-      Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
-        List<List<String>> missingPartitions = new ArrayList<List<String>>();
-        for(CandidateTablePruneCause cause: causes) {
-          missingPartitions.add(cause.getMissingPartitions());
-        }
-        return new String[] {missingPartitions.toString()};
-      }
-    },
-    ;
-
-
-    String errorFormat;
-    CandidateTablePruneCode(String format) {
-      this.errorFormat = format;
-    }
-=======
     MISSING_PARTITIONS("Missing partitions for the cube table: %s") {
       Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
         List<List<String>> missingPartitions = new ArrayList<List<String>>();
@@ -171,7 +110,6 @@ public class CandidateTablePruneCause {
       this.errorFormat = format;
     }
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     Object[] getFormatPlaceholders(Set<CandidateTablePruneCause> causes) {
       return null;
     }
@@ -179,11 +117,7 @@ public class CandidateTablePruneCause {
     String getBriefError(Set<CandidateTablePruneCause> causes) {
       try {
         return String.format(errorFormat, getFormatPlaceholders(causes));
-<<<<<<< HEAD
-      } catch(NullPointerException e) {
-=======
       } catch (NullPointerException e) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         return name();
       }
     }
@@ -226,18 +160,11 @@ public class CandidateTablePruneCause {
     public SkipStorageCause(SkipStorageCode cause) {
       this.cause = cause;
     }
-<<<<<<< HEAD
-    public static SkipStorageCause partColDoesNotExist(String... partCols) {
-      SkipStorageCause ret = new SkipStorageCause(SkipStorageCode.PART_COL_DOES_NOT_EXIST);
-      ret.nonExistantPartCols = new ArrayList<String>();
-      for(String s: partCols) {
-=======
 
     public static SkipStorageCause partColDoesNotExist(String... partCols) {
       SkipStorageCause ret = new SkipStorageCause(SkipStorageCode.PART_COL_DOES_NOT_EXIST);
       ret.nonExistantPartCols = new ArrayList<String>();
       for (String s : partCols) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         ret.nonExistantPartCols.add(s);
       }
       return ret;
@@ -279,34 +206,22 @@ public class CandidateTablePruneCause {
     cause.setMissingColumns(colList);
     return cause;
   }
-<<<<<<< HEAD
-  public static CandidateTablePruneCause columnNotFound(String... columns) {
-    List<String> colList = new ArrayList<String>();
-    for(String column: columns) {
-=======
 
   public static CandidateTablePruneCause columnNotFound(String... columns) {
     List<String> colList = new ArrayList<String>();
     for (String column : columns) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       colList.add(column);
     }
     return columnNotFound(colList);
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static CandidateTablePruneCause missingPartitions(List<String> nonExistingParts) {
     CandidateTablePruneCause cause =
       new CandidateTablePruneCause(CandidateTablePruneCode.MISSING_PARTITIONS);
     cause.setMissingPartitions(nonExistingParts);
     return cause;
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static CandidateTablePruneCause noColumnPartOfAJoinPath(final Collection<String> colSet) {
     CandidateTablePruneCause cause =
       new CandidateTablePruneCause(CandidateTablePruneCode.NO_COLUMN_PART_OF_A_JOIN_PATH);
@@ -317,14 +232,6 @@ public class CandidateTablePruneCause {
     });
     return cause;
   }
-<<<<<<< HEAD
-  public static CandidateTablePruneCause noCandidateStorages(Map<String, SkipStorageCause> storageCauses) {
-    CandidateTablePruneCause cause = new CandidateTablePruneCause(CandidateTablePruneCode.NO_CANDIDATE_STORAGES);
-    cause.setStorageCauses(new HashMap<String, SkipStorageCause>());
-    for(Map.Entry<String, SkipStorageCause> entry: storageCauses.entrySet()) {
-      String key = entry.getKey();
-      key = key.substring(0, (key.indexOf("_") + key.length() + 1) % (key.length() + 1) ); // extract the storage part
-=======
 
   public static CandidateTablePruneCause noCandidateStorages(Map<String, SkipStorageCause> storageCauses) {
     CandidateTablePruneCause cause = new CandidateTablePruneCause(CandidateTablePruneCode.NO_CANDIDATE_STORAGES);
@@ -332,23 +239,15 @@ public class CandidateTablePruneCause {
     for (Map.Entry<String, SkipStorageCause> entry : storageCauses.entrySet()) {
       String key = entry.getKey();
       key = key.substring(0, (key.indexOf("_") + key.length() + 1) % (key.length() + 1)); // extract the storage part
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       cause.getStorageCauses().put(key, entry.getValue());
     }
     return cause;
   }
-<<<<<<< HEAD
-  public static CandidateTablePruneCause missingDefaultAggregate(String... names) {
-    CandidateTablePruneCause cause = new CandidateTablePruneCause(CandidateTablePruneCode.MISSING_DEFAULT_AGGREGATE);
-    cause.setColumnsMissingDefaultAggregate(new ArrayList<String>());
-    for(String name: names) {
-=======
 
   public static CandidateTablePruneCause missingDefaultAggregate(String... names) {
     CandidateTablePruneCause cause = new CandidateTablePruneCause(CandidateTablePruneCode.MISSING_DEFAULT_AGGREGATE);
     cause.setColumnsMissingDefaultAggregate(new ArrayList<String>());
     for (String name : names) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       cause.getColumnsMissingDefaultAggregate().add(name);
     }
     return cause;

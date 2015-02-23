@@ -18,11 +18,8 @@
  */
 package org.apache.lens.server.api.driver;
 
-<<<<<<< HEAD
-=======
 import org.apache.lens.server.api.query.AbstractQueryContext;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.hadoop.conf.Configuration;
 
 /**

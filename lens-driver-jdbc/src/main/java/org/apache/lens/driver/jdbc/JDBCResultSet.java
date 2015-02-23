@@ -25,15 +25,12 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
-=======
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.query.ResultRow;
 import org.apache.lens.driver.jdbc.JDBCDriver.QueryResult;
 import org.apache.lens.server.api.driver.InMemoryResultSet;
 import org.apache.lens.server.api.driver.LensResultSetMetadata;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
@@ -200,11 +197,7 @@ public class JDBCResultSet extends InMemoryResultSet {
       hiveType = new TypeDescriptor(Type.DECIMAL_TYPE);
       qualifiers = new TypeQualifiers();
       int colPrecision = rsmeta.getPrecision(index);
-<<<<<<< HEAD
-      if ( colPrecision > HiveDecimal.MAX_PRECISION ) {
-=======
       if (colPrecision > HiveDecimal.MAX_PRECISION) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         qualifiers.setPrecision(HiveDecimal.MAX_PRECISION);
       }
       qualifiers.setScale(rsmeta.getScale(index));

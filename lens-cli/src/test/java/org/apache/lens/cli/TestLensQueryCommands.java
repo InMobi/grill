@@ -30,12 +30,9 @@ import org.apache.lens.cli.commands.LensCubeCommands;
 import org.apache.lens.cli.commands.LensQueryCommands;
 import org.apache.lens.client.LensClient;
 import org.apache.lens.driver.hive.TestHiveDriver;
-<<<<<<< HEAD
-=======
 
 import org.apache.commons.lang.StringUtils;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -139,15 +136,8 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
   /**
    * Test fail prepared query.
    *
-<<<<<<< HEAD
-   * @param qCom
-   *          the q com
-   * @throws Exception
-   *           the exception
-=======
    * @param qCom the q com
    * @throws Exception the exception
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   private void testFailPreparedQuery(LensQueryCommands qCom) throws Exception {
     client = new LensClient();
@@ -155,13 +145,8 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
     qCom.setClient(client);
     String sql = "cube select id, name from test_dim";
     final String result = qCom.explainAndPrepare(sql, "testFailPrepared");
-<<<<<<< HEAD
-    Assert.assertTrue(result.contains("Explain FAILED:Error while processing statement: FAILED: Hive Internal Error:" +
-        " java.lang.ClassNotFoundException(org.apache.lens.driver.hive.TestHiveDriver.FailHook)"));
-=======
     Assert.assertTrue(result.contains("Explain FAILED:Error while processing statement: FAILED: Hive Internal Error:"
       + " java.lang.ClassNotFoundException(org.apache.lens.driver.hive.TestHiveDriver.FailHook)"));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   /**
@@ -212,15 +197,9 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
     // this is because previous query has run two query handle will be there
     Assert.assertTrue(result.contains(qh), result);
     Assert.assertTrue(result.contains("Total number of queries"));
-<<<<<<< HEAD
-    String [] resultSplits = result.split("\n");
-    // assert on the number of queries
-    Assert.assertEquals(String.valueOf(resultSplits.length -1), resultSplits[resultSplits.length-1].split(": ")[1]);
-=======
     String[] resultSplits = result.split("\n");
     // assert on the number of queries
     Assert.assertEquals(String.valueOf(resultSplits.length - 1), resultSplits[resultSplits.length - 1].split(": ")[1]);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     // Check that query name searching is 'ilike'
     String result2 = qCom.getAllQueries("", "query", "all", -1, Long.MAX_VALUE);

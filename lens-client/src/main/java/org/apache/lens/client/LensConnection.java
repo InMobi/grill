@@ -234,24 +234,13 @@ public class LensConnection {
   /**
    * List resources from session
    *
-<<<<<<< HEAD
-   * @param type
-   *          type of resource
-   * @return
-   *         List of resources
-=======
    * @param type type of resource
    * @return List of resources
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   public List<String> listResourcesFromConnection(String type) {
     WebTarget target = getSessionWebTarget();
     StringList result = target.path("resources/list").queryParam("sessionid", this.sessionHandle)
-<<<<<<< HEAD
-        .queryParam("type", type).request().get(StringList.class);
-=======
       .queryParam("type", type).request().get(StringList.class);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return result.getElements();
   }
 

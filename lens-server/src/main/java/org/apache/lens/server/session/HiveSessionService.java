@@ -18,17 +18,6 @@
  */
 package org.apache.lens.server.session;
 
-<<<<<<< HEAD
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.ql.processors.SetProcessor;
-import org.apache.hadoop.hive.ql.session.SessionState;
-import org.apache.hive.service.cli.*;
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -51,8 +40,6 @@ import org.apache.lens.server.api.session.SessionService;
 import org.apache.lens.server.query.QueryExecutionServiceImpl;
 import org.apache.lens.server.session.LensSessionImpl.ResourceEntry;
 
-<<<<<<< HEAD
-=======
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,7 +51,6 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.service.cli.CLIService;
 import org.apache.hive.service.cli.HiveSQLException;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 /**
  * The Class HiveSessionService.
  */
@@ -201,14 +187,9 @@ public class HiveSessionService extends LensService implements SessionService {
    * @inheritDoc
    */
   @Override
-<<<<<<< HEAD
-  public LensSessionHandle openSession(String username, String password, Map<String, String> configuration)
-      throws LensException {
-=======
   public LensSessionHandle openSession(String username, String password, String database,
                                        Map<String, String> configuration)
     throws LensException {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     LensSessionHandle sessionid = super.openSession(username, password, configuration);
     LOG.info("Opened session " + sessionid + " for user " + username);
     // add auxuiliary jars

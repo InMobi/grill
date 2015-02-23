@@ -18,17 +18,6 @@
  */
 package org.apache.lens.server.user;
 
-<<<<<<< HEAD
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.util.UtilityMethods;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,11 +101,7 @@ public class DatabaseUserConfigLoader extends UserConfigLoader {
   }
 
   private BasicDataSource refreshDataSource() {
-<<<<<<< HEAD
-    if(ds == null || ds.isClosed()) {
-=======
     if (ds == null || ds.isClosed()) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       ds = UtilityMethods.getDataSourceFromConf(hiveConf);
     }
     return ds;

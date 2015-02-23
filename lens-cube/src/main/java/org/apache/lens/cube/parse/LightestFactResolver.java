@@ -27,10 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-<<<<<<< HEAD
-import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Prune fact tables having more weight than minimum.

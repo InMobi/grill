@@ -41,8 +41,6 @@ import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.query.InMemoryOutputFormatter;
 import org.apache.lens.server.api.query.PersistedOutputFormatter;
 import org.apache.lens.server.api.query.QueryContext;
-import org.apache.lens.server.query.QueryApp;
-import org.apache.lens.server.query.QueryExecutionServiceImpl;
 
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 

@@ -21,20 +21,12 @@
  */
 package org.apache.lens.api;
 
-<<<<<<< HEAD
-import lombok.*;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
-
-=======
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.*;
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 /**
  * The Class StringList.
  */

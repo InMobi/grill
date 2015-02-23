@@ -19,37 +19,6 @@
   under the License.
 
 -->
-<<<<<<< HEAD
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <name>Lens API</name>
-    <parent>
-        <artifactId>lens-parent</artifactId>
-        <groupId>org.apache.lens</groupId>
-        <version>1.2.6-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>lens-api</artifactId>
-    <packaging>jar</packaging>
-    <description>The client api</description>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-        </dependency>
-    </dependencies>
-    <build>
-        <plugins>
-=======
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -94,7 +63,6 @@
             <arg>-Xinheritance</arg>
           </args>
           <plugins>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             <plugin>
               <groupId>org.jvnet.jaxb2_commons</groupId>
               <artifactId>jaxb2-basics</artifactId>

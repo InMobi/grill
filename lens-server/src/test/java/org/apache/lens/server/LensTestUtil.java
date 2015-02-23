@@ -104,6 +104,7 @@ public final class LensTestUtil {
     throws InterruptedException {
     createTable(tblName, parent, lensSessionId, "(ID INT, IDSTR STRING)");
   }
+
   /**
    * Load data.
    *

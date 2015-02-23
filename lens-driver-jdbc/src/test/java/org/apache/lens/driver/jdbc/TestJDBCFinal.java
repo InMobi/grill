@@ -24,27 +24,11 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-<<<<<<< HEAD
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.ql.session.SessionState;
-import org.apache.hive.service.cli.ColumnDescriptor;
-import org.apache.lens.api.LensConf;
-import org.apache.lens.api.query.ResultRow;
-import org.apache.lens.driver.jdbc.ColumnarSQLRewriter;
-import org.apache.lens.driver.jdbc.JDBCDriver;
-import org.apache.lens.driver.jdbc.JDBCDriverConfConstants;
-import org.apache.lens.driver.jdbc.JDBCResultSet;
-=======
 import java.util.List;
 
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.query.ResultRow;
 import org.apache.lens.server.api.driver.InMemoryResultSet;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.server.api.driver.LensDriver;
 import org.apache.lens.server.api.driver.LensResultSet;
 import org.apache.lens.server.api.driver.LensResultSetMetadata;
@@ -97,16 +81,11 @@ public class TestJDBCFinal {
     System.out.println("Driver configured!");
     SessionState.start(new HiveConf(ColumnarSQLRewriter.class));
 
-<<<<<<< HEAD
-    drivers = new ArrayList<LensDriver>() {{
-      add(driver); }};
-=======
     drivers = new ArrayList<LensDriver>() {
       {
         add(driver);
       }
     };
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   /**
@@ -208,11 +187,6 @@ public class TestJDBCFinal {
         + "group by fact.time_key,time_dim.day_of_week,time_dim.day " + "order by dollars_sold desc";
 
     QueryContext context = new QueryContext(query, "SA", new LensConf(), baseConf, drivers);
-<<<<<<< HEAD
-    context.setDriverQueriesAndPlans(new HashMap<LensDriver, String>() {{ put(driver, query); }} );
-    context.setSelectedDriver(driver);
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     LensResultSet resultSet = driver.execute(context);
     assertNotNull(resultSet);
@@ -269,11 +243,6 @@ public class TestJDBCFinal {
         + "group by fact.time_key,time_dim.day_of_week,time_dim.day " + "order by dollars_sold  desc ";
 
     QueryContext context = new QueryContext(query, "SA", new LensConf(), baseConf, drivers);
-<<<<<<< HEAD
-    context.setDriverQueriesAndPlans(new HashMap<LensDriver, String>() {{ put(driver, query); }} );
-    context.setSelectedDriver(driver);
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     LensResultSet resultSet = driver.execute(context);
     assertNotNull(resultSet);
 

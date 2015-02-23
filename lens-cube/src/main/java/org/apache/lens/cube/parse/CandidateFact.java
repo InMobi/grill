@@ -39,14 +39,8 @@ import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.hive.ql.session.SessionState;
-<<<<<<< HEAD
-import org.apache.lens.cube.metadata.*;
-import org.apache.lens.cube.parse.HQLParser.ASTNodeVisitor;
-import org.apache.lens.cube.parse.HQLParser.TreeNode;
-=======
 
 import org.antlr.runtime.CommonToken;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Holds context of a candidate fact table.
@@ -381,11 +375,7 @@ class CandidateFact implements CandidateTable {
     Set<String> cubeTimeDimensions = baseTable.getTimedDimensions();
     Set<String> timePartDimensions = new HashSet<String>();
     String singleStorageTable = storageTables.iterator().next();
-<<<<<<< HEAD
-    if(!dbResolved) {
-=======
     if (!dbResolved) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       singleStorageTable = SessionState.get().getCurrentDatabase() + "." + singleStorageTable;
     }
     List<FieldSchema> partitionKeys = null;
@@ -394,13 +384,8 @@ class CandidateFact implements CandidateTable {
     } catch (HiveException e) {
       throw new SemanticException(e);
     }
-<<<<<<< HEAD
-    for(FieldSchema fs: partitionKeys) {
-      if(cubeTimeDimensions.contains(CubeQueryContext.getTimeDimOfPartitionColumn(baseTable, fs.getName()))) {
-=======
     for (FieldSchema fs : partitionKeys) {
       if (cubeTimeDimensions.contains(CubeQueryContext.getTimeDimOfPartitionColumn(baseTable, fs.getName()))) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         timePartDimensions.add(fs.getName());
       }
     }

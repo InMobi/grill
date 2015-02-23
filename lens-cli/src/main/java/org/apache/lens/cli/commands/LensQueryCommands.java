@@ -101,11 +101,7 @@ public class LensQueryCommands extends BaseLensCommand implements CommandMarker 
       long submissionTime = rs.getQuery().getSubmissionTime();
       long endTime = rs.getQuery().getFinishTime();
       b.append(numRows).append(" rows process in (").append(endTime > 0 ? ((endTime - submissionTime) / 1000) : 0)
-<<<<<<< HEAD
-      .append(") seconds.\n");
-=======
         .append(") seconds.\n");
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     return b.toString();
   }
@@ -190,11 +186,7 @@ public class LensQueryCommands extends BaseLensCommand implements CommandMarker 
     List<QueryHandle> handles = getClient().getQueries(state, queryName, user, fromDate, toDate);
     if (handles != null && !handles.isEmpty()) {
       return Joiner.on("\n").skipNulls().join(handles).concat("\n").concat("Total number of queries: "
-<<<<<<< HEAD
-          + handles.size());
-=======
         + handles.size());
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     } else {
       return "No queries";
     }

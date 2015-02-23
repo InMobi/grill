@@ -27,11 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-<<<<<<< HEAD
-import org.apache.lens.cube.metadata.Dimension;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Prune dimension tables having more weight than minimum
@@ -61,11 +56,7 @@ class LightestDimensionResolver implements ContextRewriter {
           CandidateDim dim = i.next();
           if (dimWeightMap.get(dim) > minWeight) {
             LOG.info("Not considering dimtable:" + dim + " from candidate dimension tables as it has more weight:"
-<<<<<<< HEAD
-                + dimWeightMap.get(dim) + " minimum:" + minWeight);
-=======
               + dimWeightMap.get(dim) + " minimum:" + minWeight);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             cubeql.addDimPruningMsgs(entry.getKey(), dim.dimtable, new CandidateTablePruneCause(
               CandidateTablePruneCode.MORE_WEIGHT));
             i.remove();

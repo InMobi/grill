@@ -87,22 +87,6 @@ public class CubeTestSetup {
   public static final String DERIVED_CUBE_NAME4 = "der4";
 
   // Time Instances as Date Type
-<<<<<<< HEAD
-  public static Date now;
-  public static Date lastHour;
-  public static Date twodaysBack;
-  public static Date oneDayBack;
-  public static Date twoMonthsBack;
-  public static Date before4daysStart;
-  public static Date before4daysEnd;
-
-  // Time Ranges
-  public static String lastHourTimeRange;
-  public static String twoDaysRange;
-  public static String twoMonthsRangeUptoMonth;
-  public static String twoMonthsRangeUptoHours;
-  public static String twoDaysRangeBefore4days;
-=======
   public static final Date NOW;
   public static final Date LAST_HOUR;
   public static final Date TWODAYS_BACK;
@@ -117,7 +101,6 @@ public class CubeTestSetup {
   public static final String TWO_MONTHS_RANGE_UPTO_MONTH;
   public static final String TWO_MONTHS_RANGE_UPTO_HOURS;
   public static final String TWO_DAYS_RANGE_BEFORE_4_DAYS;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   private static boolean zerothHour;
   private static String c1 = "C1";
@@ -128,30 +111,18 @@ public class CubeTestSetup {
 
   static {
     Calendar cal = Calendar.getInstance();
-<<<<<<< HEAD
-    now = cal.getTime();
-    log.debug("Test now:{}", now);
-=======
     NOW = cal.getTime();
     log.debug("Test now:{}", NOW);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     // Figure out if current hour is 0th hour
     zerothHour = (cal.get(Calendar.HOUR_OF_DAY) == 0);
 
     // Figure out last hour
     cal.add(Calendar.HOUR_OF_DAY, -1);
-<<<<<<< HEAD
-    lastHour = cal.getTime();
-    log.debug("LastHour:{}", lastHour);
-
-    cal.setTime(now);
-=======
     LAST_HOUR = cal.getTime();
     log.debug("LastHour:{}", LAST_HOUR);
 
     cal.setTime(NOW);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     cal.add(Calendar.DAY_OF_MONTH, -1);
     ONE_DAY_BACK = cal.getTime();
     cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -169,28 +140,6 @@ public class CubeTestSetup {
     cal.add(Calendar.DAY_OF_MONTH, -4);
     BEFORE_4_DAYS_END = cal.getTime();
     cal.add(Calendar.DAY_OF_MONTH, -2);
-<<<<<<< HEAD
-    before4daysStart = cal.getTime();
-    twoDaysRangeBefore4days =
-      "time_range_in(dt, '" + CubeTestSetup.getDateUptoHours(before4daysStart) + "','"
-        + CubeTestSetup.getDateUptoHours(before4daysEnd) + "')";
-
-    twoDaysRange = "time_range_in(dt, '" + getDateUptoHours(twodaysBack) + "','" + getDateUptoHours(now) + "')";
-    twoMonthsRangeUptoMonth =
-      "time_range_in(dt, '" + getDateUptoMonth(twoMonthsBack) + "','" + getDateUptoMonth(now) + "')";
-    twoMonthsRangeUptoHours =
-      "time_range_in(dt, '" + getDateUptoHours(twoMonthsBack) + "','" + getDateUptoHours(now) + "')";
-
-    // calculate lastHourTimeRange
-    setLastHourTimeRange();
-    inited = true;
-  }
-
-  private static boolean inited;
-
-  public CubeTestSetup() {
-    init();
-=======
     BEFORE_4_DAYS_START = cal.getTime();
     TWO_DAYS_RANGE_BEFORE_4_DAYS =
       "time_range_in(dt, '" + CubeTestSetup.getDateUptoHours(BEFORE_4_DAYS_START) + "','"
@@ -204,7 +153,6 @@ public class CubeTestSetup {
 
     // calculate LAST_HOUR_TIME_RANGE
     LAST_HOUR_TIME_RANGE = getTimeRangeString(getDateUptoHours(LAST_HOUR), getDateUptoHours(NOW));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   public static boolean isZerothHour() {
@@ -345,11 +293,7 @@ public class CubeTestSetup {
 
   public static Map<String, String> getWhereForDailyAndHourly2daysWithTimeDim(String cubeName, String timedDimension,
     String... storageTables) {
-<<<<<<< HEAD
-    return getWhereForDailyAndHourly2daysWithTimeDim(cubeName, timedDimension, twodaysBack, now, storageTables);
-=======
     return getWhereForDailyAndHourly2daysWithTimeDim(cubeName, timedDimension, TWODAYS_BACK, NOW, storageTables);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   public static Map<String, String> getWhereForDailyAndHourly2daysWithTimeDim(String cubeName, String timedDimension,
@@ -404,20 +348,12 @@ public class CubeTestSetup {
     Date dayStart = TWO_MONTHS_BACK;
     Date monthStart = TWO_MONTHS_BACK;
     if (!CubeTestSetup.isZerothHour()) {
-<<<<<<< HEAD
-      addParts(hourlyparts, UpdatePeriod.HOURLY, twoMonthsBack, DateUtil.getCeilDate(twoMonthsBack, UpdatePeriod.DAILY));
-      addParts(hourlyparts, UpdatePeriod.HOURLY, DateUtil.getFloorDate(now, UpdatePeriod.DAILY),
-        DateUtil.getFloorDate(now, UpdatePeriod.HOURLY));
-      dayStart = DateUtil.getCeilDate(twoMonthsBack, UpdatePeriod.DAILY);
-      monthStart = DateUtil.getCeilDate(twoMonthsBack, UpdatePeriod.MONTHLY);
-=======
       addParts(hourlyparts, UpdatePeriod.HOURLY, TWO_MONTHS_BACK,
         DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.DAILY));
       addParts(hourlyparts, UpdatePeriod.HOURLY, DateUtil.getFloorDate(NOW, UpdatePeriod.DAILY),
         DateUtil.getFloorDate(NOW, UpdatePeriod.HOURLY));
       dayStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.DAILY);
       monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.MONTHLY);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     }
     Calendar cal = new GregorianCalendar();
     cal.setTime(dayStart);
@@ -425,15 +361,9 @@ public class CubeTestSetup {
       addParts(dailyparts, UpdatePeriod.DAILY, dayStart, DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.MONTHLY));
       monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.MONTHLY);
     }
-<<<<<<< HEAD
-    addParts(dailyparts, UpdatePeriod.DAILY, DateUtil.getFloorDate(now, UpdatePeriod.MONTHLY),
-      DateUtil.getFloorDate(now, UpdatePeriod.DAILY));
-    addParts(monthlyparts, UpdatePeriod.MONTHLY, monthStart, DateUtil.getFloorDate(now, UpdatePeriod.MONTHLY));
-=======
     addParts(dailyparts, UpdatePeriod.DAILY, DateUtil.getFloorDate(NOW, UpdatePeriod.MONTHLY),
       DateUtil.getFloorDate(NOW, UpdatePeriod.DAILY));
     addParts(monthlyparts, UpdatePeriod.MONTHLY, monthStart, DateUtil.getFloorDate(NOW, UpdatePeriod.MONTHLY));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     List<String> parts = new ArrayList<String>();
     parts.addAll(dailyparts);
     parts.addAll(hourlyparts);
@@ -565,11 +495,7 @@ public class CubeTestSetup {
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("noAggrMsr", "bigint", "measure without a default aggregate"),
       "No aggregateMsr", null, null, null));
     cubeMeasures.add(new ColumnMeasure(new FieldSchema("newmeasure", "bigint", "measure available  from now"),
-<<<<<<< HEAD
-      "New measure", null, null, null, now, null, 100.0));
-=======
       "New measure", null, null, null, NOW, null, 100.0));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     cubeDimensions = new HashSet<CubeDimAttribute>();
     List<CubeDimAttribute> locationHierarchy = new ArrayList<CubeDimAttribute>();
@@ -591,11 +517,7 @@ public class CubeTestSetup {
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("dim2", "int", "ref dim"), "Dim2 refer",
       new TableReference("testdim2", "id")));
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("cdim2", "int", "ref dim"), "Dim2 refer",
-<<<<<<< HEAD
-      new TableReference("cycledim1", "id"), now, null, null));
-=======
       new TableReference("cycledim1", "id"), NOW, null, null));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
     // denormalized reference
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("dim2big1", "bigint", "ref dim"), "Dim2 refer",
@@ -603,11 +525,7 @@ public class CubeTestSetup {
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("dim2big2", "bigint", "ref dim"), "Dim2 refer",
       new TableReference("testdim2", "bigid2")));
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("dim2bignew", "bigint", "ref dim"), "Dim2 refer",
-<<<<<<< HEAD
-      new TableReference("testdim2", "bigidnew"), now, null, null));
-=======
       new TableReference("testdim2", "bigidnew"), NOW, null, null));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("test_time_dim_hour_id", "int", "ref dim"),
       "Timedim reference", new TableReference("hourdim", "id"), null, null, null));
     cubeDimensions.add(new ReferencedDimAtrribute(new FieldSchema("test_time_dim_day_id", "int", "ref dim"),
@@ -1090,15 +1008,9 @@ public class CubeTestSetup {
     CubeFactTable fact = client.getFactTable(factName);
     // Add all hourly partitions for two days
     Calendar cal = Calendar.getInstance();
-<<<<<<< HEAD
-    cal.setTime(twodaysBack);
-    Date temp = cal.getTime();
-    while (!(temp.after(now))) {
-=======
     cal.setTime(TWODAYS_BACK);
     Date temp = cal.getTime();
     while (!(temp.after(NOW))) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put("ttd", temp);
       timeParts.put("ttd2", temp);
@@ -1108,17 +1020,10 @@ public class CubeTestSetup {
       temp = cal.getTime();
     }
 
-<<<<<<< HEAD
-    // Add all hourly partitions for twoDaysRangeBefore4days
-    cal.setTime(before4daysStart);
-    temp = cal.getTime();
-    while (!(temp.after(before4daysEnd))) {
-=======
     // Add all hourly partitions for TWO_DAYS_RANGE_BEFORE_4_DAYS
     cal.setTime(BEFORE_4_DAYS_START);
     temp = cal.getTime();
     while (!(temp.after(BEFORE_4_DAYS_END))) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put("ttd", temp);
       timeParts.put("ttd2", temp);
@@ -1316,13 +1221,8 @@ public class CubeTestSetup {
     cityAttrs.add(new BaseDimAttribute(new FieldSchema("name", "string", "city name")));
     cityAttrs.add(new BaseDimAttribute(new FieldSchema("ambigdim1", "string", "used in testColumnAmbiguity")));
     cityAttrs.add(new BaseDimAttribute(new FieldSchema("ambigdim2", "string", "used in testColumnAmbiguity")));
-<<<<<<< HEAD
-    cityAttrs.add(new BaseDimAttribute(new FieldSchema("nocandidatecol", "string", "used in testing no" +
-      " candidate available")));
-=======
     cityAttrs.add(new BaseDimAttribute(new FieldSchema("nocandidatecol", "string", "used in testing no"
       + " candidate available")));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     cityAttrs.add(new ReferencedDimAtrribute(new FieldSchema("stateid", "int", "state id"), "State refer",
       new TableReference("statedim", "id")));
     cityAttrs.add(new ReferencedDimAtrribute(new FieldSchema("statename", "string", "state name"), "State name",
@@ -2053,12 +1953,6 @@ public class CubeTestSetup {
     HQLParser.printAST(HQLParser.parseHQL(query));
   }
 
-<<<<<<< HEAD
-  private static void setLastHourTimeRange() {
-    lastHourTimeRange = getTimeRangeString(getDateUptoHours(lastHour), getDateUptoHours(now));
-  }
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   private static String getTimeRangeString(final String startDate, final String endDate) {
     return "time_range_in(dt, '" + startDate + "','" + endDate + "')";

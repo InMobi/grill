@@ -20,29 +20,6 @@ package org.apache.lens.cube.parse;
 
 import static org.apache.hadoop.hive.ql.parse.HiveParser.*;
 import static org.apache.hadoop.hive.ql.parse.HiveParser.Number;
-<<<<<<< HEAD
-import static org.apache.hadoop.hive.ql.parse.HiveParser.PLUS;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.STAR;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.StringLiteral;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TILDE;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_ALLCOLREF;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_DIR;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_FUNCTION;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_FUNCTIONDI;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_FUNCTIONSTAR;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_GROUPBY;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_ISNOTNULL;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_ISNULL;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_LOCAL_DIR;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_ORDERBY;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_SELECT;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_SELECTDI;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_SELEXPR;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TAB;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TABSORTCOLNAMEASC;
-import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TABSORTCOLNAMEDESC;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -53,19 +30,6 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.Context;
 import org.apache.hadoop.hive.ql.exec.FunctionRegistry;
 import org.apache.hadoop.hive.ql.lib.Node;
-<<<<<<< HEAD
-import org.apache.hadoop.hive.ql.parse.ASTNode;
-import org.apache.hadoop.hive.ql.parse.BaseSemanticAnalyzer;
-import org.apache.hadoop.hive.ql.parse.HiveParser;
-import org.apache.hadoop.hive.ql.parse.ParseDriver;
-import org.apache.hadoop.hive.ql.parse.ParseException;
-import org.apache.hadoop.hive.ql.parse.ParseUtils;
-import org.apache.hadoop.hive.ql.parse.SemanticException;
-
-import com.google.common.base.Optional;
-
-public class HQLParser {
-=======
 import org.apache.hadoop.hive.ql.parse.*;
 
 import org.antlr.runtime.tree.Tree;
@@ -76,7 +40,6 @@ public final class HQLParser {
   private HQLParser() {
 
   }
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static final Pattern P_WSPACE = Pattern.compile("\\s+");
 
   public interface ASTNodeVisitor {
@@ -325,12 +288,7 @@ public final class HQLParser {
    * Recursively reconstruct query string given a query AST
    *
    * @param root
-<<<<<<< HEAD
-   * @param buf
-   *          preallocated builder where the reconstructed string will be written
-=======
    * @param buf  preallocated builder where the reconstructed string will be written
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   public static void toInfixString(ASTNode root, StringBuilder buf) {
     if (root == null) {
@@ -659,15 +617,8 @@ public final class HQLParser {
   }
 
   /**
-<<<<<<< HEAD
-   *
    * @param node an ASTNode
    * @return true when input node is a SELECT AST Node. Otherwise, false.
-   *
-=======
-   * @param node an ASTNode
-   * @return true when input node is a SELECT AST Node. Otherwise, false.
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   public static boolean isSelectASTNode(final ASTNode node) {
 
@@ -680,16 +631,9 @@ public final class HQLParser {
   }
 
   /**
-<<<<<<< HEAD
-   *
-   * @param node an ASTNode
-   * @return When node is null or token inside node is null, then Optional.absent is returned.
-   *         Otherwise, an integer representing ASTNodeType is returned.
-=======
    * @param node an ASTNode
    * @return When node is null or token inside node is null, then Optional.absent is returned. Otherwise, an integer
    * representing ASTNodeType is returned.
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   private static Optional<Integer> getASTNodeType(final ASTNode node) {
 
@@ -748,11 +692,7 @@ public final class HQLParser {
     }
 
     for (int i = 0; i < n1.getChildCount(); i++) {
-<<<<<<< HEAD
-      if (!equalsAST((ASTNode) n1.getChild(i), (ASTNode)n2.getChild(i))) {
-=======
       if (!equalsAST((ASTNode) n1.getChild(i), (ASTNode) n2.getChild(i))) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         return false;
       }
     }

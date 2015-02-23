@@ -25,17 +25,10 @@ import org.apache.lens.cube.metadata.Dimension;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 
 /**
-<<<<<<< HEAD
- * HQL context class which passes all query strings from the fact and works with
- * required dimensions for the fact.
- *
-=======
  * HQL context class which passes all query strings from the fact and works with required dimensions for the fact.
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
  */
 public class FactHQLContext extends DimHQLContext {
 
@@ -45,15 +38,9 @@ public class FactHQLContext extends DimHQLContext {
   private final Set<Dimension> factDims;
 
   FactHQLContext(CandidateFact fact, Map<Dimension, CandidateDim> dimsToQuery, Set<Dimension> factDims,
-<<<<<<< HEAD
-      CubeQueryContext query) throws SemanticException {
-    super(query, dimsToQuery, factDims, fact.getSelectTree(), fact.getWhereTree(), fact.getGroupByTree(), null, fact
-        .getHavingTree(), null);
-=======
     CubeQueryContext query) throws SemanticException {
     super(query, dimsToQuery, factDims, fact.getSelectTree(), fact.getWhereTree(), fact.getGroupByTree(), null, fact
       .getHavingTree(), null);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     this.fact = fact;
     this.factDims = factDims;
     LOG.info("factDims:" + factDims + " for fact:" + fact);
@@ -65,7 +52,6 @@ public class FactHQLContext extends DimHQLContext {
       query.getAliasForTabName(query.getCube().getName()),
       fact.getTimePartCols(),
       query.getTimeRanges().iterator().next().getPartitionColumn());
-<<<<<<< HEAD
   }
 
   @Override
@@ -74,16 +60,6 @@ public class FactHQLContext extends DimHQLContext {
   }
 
   @Override
-=======
-  }
-
-  @Override
-  protected Set<Dimension> getQueriedDimSet() {
-    return factDims;
-  }
-
-  @Override
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   protected CandidateFact getQueriedFact() {
     return fact;
   }

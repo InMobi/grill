@@ -43,13 +43,8 @@ public class TestTimeRangeExtractor extends TestQueryRewrite {
   @BeforeTest
   public void setupInstance() throws Exception {
     driver = new CubeQueryRewriter(new HiveConf());
-<<<<<<< HEAD
-    dateTwoDaysBack = getDateUptoHours(twodaysBack);
-    dateNow = getDateUptoHours(now);
-=======
     dateTwoDaysBack = getDateUptoHours(TWODAYS_BACK);
     dateNow = getDateUptoHours(NOW);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   }
 
   @AfterTest

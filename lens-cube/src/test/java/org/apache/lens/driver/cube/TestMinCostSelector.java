@@ -23,10 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-<<<<<<< HEAD
-import org.apache.hadoop.conf.Configuration;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
 import org.apache.lens.server.api.driver.*;
@@ -42,30 +38,18 @@ import org.testng.annotations.Test;
 public class TestMinCostSelector {
 
   private MockQueryContext createMockContext(String query, Configuration conf, LensConf lensConf,
-<<<<<<< HEAD
-                                             Map<LensDriver, String> driverQueries) throws LensException {
-    MockQueryContext ctx = new MockQueryContext(query, lensConf, conf,  driverQueries.keySet());
-    ctx.setDriverQueriesAndPlans(driverQueries);
-=======
     Map<LensDriver, String> driverQueries) throws LensException {
     MockQueryContext ctx = new MockQueryContext(query, lensConf, conf, driverQueries.keySet());
     ctx.setDriverQueries(driverQueries);
     ctx.estimateCostForDrivers();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return ctx;
   }
 
   private MockQueryContext createMockContext(String query, Configuration conf, LensConf lensConf,
-<<<<<<< HEAD
-      List<LensDriver> drivers, Map<LensDriver, String> driverQueries) throws LensException {
-    MockQueryContext ctx = new MockQueryContext(query, lensConf, conf,  driverQueries.keySet());
-    ctx.setDriverQueriesAndPlans(driverQueries);
-=======
     List<LensDriver> drivers, Map<LensDriver, String> driverQueries) throws LensException {
     MockQueryContext ctx = new MockQueryContext(query, lensConf, conf, driverQueries.keySet());
     ctx.setDriverQueries(driverQueries);
     ctx.estimateCostForDrivers();
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return ctx;
   }
 

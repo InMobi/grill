@@ -18,6 +18,7 @@
  */
 package org.apache.lens.storage.db;
 
+
 import static org.apache.hadoop.hive.serde.serdeConstants.LIST_COLUMNS;
 import static org.apache.hadoop.hive.serde.serdeConstants.LIST_COLUMN_TYPES;
 

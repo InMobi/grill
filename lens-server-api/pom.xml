@@ -19,21 +19,6 @@
   under the License.
 
 -->
-<<<<<<< HEAD
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>lens-parent</artifactId>
-        <groupId>org.apache.lens</groupId>
-        <version>1.2.6-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>lens-server-api</artifactId>
-    <packaging>jar</packaging>
-    <name>Lens API for server and extensions</name>
-    <description>Lens API for server and extensions</description>
-
-=======
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -48,7 +33,6 @@
   <name>Lens API for server and extensions</name>
   <description>Lens API for server and extensions</description>
 
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   <dependencies>
     <dependency>
       <groupId>org.apache.lens</groupId>
@@ -72,8 +56,4 @@
       <artifactId>testng</artifactId>
     </dependency>
   </dependencies>
-<<<<<<< HEAD
-</project>    
-=======
 </project>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7

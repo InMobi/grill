@@ -181,13 +181,9 @@
   <property>
     <name>lens.cube.query.enable.attrfields.add.distinct</name>
     <value>true</value>
-<<<<<<< HEAD
-    <description>When the query has only attribute fields projected from cube and the flag is set to true, distinct clause will be added for the projection so that no duplicate values will be projected. If flag is set to false, projection wont be changed, result might include duplicate values.</description>
-=======
     <description>When the query has only attribute fields projected from cube and the flag is set to true, distinct
       clause will be added for the projection so that no duplicate values will be projected. If flag is set to false,
       projection wont be changed, result might include duplicate values.
     </description>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   </property>
 </configuration>

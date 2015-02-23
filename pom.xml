@@ -19,12 +19,8 @@
   under the License.
 
 -->
-<<<<<<< HEAD
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-=======
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -105,24 +101,14 @@
 
     <!-- installation -->
     <mvn.lens.install.dir>/usr/local/lens</mvn.lens.install.dir>
-<<<<<<< HEAD
-    <mvn.lens.bin.dir>${mvn.lens.install.dir}/bin</mvn.lens.bin.dir>
-    <mvn.lens.webapp.dir>${mvn.lens.install.dir}/webapp</mvn.lens.webapp.dir>
-=======
     <mvn.lens.webapp.dir>${mvn.lens.install.dir}/server/webapp</mvn.lens.webapp.dir>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     <mvn.lens.server.dir>${mvn.lens.webapp.dir}/lens-server</mvn.lens.server.dir>
 
   </properties>
 
   <groupId>org.apache.lens</groupId>
-<<<<<<< HEAD
-  <artifactId>lens-parent</artifactId>
-  <version>1.2.6-SNAPSHOT</version>
-=======
   <artifactId>apache-lens</artifactId>
   <version>2.1.0-incubating-SNAPSHOT</version>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
@@ -445,11 +431,7 @@
           <dependency>
             <groupId>org.apache.lens</groupId>
             <artifactId>checkstyle</artifactId>
-<<<<<<< HEAD
-            <version>1.6-SNAPSHOT</version>
-=======
             <version>2.1.0-incubating-SNAPSHOT</version>
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           </dependency>
         </dependencies>
         <executions>

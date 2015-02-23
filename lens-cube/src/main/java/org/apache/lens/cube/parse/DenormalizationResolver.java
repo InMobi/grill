@@ -26,12 +26,6 @@ import java.util.*;
 import org.apache.lens.cube.metadata.*;
 import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
 
-<<<<<<< HEAD
-import lombok.ToString;
-
-import org.antlr.runtime.CommonToken;
-=======
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -39,20 +33,10 @@ import org.apache.hadoop.hive.ql.ErrorMsg;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
-<<<<<<< HEAD
-import org.apache.lens.cube.metadata.AbstractCubeTable;
-import org.apache.lens.cube.metadata.CubeColumn;
-import org.apache.lens.cube.metadata.CubeInterface;
-import org.apache.lens.cube.metadata.Dimension;
-import org.apache.lens.cube.metadata.ReferencedDimAtrribute;
-import org.apache.lens.cube.metadata.TableReference;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
-=======
 
 import org.antlr.runtime.CommonToken;
 
 import lombok.ToString;
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * This class resolves all the reference columns that are queried.
@@ -257,29 +241,17 @@ public class DenormalizationResolver implements ContextRewriter {
               // remove unreachable references
               TableReference reference = iter.next();
               if (!cubeql.getAutoJoinCtx().isReachableDim(
-<<<<<<< HEAD
-                  (Dimension) cubeql.getCubeTableForAlias(reference.getDestTable()))) {
-=======
                 (Dimension) cubeql.getCubeTableForAlias(reference.getDestTable()))) {
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                 iter.remove();
               }
             }
             PickedReference picked = new PickedReference(refered.references.iterator().next(),
-<<<<<<< HEAD
-                cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
-=======
               cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             addPickedReference(refered.col.getName(), picked);
             pickedRefs.add(picked);
           } else {
             PickedReference picked =
-<<<<<<< HEAD
-                new PickedReference(refered.col, cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
-=======
               new PickedReference(refered.col, cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             addPickedReference(refered.col.getName(), picked);
             pickedRefs.add(picked);
           }
@@ -325,11 +297,7 @@ public class DenormalizationResolver implements ContextRewriter {
           return;
         }
         ASTNode newTableNode =
-<<<<<<< HEAD
-            new ASTNode(new CommonToken(HiveParser.Identifier, query.getAliasForTabName(refered.getDestTable())));
-=======
           new ASTNode(new CommonToken(HiveParser.Identifier, query.getAliasForTabName(refered.getDestTable())));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         tableNode.setChild(0, newTableNode);
         newTableNode.setParent(tableNode);
 
@@ -412,12 +380,8 @@ public class DenormalizationResolver implements ContextRewriter {
               for (ReferencedQueriedColumn refcol : denormCtx.tableToRefCols.get(cdim.getName())) {
                 if (denormCtx.getReferencedCols().get(refcol.col.getName()).isEmpty()) {
                   LOG.info("Not considering dim table:" + cdim + " as column " + refcol.col + " is not available");
-<<<<<<< HEAD
-                  cubeql.addDimPruningMsgs(dim, cdim.dimtable,                    CandidateTablePruneCause.columnNotFound(refcol.col.getName()));
-=======
                   cubeql.addDimPruningMsgs(dim, cdim.dimtable,
                     CandidateTablePruneCause.columnNotFound(refcol.col.getName()));
->>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                   i.remove();
                 }
               }
