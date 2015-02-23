@@ -18,22 +18,29 @@
  */
 package org.apache.lens.server.ui;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.lens.api.APIResult;
-import org.apache.lens.api.LensConf;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.APIResult.Status;
-import org.apache.lens.server.LensServices;
-import org.apache.lens.server.api.session.SessionService;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.lens.api.APIResult;
+import org.apache.lens.api.APIResult.Status;
+import org.apache.lens.api.LensConf;
+import org.apache.lens.api.LensException;
+import org.apache.lens.api.LensSessionHandle;
+import org.apache.lens.server.LensServices;
+import org.apache.lens.server.api.session.SessionService;
+<<<<<<< HEAD
+import org.glassfish.jersey.media.multipart.FormDataParam;
+=======
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * Session resource api
@@ -47,10 +54,23 @@ public class SessionUIResource {
   public static final Log LOG = LogFactory.getLog(SessionUIResource.class);
 
   /** The open sessions. */
-  public static HashMap<UUID, LensSessionHandle> openSessions = new HashMap<UUID, LensSessionHandle>();
+  private static HashMap<UUID, LensSessionHandle> openSessions
+    = new HashMap<UUID, LensSessionHandle>();
 
   /** The session service. */
   private SessionService sessionService;
+<<<<<<< HEAD
+=======
+
+  /**
+   * get open session from uuid
+   * @param id
+   * @return
+   */
+  public static LensSessionHandle getOpenSession(UUID id) {
+    return openSessions.get(id);
+  }
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * API to know if session service is up and running
@@ -58,7 +78,7 @@ public class SessionUIResource {
    * @return Simple text saying it up
    */
   @GET
-  @Produces({ MediaType.TEXT_PLAIN })
+  @Produces({MediaType.TEXT_PLAIN})
   public String getMessage() {
     return "session is up!";
   }
@@ -66,8 +86,7 @@ public class SessionUIResource {
   /**
    * Instantiates a new session ui resource.
    *
-   * @throws LensException
-   *           the lens exception
+   * @throws LensException the lens exception
    */
   public SessionUIResource() throws LensException {
     sessionService = (SessionService) LensServices.get().getService("session");
@@ -76,8 +95,7 @@ public class SessionUIResource {
   /**
    * Check session handle.
    *
-   * @param sessionHandle
-   *          the session handle
+   * @param sessionHandle the session handle
    */
   private void checkSessionHandle(LensSessionHandle sessionHandle) {
     if (sessionHandle == null) {
@@ -88,19 +106,19 @@ public class SessionUIResource {
   /**
    * Create a new session with Lens server.
    *
-   * @param username
-   *          User name of the Lens server user
-   * @param password
-   *          Password of the Lens server user
-   * @param sessionconf
-   *          Key-value properties which will be used to configure this session
+   * @param username    User name of the Lens server user
+   * @param password    Password of the Lens server user
+   * @param database    (Optional) Set current database to supplied value
+   * @param sessionconf Key-value properties which will be used to configure this session
    * @return A Session handle unique to this session
    */
   @POST
-  @Consumes({ MediaType.MULTIPART_FORM_DATA })
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Consumes({MediaType.MULTIPART_FORM_DATA})
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public LensSessionHandle openSession(@FormDataParam("username") String username,
-      @FormDataParam("password") String password, @FormDataParam("sessionconf") LensConf sessionconf) {
+    @FormDataParam("password") String password,
+    @FormDataParam("database") @DefaultValue("") String database,
+    @FormDataParam("sessionconf") LensConf sessionconf) {
     try {
       Map<String, String> conf;
       if (sessionconf != null) {
@@ -108,7 +126,7 @@ public class SessionUIResource {
       } else {
         conf = new HashMap<String, String>();
       }
-      LensSessionHandle handle = sessionService.openSession(username, password, conf);
+      LensSessionHandle handle = sessionService.openSession(username, password, database, conf);
       openSessions.put(handle.getPublicId(), handle);
       return handle;
     } catch (LensException e) {
@@ -119,15 +137,23 @@ public class SessionUIResource {
   /**
    * Close a Lens server session.
    *
-   * @param publicId
-   *          Session's public id of the session to be closed
+   * @param publicId Session's public id of the session to be closed
    * @return APIResult object indicating if the operation was successful (check result.getStatus())
    */
+<<<<<<< HEAD
   @DELETE @Path("{publicId}")
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
   public APIResult closeSession(@PathParam("publicId") UUID publicId) {
     LOG.info("Closing session with id: " + publicId);
     LensSessionHandle sessionHandle = openSessions.get(publicId);
+=======
+  @DELETE
+  @Path("{publicId}")
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  public APIResult closeSession(@PathParam("publicId") UUID publicId) {
+    LOG.info("Closing session with id: " + publicId);
+    LensSessionHandle sessionHandle = getOpenSession(publicId);
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     checkSessionHandle(sessionHandle);
     openSessions.remove(publicId);
     try {

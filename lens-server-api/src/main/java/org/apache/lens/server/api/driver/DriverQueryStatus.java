@@ -183,7 +183,7 @@ public class DriverQueryStatus implements Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override

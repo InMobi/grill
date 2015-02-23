@@ -18,13 +18,28 @@
  */
 package org.apache.lens.server.api.query;
 
+<<<<<<< HEAD
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.hadoop.conf.Configuration;
+=======
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.query.LensPreparedQuery;
 import org.apache.lens.api.query.QueryPrepareHandle;
 import org.apache.lens.server.api.driver.LensDriver;
+<<<<<<< HEAD
+=======
+
+import org.apache.hadoop.conf.Configuration;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import java.util.Collection;
 import java.util.Date;
@@ -101,7 +116,7 @@ public class PreparedQueryContext extends AbstractQueryContext implements Delaye
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   @Override
@@ -111,7 +126,7 @@ public class PreparedQueryContext extends AbstractQueryContext implements Delaye
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.Delayed#getDelay(java.util.concurrent.TimeUnit)
    */
   @Override

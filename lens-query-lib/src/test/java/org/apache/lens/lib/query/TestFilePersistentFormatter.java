@@ -18,12 +18,28 @@
  */
 package org.apache.lens.lib.query;
 
+<<<<<<< HEAD
+=======
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.api.query.PersistedOutputFormatter;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
+<<<<<<< HEAD
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.query.PersistedOutputFormatter;
+=======
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -107,7 +123,7 @@ public class TestFilePersistentFormatter extends TestAbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.TestAbstractFileFormatter#createFormatter()
    */
   @Override
@@ -117,7 +133,7 @@ public class TestFilePersistentFormatter extends TestAbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.TestAbstractFileFormatter#writeAllRows(org.apache.hadoop.conf.Configuration)
    */
   @Override

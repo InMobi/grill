@@ -18,21 +18,24 @@
  */
 package org.apache.lens.server.ui;
 
-import org.apache.lens.api.metastore.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.server.LensServices;
-import org.apache.lens.server.api.metastore.CubeMetastoreService;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.UUID;
+
+import org.apache.lens.api.LensException;
+import org.apache.lens.api.LensSessionHandle;
+import org.apache.lens.api.metastore.*;
+import org.apache.lens.server.LensServices;
+import org.apache.lens.server.api.metastore.CubeMetastoreService;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * metastore UI resource api
@@ -77,7 +80,7 @@ public class MetastoreUIResource {
   @Path("tables")
   @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   public String getAllTables(@QueryParam("publicId") UUID publicId) {
-    LensSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+    LensSessionHandle sessionHandle = SessionUIResource.getOpenSession(publicId);
     checkSessionHandle(sessionHandle);
     JSONArray tableList = new JSONArray();
 
@@ -140,19 +143,20 @@ public class MetastoreUIResource {
   @Path("tables/{name}")
   @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   public String getDescription(@QueryParam("publicId") UUID publicId, @QueryParam("type") String type,
-      @PathParam("name") String name) {
-    LensSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+    @PathParam("name") String name) {
+    LensSessionHandle sessionHandle = SessionUIResource.getOpenSession(publicId);
     checkSessionHandle(sessionHandle);
     JSONArray attribList = new JSONArray();
     if (type.equals("cube")) {
-      XCube cube;
+      XBaseCube cube;
       try {
-        cube = getSvc().getCube(sessionHandle, name);
+        cube = (XBaseCube) getSvc().getCube(sessionHandle, name);
       } catch (LensException e) {
         throw new WebApplicationException(e);
       }
+
       if (cube.getMeasures() != null) {
-        for (XMeasure measure : cube.getMeasures().getMeasures()) {
+        for (XMeasure measure : cube.getMeasures().getMeasure()) {
           try {
             attribList.put(new JSONObject().put("name", measure.getName()).put("type", measure.getType()));
           } catch (JSONException j) {
@@ -161,7 +165,7 @@ public class MetastoreUIResource {
         }
       }
       if (cube.getDimAttributes() != null) {
-        for (XDimAttribute dim : cube.getDimAttributes().getDimAttributes()) {
+        for (XDimAttribute dim : cube.getDimAttributes().getDimAttribute()) {
           try {
             attribList.put(new JSONObject().put("name", dim.getName()).put("type", dim.getType()));
           } catch (JSONException j) {
@@ -177,7 +181,7 @@ public class MetastoreUIResource {
         throw new WebApplicationException(e);
       }
       if (table.getAttributes() != null) {
-        for (XDimAttribute col : table.getAttributes().getDimAttributes()) {
+        for (XDimAttribute col : table.getAttributes().getDimAttribute()) {
           try {
             attribList.put(new JSONObject().put("name", col.getName()).put("type", col.getType()));
           } catch (JSONException j) {
@@ -187,10 +191,10 @@ public class MetastoreUIResource {
       }
 
       if (table.getExpressions() != null) {
-        for (XExprColumn expr : table.getExpressions().getExpressions()) {
+        for (XExprColumn expr : table.getExpressions().getExpression()) {
           try {
             attribList.put(new JSONObject().put("name", expr.getName()).put("type", "expression")
-                .put("expression", expr.getExpr()));
+              .put("expression", expr.getExpr()));
           } catch (JSONException j) {
             LOG.error(j);
           }
@@ -212,7 +216,7 @@ public class MetastoreUIResource {
   @Path("searchablefields")
   @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   public String getFilterResults(@QueryParam("publicId") UUID publicId, @QueryParam("keyword") String keyword) {
-    LensSessionHandle sessionHandle = SessionUIResource.openSessions.get(publicId);
+    LensSessionHandle sessionHandle = SessionUIResource.getOpenSession(publicId);
     checkSessionHandle(sessionHandle);
     JSONArray tableList = null;
     JSONArray searchResultList = new JSONArray();
@@ -259,14 +263,14 @@ public class MetastoreUIResource {
         if (cubeSearchResultList.length() > 0) {
           try {
             searchResultList.put(new JSONObject().put("name", name).put("type", type).put("columns",
-                cubeSearchResultList));
+              cubeSearchResultList));
           } catch (JSONException j) {
             LOG.error(j);
           }
         } else if (name.contains(keyword)) {
           try {
             searchResultList.put(new JSONObject().put("name", name).put("type", type).put("columns",
-                cubeSearchResultList));
+              cubeSearchResultList));
           } catch (JSONException j) {
             LOG.error(j);
           }
@@ -300,14 +304,14 @@ public class MetastoreUIResource {
         if (dimSearchResultList.length() > 0) {
           try {
             searchResultList.put(new JSONObject().put("name", name).put("type", type).put("columns",
-                dimSearchResultList));
+              dimSearchResultList));
           } catch (JSONException j) {
             LOG.error(j);
           }
         } else if (name.contains(keyword)) {
           try {
             searchResultList.put(new JSONObject().put("name", name).put("type", type).put("columns",
-                dimSearchResultList));
+              dimSearchResultList));
           } catch (JSONException j) {
             LOG.error(j);
           }

@@ -22,12 +22,16 @@ package org.apache.lens.cube.metadata;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+<<<<<<< HEAD
+=======
+import org.apache.lens.cube.parse.HQLParser;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.ParseException;
-import org.apache.lens.cube.parse.HQLParser;
 
 public class ExprColumn extends CubeColumn {
   public static final char EXPRESSION_DELIMITER = '|';
@@ -38,7 +42,11 @@ public class ExprColumn extends CubeColumn {
   private boolean hasHashCode = false;
   private int hashCode;
 
+<<<<<<< HEAD
   public ExprColumn(FieldSchema column, String displayString, String ... expressions) throws ParseException {
+=======
+  public ExprColumn(FieldSchema column, String displayString, String... expressions) throws ParseException {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     super(column.getName(), column.getComment(), displayString, null, null, 0.0);
 
     if (expressions == null || expressions.length == 0) {
@@ -173,7 +181,7 @@ public class ExprColumn extends CubeColumn {
 
   /**
    * Get the AST corresponding to the expression
-   * 
+   *
    * @return the ast
    * @throws ParseException
    */
@@ -192,6 +200,7 @@ public class ExprColumn extends CubeColumn {
           throw new IllegalStateException("Expression can't be parsed: " + expr, e);
         }
       }
+<<<<<<< HEAD
     }
     return astNodeList;
   }
@@ -227,6 +236,46 @@ public class ExprColumn extends CubeColumn {
 
   /**
    * Remove an expression from the set of expressions of this column
+=======
+    }
+    return astNodeList;
+  }
+
+  private Set<String> getAllExpressions() {
+    return expressionSet;
+  }
+
+  /**
+   * Get immutable view of this column's expressions
+   *
+   * @return
+   */
+  public Collection<String> getExpressions() {
+    return Collections.unmodifiableSet(expressionSet);
+  }
+
+  /**
+   * Add an expression to existing set of expressions for this column
+   *
+   * @param expression
+   * @throws ParseException
+   */
+  public void addExpression(String expression) throws ParseException {
+    if (expression == null || expression.isEmpty()) {
+      throw new IllegalArgumentException("Empty expression not allowed");
+    }
+
+    // Validate if expression can be correctly parsed
+    HQLParser.parseExpr(expression);
+    expressionSet.add(expression);
+    astNodeList = null;
+    hasHashCode = false;
+  }
+
+  /**
+   * Remove an expression from the set of expressions of this column
+   *
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param expression
    * @return
    */

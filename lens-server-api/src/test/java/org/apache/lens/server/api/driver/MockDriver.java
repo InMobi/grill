@@ -18,10 +18,20 @@
  */
 package org.apache.lens.server.api.driver;
 
+<<<<<<< HEAD:lens-server-api/src/test/java/org/apache/lens/server/api/driver/MockDriver.java
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hive.service.cli.ColumnDescriptor;
+=======
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7:lens-server-api/src/test/java/org/apache/lens/server/api/driver/MockDriver.java
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.query.QueryCost;
 import org.apache.lens.api.query.QueryHandle;
@@ -33,12 +43,20 @@ import org.apache.lens.server.api.query.AbstractQueryContext;
 import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
 
+<<<<<<< HEAD:lens-server-api/src/test/java/org/apache/lens/server/api/driver/MockDriver.java
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+=======
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hive.service.cli.ColumnDescriptor;
+
+import lombok.Getter;
+import lombok.Setter;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7:lens-server-api/src/test/java/org/apache/lens/server/api/driver/MockDriver.java
 
 /**
  * The Class MockDriver.
@@ -358,6 +376,11 @@ public class MockDriver implements LensDriver {
 
   public int getTestIOVal() {
     return ioTestVal;
+  }
+
+  @Override
+  public QueryCost estimate(AbstractQueryContext qctx) throws LensException {
+    return new QueryCost(0L, 0.0);
   }
 
 }

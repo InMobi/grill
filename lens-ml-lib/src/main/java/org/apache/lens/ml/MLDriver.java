@@ -18,10 +18,10 @@
  */
 package org.apache.lens.ml;
 
+import java.util.List;
+
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
-
-import java.util.List;
 
 /**
  * The Interface MLDriver.
@@ -29,50 +29,43 @@ import java.util.List;
 public interface MLDriver {
 
   /**
-   * Checks if is trainer supported.
+   * Checks if is algo supported.
    *
-   * @param trainer
-   *          the trainer
-   * @return true, if is trainer supported
+   * @param algo the algo
+   * @return true, if is algo supported
    */
-  public boolean isTrainerSupported(String trainer);
+  boolean isAlgoSupported(String algo);
 
   /**
-   * Gets the trainer instance.
+   * Gets the algo instance.
    *
-   * @param trainer
-   *          the trainer
-   * @return the trainer instance
-   * @throws LensException
-   *           the lens exception
+   * @param algo the algo
+   * @return the algo instance
+   * @throws LensException the lens exception
    */
-  public MLTrainer getTrainerInstance(String trainer) throws LensException;
+  MLAlgo getAlgoInstance(String algo) throws LensException;
 
   /**
    * Inits the.
    *
-   * @param conf
-   *          the conf
-   * @throws LensException
-   *           the lens exception
+   * @param conf the conf
+   * @throws LensException the lens exception
    */
-  public void init(LensConf conf) throws LensException;
+  void init(LensConf conf) throws LensException;
 
   /**
    * Start.
    *
-   * @throws LensException
-   *           the lens exception
+   * @throws LensException the lens exception
    */
-  public void start() throws LensException;
+  void start() throws LensException;
 
   /**
    * Stop.
    *
-   * @throws LensException
-   *           the lens exception
+   * @throws LensException the lens exception
    */
-  public void stop() throws LensException;
+  void stop() throws LensException;
 
-  public List<String> getTrainerNames();
+  List<String> getAlgoNames();
 }

@@ -23,14 +23,10 @@ import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TMP_FILE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+
+import org.apache.lens.cube.metadata.*;
+import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +39,7 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.Context;
 import org.apache.hadoop.hive.ql.ErrorMsg;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
+<<<<<<< HEAD
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.JoinCond;
 import org.apache.hadoop.hive.ql.parse.JoinType;
@@ -55,14 +52,23 @@ import org.apache.hadoop.hive.ql.parse.QBParseInfo;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.lens.cube.metadata.*;
 import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
+=======
+import org.apache.hadoop.hive.ql.parse.*;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.codehaus.jackson.map.ObjectMapper;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 public class CubeQueryContext {
   public static final String TIME_RANGE_FUNC = "time_range_in";
   public static final String NOW = "now";
   public static final String DEFAULT_TABLE = "_default_";
-  public static Log LOG = LogFactory.getLog(CubeQueryContext.class.getName());
+  public static final Log LOG = LogFactory.getLog(CubeQueryContext.class.getName());
   private final ASTNode ast;
+<<<<<<< HEAD
   @Getter private final QB qb;
   private String clauseName = null;
   private final HiveConf conf;
@@ -97,11 +103,63 @@ public class CubeQueryContext {
   @Getter private final List<String> selectFinalAliases = new ArrayList<String>();
   // All aggregate expressions in the query
   @Getter private final Set<String> aggregateExprs = new HashSet<String>();
+=======
+  @Getter
+  private final QB qb;
+  private String clauseName = null;
+  private final HiveConf conf;
+
+  @Getter
+  private final List<TimeRange> timeRanges;
+
+  // metadata
+  @Getter
+  private CubeInterface cube;
+  // Dimensions accessed in the query, contains dimensions that are joinchain destinations
+  // of the joinchains used.
+  @Getter
+  protected Set<Dimension> dimensions = new HashSet<Dimension>();
+  // The dimensions accessed by name in the query directly, via tablename.columname
+  @Getter
+  protected Set<Dimension> nonChainedDimensions = new HashSet<Dimension>();
+  // Joinchains accessed in the query
+  @Getter
+  protected Map<String, JoinChain> joinchains = new HashMap<String, JoinChain>();
+  private final Set<String> queriedDimAttrs = new HashSet<String>();
+
+  @Getter
+  private final Set<String> queriedMsrs = new HashSet<String>();
+
+  @Getter()
+  private final Set<Set<CandidateFact>> candidateFactSets = new HashSet<Set<CandidateFact>>();
+
+  // would be added through join chains and de-normalized resolver
+  @Getter
+  protected Map<Dimension, OptionalDimCtx> optionalDimensions = new HashMap<Dimension, OptionalDimCtx>();
+
+  // Alias to table object mapping of tables accessed in this query
+  @Getter
+  private final Map<String, AbstractCubeTable> cubeTbls = new HashMap<String, AbstractCubeTable>();
+  // Alias name to fields queried
+  @Getter
+  private final Map<String, Set<String>> tblAliasToColumns = new HashMap<String, Set<String>>();
+  // Mapping of an expression to its column alias in the query
+  @Getter
+  private final Map<String, String> exprToAlias = new HashMap<String, String>();
+  @Getter
+  private final List<String> selectAliases = new ArrayList<String>();
+  @Getter
+  private final List<String> selectFinalAliases = new ArrayList<String>();
+  // All aggregate expressions in the query
+  @Getter
+  private final Set<String> aggregateExprs = new HashSet<String>();
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   // Join conditions used in all join expressions
   @Getter
   private final Map<QBJoinTree, String> joinConds = new HashMap<QBJoinTree, String>();
 
   // storage specific
+<<<<<<< HEAD
   @Getter protected final Set<CandidateFact> candidateFacts = new HashSet<CandidateFact>();
   @Getter protected final Map<Dimension, Set<CandidateDim>> candidateDims = new HashMap<Dimension, Set<CandidateDim>>();
 
@@ -121,6 +179,41 @@ public class CubeQueryContext {
   @Getter private PruneCauses<CubeFactTable> factPruningMsgs =
     new PruneCauses<CubeFactTable>();
   @Getter private Map<Dimension, PruneCauses<CubeDimensionTable>> dimPruningMsgs =
+=======
+  @Getter
+  protected final Set<CandidateFact> candidateFacts = new HashSet<CandidateFact>();
+  @Getter
+  protected final Map<Dimension, Set<CandidateDim>> candidateDims = new HashMap<Dimension, Set<CandidateDim>>();
+
+  // query trees
+  @Getter
+  private ASTNode havingAST;
+  @Getter
+  private ASTNode selectAST;
+
+  // Will be set after the Fact is picked and time ranges replaced
+  @Getter
+  @Setter
+  private ASTNode whereAST;
+
+  @Getter
+  private ASTNode orderByAST;
+  // Setter is used in promoting the select when promotion is on.
+  @Getter
+  @Setter
+  private ASTNode groupByAST;
+  @Getter
+  private CubeMetastoreClient metastoreClient;
+  @Getter
+  private JoinResolver.AutoJoinContext autoJoinCtx;
+  @Getter
+  private DenormalizationResolver.DenormalizationContext deNormCtx;
+  @Getter
+  private PruneCauses<CubeFactTable> factPruningMsgs =
+    new PruneCauses<CubeFactTable>();
+  @Getter
+  private Map<Dimension, PruneCauses<CubeDimensionTable>> dimPruningMsgs =
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     new HashMap<Dimension, PruneCauses<CubeDimensionTable>>();
 
   public CubeQueryContext(ASTNode ast, QB qb, HiveConf conf) throws SemanticException {
@@ -196,6 +289,7 @@ public class CubeQueryContext {
         joinchain = chainByName;
         retVal = true;
       }
+<<<<<<< HEAD
     }
 
     if(!retVal) {
@@ -221,6 +315,33 @@ public class CubeQueryContext {
       return true;
     }
 
+=======
+    }
+
+    if (!retVal) {
+      for (Dimension table : dimensions) {
+        JoinChain chainByName = table.getChainByName(aliasLowerCaseStr);
+        if (chainByName != null) {
+          joinchain = chainByName;
+          retVal = true;
+          break;
+        }
+      }
+    }
+
+    if (retVal) {
+      joinchains.put(aliasLowerCaseStr, new JoinChain(joinchain));
+      String destTable = joinchain.getDestTable();
+      boolean added = addQueriedTable(alias, destTable, isOptional, true);
+      if (!added) {
+        LOG.info("Queried tables do not exist. Missing tables:" + destTable);
+        throw new SemanticException(ErrorMsg.NEITHER_CUBE_NOR_DIMENSION);
+      }
+      LOG.info("Added join chain for " + destTable);
+      return true;
+    }
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     return retVal;
   }
 
@@ -242,6 +363,7 @@ public class CubeQueryContext {
   }
 
   /**
+<<<<<<< HEAD
    * destination table  : a table whose columns are getting queried
    * intermediate table : a table which is only used as a link between cube and destination table
    *
@@ -253,6 +375,18 @@ public class CubeQueryContext {
    * @param isChainedDimension  pass true when you're adding the dimension as a joinchain destination,
    *                            pass false when this table is mentioned by name in the user query
    * @return                    true if added
+=======
+   * destination table  : a table whose columns are getting queried intermediate table : a table which is only used as a
+   * link between cube and destination table
+   *
+   * @param alias
+   * @param tblName
+   * @param isOptional         pass false when it's a destination table pass true when it's an intermediate table when
+   *                           join chain destination is being added, this will be false.
+   * @param isChainedDimension pass true when you're adding the dimension as a joinchain destination, pass false when
+   *                           this table is mentioned by name in the user query
+   * @return true if added
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @throws SemanticException
    */
   private boolean addQueriedTable(String alias, String tblName, boolean isOptional, boolean isChainedDimension)
@@ -275,7 +409,11 @@ public class CubeQueryContext {
         if (!isOptional) {
           dimensions.add(dim);
         }
+<<<<<<< HEAD
         if(!isChainedDimension) {
+=======
+        if (!isChainedDimension) {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           nonChainedDimensions.add(dim);
         }
         cubeTbls.put(alias, dim);
@@ -307,11 +445,12 @@ public class CubeQueryContext {
   }
 
   public void addOptionalDimTable(String alias, String col, CandidateTable candidate, boolean isRequiredInJoin)
-      throws SemanticException {
+    throws SemanticException {
     alias = alias.toLowerCase();
     try {
       if (!addQueriedTable(alias, true)) {
         throw new SemanticException("Could not add queried table or chain:" + alias);
+<<<<<<< HEAD
       }
       Dimension dim = (Dimension)cubeTbls.get(alias);
       OptionalDimCtx optDim = optionalDimensions.get(dim);
@@ -319,6 +458,15 @@ public class CubeQueryContext {
         optDim = new OptionalDimCtx();
         optionalDimensions.put(dim, optDim);
       }
+=======
+      }
+      Dimension dim = (Dimension) cubeTbls.get(alias);
+      OptionalDimCtx optDim = optionalDimensions.get(dim);
+      if (optDim == null) {
+        optDim = new OptionalDimCtx();
+        optionalDimensions.put(dim, optDim);
+      }
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       if (col != null && candidate != null) {
         optDim.colQueried.add(col);
         optDim.requiredForCandidates.add(candidate);
@@ -501,7 +649,7 @@ public class CubeQueryContext {
       builder.append("\n joinConds:");
       for (JoinCond cond : joinTree.getJoinCond()) {
         builder.append("\n\t left: " + cond.getLeft() + " right: " + cond.getRight() + " type:" + cond.getJoinType()
-            + " preserved:" + cond.getPreserved());
+          + " preserved:" + cond.getPreserved());
       }
     }
   }
@@ -583,7 +731,7 @@ public class CubeQueryContext {
   }
 
   private void getQLString(QBJoinTree joinTree, StringBuilder builder, CandidateFact fact,
-      Map<Dimension, CandidateDim> dimsToQuery) throws SemanticException {
+    Map<Dimension, CandidateDim> dimsToQuery) throws SemanticException {
     String joiningTable = null;
     if (joinTree.getBaseSrc()[0] == null) {
       if (joinTree.getJoinSrc() != null) {
@@ -663,7 +811,7 @@ public class CubeQueryContext {
         if (candidateDims.get(dim) != null && candidateDims.get(dim).size() > 0) {
           CandidateDim cdim = candidateDims.get(dim).iterator().next();
           LOG.info("Available candidate dims are:" + candidateDims.get(dim) + ", picking up " + cdim.dimtable
-              + " for querying");
+            + " for querying");
           dimsToQuery.put(dim, cdim);
         } else {
           String reason = "";
@@ -785,7 +933,11 @@ public class CubeQueryContext {
         }
       } else {
         joiningTables.addAll(autoJoinCtx.pickOptionalTables(null,
+<<<<<<< HEAD
             dimsToQuery!= null ? dimsToQuery.keySet() : null, this));
+=======
+          dimsToQuery != null ? dimsToQuery.keySet() : null, this));
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
       }
       if (dimsToQuery == null) {
         dimsToQuery = pickCandidateDimsToQuery(joiningTables);
@@ -808,7 +960,7 @@ public class CubeQueryContext {
   }
 
   private HQLContextInterface createHQLContext(Set<CandidateFact> facts, Map<Dimension, CandidateDim> dimsToQuery,
-      Map<CandidateFact, Set<Dimension>> factDimMap, CubeQueryContext query) throws SemanticException {
+    Map<CandidateFact, Set<Dimension>> factDimMap, CubeQueryContext query) throws SemanticException {
     if (facts == null || facts.size() == 0) {
       return new DimOnlyHQLContext(dimsToQuery, query);
     } else if (facts.size() == 1) {
@@ -982,12 +1134,16 @@ public class CubeQueryContext {
 
   public boolean shouldReplaceTimeDimWithPart() {
     return getHiveConf().getBoolean(CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL,
-        CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL);
+      CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL);
   }
 
   public String getPartitionColumnOfTimeDim(String timeDimName) {
     return getPartitionColumnOfTimeDim(cube, timeDimName);
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static String getPartitionColumnOfTimeDim(CubeInterface cube, String timeDimName) {
     if (cube == null) {
       return timeDimName;
@@ -1002,6 +1158,10 @@ public class CubeQueryContext {
   public String getTimeDimOfPartitionColumn(String partCol) {
     return getTimeDimOfPartitionColumn(cube, partCol);
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   public static String getTimeDimOfPartitionColumn(CubeInterface cube, String partCol) {
     if (cube == null) {
       return partCol;
@@ -1030,9 +1190,9 @@ public class CubeQueryContext {
 
   /**
    * Prune candidate fact sets with respect to available candidate facts.
-   * 
+   * <p/>
    * Prune a candidate set, if any of the fact is missing.
-   * 
+   *
    * @param pruneCause
    */
   public void pruneCandidateFactSet(CandidateTablePruneCode pruneCause) {
@@ -1041,7 +1201,7 @@ public class CubeQueryContext {
       Set<CandidateFact> cfacts = i.next();
       if (!candidateFacts.containsAll(cfacts)) {
         LOG.info("Not considering fact table set:" + cfacts
-            + " as they have non candidate tables and facts missing because of" + pruneCause);
+          + " as they have non candidate tables and facts missing because of" + pruneCause);
         i.remove();
       }
     }
@@ -1049,10 +1209,9 @@ public class CubeQueryContext {
 
   /**
    * Prune candidate fact with respect to available candidate fact sets.
-   * 
-   * If candidate fact is not present in any of the candidate fact sets, remove
-   * it.
-   * 
+   * <p/>
+   * If candidate fact is not present in any of the candidate fact sets, remove it.
+   *
    * @param pruneCause
    */
   public void pruneCandidateFactWithCandidateSet(CandidateTablePruneCode pruneCause) {

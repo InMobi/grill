@@ -22,9 +22,12 @@ import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensException;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.query.*;
+<<<<<<< HEAD
 
 import javax.ws.rs.core.Response;
 import java.util.List;
+=======
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Interface QueryExecutionService.
@@ -35,6 +38,23 @@ public interface QueryExecutionService {
    * The Constant NAME.
    */
   String NAME = "query";
+<<<<<<< HEAD
+=======
+
+  /**
+   * Estimate the cost of given query.
+   *
+   * @param sessionHandle the session handle
+   * @param query         The query should be in HiveQL(SQL like)
+   * @param conf          The query configuration
+   *
+   * @return The query cost, if no failure
+   *         The error message, incase of failure
+   *
+   * @throws LensException the lens exception
+   */
+  EstimateResult estimate(LensSessionHandle sessionHandle, String query, LensConf conf) throws LensException;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * Explain the given query.

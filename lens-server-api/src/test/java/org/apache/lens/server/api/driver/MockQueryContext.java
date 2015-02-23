@@ -18,11 +18,20 @@
  */
 package org.apache.lens.server.api.driver;
 
+<<<<<<< HEAD:lens-server-api/src/test/java/org/apache/lens/server/api/driver/MockQueryContext.java
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.server.api.query.AbstractQueryContext;
 
 import java.util.Collection;
+=======
+import java.util.Collection;
+
+import org.apache.lens.api.LensConf;
+import org.apache.lens.server.api.query.AbstractQueryContext;
+
+import org.apache.hadoop.conf.Configuration;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7:lens-server-api/src/test/java/org/apache/lens/server/api/driver/MockQueryContext.java
 
 public class MockQueryContext extends AbstractQueryContext {
 

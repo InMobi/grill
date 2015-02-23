@@ -18,8 +18,14 @@
  */
 package org.apache.lens.server.api.driver;
 
+<<<<<<< HEAD
 import org.apache.hadoop.conf.Configuration;
+=======
+import java.io.Externalizable;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.lens.api.LensException;
+import org.apache.lens.api.query.QueryCost;
 import org.apache.lens.api.query.QueryHandle;
 import org.apache.lens.api.query.QueryPrepareHandle;
 import org.apache.lens.server.api.events.LensEventListener;
@@ -27,7 +33,11 @@ import org.apache.lens.server.api.query.AbstractQueryContext;
 import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
 
+<<<<<<< HEAD
 import java.io.Externalizable;
+=======
+import org.apache.hadoop.conf.Configuration;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Interface LensDriver.
@@ -44,8 +54,26 @@ public interface LensDriver extends Externalizable {
    *
    * @param conf The configuration object
    * @throws LensException the lens exception
+<<<<<<< HEAD
    */
   void configure(Configuration conf) throws LensException;
+=======
+   */
+  void configure(Configuration conf) throws LensException;
+
+  /**
+   * Estimate the cost of execution for given query.
+   *
+   * This should be returned with very less latency - should return within 10s of milli seconds.
+   *
+   * @param qctx The query context
+   *
+   * @return The QueryCost object
+   *
+   * @throws LensException the lens exception if driver cannot estimate
+   */
+  QueryCost estimate(AbstractQueryContext qctx) throws LensException;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
   /**
    * Explain the given query.

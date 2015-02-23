@@ -23,34 +23,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.lens.api.APIResult;
-import org.apache.lens.api.LensConf;
-import org.apache.lens.api.LensException;
-import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.StringList;
+import org.apache.lens.api.*;
 import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.server.LensService;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.session.SessionService;
+<<<<<<< HEAD
+=======
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * Session resource api
- *
+ * <p/>
  * This provides api for all things in session.
  */
 @Path("/session")
@@ -68,7 +60,7 @@ public class SessionResource {
    * @return Simple text saying it up
    */
   @GET
-  @Produces({ MediaType.TEXT_PLAIN })
+  @Produces({MediaType.TEXT_PLAIN})
   public String getMessage() {
     return "session is up!";
   }
@@ -76,8 +68,7 @@ public class SessionResource {
   /**
    * Instantiates a new session resource.
    *
-   * @throws LensException
-   *           the lens exception
+   * @throws LensException the lens exception
    */
   public SessionResource() throws LensException {
     sessionService = (SessionService) LensServices.get().getService("session");
@@ -86,19 +77,19 @@ public class SessionResource {
   /**
    * Create a new session with Lens server.
    *
-   * @param username
-   *          User name of the Lens server user
-   * @param password
-   *          Password of the Lens server user
-   * @param sessionconf
-   *          Key-value properties which will be used to configure this session
+   * @param username    User name of the Lens server user
+   * @param password    Password of the Lens server user
+   * @param database    Set current database to the supplied value, if provided
+   * @param sessionconf Key-value properties which will be used to configure this session
    * @return A Session handle unique to this session
    */
   @POST
-  @Consumes({ MediaType.MULTIPART_FORM_DATA })
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Consumes({MediaType.MULTIPART_FORM_DATA})
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public LensSessionHandle openSession(@FormDataParam("username") String username,
-      @FormDataParam("password") String password, @FormDataParam("sessionconf") LensConf sessionconf) {
+    @FormDataParam("password") String password,
+    @FormDataParam("database")  @DefaultValue("") String database,
+    @FormDataParam("sessionconf") LensConf sessionconf) {
     try {
       Map<String, String> conf;
       if (sessionconf != null) {
@@ -106,7 +97,7 @@ public class SessionResource {
       } else {
         conf = new HashMap<String, String>();
       }
-      return sessionService.openSession(username, password, conf);
+      return sessionService.openSession(username, password, database,   conf);
     } catch (LensException e) {
       throw new WebApplicationException(e);
     }
@@ -115,12 +106,11 @@ public class SessionResource {
   /**
    * Close a Lens server session.
    *
-   * @param sessionid
-   *          Session handle object of the session to be closed
+   * @param sessionid Session handle object of the session to be closed
    * @return APIResult object indicating if the operation was successful (check result.getStatus())
    */
   @DELETE
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult closeSession(@QueryParam("sessionid") LensSessionHandle sessionid) {
     try {
       sessionService.closeSession(sessionid);
@@ -132,28 +122,25 @@ public class SessionResource {
 
   /**
    * Add a resource to the session to all LensServices running in this Lens server
-   *
+   * <p/>
    * <p>
    * The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation was successful for all
    * services running in this Lens server.
    * </p>
    *
-   * @param sessionid
-   *          session handle object
-   * @param type
-   *          The type of resource. Valid types are 'jar', 'file' and 'archive'
-   * @param path
-   *          path of the resource
+   * @param sessionid session handle object
+   * @param type      The type of resource. Valid types are 'jar', 'file' and 'archive'
+   * @param path      path of the resource
    * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if add was successful. {@link APIResult} with state
-   *         {@link Status#PARTIAL}, if add succeeded only for some services. {@link APIResult} with state
-   *         {@link Status#FAILED}, if add has failed
+   * {@link Status#PARTIAL}, if add succeeded only for some services. {@link APIResult} with state
+   * {@link Status#FAILED}, if add has failed
    */
   @PUT
   @Path("resources/add")
-  @Consumes({ MediaType.MULTIPART_FORM_DATA })
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Consumes({MediaType.MULTIPART_FORM_DATA})
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult addResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
-      @FormDataParam("type") String type, @FormDataParam("path") String path) {
+    @FormDataParam("type") String type, @FormDataParam("path") String path) {
     int numAdded = sessionService.addResourceToAllServices(sessionid, type, path);
     if (numAdded == 0) {
       return new APIResult(Status.FAILED, "Add resource has failed ");
@@ -166,6 +153,7 @@ public class SessionResource {
   /**
    * Lists resources from the session for a given resource type.
    *
+<<<<<<< HEAD
    * @param sessionid
    *          session handle object
    * @param type
@@ -178,6 +166,18 @@ public class SessionResource {
   @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
   public StringList listResources(@QueryParam("sessionid") LensSessionHandle sessionid,
       @QueryParam("type") String type) {
+=======
+   * @param sessionid session handle object
+   * @param type      resource type. It can be jar, file or null
+   * @return Lists all resources for a given resource type
+   * Lists all resources if the resource type is not specified
+   */
+  @GET
+  @Path("resources/list")
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  public StringList listResources(@QueryParam("sessionid") LensSessionHandle sessionid,
+    @QueryParam("type") String type) {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     List<String> resources = sessionService.listAllResources(sessionid, type);
     return new StringList(resources);
   }
@@ -188,23 +188,19 @@ public class SessionResource {
    * Similar to addResource, this call is successful only if resource was deleted from all services.
    * </p>
    *
-   * @param sessionid
-   *          session handle object
-   * @param type
-   *          The type of resource. Valid types are 'jar', 'file' and 'archive'
-   * @param path
-   *          path of the resource to be deleted
-   *
+   * @param sessionid session handle object
+   * @param type      The type of resource. Valid types are 'jar', 'file' and 'archive'
+   * @param path      path of the resource to be deleted
    * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if delete was successful. {@link APIResult} with
-   *         state {@link Status#PARTIAL}, if delete succeeded only for some services. {@link APIResult} with state
-   *         {@link Status#FAILED}, if delete has failed
+   * state {@link Status#PARTIAL}, if delete succeeded only for some services. {@link APIResult} with state
+   * {@link Status#FAILED}, if delete has failed
    */
   @PUT
   @Path("resources/delete")
-  @Consumes({ MediaType.MULTIPART_FORM_DATA })
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Consumes({MediaType.MULTIPART_FORM_DATA})
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult deleteResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
-      @FormDataParam("type") String type, @FormDataParam("path") String path) {
+    @FormDataParam("type") String type, @FormDataParam("path") String path) {
     int numDeleted = 0;
     for (LensService service : LensServices.get().getLensServices()) {
       try {
@@ -225,20 +221,17 @@ public class SessionResource {
   /**
    * Get a list of key=value parameters set for this session.
    *
-   * @param sessionid
-   *          session handle object
-   * @param verbose
-   *          If true, all the parameters will be returned. If false, configuration parameters will be returned
-   * @param key
-   *          if this is empty, output will contain all parameters and their values, if it is non empty parameters will
-   *          be filtered by key
+   * @param sessionid session handle object
+   * @param verbose   If true, all the parameters will be returned. If false, configuration parameters will be returned
+   * @param key       if this is empty, output will contain all parameters and their values,
+   *                  if it is non empty parameters will be filtered by key
    * @return List of Strings, one entry per key-value pair
    */
   @GET
   @Path("params")
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public StringList getParams(@QueryParam("sessionid") LensSessionHandle sessionid,
-      @DefaultValue("false") @QueryParam("verbose") boolean verbose, @DefaultValue("") @QueryParam("key") String key) {
+    @DefaultValue("false") @QueryParam("verbose") boolean verbose, @DefaultValue("") @QueryParam("key") String key) {
     try {
       List<String> result = sessionService.getAllSessionParameters(sessionid, verbose, key);
       return new StringList(result);
@@ -249,25 +242,21 @@ public class SessionResource {
 
   /**
    * Set value for a parameter specified by key
-   *
+   * <p/>
    * The parameters can be a hive variable or a configuration. To set key as a hive variable, the key should be prefixed
    * with 'hivevar:'. To set key as configuration parameter, the key should be prefixed with 'hiveconf:' If no prefix is
    * attached, the parameter is set as configuration.
    *
-   * @param sessionid
-   *          session handle object
-   * @param key
-   *          parameter key
-   * @param value
-   *          parameter value
-   *
+   * @param sessionid session handle object
+   * @param key       parameter key
+   * @param value     parameter value
    * @return APIResult object indicating if set operation was successful
    */
   @PUT
   @Path("params")
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN })
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult setParam(@FormDataParam("sessionid") LensSessionHandle sessionid, @FormDataParam("key") String key,
-      @FormDataParam("value") String value) {
+    @FormDataParam("value") String value) {
     sessionService.setSessionParameter(sessionid, key, value);
     return new APIResult(Status.SUCCEEDED, "Set param succeeded");
   }

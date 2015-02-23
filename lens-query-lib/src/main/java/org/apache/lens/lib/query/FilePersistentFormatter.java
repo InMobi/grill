@@ -18,15 +18,26 @@
  */
 package org.apache.lens.lib.query;
 
+<<<<<<< HEAD
+=======
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.lens.server.api.driver.LensResultSetMetadata;
+import org.apache.lens.server.api.query.PersistedOutputFormatter;
+import org.apache.lens.server.api.query.QueryContext;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
-import org.apache.lens.server.api.driver.LensResultSetMetadata;
-import org.apache.lens.server.api.query.PersistedOutputFormatter;
-import org.apache.lens.server.api.query.QueryContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +60,7 @@ public class FilePersistentFormatter extends WrappedFileFormatter implements Per
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.WrappedFileFormatter#init(org.apache.lens.server.api.query.QueryContext,
    * org.apache.lens.server.api.driver.LensResultSetMetadata)
    */
@@ -82,7 +93,7 @@ public class FilePersistentFormatter extends WrappedFileFormatter implements Per
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -98,7 +109,7 @@ public class FilePersistentFormatter extends WrappedFileFormatter implements Per
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.PersistedOutputFormatter#addRowsFromPersistedPath(org.apache.hadoop.fs.Path)
    */
   @Override

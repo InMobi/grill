@@ -21,14 +21,19 @@ package org.apache.lens.cube.parse;
 import static org.apache.hadoop.hive.ql.parse.HiveParser.Identifier;
 import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_SELEXPR;
 
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+=======
+import java.util.*;
 
-import org.antlr.runtime.CommonToken;
+import org.apache.lens.cube.metadata.*;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +43,7 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+<<<<<<< HEAD
 import org.apache.lens.cube.metadata.AbstractCubeTable;
 import org.apache.lens.cube.metadata.CubeInterface;
 import org.apache.lens.cube.metadata.DerivedCube;
@@ -51,11 +57,21 @@ import org.apache.lens.cube.metadata.ReferencedDimAtrribute;
  * Does queried field validation wrt derived cubes, if all fields of queried
  * cube cannot be queried together.
  *
+=======
+
+import org.antlr.runtime.CommonToken;
+
+/**
+ * Finds queried column to table alias. Finds queried dim attributes and queried measures.
+ * <p/>
+ * Does queried field validation wrt derived cubes, if all fields of queried cube cannot be queried together.
+ * <p/>
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
  * Replaces all the columns in all expressions with tablealias.column
  */
 class AliasReplacer implements ContextRewriter {
 
-  private static Log LOG = LogFactory.getLog(AliasReplacer.class.getName());
+  private static final Log LOG = LogFactory.getLog(AliasReplacer.class.getName());
 
   // Mapping of a qualified column name to its table alias
   private Map<String, String> colToTableAlias;
@@ -86,6 +102,7 @@ class AliasReplacer implements ContextRewriter {
     }
 
     replaceAliases(cubeql.getSelectAST(), 0, colToTableAlias);
+<<<<<<< HEAD
 
     replaceAliases(cubeql.getHavingAST(), 0, colToTableAlias);
 
@@ -95,6 +112,17 @@ class AliasReplacer implements ContextRewriter {
 
     replaceAliases(cubeql.getWhereAST(), 0, colToTableAlias);
 
+=======
+
+    replaceAliases(cubeql.getHavingAST(), 0, colToTableAlias);
+
+    replaceAliases(cubeql.getOrderByAST(), 0, colToTableAlias);
+
+    replaceAliases(cubeql.getGroupByAST(), 0, colToTableAlias);
+
+    replaceAliases(cubeql.getWhereAST(), 0, colToTableAlias);
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     replaceAliases(cubeql.getJoinTree(), 0, colToTableAlias);
 
 
@@ -139,7 +167,11 @@ class AliasReplacer implements ContextRewriter {
         while (iter.hasNext()) {
           String attr = iter.next();
           if (cube.getDimAttributeByName(attr) instanceof ReferencedDimAtrribute
+<<<<<<< HEAD
               && ((ReferencedDimAtrribute)cube.getDimAttributeByName(attr)).isChainedColumn()) {
+=======
+            && ((ReferencedDimAtrribute) cube.getDimAttributeByName(attr)).isChainedColumn()) {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             iter.remove();
           }
         }

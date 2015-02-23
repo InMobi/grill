@@ -18,15 +18,19 @@
  */
 package org.apache.lens.lib.query;
 
-import org.apache.hadoop.hive.serde.serdeConstants;
-import org.apache.hadoop.io.Text;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.hadoop.hive.serde.serdeConstants;
+import org.apache.hadoop.io.Text;
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * The Class TestJSONSerde.

@@ -1,46 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements. See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership. The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License. You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied. See the License for the
+  specific language governing permissions and limitations
+  under the License.
 
 -->
+<<<<<<< HEAD
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+=======
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>14</version>
+    <version>16</version>
   </parent>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <powermock.version>1.4.12</powermock.version>
+
+    <!-- java and javax -->
+    <java.source.version>1.6</java.source.version>
+    <java.target.version>1.6</java.target.version>
+    <servlet3.version>3.0.1</servlet3.version>
+    <servlet.api.version>2.5</servlet.api.version>
+    <jsp.api.version>2.0</jsp.api.version>
+    <ws.rs.version>2.0</ws.rs.version>
+    <jaxb.api.version>2.1</jaxb.api.version>
+    <javax.mail.version>1.4</javax.mail.version>
+
+    <!-- hadoop stack -->
+    <hadoop.version>2.4.0</hadoop.version>
+    <spark.version>1.1.0</spark.version>
     <hive.version>0.13.3-inm</hive.version>
+
+    <!-- common library/framework versions -->
+    <commons.logging.version>1.1.1</commons.logging.version>
+    <slf4j.version>1.7.6</slf4j.version>
+    <log4j.version>1.2.16</log4j.version>
+    <commons.lang.version>2.4</commons.lang.version>
+    <joda.time.version>2.0</joda.time.version>
+    <guava.version>13.0.1</guava.version>
+    <lombok.version>1.12.4</lombok.version>
+
+    <jackson.asl.version>1.9.13</jackson.asl.version>
+    <opencsv.version>2.3</opencsv.version>
+
+    <libthrift.version>0.9.0</libthrift.version>
+
     <jetty.version>6.1.26</jetty.version>
     <jersey.version>2.3.1</jersey.version>
     <grizzly.version>2.3.6</grizzly.version>
-    <servlet3.version>3.0.1</servlet3.version>
-    <slf4j.version>1.7.6</slf4j.version>
     <metrics.version>3.0.2</metrics.version>
-    <hadoop.version>2.4.0</hadoop.version>
-    <spark.version>1.1.0</spark.version>
+    <subethasmtp.version>3.1.7</subethasmtp.version>
+    <liquibase.version>3.0.7</liquibase.version>
+    <spring.shell.version>1.0.0.RELEASE</spring.shell.version>
+
+    <c3p0.version>0.9.5</c3p0.version>
+    <hsqldb.version>2.2.9</hsqldb.version>
+    <dbcp.version>1.4</dbcp.version>
+    <dbutils.version>1.5</dbutils.version>
+
+    <!-- test -->
+    <testng.version>6.8</testng.version>
+    <mockito.version>1.8.5</mockito.version>
+    <powermock.version>1.4.12</powermock.version>
     <test.tmp.dir>${basedir}/target/tmp</test.tmp.dir>
 
     <!-- maven plugins -->
@@ -63,19 +105,28 @@
 
     <!-- installation -->
     <mvn.lens.install.dir>/usr/local/lens</mvn.lens.install.dir>
+<<<<<<< HEAD
     <mvn.lens.bin.dir>${mvn.lens.install.dir}/bin</mvn.lens.bin.dir>
     <mvn.lens.webapp.dir>${mvn.lens.install.dir}/webapp</mvn.lens.webapp.dir>
+=======
+    <mvn.lens.webapp.dir>${mvn.lens.install.dir}/server/webapp</mvn.lens.webapp.dir>
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     <mvn.lens.server.dir>${mvn.lens.webapp.dir}/lens-server</mvn.lens.server.dir>
 
   </properties>
 
   <groupId>org.apache.lens</groupId>
+<<<<<<< HEAD
   <artifactId>lens-parent</artifactId>
   <version>1.2.6-SNAPSHOT</version>
+=======
+  <artifactId>apache-lens</artifactId>
+  <version>2.1.0-incubating-SNAPSHOT</version>
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
-  <url>https://github.com/InMobi/grill</url>
+  <url>http://lens.incubator.apache.org</url>
   <inceptionYear>2014</inceptionYear>
   <licenses>
     <license>
@@ -89,27 +140,51 @@
     <url>http://www.apache.org</url>
   </organization>
 
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.apache.org/jira/browse/LENS</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://builds.apache.org/view/H-L/view/Lens/</url>
+  </ciManagement>
+
+  <distributionManagement>
+    <site>
+      <id>lens-site</id>
+      <url>http://lens.incubator.apache.org/</url>
+    </site>
+  </distributionManagement>
+
   <mailingLists>
     <mailingList>
-      <name>grill-users@googlegroups.com</name>
-      <subscribe>grill-users+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>grill-users+unsubscribe@googlegroups.com</unsubscribe>
-      <post>grill-users@googlegroups.com</post>
-      <archive>https://groups.google.com/forum/?hl=en#!forum/grill-users</archive>
+      <name>lens-user</name>
+      <subscribe>user-subscribe@lens.incubator.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@lens.incubator.apache.org</unsubscribe>
+      <post>user@lens.incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/lens-user/</archive>
     </mailingList>
     <mailingList>
-      <name>grill-dev@googlegroups.com</name>
-      <subscribe>grill-dev+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>grill-dev+unsubscribe@googlegroups.com</unsubscribe>
-      <post>grill-dev@googlegroups.com</post>
-      <archive>https://groups.google.com/forum/?hl=en#!forum/grill-dev</archive>
+      <name>lens-dev</name>
+      <subscribe>dev-subscribe@lens.incubator.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@lens.incubator.apache.org</unsubscribe>
+      <post>dev@lens.incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/lens-dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>lens-commits</name>
+      <subscribe>commits-subscribe@lens.incubator.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@lens.incubator.apache.org</unsubscribe>
+      <post>commits@lens.incubator.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/lens-commits/</archive>
     </mailingList>
   </mailingLists>
 
   <scm>
-    <connection>scm:git:https://github.com/InMobi/grill.git</connection>
-    <url>https://github.com/InMobi/grill</url>
-    <developerConnection>scm:git:https://github.com/InMobi/grill.git</developerConnection>
+    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-lens.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-lens.git</developerConnection>
+    <url>https://git-wip-us.apache.org/repos/asf/incubator-falcon.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -118,7 +193,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.7</version>
+        <version>${reports.plugin.version}</version>
         <configuration>
           <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
           <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -145,7 +220,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
+        <version>${javadoc.plugin.version}</version>
         <inherited>false</inherited>
         <reportSets>
           <reportSet>
@@ -194,7 +269,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>2.4</version>
+          <version>${reports.plugin.version}</version>
           <configuration>
             <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
             <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -209,14 +284,13 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>${java.source.version}</source>
+            <target>${java.target.version}</target>
           </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
           <configuration>
             <generateReports>true</generateReports>
           </configuration>
@@ -224,10 +298,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.2</version>
           <executions>
             <execution>
               <goals>
+                <goal>jar</goal>
                 <goal>test-jar</goal>
               </goals>
             </execution>
@@ -236,7 +310,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.15</version>
+          <version>${surefire.plugin.version}</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
             <forkedProcessTimeoutInSeconds>2400</forkedProcessTimeoutInSeconds>
@@ -245,35 +319,47 @@
         <plugin>
           <artifactId>jdeb</artifactId>
           <groupId>org.vafer</groupId>
-          <version>0.9</version>
+          <version>${jdeb.plugin.version}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.5</version>
-          <configuration>
-            <skip>true</skip>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.8</version>
-        </plugin>
-        <plugin>
-           <groupId>org.apache.rat</groupId>
-           <artifactId>apache-rat-plugin</artifactId>
-           <version>0.7</version>
-         </plugin>
-         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.9.1</version>
+          <version>${checkstyle.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jvnet.jaxb2.maven2</groupId>
+          <artifactId>maven-jaxb2-plugin</artifactId>
+          <version>${jaxb2.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jvnet.jaxb2_commons</groupId>
+          <artifactId>jaxb2-basics</artifactId>
+          <version>${jaxb2.basics.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>maven-jetty-plugin</artifactId>
+          <version>${jetty.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${exec.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.enunciate</groupId>
+          <artifactId>maven-enunciate-plugin</artifactId>
+          <version>${enunciate.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${war.plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
-       <plugin>
+      <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <configuration>
@@ -282,48 +368,53 @@
           <useIdeaDefaultExcludes>true</useIdeaDefaultExcludes>
           <useEclipseDefaultExcludes>true</useEclipseDefaultExcludes>
           <excludes>
-             <exclude>**/*.txt</exclude>
-             <exclude>.git/**</exclude>
-             <exclude>.idea/**</exclude>
-             <exclude>**/*.twiki</exclude>
-             <exclude>**/*.iml</exclude>
-             <exclude>**/target/**</exclude>
-             <exclude>**/activemq-data/**</exclude>
-             <exclude>**/build/**</exclude>
-             <exclude>*.patch</exclude>
-             <exclude>**/*.log</exclude>
-             <exclude>**/logs/**</exclude>
-             <exclude>**/.classpath</exclude>
-             <exclude>**/.project</exclude>
-             <exclude>**/.checkstyle</exclude>
-             <exclude>**/.settings/**</exclude>
-             <exclude>**/test-output/**</exclude>
-             <exclude>**/maven-eclipse.xml</exclude>
-             <exclude>**/.externalToolBuilders/**</exclude>
-             <exclude>.gitignore</exclude>
-             <exclude>README.*</exclude>
-             <exclude>**/*.diff</exclude>
-             <exclude>**/*.png</exclude>
-             <exclude>**/*.pptx</exclude>
-             <exclude>**/*.jar</exclude>
-             <exclude>**/*.data</exclude>
-             <exclude>**/control</exclude>
+            <exclude>README.*</exclude>
+            <exclude>DEPENDENCIES</exclude>
+            <exclude>**/LICENSE*</exclude>
+            <!-- Local git repo -->
+            <exclude>.git/**</exclude>
+            <!-- For connecting to ReviewBoard thru rbt tools-->
+            <exclude>.reviewboardrc</exclude>
+            <!-- IDE files -->
+            <exclude>.idea/**</exclude>
+            <exclude>**/*.iml</exclude>
+            <exclude>**/.classpath</exclude>
+            <exclude>**/.project</exclude>
+            <exclude>**/.checkstyle</exclude>
+            <exclude>**/.settings/**</exclude>
+            <exclude>**/maven-eclipse.xml</exclude>
+            <exclude>**/.externalToolBuilders/**</exclude>
+            <!-- Build directories - target for maven build/ for other tools like sloccount -->
+            <exclude>**/target/**</exclude>
+            <exclude>**/build/**</exclude>
+            <!-- To make developer life easy. Source wont have these files -->
+            <exclude>**/*.diff</exclude>
+            <exclude>*.patch</exclude>
+            <exclude>**/*.log</exclude>
+            <!-- .png files constitute images required for documentation. .pptx contain the sources for images -->
+            <exclude>**/*.png</exclude>
+            <exclude>**/*.pptx</exclude>
+            <!-- .data files are used to hold data for loading into tables - used in tests and examples -->
+            <exclude>**/*.data</exclude>
+            <!-- Used on ui -->
+            <exclude>**/codemirror.min.*</exclude>
+            <exclude>**/*.js</exclude>
           </excludes>
         </configuration>
         <executions>
-           <execution>
-             <id>rat-check</id>
-             <goals>
-               <goal>check</goal>
-             </goals>
-             <phase>package</phase>
-           </execution>
+          <execution>
+            <id>rat-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
         </executions>
       </plugin>
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>2.6</version>
+        <version>${license.plugin.version}</version>
         <configuration>
           <header>License-Header.txt</header>
           <licenseName>apache_v2</licenseName>
@@ -331,22 +422,13 @@
           <canUpdateCopyright>true</canUpdateCopyright>
           <canUpdateDescription>true</canUpdateDescription>
           <excludes>
-            <exclude>**/*.txt</exclude>
+            <exclude>**/*.diff</exclude>
+            <exclude>*.patch</exclude>
+            <exclude>**/*.log</exclude>
+            <exclude>**/*.data</exclude>
             <exclude>**/README.*</exclude>
           </excludes>
         </configuration>
-      <!--
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <version>1.6</version>
-        <configuration>
-          <header>License-Header.txt</header>
-          <licenseHeaderFile>License-Header.txt</licenseHeaderFile>
-          <licenseName>apache_v2</licenseName>
-          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-          <canUpdateCopyright>true</canUpdateCopyright>
-          <canUpdateDescription>true</canUpdateDescription>
-        </configuration> -->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -355,7 +437,7 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-      <!--  Checkstyle Plugin -->
+      <!-- Checkstyle Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -363,7 +445,11 @@
           <dependency>
             <groupId>org.apache.lens</groupId>
             <artifactId>checkstyle</artifactId>
+<<<<<<< HEAD
             <version>1.6-SNAPSHOT</version>
+=======
+            <version>2.1.0-incubating-SNAPSHOT</version>
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
           </dependency>
         </dependencies>
         <executions>
@@ -378,7 +464,7 @@
               <includeTestSourceDirectory>true</includeTestSourceDirectory>
               <configLocation>checkstyle.xml</configLocation>
               <headerLocation>checkstyle-java-header.txt</headerLocation>
-              <failOnViolation>false</failOnViolation>
+              <failOnViolation>true</failOnViolation>
             </configuration>
           </execution>
         </executions>
@@ -386,7 +472,6 @@
     </plugins>
 
   </build>
-
   <repositories>
     <repository>
       <id>inmobi.repo</id>
@@ -462,34 +547,52 @@
       </snapshots>
     </repository>
   </repositories>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.12.4</version>
+        <version>${lombok.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j.version}</version>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>1.2.16</version>
+        <version>${log4j.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.1.1</version>
+        <version>${commons.logging.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>2.4</version>
+        <version>${commons.lang.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>6.8</version>
-        <scope>test</scope>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>${joda.time.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.hadoop</groupId>
@@ -525,6 +628,46 @@
             <groupId>net.java.dev.jets3t</groupId>
             <artifactId>jets3t</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -532,12 +675,6 @@
         <artifactId>hadoop-client</artifactId>
         <version>${hadoop.version}</version>
         <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-        <version>${hadoop.version}</version>
-        <scope>provided</scope>
         <exclusions>
           <exclusion>
             <groupId>com.sun.jersey</groupId>
@@ -552,86 +689,62 @@
             <artifactId>jersey-server</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-guice</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-common</artifactId>
-        <version>${hadoop.version}</version>
-        <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-compiler</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-runtime</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
+            <groupId>net.java.dev.jets3t</groupId>
+            <artifactId>jets3t</artifactId>
           </exclusion>
           <exclusion>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-guice</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+          </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.hive</groupId>
-        <artifactId>hive-metastore</artifactId>
-        <version>${hive.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.hive</groupId>
-        <artifactId>hive-common</artifactId>
-        <version>${hive.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hive</groupId>
-        <artifactId>hive-exec</artifactId>
-        <version>${hive.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hive</groupId>
-        <artifactId>hive-cli</artifactId>
-        <version>${hive.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.subethamail</groupId>
-        <artifactId>subethasmtp</artifactId>
-        <version>3.1.7</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>1.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-maven-plugin</artifactId>
-        <version>3.0.7</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>2.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.hive</groupId>
@@ -657,26 +770,59 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-metastore</artifactId>
+        <version>${hive.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-common</artifactId>
+        <version>${hive.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-exec</artifactId>
+        <version>${hive.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-cli</artifactId>
+        <version>${hive.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
       <dependency>
-        <groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
-        <version>2.4.1</version>
+        <groupId>org.subethamail</groupId>
+        <artifactId>subethasmtp</artifactId>
+        <version>${subethasmtp.version}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>13.0.1</version>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>${javax.mail.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.elasticsearch</groupId>
-        <artifactId>elasticsearch</artifactId>
-        <version>0.20.1</version>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <version>${liquibase.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>${testng.version}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
-        <version>1.8.5</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -691,45 +837,10 @@
         <version>${powermock.version}</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jul-to-slf4j</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.media</groupId>
-        <artifactId>jersey-media-moxy</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
 
-      <dependency>
-        <groupId>org.glassfish.jersey.containers</groupId>
-        <artifactId>jersey-container-servlet</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.ws.rs</groupId>
-        <artifactId>javax.ws.rs-api</artifactId>
-        <version>2.0</version>
-      </dependency>
       <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-client</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.connectors</groupId>
-        <artifactId>jersey-grizzly-connector</artifactId>
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
@@ -745,12 +856,6 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${servlet3.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.glassfish.jersey.containers</groupId>
         <artifactId>jersey-container-grizzly2-servlet</artifactId>
         <version>${jersey.version}</version>
@@ -759,6 +864,67 @@
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-multipart</artifactId>
         <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-json-jackson</artifactId>
+        <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-moxy</artifactId>
+        <version>${jersey.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.grizzly</groupId>
+        <artifactId>grizzly-framework</artifactId>
+        <version>${grizzly.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.grizzly</groupId>
+        <artifactId>grizzly-http-server</artifactId>
+        <version>${grizzly.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${servlet3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet.api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>${jsp.api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb.api.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>javax.ws.rs-api</artifactId>
+        <version>${ws.rs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>${jetty.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-plus</artifactId>
+        <version>${jetty.version}</version>
+        <scope>compile</scope>
       </dependency>
 
       <dependency>
@@ -781,91 +947,47 @@
         <artifactId>metrics-ganglia</artifactId>
         <version>${metrics.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.media</groupId>
-        <artifactId>jersey-media-json-jackson</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
 
       <dependency>
-        <groupId>org.glassfish.grizzly</groupId>
-        <artifactId>grizzly-framework</artifactId>
-        <version>${grizzly.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.grizzly</groupId>
-        <artifactId>grizzly-http-server</artifactId>
-        <version>${grizzly.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>2.1</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.servlet.jsp</groupId>
-        <artifactId>jsp-api</artifactId>
-        <version>2.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty</artifactId>
-        <version>${jetty.version}</version>
-        <scope>compile</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-plus</artifactId>
-        <version>${jetty.version}</version>
-        <scope>compile</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>c3p0</groupId>
+        <groupId>com.mchange</groupId>
         <artifactId>c3p0</artifactId>
-        <version>0.9.1.2</version>
+        <version>${c3p0.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.shell</groupId>
         <artifactId>spring-shell</artifactId>
-        <version>1.0.0.RELEASE</version>
+        <version>${spring.shell.version}</version>
       </dependency>
       <!-- HSQLDB Dependency for examples to work -->
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>2.2.9</version>
+        <version>${hsqldb.version}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-core-asl</artifactId>
-        <version>1.9.13</version>
+        <version>${jackson.asl.version}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-mapper-asl</artifactId>
-        <version>1.9.13</version>
+        <version>${jackson.asl.version}</version>
       </dependency>
       <!-- Connection pooling for Finished queries -->
       <dependency>
         <groupId>commons-dbcp</groupId>
         <artifactId>commons-dbcp</artifactId>
-        <version>1.4</version>
+        <version>${dbcp.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-dbutils</groupId>
         <artifactId>commons-dbutils</artifactId>
-        <version>1.5</version>
+        <version>${dbutils.version}</version>
       </dependency>
 
-      <dependency> <!-- Spark dependency -->
+      <!-- Spark dependency -->
+      <dependency>
         <groupId>org.apache.spark</groupId>
         <artifactId>spark-core_2.10</artifactId>
         <version>${spark.version}</version>
@@ -881,46 +1003,35 @@
         <artifactId>hive-hcatalog-core</artifactId>
         <version>${hive.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.thrift</groupId>
+        <artifactId>libthrift</artifactId>
+        <version>${libthrift.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>${opencsv.version}</version>
+      </dependency>
     </dependencies>
-
   </dependencyManagement>
 
-  <distributionManagement>
-    <repository>
-      <id>InMobiReleases</id>
-      <name>InMobi release Repository</name>
-      <url>https://github.com/InMobi/mvn-repo/raw/master/releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>InMobiSnapshots</id>
-      <name>InMobi snapshot Repository</name>
-      <url>https://github.com/InMobi/mvn-repo/raw/master/snapshots</url>
-    </snapshotRepository>
-    <site>
-      <id>lens-site</id>
-      <url>https://inmobi.github.io/grill/</url>
-    </site>
-  </distributionManagement>
-
-
   <modules>
-  <module>checkstyle</module>
+    <module>checkstyle</module>
     <module>lens-api</module>
     <module>lens-server-api</module>
     <module>lens-cube</module>
     <module>lens-storage-db</module>
     <module>lens-query-lib</module>
     <module>lens-driver-hive</module>
-    <module>lens-driver-impala</module>
     <module>lens-driver-jdbc</module>
     <module>lens-server</module>
     <module>lens-client</module>
     <module>lens-cli</module>
     <module>lens-examples</module>
     <module>lens-dist</module>
-    <module>lens-client-dist</module>
     <module>lens-ml-lib</module>
+    <module>lens-regression</module>
   </modules>
 
   <profiles>
@@ -944,7 +1055,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <includes>
-                <!--  integration test would run with mvn clean install -P integration-tests-->
+                <!-- integration test would run with mvn clean install -P integration-tests -->
                 <include>**/IT*.java</include>
               </includes>
               <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
@@ -954,7 +1065,57 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>no-checkstyle</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.lens</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>2.1.0-incubating-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>checkstyle-check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <consoleOutput>true</consoleOutput>
+                  <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                  <configLocation>checkstyle.xml</configLocation>
+                  <headerLocation>checkstyle-java-header.txt</headerLocation>
+                  <failOnViolation>false</failOnViolation>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>apache-release</id>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-ganglia</artifactId>
+            <version>${metrics.version}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.acplt</groupId>
+                <artifactId>oncrpc</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
   </profiles>
-
-
 </project>

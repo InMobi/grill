@@ -27,8 +27,12 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.apache.lens.server.api.ServiceProvider;
+import org.apache.lens.server.api.events.LensEventService;
+import org.apache.lens.server.api.metrics.MetricsService;
+import org.apache.lens.server.session.LensSessionImpl;
+import org.apache.lens.server.stats.StatisticsService;
+import org.apache.lens.server.user.UserConfigLoaderFactory;
 
 import org.apache.lens.server.api.ServiceProvider;
 import org.apache.lens.server.api.events.LensEventService;
@@ -47,6 +51,14 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.CompositeService;
 import org.apache.hive.service.Service;
 import org.apache.hive.service.cli.CLIService;
+<<<<<<< HEAD
+=======
+
+import lombok.Getter;
+import lombok.Setter;
+
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * Manage lifecycle of all Lens services
@@ -64,7 +76,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
   private static final String FS_IO_FILE_BUFFER_SIZE = "io.file.buffer.size";
 
   /** The instance. */
-  private static LensServices INSTANCE = new LensServices(LENS_SERVICES_NAME);
+  private static LensServices instance = new LensServices(LENS_SERVICES_NAME);
 
   /** The conf. */
   private HiveConf conf;
@@ -115,13 +127,12 @@ public class LensServices extends CompositeService implements ServiceProvider {
     METASTORE_NODROP, // DELETE requests on metastore are not accepted
     /** The open. */
     OPEN // All requests are accepted
-  };
+  }
 
   /**
    * Instantiates a new lens services.
    *
-   * @param name
-   *          the name
+   * @param name the name
    */
   public LensServices(String name) {
     super(name);
@@ -129,12 +140,12 @@ public class LensServices extends CompositeService implements ServiceProvider {
 
   // This is only for test, to simulate a restart of the server
   static void setInstance(LensServices newInstance) {
-    INSTANCE = newInstance;
+    instance = newInstance;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.hive.service.CompositeService#init(org.apache.hadoop.hive.conf.HiveConf)
    */
   @SuppressWarnings("unchecked")
@@ -174,7 +185,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
             Class<? extends LensService> serviceClass = (Class<? extends LensService>) cls;
             LOG.info("Adding " + sName + " service with " + serviceClass);
             Constructor<?> constructor = serviceClass.getConstructor(CLIService.class);
-            LensService service = (LensService) constructor.newInstance(new Object[] { cliService });
+            LensService service = (LensService) constructor.newInstance(new Object[]{cliService});
             addService(service);
             lensServices.add(service);
           } else if (Service.class.isAssignableFrom(cls)) {
@@ -226,7 +237,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.hive.service.CompositeService#start()
    */
   public synchronized void start() {
@@ -249,10 +260,8 @@ public class LensServices extends CompositeService implements ServiceProvider {
   /**
    * Setup persisted state.
    *
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws ClassNotFoundException
-   *           the class not found exception
+   * @throws IOException            Signals that an I/O exception has occurred.
+   * @throws ClassNotFoundException the class not found exception
    */
   private void setupPersistedState() throws IOException, ClassNotFoundException {
     if (conf.getBoolean(SERVER_RECOVER_ON_RESTART,
@@ -281,8 +290,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
   /**
    * Persist lens service state.
    *
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
+   * @throws IOException Signals that an I/O exception has occurred.
    */
   private void persistLensServiceState() throws IOException {
 
@@ -327,8 +335,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
   /**
    * Gets the service persist path.
    *
-   * @param service
-   *          the service
+   * @param service the service
    * @return the service persist path
    */
   private Path getServicePersistPath(LensService service) {
@@ -337,7 +344,7 @@ public class LensServices extends CompositeService implements ServiceProvider {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.hive.service.CompositeService#stop()
    */
   public synchronized void stop() {
@@ -381,12 +388,12 @@ public class LensServices extends CompositeService implements ServiceProvider {
    * @return the lens services
    */
   public static LensServices get() {
-    return INSTANCE;
+    return instance;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.ServiceProvider#getService(java.lang.String)
    */
   @Override

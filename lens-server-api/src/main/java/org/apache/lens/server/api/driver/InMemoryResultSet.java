@@ -56,7 +56,7 @@ public abstract class InMemoryResultSet extends LensResultSet {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.driver.LensResultSet#toQueryResult()
    */
   public QueryResult toQueryResult() throws LensException {

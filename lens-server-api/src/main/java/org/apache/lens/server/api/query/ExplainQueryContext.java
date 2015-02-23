@@ -18,6 +18,11 @@
  */
 package org.apache.lens.server.api.query;
 
+import java.util.Collection;
+
+import org.apache.lens.api.LensConf;
+import org.apache.lens.server.api.driver.LensDriver;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.server.api.driver.LensDriver;

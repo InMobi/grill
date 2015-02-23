@@ -17,37 +17,62 @@
  * under the License.
  */
 /*
- * 
+ *
  */
 package org.apache.lens.api.query;
 
 /**
- * The Enum SubmitOp.
+ * The Enum for query submit operations.
  */
 public enum SubmitOp {
 
   /**
+<<<<<<< HEAD
    * The execute.
+=======
+   * Estimate query cost
+   */
+  ESTIMATE,
+
+  /**
+   * Execute the query
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   EXECUTE,
 
   /**
+<<<<<<< HEAD
    * The explain.
+=======
+   * Explain the query.
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   EXPLAIN,
 
   /**
+<<<<<<< HEAD
    * The prepare.
+=======
+   * Prepare the query.
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   PREPARE,
 
   /**
+<<<<<<< HEAD
    * The explain and prepare.
+=======
+   * Explain and prepare the query.
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   EXPLAIN_AND_PREPARE,
 
   /**
+<<<<<<< HEAD
    * The execute with timeout.
+=======
+   * Execute query and return result within timeout, if query is successful.
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    */
   EXECUTE_WITH_TIMEOUT
 }

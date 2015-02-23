@@ -17,7 +17,7 @@
  * under the License.
  */
 /*
- * 
+ *
  */
 package org.apache.lens.api.query;
 
@@ -26,10 +26,15 @@ import lombok.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+<<<<<<< HEAD
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
+=======
+
+import lombok.*;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Class QueryPlan.

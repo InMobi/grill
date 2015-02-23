@@ -269,7 +269,7 @@ public class QueryContext extends AbstractQueryContext implements Comparable<Que
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   @Override

@@ -17,7 +17,7 @@
  * under the License.
  */
 /*
- * 
+ *
  */
 package org.apache.lens.api.query;
 
@@ -25,8 +25,13 @@ import lombok.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+<<<<<<< HEAD
 import java.io.Serializable;
 import java.util.UUID;
+=======
+
+import lombok.*;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * The Class QueryHandle.

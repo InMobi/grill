@@ -87,7 +87,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#setupOutputs()
    */
   public void setupOutputs() throws IOException {
@@ -124,7 +124,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#commit()
    */
   @Override
@@ -137,7 +137,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#close()
    */
   @Override
@@ -158,7 +158,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#writeHeader(java.lang.String)
    */
   public void writeHeader(String header) throws IOException {
@@ -169,7 +169,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#writeFooter(java.lang.String)
    */
   public void writeFooter(String footer) throws IOException {
@@ -179,7 +179,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#writeRow(java.lang.String)
    */
   public void writeRow(String row) throws IOException {
@@ -206,7 +206,7 @@ public class ZipFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.AbstractFileFormatter#writeHeader()
    */
   @Override

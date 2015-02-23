@@ -18,12 +18,12 @@
  */
 package org.apache.lens.api.ml;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class TestReport.
@@ -105,7 +105,7 @@ public class TestReport {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override
@@ -115,7 +115,7 @@ public class TestReport {
     builder.append("Algorithm: ").append(algorithm).append('\n');
     builder.append("Report id: ").append(reportID).append('\n');
     builder.append("Model id: ").append(modelID).append('\n');
-    builder.append("Grill Query id: ").append(queryID).append('\n');
+    builder.append("Lens Query id: ").append(queryID).append('\n');
     builder.append("Feature columns: ").append(featureColumns).append('\n');
     builder.append("Labelled column: ").append(labelColumn).append('\n');
     builder.append("Predicted column: ").append(outputColumn).append('\n');

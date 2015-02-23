@@ -21,17 +21,17 @@ package org.apache.lens.cube.parse;
 import static org.apache.hadoop.hive.ql.parse.HiveParser.Identifier;
 import static org.apache.hadoop.hive.ql.parse.HiveParser.TOK_TABLE_OR_COL;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import org.apache.lens.cube.metadata.*;
+import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
+
+<<<<<<< HEAD
 import lombok.ToString;
 
 import org.antlr.runtime.CommonToken;
+=======
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -39,6 +39,7 @@ import org.apache.hadoop.hive.ql.ErrorMsg;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+<<<<<<< HEAD
 import org.apache.lens.cube.metadata.AbstractCubeTable;
 import org.apache.lens.cube.metadata.CubeColumn;
 import org.apache.lens.cube.metadata.CubeInterface;
@@ -46,14 +47,18 @@ import org.apache.lens.cube.metadata.Dimension;
 import org.apache.lens.cube.metadata.ReferencedDimAtrribute;
 import org.apache.lens.cube.metadata.TableReference;
 import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
+=======
+
+import org.antlr.runtime.CommonToken;
+
+import lombok.ToString;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * This class resolves all the reference columns that are queried.
- * 
- * Keeps track of the context that if any candidate needs to use columns through
- * tables referenced and replaces the columns from referenced tables in all the
- * ASTs
- * 
+ * <p/>
+ * Keeps track of the context that if any candidate needs to use columns through tables referenced and replaces the
+ * columns from referenced tables in all the ASTs
  */
 public class DenormalizationResolver implements ContextRewriter {
 
@@ -113,11 +118,11 @@ public class DenormalizationResolver implements ContextRewriter {
   public static class DenormalizationContext {
     // map of column name to all references
     private Map<String, Set<ReferencedQueriedColumn>> referencedCols =
-        new HashMap<String, Set<ReferencedQueriedColumn>>();
+      new HashMap<String, Set<ReferencedQueriedColumn>>();
 
     // candidate table name to all the references columns it needs
     private Map<String, Set<ReferencedQueriedColumn>> tableToRefCols =
-        new HashMap<String, Set<ReferencedQueriedColumn>>();
+      new HashMap<String, Set<ReferencedQueriedColumn>>();
 
     private CubeQueryContext cubeql;
 
@@ -201,7 +206,7 @@ public class DenormalizationResolver implements ContextRewriter {
     }
 
     public Set<Dimension> rewriteDenormctx(CandidateFact cfact, Map<Dimension, CandidateDim> dimsToQuery,
-        boolean replaceFact) throws SemanticException {
+      boolean replaceFact) throws SemanticException {
       Set<Dimension> refTbls = new HashSet<Dimension>();
 
       if (!tableToRefCols.isEmpty()) {
@@ -252,17 +257,29 @@ public class DenormalizationResolver implements ContextRewriter {
               // remove unreachable references
               TableReference reference = iter.next();
               if (!cubeql.getAutoJoinCtx().isReachableDim(
+<<<<<<< HEAD
                   (Dimension) cubeql.getCubeTableForAlias(reference.getDestTable()))) {
+=======
+                (Dimension) cubeql.getCubeTableForAlias(reference.getDestTable()))) {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                 iter.remove();
               }
             }
             PickedReference picked = new PickedReference(refered.references.iterator().next(),
+<<<<<<< HEAD
                 cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
+=======
+              cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             addPickedReference(refered.col.getName(), picked);
             pickedRefs.add(picked);
           } else {
             PickedReference picked =
+<<<<<<< HEAD
                 new PickedReference(refered.col, cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
+=======
+              new PickedReference(refered.col, cubeql.getAliasForTabName(refered.srcTable.getName()), tbl);
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
             addPickedReference(refered.col.getName(), picked);
             pickedRefs.add(picked);
           }
@@ -272,7 +289,7 @@ public class DenormalizationResolver implements ContextRewriter {
 
     private void replaceReferencedColumns(CandidateFact cfact, boolean replaceFact) throws SemanticException {
       if (replaceFact
-          && (tableToRefCols.get(cfact.getName()) != null && !tableToRefCols.get(cfact.getName()).isEmpty())) {
+        && (tableToRefCols.get(cfact.getName()) != null && !tableToRefCols.get(cfact.getName()).isEmpty())) {
         resolveClause(cubeql, cfact.getSelectAST());
         resolveClause(cubeql, cfact.getWhereAST());
         resolveClause(cubeql, cfact.getGroupByAST());
@@ -308,7 +325,11 @@ public class DenormalizationResolver implements ContextRewriter {
           return;
         }
         ASTNode newTableNode =
+<<<<<<< HEAD
             new ASTNode(new CommonToken(HiveParser.Identifier, query.getAliasForTabName(refered.getDestTable())));
+=======
+          new ASTNode(new CommonToken(HiveParser.Identifier, query.getAliasForTabName(refered.getDestTable())));
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
         tableNode.setChild(0, newTableNode);
         newTableNode.setParent(tableNode);
 
@@ -326,10 +347,8 @@ public class DenormalizationResolver implements ContextRewriter {
   }
 
   /**
-   * Find all de-normalized columns, if these columns are not directly available
-   * in candidate tables, query will be replaced with the corresponding table
-   * reference
-   * 
+   * Find all de-normalized columns, if these columns are not directly available in candidate tables, query will be
+   * replaced with the corresponding table reference
    */
   @Override
   public void rewriteContext(CubeQueryContext cubeql) throws SemanticException {
@@ -381,7 +400,7 @@ public class DenormalizationResolver implements ContextRewriter {
         }
         if (cubeql.getCandidateFactTables().size() == 0) {
           throw new SemanticException(ErrorMsg.NO_FACT_HAS_COLUMN, cubeql.getColumnsQueried(cubeql.getCube().getName())
-              .toString());
+            .toString());
         }
         cubeql.pruneCandidateFactSet(CandidateTablePruneCode.COLUMN_NOT_FOUND);
       }
@@ -393,7 +412,12 @@ public class DenormalizationResolver implements ContextRewriter {
               for (ReferencedQueriedColumn refcol : denormCtx.tableToRefCols.get(cdim.getName())) {
                 if (denormCtx.getReferencedCols().get(refcol.col.getName()).isEmpty()) {
                   LOG.info("Not considering dim table:" + cdim + " as column " + refcol.col + " is not available");
+<<<<<<< HEAD
                   cubeql.addDimPruningMsgs(dim, cdim.dimtable,                    CandidateTablePruneCause.columnNotFound(refcol.col.getName()));
+=======
+                  cubeql.addDimPruningMsgs(dim, cdim.dimtable,
+                    CandidateTablePruneCause.columnNotFound(refcol.col.getName()));
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
                   i.remove();
                 }
               }

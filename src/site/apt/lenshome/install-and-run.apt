@@ -1,0 +1,256 @@
+~~
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+~~
+
+Installing and Running Lens
+
+%{toc|section=1-2|fromDepth=0}
+
+* Installation
+
+** Downloading
+
+  Download a release of Apache Lens from {{{/releases/download.html}here}}.
+  Lens depends on Hive forked from Apache Hive. Download a release of hive from {{{https://github.com/InMobi/hive/releases}https://github.com/InMobi/hive/releases}}.
+
+** Installing Lens
+
+  Unpack the tarball.
+
++---+
+
+  tar zxvf apache-lens-<verison>-bin.tar.gz
+
++---+
+
+  This will result in the creation of a directory named apache-lens-<verison>-bin (where <version> is the release number).
+
++---+
+  apache-lens-<verison>-bin
+  ├── client
+  ├── LICENSE
+  ├── NOTICE
+  ├── README
+  ├── DISCLAIMER
+  ├── LICENSE*
+  └── server
++---+
+
+ <apache-lens-<verison>-bin/client> can be used as the Lens client installation directory and <apache-lens-<verison>-bin/server> can be used as the Lens server installation directory to {{{#Running_Lens}run}} lens client and lens server respectively.
+
+** Installing Hive
+
+  Unpack the tarball.
+
++---+
+
+  tar -xzvf hive-hive-release-<version>-inm.tar.gz
+
++---+
+
+  This will result in the creation of a directory named hive-hive-release-<version>-inm. This directory contains hive source code. Build hive binary using below commands.
+
++---+
+
+  cd hive-hive-release-<version>-inm
+  mvn clean package -DskipTests -Phadoop-2,dist
+
++---+
+
+  This will result in creation of hive binary, which can be found at location packaging/target/apache-hive-<version>-inm-bin.tar.gz.
+  Unpack the created hive tarball in the directory where you want to install hive.
+
++---+
+  tar zxvf apache-hive-<version>-inm-bin.tar.gz
++---+
+
+  This will result in creation of directory apache-hive-<version>-inm-bin.
+  Set HIVE_HOME.
+
++---+
+  cd apache-hive-<version>-inm-bin
+  export HIVE_HOME=`pwd`
++---+
+
+* Running Lens
+
+** Running Lens Server
+
+*** Structure of Lens server installation directory
+
++---+
+
+  ├── bin
+  │   ├── lens-config.sh
+  │   └── lens-ctl
+  ├── conf
+  │   ├── hivedriver-site.xml
+  │   ├── jdbcdriver-site.xml
+  │   ├── lens-env.sh
+  │   ├── lens-site.xml
+  │   └── log4j.properties
+  ├── conf-pseudo-distr
+  │   ├── hivedriver-site.xml
+  │   ├── jdbcdriver-site.xml
+  │   ├── lens-env.sh
+  │   ├── lens-site.xml
+  │   └── log4j.properties
+  └── webapp
+      └── lens-server.war
++---+
+
+  We will refer to Lens server installation directory as <lens-install-dir> in rest of the page. The <bin> folder provides <lens-ctl> which provides commands for starting and stopping the lens server. Other .sh files in <bin> are the scripts used by lens-ctl.
+
+  The server war is available in webapp/ folder, which would be expanded in the same directory. War would be expanded either by postinst script of debian or if debian is not used for installation, then it will be expanded on first server start. The lib folder contains all the dependent libraries.
+
+  Server configuration can be overridden in lens-site.xml. See {{{../admin/config.html}server configuration}} for all the configuration parameters available and their default values. You can set up the environment variables such as JAVA_HOME, java options, heap size and etc in lens-env.sh.
+
+  The server logs go into logs/ folder in the <lens-install-dir> directory, unless overridden. The proper logging configuration can be provided in log4j.properties file.
+
+  Lens server dependes on hive which is forked from {{{http://github.com/apache/hive}Apache Hive}} into {{{http://github.com/inmobi/hive} InMobi Hive}}. See {{{https://github.com/InMobi/hive/releases}here}} for all the latest releases.
+
+  Build it from source and set HIVE_HOME.
+
++---+
+
+   git clone https://github.com/inmobi/hive.git
+
+   cd hive
+
+   git checkout <release-tag>
+
+   mvn clean package -DskipTests -Phadoop-2,dist
+
++---+
+
+  Once above package command completes successfully, packaging/target will have apache-hive-$project.version-bin. This build also produces source, binary tar.gz files and deb package for hive.
+
+  <<Ex:>> export <<HIVE_HOME>>=$\{hive-source-location\}/packaging/target/apache-hive-$project.version-bin/apache-hive-$project.version-bin/
+
+*** Driver configuration
+
+  If server has HiveDriver as one of the drivers, the configuration for hive driver should be set up in hive-site.xml.
+  All the available configuration of the HiveDriver can be found {{{../admin/hivedriver-config.html}here}}.
+
+*** Setting Environment Variables
+
+  Before starting the server, you need to set <<HADOOP_HOME>> and <<HIVE_HOME>> environment variables. These should point to the Hadoop and Hive installation directories.
+
+*** Starting Lens server
+
+  Once env variables are set, you can use the following command to start the server:
+
++---+
+
+  bin/lens-ctl start
+
++---+
+
+  Once the server is up, you can go to the browser and open the server <baseurl>. You would see a message saying ‘Lens server is up’.
+
+  To check all other services are up and running, try <baseurl>/session, <baseurl>/queryapi, <baseurl>/metastore and all of them will respond with respective service is up.
+
+  You can try out examples described below or use the REST api <link> for each service.
+
+  Lens server also comes with simple UI service which can be used to browse catalog and submit queries. Once the server
+  starts up, you can open the UI service on http://<serverhost>:19999/index.html and browse.
+
+  The command to stop the server:
+
++---+
+
+  bin/lens-ctl stop
+
++---+
+
+** Running Lens Client
+
+*** Structure of Lens client installation directory
+
++---+
+  ├── bin
+  │   ├── lens-cli.sh
+  │   ├── lens-config.sh
+  │   └── run-examples.sh
+  ├── conf
+  │   ├── lens-client-site.xml
+  │   ├── lens-env.sh
+  │   └── log4j.properties
+  ├── examples
+  │   ├── data
+  │   │   ├── dim1_local
+  │   │   │   └── dim1-local.data
+  │   │   └── dim2_local
+  │   │       └── dim2-local.data
+  │   ├── queries
+  │   │   └── dimension-queries.txt
+  │   └── resources
+  │       ├── db-storage.xml
+  │       ├── dim1-local-part.xml
+  │       ├── dim1-storage-tables.xml
+  │       ├── dim2-local-part.xml
+  │       ├── dim2-storage-tables.xml
+  │       ├── dim_table.xml
+  │       ├── dim_table2.xml
+  │       ├── fact1-storage-tables.xml
+  │       ├── fact1.xml
+  │       ├── fact2-storage-tables.xml
+  │       ├── fact2.xml
+  │       ├── local-cluster-storage.xml
+  │       ├── local-storage.xml
+  │       ├── rawfact-storage-tables.xml
+  │       ├── rawfact.xml
+  │       └── sample-cube.xml
+  └── lib
+      ├── ST4-4.0.4.jar
+       …….
+      └── xmlenc-0.52.jar
++---+
+
+  The <bin> folder provides various scripts for the client.
+
+    * <<run-examples.sh>> provides commands to run examples - create a sample metastore, populate metastore with sample data and run some example queries. This would validate your server is all up and running fine.
+
+    * <<lens-cli.sh>> provides CLI shell for running various commands. Its usage is more described in CLI user guide.
+
+    * <<lens-config.sh>> is used internally by other scripts
+
+  Client configuration can be overridden in lens-client-site.xml. See {{{../user/client-config.html}client configuration}} for all the configuration parameters available and their default values. You can set up the environment variables such as JAVA_HOME, java options, heap size and etc in lens-env.sh.
+
+  The client logs go into logs/ folder in the install directory, unless overridden. The proper logging configuration can be provided in log4j.properties file.
+
+  Examples folder contains sample resource files, data files and query files which will be used by <<run-examples.sh>> script.
+
+*** Starting Lens Client
+
++---+
+
+  bin/lens-cli.sh
+
++---+
+
+
+
+
+
+
+
+
+
+
+

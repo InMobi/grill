@@ -25,19 +25,31 @@
 	<publishDate position="right"/>
 	<version position="right"/>
 	<bannerLeft>
-    <name>Lens Analytics Platform for InMobi</name>
+    <name>Lens Analytics Platform</name>
+        <src>/images/apache-lens-logo.png</src>
 		<title>Lens Analytics Platform</title>
-		<src>http://inmobi.github.io/grill/grill-logo.png</src>
-		<href>http://inmobi.github.io/grill</href>
+		<href>http://lens.incubator.apache.org</href>
+        <height>54px</height>
   </bannerLeft>
 	
+    <bannerRight>
+        <name>Apache Incubator</name>
+        <src>/images/apache-incubator-logo.png</src>
+        <href>http://incubator.apache.org</href>
+    </bannerRight>
+
  <body>
     <menu name="Lens" >
       <item name="Overview" href="index.html" />
-      <item name="Getting Started" href="./gettingstarted/quick-start.html" />
-      <item name="Install and Run" href="./gettingstarted/install-steps.html" />
-      <item name="Pseudo Distributed Setup" href="./gettingstarted/pseudo-distributed-setup.html" />
+      <item name="Getting Started" href="./lenshome/quick-start.html" />
+      <item name="Installing and Running Lens" href="./lenshome/install-and-run.html" />
+      <item name="Pseudo Distributed Setup" href="./lenshome/pseudo-distributed-setup.html" />
     </menu>
+      <menu name="Releases" >
+      <item name="Download" href="./releases/download.html" />
+      <item name="Compatibility" href="./releases/compatibility.html" />
+      <item name="All Releases" href="./releases/release-history.html" />
+      </menu>
 		<menu name="User Documentation">
       <item name="Lens User Guide" href="./user/index.html" />
       <item name="OLAP data cube" href="./user/olap-cube.html" />
@@ -45,6 +57,7 @@
       <item name="Lens CLI" href="./user/cli.html" />
 			<item name="Java Client Library" href="./user/java-client.html"/>
 			<item name="JDBC Client" href="./user/jdbc-client.html"/>
+      <item name="Lens ML" href="./user/ml.html" />
 			<item name="FAQ" href="./user/faq.html"/>
 		</menu>
 		<menu name="Developer Documentation">
@@ -61,17 +74,16 @@
     </menu>
     <menu ref="reports"/>
     <breadcrumbs>
-      <item name="InMobi" href="https://github.com/InMobi" />
-			<item name="Lens" href="https://github.com/InMobi/grill" />
+      <item name="Apache" href="http://www.apache.org" />
+			<item name="Lens" href="http://lens.incubator.apache.org" />
     </breadcrumbs>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-classic-skin</artifactId>
-    <version>1.1</version>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.3.0</version>
   </skin>
   <poweredBy>
-    <logo name="inmobi" href="http://www.inmobi.com/"
-          img="../images/inmobi-logo.jpg"/>
+    <logo name="ASF" href="http://www.apache.org/"/>
   </poweredBy>
 </project>

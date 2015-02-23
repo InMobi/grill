@@ -42,8 +42,13 @@ public class Dimension extends AbstractBaseTable {
     this(name, attributes, null, null, properties, weight);
   }
 
+<<<<<<< HEAD
   public Dimension(String name, Set<CubeDimAttribute> attributes, Set<ExprColumn> expressions, Set<JoinChain> joinChains,
       Map<String, String> properties, double weight) {
+=======
+  public Dimension(String name, Set<CubeDimAttribute> attributes, Set<ExprColumn> expressions,
+    Set<JoinChain> joinChains, Map<String, String> properties, double weight) {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     super(name, expressions, joinChains, properties, weight);
     this.attributes = attributes;
 
@@ -66,7 +71,11 @@ public class Dimension extends AbstractBaseTable {
   }
 
   public Dimension(final String name, final Set<CubeDimAttribute> attributes, final Set<ExprColumn> exprs, final
+<<<<<<< HEAD
     Map<String, String> dimProps, final long weight) {
+=======
+  Map<String, String> dimProps, final long weight) {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     this(name, attributes, exprs, null, dimProps, weight);
   }
 
@@ -117,7 +126,7 @@ public class Dimension extends AbstractBaseTable {
         Class<?> clazz = Class.forName(className);
         Constructor<?> constructor;
         constructor = clazz.getConstructor(String.class, Map.class);
-        attr = (CubeDimAttribute) constructor.newInstance(new Object[] { attrName, props });
+        attr = (CubeDimAttribute) constructor.newInstance(new Object[]{attrName, props});
       } catch (Exception e) {
         throw new IllegalArgumentException("Invalid dimension", e);
       }
@@ -139,6 +148,14 @@ public class Dimension extends AbstractBaseTable {
 //    return ((ReferencedDimAtrribute) attributeMap.get(name.toLowerCase())).isChainedColumn();
 //  }
 
+<<<<<<< HEAD
+=======
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
   @Override
   public boolean equals(Object obj) {
     if (!super.equals(obj)) {
@@ -172,9 +189,14 @@ public class Dimension extends AbstractBaseTable {
   }
 
   /**
+<<<<<<< HEAD
    * Alters the attribute if already existing or just adds if it is new
    * attribute
    * 
+=======
+   * Alters the attribute if already existing or just adds if it is new attribute
+   *
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
    * @param attribute
    * @throws HiveException
    */
@@ -197,7 +219,7 @@ public class Dimension extends AbstractBaseTable {
 
   /**
    * Remove the dimension with name specified
-   * 
+   *
    * @param attrName
    */
   public void removeAttribute(String attrName) {

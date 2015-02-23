@@ -18,12 +18,18 @@
  */
 package org.apache.lens.lib.query;
 
+<<<<<<< HEAD
+=======
+import java.io.IOException;
+
+import org.apache.lens.server.api.driver.LensResultSetMetadata;
+import org.apache.lens.server.api.query.QueryContext;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
-import org.apache.lens.server.api.driver.LensResultSetMetadata;
-import org.apache.lens.server.api.query.QueryContext;
 
 import java.io.IOException;
 
@@ -45,7 +51,7 @@ public abstract class WrappedFileFormatter extends AbstractOutputFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.AbstractOutputFormatter#init(org.apache.lens.server.api.query.QueryContext,
    * org.apache.lens.server.api.driver.LensResultSetMetadata)
    */
@@ -61,7 +67,7 @@ public abstract class WrappedFileFormatter extends AbstractOutputFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#writeHeader()
    */
   @Override
@@ -76,7 +82,7 @@ public abstract class WrappedFileFormatter extends AbstractOutputFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#writeFooter()
    */
   @Override
@@ -106,7 +112,7 @@ public abstract class WrappedFileFormatter extends AbstractOutputFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#commit()
    */
   @Override
@@ -116,7 +122,7 @@ public abstract class WrappedFileFormatter extends AbstractOutputFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#close()
    */
   @Override

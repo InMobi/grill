@@ -18,6 +18,7 @@
  */
 package org.apache.lens.server.session;
 
+<<<<<<< HEAD
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +27,8 @@ import org.apache.hadoop.hive.ql.processors.SetProcessor;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.service.cli.*;
 
+=======
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -48,6 +51,20 @@ import org.apache.lens.server.api.session.SessionService;
 import org.apache.lens.server.query.QueryExecutionServiceImpl;
 import org.apache.lens.server.session.LensSessionImpl.ResourceEntry;
 
+<<<<<<< HEAD
+=======
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.ql.metadata.Hive;
+import org.apache.hadoop.hive.ql.metadata.HiveException;
+import org.apache.hadoop.hive.ql.processors.SetProcessor;
+import org.apache.hadoop.hive.ql.session.SessionState;
+import org.apache.hive.service.cli.CLIService;
+import org.apache.hive.service.cli.HiveSQLException;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 /**
  * The Class HiveSessionService.
  */
@@ -69,8 +86,7 @@ public class HiveSessionService extends LensService implements SessionService {
   /**
    * Instantiates a new hive session service.
    *
-   * @param cliService
-   *          the cli service
+   * @param cliService the cli service
    */
   public HiveSessionService(CLIService cliService) {
     super(NAME, cliService);
@@ -153,12 +169,9 @@ public class HiveSessionService extends LensService implements SessionService {
   /**
    * Gets the session param.
    *
-   * @param sessionConf
-   *          the session conf
-   * @param ss
-   *          the ss
-   * @param varname
-   *          the varname
+   * @param sessionConf the session conf
+   * @param ss          the ss
+   * @param varname     the varname
    * @return the session param
    */
   private String getSessionParam(Configuration sessionConf, SessionState ss, String varname) {
@@ -188,12 +201,34 @@ public class HiveSessionService extends LensService implements SessionService {
    * @inheritDoc
    */
   @Override
+<<<<<<< HEAD
   public LensSessionHandle openSession(String username, String password, Map<String, String> configuration)
       throws LensException {
+=======
+  public LensSessionHandle openSession(String username, String password, String database,
+                                       Map<String, String> configuration)
+    throws LensException {
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
     LensSessionHandle sessionid = super.openSession(username, password, configuration);
     LOG.info("Opened session " + sessionid + " for user " + username);
     // add auxuiliary jars
     String[] auxJars = getSession(sessionid).getSessionConf().getStrings(LensConfConstants.AUX_JARS);
+
+    // Set current database
+    if (StringUtils.isNotBlank(database)) {
+      try {
+        if (!Hive.get(getSession(sessionid).getHiveConf()).databaseExists(database)) {
+          throw new NotFoundException("Database " + database + " does not exist");
+        }
+      } catch (HiveException e) {
+        LOG.error("Error in checking if database exists " + database, e);
+        throw new LensException(e);
+      }
+
+      getSession(sessionid).setCurrentDatabase(database);
+      LOG.info("Set database to " + database + " for session " + sessionid.getPublicId());
+    }
+
     if (auxJars != null) {
       LOG.info("Adding aux jars:" + auxJars);
       for (String jar : auxJars) {
@@ -208,7 +243,7 @@ public class HiveSessionService extends LensService implements SessionService {
    */
   @Override
   public List<String> getAllSessionParameters(LensSessionHandle sessionid, boolean verbose, String key)
-      throws LensException {
+    throws LensException {
     List<String> result = new ArrayList<String>();
     acquire(sessionid);
     try {
@@ -246,14 +281,10 @@ public class HiveSessionService extends LensService implements SessionService {
   /**
    * Sets the session parameter.
    *
-   * @param sessionid
-   *          the sessionid
-   * @param key
-   *          the key
-   * @param value
-   *          the value
-   * @param addToSession
-   *          the add to session
+   * @param sessionid    the sessionid
+   * @param key          the key
+   * @param value        the value
+   * @param addToSession the add to session
    */
   protected void setSessionParameter(LensSessionHandle sessionid, String key, String value, boolean addToSession) {
     LOG.info("Request to Set param key:" + key + " value:" + value);
@@ -284,7 +315,7 @@ public class HiveSessionService extends LensService implements SessionService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.hive.service.CompositeService#start()
    */
   @Override
@@ -337,7 +368,7 @@ public class HiveSessionService extends LensService implements SessionService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.hive.service.CompositeService#stop()
    */
   @Override
@@ -350,7 +381,7 @@ public class HiveSessionService extends LensService implements SessionService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.LensService#writeExternal(java.io.ObjectOutput)
    */
   @Override
@@ -366,7 +397,7 @@ public class HiveSessionService extends LensService implements SessionService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.LensService#readExternal(java.io.ObjectInput)
    */
   @Override
@@ -440,7 +471,7 @@ public class HiveSessionService extends LensService implements SessionService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Runnable#run()
      */
     @Override

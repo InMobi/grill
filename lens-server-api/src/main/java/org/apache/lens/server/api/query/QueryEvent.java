@@ -79,7 +79,7 @@ public abstract class QueryEvent<T> extends LensEvent {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override

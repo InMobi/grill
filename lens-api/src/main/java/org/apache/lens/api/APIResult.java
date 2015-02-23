@@ -18,9 +18,13 @@
  */
 package org.apache.lens.api;
 
+<<<<<<< HEAD
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+=======
+import java.io.StringWriter;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -29,7 +33,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+<<<<<<< HEAD
 import java.io.StringWriter;
+=======
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 
 /**
  * APIResult is the output returned by all the APIs; status-SUCCEEDED or FAILED message- detailed message.
@@ -102,7 +113,7 @@ public class APIResult {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#toString()
    */
   @Override

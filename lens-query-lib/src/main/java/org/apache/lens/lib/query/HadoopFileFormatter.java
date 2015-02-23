@@ -18,12 +18,18 @@
  */
 package org.apache.lens.lib.query;
 
+<<<<<<< HEAD
+=======
+import java.io.IOException;
+
+import org.apache.lens.lib.query.LensFileOutputFormat.LensRowWriter;
+
+>>>>>>> e3ff7daa540cc4b0225ee5aa5384bc7cd49c06d7
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.Reporter;
-import org.apache.lens.lib.query.LensFileOutputFormat.LensRowWriter;
 
 import java.io.IOException;
 
@@ -46,7 +52,7 @@ public class HadoopFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#setupOutputs()
    */
   public void setupOutputs() throws IOException {
@@ -66,7 +72,7 @@ public class HadoopFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#writeHeader(java.lang.String)
    */
   public void writeHeader(String header) throws IOException {
@@ -75,7 +81,7 @@ public class HadoopFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#writeFooter(java.lang.String)
    */
   public void writeFooter(String footer) throws IOException {
@@ -89,7 +95,7 @@ public class HadoopFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.lib.query.FileFormatter#writeRow(java.lang.String)
    */
   public void writeRow(String row) throws IOException {
@@ -103,7 +109,7 @@ public class HadoopFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#commit()
    */
   @Override
@@ -123,7 +129,7 @@ public class HadoopFileFormatter extends AbstractFileFormatter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.lens.server.api.query.QueryOutputFormatter#close()
    */
   @Override

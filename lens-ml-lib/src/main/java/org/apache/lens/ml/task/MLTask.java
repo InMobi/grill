@@ -18,25 +18,21 @@
  */
 package org.apache.lens.ml.task;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import lombok.Getter;
-import lombok.ToString;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.client.LensConnectionParams;
 import org.apache.lens.client.LensMLClient;
 import org.apache.lens.ml.LensML;
 import org.apache.lens.ml.MLTestReport;
 import org.apache.lens.ml.MLUtils;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.conf.HiveConf;
+
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Run a complete cycle of train and test (evaluation) for an ML algorithm
@@ -53,7 +49,7 @@ public class MLTask implements Runnable {
   private State taskState;
 
   /**
-   * Name of the trainer/algorithm.
+   * Name of the algo/algorithm.
    */
   @Getter
   private String algorithm;
@@ -119,13 +115,13 @@ public class MLTask implements Runnable {
    * User name to connect to Lens server
    */
   @Getter
-  public String userName;
+  private String userName;
 
   /**
    * Password to connect to Lens server
    */
   @Getter
-  public String password;
+  private String password;
 
   @Getter
   private String modelID;
@@ -257,10 +253,10 @@ public class MLTask implements Runnable {
       LOG.info("Working in Lens server");
     }
 
-    String trainerArgs[] = buildTrainingArgs();
-    LOG.info("Starting task " + taskID + " trainer args: " + Arrays.toString(trainerArgs));
+    String[] algoArgs = buildTrainingArgs();
+    LOG.info("Starting task " + taskID + " algo args: " + Arrays.toString(algoArgs));
 
-    modelID = ml.train(trainingTable, algorithm, trainerArgs);
+    modelID = ml.train(trainingTable, algorithm, algoArgs);
     printModelMetadata(taskID, modelID);
 
     LOG.info("Starting test " + taskID);
