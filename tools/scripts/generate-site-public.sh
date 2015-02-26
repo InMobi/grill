@@ -8,9 +8,7 @@ die() {
 REPO=git@github.com:InMobi/grill.git
 TMP=/tmp/grill-site-stage
 STAGE=`pwd`/target/staging
-REST_DIR=`pwd`/grill-server/target/site/wsdocs
-IMAGES_DIR=`pwd`/src/site/apt/figures
-LOGO_FILE=`pwd`/grill-logo.png
+REST_DIR=`pwd`/lens-server/target/site/wsdocs
 VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version|grep -Ev '(^\[|Download\w+:)' || die "unable to get version")
 
 
@@ -20,7 +18,7 @@ echo "Running site in current grill branch" $CURR_BRANCH
 mvn clean test -Dtest=TestGenerateConfigDoc || die "Unable to generate config docs"
 mvn install -DskipTests
 mvn clean site site:stage -Ddependency.locations.enabled=false -Ddependency.details.enabled=false || die "unable to generate site"
-cd grill-server
+cd lens-server
 mvn enunciate:docs
 cd ..
 echo "Site gen complete"
@@ -38,14 +36,11 @@ mkdir -p versions/$VERSION || due "unable to create dir versions/$VERSION"
 
 find current -type f -exec git rm {} \;
 echo "Copying REST docs from " $REST_DIR
-cp $LOGO_FILE .
 # Delete index.html from the source wsdocs as it conflitcs with maven index.html
 echo "DELETE $REST_DIR/index.html"
 rm $REST_DIR/index.html
 echo "Copy enunciate documentation"
 cp -r $REST_DIR/* .
-echo "Copy images"
-cp -r $IMAGES_DIR . 
 echo "Copy MVN site"
 cp -r $STAGE/ . || die "unable to copy to base"
 echo "Copy docs to current/"
