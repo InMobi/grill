@@ -55,18 +55,16 @@
               <a href="ns0.html">ns0</a> &gt;
               <ul>
                 <li><a href="ns0.html">ns0</a></li>
-                <li><a href="ns1.html">ns1</a></li>
               </ul>
             </li>
             <li class="current">
               <a href="el_ns0_queryStatus.html">queryStatus element</a>
               <ul>
                 <li><a href="el_ns0_conf.html">conf element</a></li>
-                <li><a href="el_ns0_dateTime.html">dateTime element</a></li>
+                <li><a href="el_ns0_grillPreparedQuery.html">grillPreparedQuery element</a></li>
+                <li><a href="el_ns0_grillQuery.html">grillQuery element</a></li>
+                <li><a href="el_ns0_grillSessionHandle.html">grillSessionHandle element</a></li>
                 <li><a href="el_ns0_inMemoryQueryResult.html">inMemoryQueryResult element</a></li>
-                <li><a href="el_ns0_lensPreparedQuery.html">lensPreparedQuery element</a></li>
-                <li><a href="el_ns0_lensQuery.html">lensQuery element</a></li>
-                <li><a href="el_ns0_lensSessionHandle.html">lensSessionHandle element</a></li>
                 <li><a href="el_ns0_persistentQueryResult.html">persistentQueryResult element</a></li>
                 <li><a href="el_ns0_queryCost.html">queryCost element</a></li>
                 <li><a href="el_ns0_queryHandle.html">queryHandle element</a></li>
@@ -107,21 +105,21 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;queryStatus&gt;
+  &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+  &lt;status&gt;...&lt;/status&gt;
   &lt;progress&gt;...&lt;/progress&gt;
-  &lt;errorMessage&gt;...&lt;/errorMessage&gt;
   &lt;progressMessage&gt;...&lt;/progressMessage&gt;
   &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
-  &lt;status&gt;...&lt;/status&gt;
-  &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+  &lt;errorMessage&gt;...&lt;/errorMessage&gt;
 &lt;/queryStatus&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
+  &quot;statusMessage&quot; : &quot;...&quot;,
+  &quot;status&quot; : &quot;NEW&quot;,
   &quot;progress&quot; : ...,
-  &quot;errorMessage&quot; : &quot;...&quot;,
   &quot;progressMessage&quot; : &quot;...&quot;,
   &quot;isResultSetAvailable&quot; : false,
-  &quot;status&quot; : &quot;NEW&quot;,
-  &quot;statusMessage&quot; : &quot;...&quot;
+  &quot;errorMessage&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />

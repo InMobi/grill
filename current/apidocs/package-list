@@ -12,15 +12,14 @@ org.apache.lens.cube.parse
 org.apache.lens.driver.cube
 org.apache.lens.driver.hive
 org.apache.lens.driver.hive.priority
-org.apache.lens.driver.impala
 org.apache.lens.driver.jdbc
 org.apache.lens.examples
 org.apache.lens.lib.query
 org.apache.lens.ml
 org.apache.lens.ml.dao
 org.apache.lens.ml.spark
+org.apache.lens.ml.spark.algos
 org.apache.lens.ml.spark.models
-org.apache.lens.ml.spark.trainers
 org.apache.lens.ml.task
 org.apache.lens.rdd
 org.apache.lens.server
@@ -34,6 +33,7 @@ org.apache.lens.server.api.query
 org.apache.lens.server.api.quota
 org.apache.lens.server.api.scheduler
 org.apache.lens.server.api.session
+org.apache.lens.server.api.util
 org.apache.lens.server.metastore
 org.apache.lens.server.ml
 org.apache.lens.server.query

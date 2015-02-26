@@ -117,7 +117,7 @@ This provides api for all things in session.</p>
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Create a new session with Lens server.
+            Create a new session with Grill server
           </p>
       <h3>Parameters</h3>
       <table>
@@ -130,7 +130,7 @@ This provides api for all things in session.</p>
         <tr>
           <td>username</td>
           <td>
-            User name of the Lens server user
+            User name of the Grill server user
           </td>
           <td>formdata</td>
           <td></td>
@@ -138,7 +138,7 @@ This provides api for all things in session.</p>
         <tr>
           <td>password</td>
           <td>
-            Password of the Lens server user
+            Password of the Grill server user
           </td>
           <td>formdata</td>
           <td></td>
@@ -156,7 +156,7 @@ This provides api for all things in session.</p>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td><a href="el_ns0_lensSessionHandle.html">lensSessionHandle</a></td>
+          <td><a href="el_ns0_grillSessionHandle.html">grillSessionHandle</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -167,7 +167,7 @@ This provides api for all things in session.</p>
       <a name="DELETE"></a>
       <h2>DELETE</h2>
       <p>
-            Close a Lens server session.
+            Close a Grill server session
           </p>
       <h3>Parameters</h3>
       <table>
@@ -204,7 +204,7 @@ This provides api for all things in session.</p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Get a list of key=value parameters set for this session.
+            Get a list of key=value parameters set for this session
           </p>
       <h3>Parameters</h3>
       <table>
@@ -225,7 +225,8 @@ This provides api for all things in session.</p>
         <tr>
           <td>verbose</td>
           <td>
-            If true, all the parameters will be returned. If false, configuration parameters will be returned
+            If true, all the parameters will be returned.
+If false, configuration parameters will be returned
           </td>
           <td>query</td>
           <td>false</td>
@@ -233,8 +234,8 @@ This provides api for all things in session.</p>
         <tr>
           <td>key</td>
           <td>
-            if this is empty, output will contain all parameters and their values, if it is non empty parameters will
-be filtered by key
+            if this is empty, output will contain all parameters and their values,
+if it is non empty parameters will be filtered by key
           </td>
           <td>query</td>
           <td></td>
@@ -257,9 +258,10 @@ be filtered by key
       <p>
             Set value for a parameter specified by key
 
-The parameters can be a hive variable or a configuration. To set key as a hive variable, the key should be prefixed
-with 'hivevar:'. To set key as configuration parameter, the key should be prefixed with 'hiveconf:' If no prefix is
-attached, the parameter is set as configuration.
+The parameters can be a hive variable or a configuration.
+To set key as a hive variable, the key should be prefixed with 'hivevar:'.
+To set key as configuration parameter, the key should be prefixed with 'hiveconf:'
+If no prefix is attached, the parameter is set as configuration.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -312,11 +314,11 @@ attached, the parameter is set as configuration.
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
-            Add a resource to the session to all LensServices running in this Lens server
+            Add a resource to the session to all GrillServices running in this Grill server
 
 <p>
-The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation was successful for all
-services running in this Lens server.
+The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation
+was successful for all services running in this Grill server.
 </p>
           </p>
       <h3>Parameters</h3>
@@ -363,16 +365,16 @@ services running in this Lens server.
           <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
-      <p>APIResult with state Status#SUCCEEDED, if add was successful. APIResult with state
-Status#PARTIAL, if add succeeded only for some services. APIResult with state
-Status#FAILED, if add has failed</p>
+      <p>APIResult with state Status#SUCCEEDED, if add was successful.
+APIResult with state Status#PARTIAL, if add succeeded only for some services.
+APIResult with state Status#FAILED, if add has failed</p>
         <a name="path__session_resources_delete.html"></a>
       <h1>/session/resources/delete</h1>
       <p class="note">Mount Point: <a href="../session/resources/delete">/session/resources/delete</a></p>
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
-            Delete a resource from sesssion from all the @{link LensService}s running in this Lens server
+            Delete a resource from sesssion from all the @{link GrillService}s running in this Grill server
 <p>
 Similar to addResource, this call is successful only if resource was deleted from all services.
 </p>
@@ -421,9 +423,9 @@ Similar to addResource, this call is successful only if resource was deleted fro
           <td>application/xml<br/>text/plain<br/>application/json</td>
         </tr>
       </table>
-      <p>APIResult with state Status#SUCCEEDED, if delete was successful. APIResult with
-state Status#PARTIAL, if delete succeeded only for some services. APIResult with state
-Status#FAILED, if delete has failed</p>
+      <p>APIResult with state Status#SUCCEEDED, if delete was successful.
+APIResult with state Status#PARTIAL, if delete succeeded only for some services.
+APIResult with state Status#FAILED, if delete has failed</p>
 
       <div class="clear" />
     </div>
