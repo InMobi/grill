@@ -107,20 +107,22 @@
       <h2>Example XML</h2>
       <code class="prettyprint lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;lensQuery&gt;
-  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
-  &lt;status&gt;
-    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
-    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
-    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
-    &lt;status&gt;...&lt;/status&gt;
-    &lt;progress&gt;...&lt;/progress&gt;
-    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
-  &lt;/status&gt;
-  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
+  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
+  &lt;userQuery&gt;...&lt;/userQuery&gt;
+  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
+  &lt;queryName&gt;...&lt;/queryName&gt;
+  &lt;finishTime&gt;...&lt;/finishTime&gt;
   &lt;queryHandle&gt;
     &lt;handleId&gt;...&lt;/handleId&gt;
   &lt;/queryHandle&gt;
-  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
+  &lt;status&gt;
+    &lt;status&gt;...&lt;/status&gt;
+    &lt;isResultSetAvailable&gt;...&lt;/isResultSetAvailable&gt;
+    &lt;progressMessage&gt;...&lt;/progressMessage&gt;
+    &lt;progress&gt;...&lt;/progress&gt;
+    &lt;statusMessage&gt;...&lt;/statusMessage&gt;
+    &lt;errorMessage&gt;...&lt;/errorMessage&gt;
+  &lt;/status&gt;
   &lt;queryConf&gt;
     &lt;properties&gt;
       &lt;entry&gt;
@@ -138,53 +140,51 @@
       &lt;!--...more entries...--&gt;
     &lt;/properties&gt;
   &lt;/queryConf&gt;
-  &lt;finishTime&gt;...&lt;/finishTime&gt;
-  &lt;queryName&gt;...&lt;/queryName&gt;
-  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
-  &lt;submissionTime&gt;...&lt;/submissionTime&gt;
-  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
-  &lt;userQuery&gt;...&lt;/userQuery&gt;
-  &lt;priority&gt;...&lt;/priority&gt;
   &lt;closedTime&gt;...&lt;/closedTime&gt;
-  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
-  &lt;isPersistent&gt;...&lt;/isPersistent&gt;
-  &lt;launchTime&gt;...&lt;/launchTime&gt;
   &lt;selectedDriverClassName&gt;...&lt;/selectedDriverClassName&gt;
+  &lt;resultSetPath&gt;...&lt;/resultSetPath&gt;
+  &lt;driverFinishTime&gt;...&lt;/driverFinishTime&gt;
+  &lt;driverQuery&gt;...&lt;/driverQuery&gt;
+  &lt;driverOpHandle&gt;...&lt;/driverOpHandle&gt;
+  &lt;driverStartTime&gt;...&lt;/driverStartTime&gt;
+  &lt;submittedUser&gt;...&lt;/submittedUser&gt;
+  &lt;priority&gt;...&lt;/priority&gt;
+  &lt;launchTime&gt;...&lt;/launchTime&gt;
 &lt;/lensQuery&gt;</code>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-  &quot;resultSetPath&quot; : &quot;...&quot;,
-  &quot;status&quot; : {
-    &quot;statusMessage&quot; : &quot;...&quot;,
-    &quot;progressMessage&quot; : &quot;...&quot;,
-    &quot;isResultSetAvailable&quot; : false,
-    &quot;status&quot; : &quot;NEW&quot;,
-    &quot;progress&quot; : ...,
-    &quot;errorMessage&quot; : &quot;...&quot;
-  },
-  &quot;submittedUser&quot; : &quot;...&quot;,
+  &quot;isPersistent&quot; : false,
+  &quot;userQuery&quot; : &quot;...&quot;,
+  &quot;submissionTime&quot; : ...,
+  &quot;queryName&quot; : &quot;...&quot;,
+  &quot;finishTime&quot; : ...,
   &quot;queryHandle&quot; : {
     &quot;handleId&quot; : &quot;...&quot;
   },
-  &quot;driverStartTime&quot; : ...,
+  &quot;status&quot; : {
+    &quot;status&quot; : &quot;NEW&quot;,
+    &quot;isResultSetAvailable&quot; : false,
+    &quot;progressMessage&quot; : &quot;...&quot;,
+    &quot;progress&quot; : ...,
+    &quot;statusMessage&quot; : &quot;...&quot;,
+    &quot;errorMessage&quot; : &quot;...&quot;
+  },
   &quot;queryConf&quot; : {
     &quot;properties&quot; : {
       &quot;...&quot; : &quot;...&quot;,
       &quot;---&quot; : ...
     }
   },
-  &quot;finishTime&quot; : ...,
-  &quot;queryName&quot; : &quot;...&quot;,
-  &quot;driverOpHandle&quot; : &quot;...&quot;,
-  &quot;submissionTime&quot; : ...,
-  &quot;driverQuery&quot; : &quot;...&quot;,
-  &quot;userQuery&quot; : &quot;...&quot;,
-  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
   &quot;closedTime&quot; : ...,
+  &quot;selectedDriverClassName&quot; : &quot;...&quot;,
+  &quot;resultSetPath&quot; : &quot;...&quot;,
   &quot;driverFinishTime&quot; : ...,
-  &quot;isPersistent&quot; : false,
-  &quot;launchTime&quot; : ...,
-  &quot;selectedDriverClassName&quot; : &quot;...&quot;
+  &quot;driverQuery&quot; : &quot;...&quot;,
+  &quot;driverOpHandle&quot; : &quot;...&quot;,
+  &quot;driverStartTime&quot; : ...,
+  &quot;submittedUser&quot; : &quot;...&quot;,
+  &quot;priority&quot; : &quot;VERY_HIGH&quot;,
+  &quot;launchTime&quot; : ...
 }</code>
 
       <div class="clear" />
