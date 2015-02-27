@@ -24,6 +24,7 @@ org.apache.lens.ml.task
 org.apache.lens.rdd
 org.apache.lens.server
 org.apache.lens.server.api
+org.apache.lens.server.api.annotations
 org.apache.lens.server.api.driver
 org.apache.lens.server.api.events
 org.apache.lens.server.api.metastore
@@ -35,7 +36,9 @@ org.apache.lens.server.api.scheduler
 org.apache.lens.server.api.session
 org.apache.lens.server.api.util
 org.apache.lens.server.metastore
+org.apache.lens.server.metrics
 org.apache.lens.server.ml
+org.apache.lens.server.model
 org.apache.lens.server.query
 org.apache.lens.server.quota
 org.apache.lens.server.scheduler

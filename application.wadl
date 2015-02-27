@@ -630,7 +630,7 @@ returns queries of the current user.]]>
         <wadl:response>
           <wadl:doc>
             <![CDATA[QueryHandle in case of SubmitOp#EXECUTE operation. QueryPlan in case of  operation. QueryHandleWithResultSet in case SubmitOp#EXECUTE_WITH_TIMEOUT
-operation.]]>
+operation. EstimateResult in case of SubmitOp#ESTIMATE operation.]]>
           </wadl:doc>
           <wadl:representation mediaType="application/xml" element="querySubmitResult"/>
           <wadl:representation mediaType="text/plain"/>
