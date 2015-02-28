@@ -303,7 +303,7 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
     return eventService;
   }
 
-  private synchronized MetricsService getMetrics() {
+  private MetricsService getMetrics() {
     if (metricsService == null) {
       metricsService = (MetricsService) LensServices.get().getService(MetricsService.NAME);
       if (metricsService == null) {
@@ -313,7 +313,7 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
     return metricsService;
   }
 
-  private synchronized StatisticsService getStatisticsService() {
+  private StatisticsService getStatisticsService() {
     if (statisticsService == null) {
       statisticsService = (StatisticsService) LensServices.get().getService(StatisticsService.STATS_SVC_NAME);
       if (statisticsService == null) {
@@ -632,8 +632,10 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
             LOG.error("Status update failed for " + handle, exc);
           }
           // query is successfully executed by driver and
-          // if query result need not persisted, move the query to succeeded state
-          if (ctx.getStatus().getStatus().equals(QueryStatus.Status.EXECUTED) && !ctx.isPersistent()) {
+          // if query result need not be persisted or there is no result available in driver, move the query to
+          // succeeded state immediately, otherwise result formatter will format the result and move it to succeeded
+          if (ctx.getStatus().getStatus().equals(QueryStatus.Status.EXECUTED) && (!ctx.isPersistent()
+            || !ctx.isResultAvailableInDriver())) {
             setSuccessState(ctx);
           } else {
             if (ctx.getStatus().isFinished()) {
@@ -1088,6 +1090,7 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
     accept(query, conf, op);
     PreparedQueryContext prepared = new PreparedQueryContext(query, getSession(sessionHandle).getLoggedInUser(), conf,
       lensConf, drivers.values());
+    prepared.setLensSessionIdentifier(sessionHandle.getPublicId().toString());
     rewriteAndSelect(prepared);
     preparedQueries.put(prepared.getPrepareHandle(), prepared);
     preparedQueryQueue.add(prepared);
@@ -1793,7 +1796,7 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
       Configuration qconf = getLensConf(sessionHandle, lensConf);
       ExplainQueryContext explainQueryContext = new ExplainQueryContext(query,
         getSession(sessionHandle).getLoggedInUser(), lensConf, qconf, drivers.values());
-
+      explainQueryContext.setLensSessionIdentifier(sessionHandle.getPublicId().toString());
       accept(query, qconf, SubmitOp.EXPLAIN);
       rewriteAndSelect(explainQueryContext);
       maybeAddSessionResourcesToDriver(explainQueryContext);
@@ -2193,18 +2196,31 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
     // Add resources if either they haven't been marked as added on the session, or if Hive driver says they need
     // to be added to the corresponding hive driver
     if (!hiveDriver.areRsourcesAddedForSession(sessionIdentifier)) {
-      LOG.info("Proceeding to add resources for DB "
-        + session.getCurrentDatabase() + " for query " + queryHandle);
       Collection<LensSessionImpl.ResourceEntry> dbResources = session.getCurrentDBResources();
       if (dbResources != null && !dbResources.isEmpty()) {
+        Map<String, LinkedHashSet<String>> resourceMap = new HashMap<String, LinkedHashSet<String>>();
+
         for (LensSessionImpl.ResourceEntry resource : dbResources) {
+          LinkedHashSet<String> typeResources = resourceMap.get(resource.getType());
+          if (typeResources == null) {
+            typeResources = new LinkedHashSet<String>();
+            resourceMap.put(resource.getType(), typeResources);
+          }
+          typeResources.add(resource.getLocation());
+        }
+
+        LOG.info("Proceeding to add resources for DB "
+          + session.getCurrentDatabase() + " for query " + queryHandle + " resources: " + resourceMap);
+
+        for (String resType : resourceMap.keySet()) {
           try {
-            String command = "add " + resource.getType().toLowerCase() + " " + resource.getLocation();
+            String command = "add " + resType + "s " + StringUtils.join(resourceMap.get(resType), " ");
             hiveDriver.execute(createResourceQuery(command, sessionHandle, driver));
-            LOG.info("Added resource to hive driver " + resource);
+            LOG.info("Added resources to hive driver for session "
+              + sessionIdentifier + " cmd: " + command);
           } catch (LensException exc) {
-            LOG.warn("Failed to add resource to hive driver for session: "
-              + sessionIdentifier + " resource:" + resource.toString(), exc);
+            LOG.error("Error adding resources for session "
+              + sessionIdentifier + " resources: " + resourceMap.get(resType), exc.getCause());
           }
         }
       } else {

@@ -22,10 +22,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -166,6 +163,21 @@ public final class LensTestUtil {
     throws InterruptedException {
     LensConf conf = new LensConf();
     conf.addProperty(LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false");
+    dropTableWithConf(tblName, parent, lensSessionId, conf);
+  }
+
+  /**
+   * Drop table with conf passed.
+   *
+   * @param tblName       the tbl name
+   * @param parent        the parent
+   * @param lensSessionId the lens session id
+   * @param conf          the query conf
+   *
+   * @throws InterruptedException
+   */
+  public static void dropTableWithConf(String tblName, WebTarget parent, LensSessionHandle lensSessionId,
+    LensConf conf) throws InterruptedException {
     final WebTarget target = parent.path("queryapi/queries");
 
     final FormDataMultiPart mp = new FormDataMultiPart();
@@ -244,7 +256,20 @@ public final class LensTestUtil {
       }
       // Add a jar in the directory
       try {
-        FileUtils.copyFile(testJarFile, new File(dbDir, db + ".jar"));
+
+        String[] jarOrder = {
+          "x_" + db + ".jar",
+          "y_" + db + ".jar",
+          "z_" + db + ".jar",
+        };
+
+        // Jar order is -> z, y, x, File listing order is x, y, z
+        // We are explicitly specifying jar order
+        FileUtils.writeLines(new File(dbDir, "jar_order"), Arrays.asList(jarOrder[2], jarOrder[1], jarOrder[0]));
+
+        FileUtils.copyFile(testJarFile, new File(dbDir, jarOrder[0]));
+        FileUtils.copyFile(testJarFile, new File(dbDir, jarOrder[1]));
+        FileUtils.copyFile(testJarFile, new File(dbDir, jarOrder[2]));
       } catch (FileNotFoundException fnf) {
         fnf.printStackTrace();
       }
