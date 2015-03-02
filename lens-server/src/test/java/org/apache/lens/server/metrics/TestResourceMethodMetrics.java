@@ -53,11 +53,8 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
-@Test(groups = "unit-test")
+//@Test(groups = "unit-test")
 public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
   private CubeMetastoreServiceImpl metastoreService;
   private MetricsServiceImpl metricsSvc;
@@ -70,7 +67,7 @@ public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
    *
    * @see org.glassfish.jersey.test.JerseyTest#setUp()
    */
-  @BeforeTest
+  //@BeforeTest
   public void setUp() throws Exception {
     super.setUp();
     BasicConfigurator.configure();
@@ -89,7 +86,7 @@ public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
     LensTestUtil.loadData(tblName, testDataFile, target(), lensSessionId);
   }
 
-  @AfterTest
+  //@AfterTest
   public void tearDown() throws Exception {
     LensTestUtil.dropTable(TestQueryService.TEST_TABLE, target(), lensSessionId);
     metastoreService.closeSession(lensSessionId);
@@ -113,8 +110,8 @@ public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
     config.register(MultiPartFeature.class);
   }
 
-  @Test
-  public void test() throws Exception {
+  //@Test
+  private void test() throws Exception {
     boolean enabled = metricsSvc.isEnableResourceMethodMetering();
     disableResourceMethodMetering();
     metricsSvc.setEnableResourceMethodMetering(true);
