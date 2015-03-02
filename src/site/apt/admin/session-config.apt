@@ -82,7 +82,7 @@ Lens session configuration
 *--+--+---+--+
 |29|lens.query.result.output.serde|org.apache.lens.lib.query.CSVSerde|The default serde class name that should be used by org.apache.lens.lib.query.FileSerdeFormatter for formatting the output|
 *--+--+---+--+
-|30|lens.query.result.parent.dir|/tmp/lensreports|The directory for storing persisted result of query. This directory should exist and should have writable permissions by lens server|
+|30|lens.query.result.parent.dir|file:///tmp/lensreports|The directory for storing persisted result of query. This directory should exist and should have writable permissions by lens server|
 *--+--+---+--+
 |31|lens.query.result.size.format.threshold|10737418240|The maximum allowed size of the query result. If exceeds, no server side formatting would be done.|
 *--+--+---+--+
