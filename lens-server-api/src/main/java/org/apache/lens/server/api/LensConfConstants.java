@@ -788,6 +788,13 @@ public final class LensConfConstants {
    */
   public static final String SERVER_DB_JDBC_PASS = SERVER_PFX + "db.jdbc.pass";
 
+  /** Validation query to check db pool is valid before passing to the application */
+  public static final String SERVER_DB_VALIDATION_QUERY = SERVER_PFX + "db.validation.query";
+
+  /** default value of the validation query */
+  public static final String DEFAULT_SERVER_DB_VALIDATION_QUERY = "select 1";
+
+
   /**
    * The Constant DEFAULT_SERVER_DB_PASS.
    */
@@ -816,4 +823,28 @@ public final class LensConfConstants {
    * Default value of top level dir for database specific resources
    */
   public static final String DEFAULT_DATABASE_RESOURCE_DIR = "/tmp/lens/resources";
+
+  /**
+   * Key for enabling metrics for each query to be different
+   */
+  public static final String ENABLE_QUERY_METRICS = QUERY_PFX + "enable.metrics.per.query";
+
+  /**
+   * Default value for query wise metrics
+   */
+  public static final boolean DEFAULT_ENABLE_QUERY_METRICS = false;
+
+  /**
+   * Key used to hold value of unique id for query metrics. This wont be passed by user, will be generated and set.
+   * This is to pass unique id for query across the code flow.
+   */
+  public static final String QUERY_METRIC_UNIQUE_ID_CONF_KEY = QUERY_PFX + "metric.unique.id";
+
+  /**
+   * Key used to hold value query metric name in the stack. This wont be passed by user, will be generated and set.
+   * When each query looked at by driver, the metric needs to be different for each driver. This name capture the stack
+   * from which driver the code reached there.
+   */
+  public static final String QUERY_METRIC_DRIVER_STACK_NAME = QUERY_PFX + "metric.driver.stack.name";
+
 }
