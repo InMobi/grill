@@ -513,6 +513,7 @@
             <!-- Used on ui -->
             <exclude>**/codemirror.min.*</exclude>
             <exclude>**/*.js</exclude>
+            <exclude>**/*.properties</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -1151,6 +1152,7 @@
     <module>lens-examples</module>
     <module>lens-dist</module>
     <module>lens-ml-lib</module>
+    <module>lens-ml-dist</module>
     <module>lens-regression</module>
   </modules>
 
