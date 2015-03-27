@@ -44,7 +44,6 @@ import org.apache.thrift.TException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import lombok.extern.apachecommons.CommonsLog;
 
 /**
@@ -195,6 +194,7 @@ public class CubeMetastoreClient {
               // Not found in table properties either, compute from all partitions of the fact-storage table.
               // First make sure all combinations of update period and partition column have an entry even
               // if no partitions exist
+              log.info("loading from all partitions");
               if (getCubeFact(fact).getUpdatePeriods() != null && getCubeFact(fact).getUpdatePeriods().get(
                 storage) != null) {
                 for (UpdatePeriod updatePeriod : getCubeFact(fact).getUpdatePeriods().get(storage)) {
@@ -221,6 +221,7 @@ public class CubeMetastoreClient {
               commitAllBatchAdditions(storageTableName);
             } else {
               // found in table properties, load from there.
+              log.info("loading from table properties");
               for (UpdatePeriod updatePeriod : getCubeFact(fact).getUpdatePeriods().get(storage)) {
                 for (String partCol : getTimePartsOfTable(storageTableName)) {
                   ensureEntry(storageTableName, updatePeriod, partCol).init(storageTable);
@@ -277,7 +278,6 @@ public class CubeMetastoreClient {
           CubeMetastoreClient.this, storageTable, updatePeriod, partitionColumn));
       }
       PartitionTimeline ret = get(storageTable).get(updatePeriod).get(partitionColumn);
-      log.info("ensured entry " + ret);
       return ret;
     }
 
@@ -329,14 +329,19 @@ public class CubeMetastoreClient {
     }
 
     /** update partition timeline cache for deletion of time partition */
-    public void updateForDeletion(String cubeTableName, String storageName, UpdatePeriod updatePeriod,
+    public boolean updateForDeletion(String cubeTableName, String storageName, UpdatePeriod updatePeriod,
       Map<String, Date> timePartSpec) throws HiveException, LensException {
+      boolean updated = false;
       for (Map.Entry<String, Date> entry : timePartSpec.entrySet()) {
-        get(cubeTableName, storageName, updatePeriod, entry.getKey()).drop(TimePartition.of(
-          updatePeriod, entry.getValue()));
+        TimePartition part = TimePartition.of(updatePeriod, entry.getValue());
+        if (!partitionExistsByFilter(cubeTableName, storageName, StorageConstants.getPartFilter(entry.getKey(),
+          part.getDateString()))) {
+          get(cubeTableName, storageName, updatePeriod, entry.getKey()).drop(part);
+          updated = true;
+        }
       }
+      return updated;
     }
-
   }
 
 
@@ -936,8 +941,9 @@ public class CubeMetastoreClient {
     } else {
       // dropping fact partition
       getStorage(storageName).dropPartition(getClient(), storageTableName, partVals, null);
-      partitionTimelineCache.updateForDeletion(cubeTableName, storageName, updatePeriod, timePartSpec);
-      this.alterTablePartitionCache(storageTableName);
+      if (partitionTimelineCache.updateForDeletion(cubeTableName, storageName, updatePeriod, timePartSpec)) {
+        this.alterTablePartitionCache(storageTableName);
+      }
     }
   }
 
@@ -975,6 +981,11 @@ public class CubeMetastoreClient {
   public boolean partitionExists(String storageTableName, UpdatePeriod updatePeriod,
     Map<String, Date> partitionTimestamps) throws HiveException {
     return partitionExists(storageTableName, getPartitionSpec(updatePeriod, partitionTimestamps));
+  }
+
+  public boolean partitionExistsByFilter(String cubeTableName, String storageName, String filter) throws HiveException {
+    return partitionExistsByFilter(MetastoreUtil.getStorageTableName(cubeTableName, Storage.getPrefix(storageName)),
+      filter);
   }
 
   public boolean partitionExistsByFilter(String storageTableName, String filter) throws HiveException {
