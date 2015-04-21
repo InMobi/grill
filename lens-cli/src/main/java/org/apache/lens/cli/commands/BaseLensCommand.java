@@ -19,6 +19,9 @@
 package org.apache.lens.cli.commands;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.lens.client.LensClient;
 import org.apache.lens.client.LensClientSingletonWrapper;
@@ -30,6 +33,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.impl.Indenter;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
 /**
@@ -48,6 +52,19 @@ public class BaseLensCommand {
 
   /** The is connection active. */
   protected static boolean isConnectionActive;
+  public static final String DATE_FMT = "yyyy-MM-dd'T'HH:mm:ss:SSS";
+
+  public static final ThreadLocal<DateFormat> DATE_PARSER =
+    new ThreadLocal<DateFormat>() {
+      @Override
+      protected SimpleDateFormat initialValue() {
+        return new SimpleDateFormat(DATE_FMT);
+      }
+    };
+
+  public static String formatDate(Date dt) {
+    return DATE_PARSER.get().format(dt);
+  }
 
   static {
     Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -74,6 +91,8 @@ public class BaseLensCommand {
   public BaseLensCommand() {
     getClient();
     mapper = new ObjectMapper();
+    mapper.setSerializationInclusion(Inclusion.NON_NULL);
+    mapper.setSerializationInclusion(Inclusion.NON_DEFAULT);
     pp = new DefaultPrettyPrinter();
     pp.indentObjectsWith(new Indenter() {
       @Override

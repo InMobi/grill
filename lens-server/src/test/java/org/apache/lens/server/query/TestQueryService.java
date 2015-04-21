@@ -224,7 +224,7 @@ public class TestQueryService extends LensJerseyTest {
     LensQuery ctx = target.path(handle.toString()).queryParam("sessionid", lensSessionId).request()
       .get(LensQuery.class);
     QueryStatus stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       System.out.println("%% query " + ctx.getQueryHandle() + " status:" + stat);
@@ -308,7 +308,7 @@ public class TestQueryService extends LensJerseyTest {
 
     // wait till the query finishes
     QueryStatus stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       switch (stat.getStatus()) {
@@ -534,7 +534,7 @@ public class TestQueryService extends LensJerseyTest {
     Assert.assertEquals(ctx1.getQueryName().toLowerCase(), "testquery1");
     // wait till the query finishes
     QueryStatus stat = ctx1.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx1 = target().path("queryapi/queries").path(handle1.toString()).queryParam("sessionid", lensSessionId)
         .request().get(LensQuery.class);
       stat = ctx1.getStatus();
@@ -548,7 +548,7 @@ public class TestQueryService extends LensJerseyTest {
     Assert.assertEquals(ctx2.getQueryName().toLowerCase(), "testqueryname2");
     // wait till the query finishes
     stat = ctx2.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx2 = target().path("queryapi/queries").path(handle1.toString()).queryParam("sessionid", lensSessionId)
         .request().get(LensQuery.class);
       stat = ctx2.getStatus();
@@ -626,7 +626,7 @@ public class TestQueryService extends LensJerseyTest {
       .request().get(LensQuery.class);
     // wait till the query finishes
     QueryStatus stat = ctx1.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx1 = target().path("queryapi/queries").path(handle1.toString()).queryParam("sessionid", lensSessionId)
         .request().get(LensQuery.class);
       stat = ctx1.getStatus();
@@ -638,7 +638,7 @@ public class TestQueryService extends LensJerseyTest {
       .request().get(LensQuery.class);
     // wait till the query finishes
     stat = ctx2.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx2 = target().path("queryapi/queries").path(handle1.toString()).queryParam("sessionid", lensSessionId)
         .request().get(LensQuery.class);
       stat = ctx2.getStatus();
@@ -697,7 +697,7 @@ public class TestQueryService extends LensJerseyTest {
 
     // wait till the query finishes
     QueryStatus stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       switch (stat.getStatus()) {
@@ -760,7 +760,7 @@ public class TestQueryService extends LensJerseyTest {
     ctx = target.path(handle3.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
     // wait till the query finishes
     stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle3.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       Thread.sleep(1000);
@@ -981,7 +981,7 @@ public class TestQueryService extends LensJerseyTest {
 
     // wait till the query finishes
     QueryStatus stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       Thread.sleep(1000);
@@ -1036,7 +1036,7 @@ public class TestQueryService extends LensJerseyTest {
 
     // wait till the query finishes
     QueryStatus stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(dropHandle.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       Thread.sleep(1000);
@@ -1066,7 +1066,7 @@ public class TestQueryService extends LensJerseyTest {
 
     // wait till the query finishes
     stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       Thread.sleep(1000);
@@ -1091,7 +1091,7 @@ public class TestQueryService extends LensJerseyTest {
 
     // wait till the query finishes
     stat = ctx.getStatus();
-    while (!stat.isFinished()) {
+    while (!stat.finished()) {
       ctx = target.path(handle2.toString()).queryParam("sessionid", lensSessionId).request().get(LensQuery.class);
       stat = ctx.getStatus();
       Thread.sleep(1000);
@@ -1291,6 +1291,22 @@ public class TestQueryService extends LensJerseyTest {
     Assert.assertEquals(queryService.getSession(lensSessionId).getHiveConf().getClassLoader(),
       ctx.getDriverContext().getDriverConf(queryService.getDrivers().iterator().next()).getClassLoader());
     Assert.assertTrue(ctx.isDriverQueryExplicitlySet());
+    for (LensDriver driver : queryService.getDrivers()) {
+      Configuration dconf = ctx.getDriverConf(driver);
+      Assert.assertEquals(dconf.get("test.session.key"), "svalue");
+      // query specific conf
+      Assert.assertEquals(dconf.get("test.query.conf"), "qvalue");
+      // lenssession default should be loaded
+      Assert.assertNotNull(dconf.get("lens.query.enable.persistent.resultset"));
+      // lens site should be loaded
+      Assert.assertEquals(dconf.get("test.lens.site.key"), "gsvalue");
+      // hive default variables should not be set
+      Assert.assertNull(conf.get("hive.exec.local.scratchdir"));
+      // driver site should be loaded
+      Assert.assertEquals(dconf.get("lens.driver.test.key"), "set");
+      // core default should not be loaded
+      Assert.assertNull(dconf.get("fs.default.name"));
+    }
   }
 
   /**
@@ -1515,5 +1531,21 @@ public class TestQueryService extends LensJerseyTest {
         "lens.MethodMetricGauge.TestQueryService-testEstimateGauges-JDBCDriver-RewriteUtil-rewriteQuery",
         "lens.MethodMetricGauge.TestQueryService-testEstimateGauges-PARALLEL_ESTIMATE")),
       reg.getGauges().keySet().toString());
+  }
+  @Test
+  public void testQueryRejection() throws InterruptedException, IOException {
+    final WebTarget target = target().path("queryapi/queries");
+
+    final FormDataMultiPart mp = new FormDataMultiPart();
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), lensSessionId,
+      MediaType.APPLICATION_XML_TYPE));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("query").build(), "blah select ID from "
+      + TEST_TABLE));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("operation").build(), "execute"));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("conf").fileName("conf").build(), new LensConf(),
+      MediaType.APPLICATION_XML_TYPE));
+
+    Response response = target.request().post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE));
+    Assert.assertEquals(response.getStatus(), 400);
   }
 }

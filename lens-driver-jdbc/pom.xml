@@ -25,7 +25,11 @@
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
+<<<<<<< HEAD
     <version>2.1.7-inm-SNAPSHOT</version>
+=======
+    <version>2.2.0-beta-incubating-SNAPSHOT</version>
+>>>>>>> d837cfedec8095d8dc1b123fc8dd0ce72d64e702
   </parent>
 
   <artifactId>lens-driver-jdbc</artifactId>

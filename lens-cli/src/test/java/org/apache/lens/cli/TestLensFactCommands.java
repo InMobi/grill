@@ -19,8 +19,12 @@
 package org.apache.lens.cli;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.ws.rs.NotFoundException;
+
+import org.apache.lens.cli.commands.LensCubeCommands;
 import org.apache.lens.cli.commands.LensFactCommands;
 import org.apache.lens.client.LensClient;
 
@@ -42,6 +46,7 @@ public class TestLensFactCommands extends LensCliApplicationTest {
 
   /** The command. */
   private static LensFactCommands command = null;
+  private static LensCubeCommands cubeCommands = null;
 
   /**
    * Test fact commands.
@@ -49,12 +54,25 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    * @throws IOException
    */
   @Test
-  public void testFactCommands() throws IOException {
+  public void testFactCommands() throws IOException, URISyntaxException {
+    createSampleCube();
     addFact1Table();
     updateFact1Table();
     testFactStorageActions();
     testFactPartitionActions();
     dropFact1Table();
+    dropSampleCube();
+  }
+
+  private void createSampleCube() throws URISyntaxException {
+    URL cubeSpec = TestLensCubeCommands.class.getClassLoader().getResource("sample-cube.xml");
+    String cubeList = getCubeCommand().showCubes();
+    Assert.assertFalse(cubeList.contains("sample_cube"));
+    getCubeCommand().createCube(new File(cubeSpec.toURI()).getAbsolutePath());
+  }
+
+  private void dropSampleCube() {
+    getCubeCommand().dropCube("sample_cube");
   }
 
   private static LensFactCommands getCommand() {
@@ -66,6 +84,15 @@ public class TestLensFactCommands extends LensCliApplicationTest {
     return command;
   }
 
+  private static LensCubeCommands getCubeCommand() {
+    if (cubeCommands == null) {
+      LensClient client = new LensClient();
+      cubeCommands = new LensCubeCommands();
+      cubeCommands.setClient(client);
+    }
+    return cubeCommands;
+  }
+
   /**
    * Adds the fact1 table.
    *
@@ -73,7 +100,8 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    */
   public static void addFact1Table() throws IOException {
     LensFactCommands command = getCommand();
-    String factList = command.showFacts();
+    String factList = command.showFacts(null);
+    Assert.assertEquals(command.showFacts("sample_cube"), factList);
     Assert.assertEquals("No Facts Found", factList, "Fact tables should not be found");
     // add local storage before adding fact table
     TestLensStorageCommands.addLocalStorage(FACT_LOCAL);
@@ -83,7 +111,20 @@ public class TestLensFactCommands extends LensCliApplicationTest {
     } catch (Exception e) {
       Assert.fail("Unable to create fact table" + e.getMessage());
     }
-    factList = command.showFacts();
+    factList = command.showFacts(null);
+    Assert.assertEquals(command.showFacts("sample_cube"), factList);
+    try {
+      Assert.assertEquals(command.showFacts("blah"), factList);
+      Assert.fail();
+    } catch (NotFoundException e) {
+      LOG.info("blah is not a table", e);
+    }
+    try {
+      Assert.assertEquals(command.showFacts("fact1"), factList);
+      Assert.fail();
+    } catch (NotFoundException e) {
+      LOG.info("fact1 is a table, but not a cube table", e);
+    }
     Assert.assertEquals("fact1", factList, "Fact1 table should be found");
   }
 
@@ -199,9 +240,26 @@ public class TestLensFactCommands extends LensCliApplicationTest {
       Assert.fail("Unable to locate the storage part file for adding new storage to fact table fact1");
     }
     verifyAndDeletePartitions();
+
+    // Wrong files:
+    try {
+      command.addPartitionToFact("fact1 " + FACT_LOCAL + " " + new File(
+        TestLensFactCommands.class.getClassLoader().getResource("fact1-local-parts.xml").toURI()).getAbsolutePath());
+      Assert.fail("Should fail");
+    } catch (Throwable t) {
+      // pass
+    }
+    try {
+      command.addPartitionsToFact("fact1 " + FACT_LOCAL + " " + new File(
+        TestLensFactCommands.class.getClassLoader().getResource("fact1-local-part.xml").toURI()).getAbsolutePath());
+      Assert.fail("Should fail");
+    } catch (Throwable t) {
+      // pass
+    }
   }
 
   private void verifyAndDeletePartitions() {
+    Assert.assertEquals(getCubeCommand().getLatest("sample_cube dt"), "2014-03-27T12:00:00:000");
     String result = command.getAllPartitionsOfFact("fact1 " + FACT_LOCAL);
     Assert.assertTrue(result.contains("HOURLY"));
     String dropPartitionsStatus = command.dropAllPartitionsOfFact("fact1 " + FACT_LOCAL);
@@ -215,10 +273,10 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    */
   public static void dropFact1Table() {
     LensFactCommands command = getCommand();
-    String factList = command.showFacts();
+    String factList = command.showFacts(null);
     Assert.assertEquals("fact1", factList, "Fact1 table should be found");
     command.dropFact("fact1", false);
-    factList = command.showFacts();
+    factList = command.showFacts(null);
     Assert.assertEquals("No Facts Found", factList, "Fact tables should not be found");
     TestLensStorageCommands.dropStorage(FACT_LOCAL);
   }

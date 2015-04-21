@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
@@ -39,6 +40,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.lens.api.APIResult;
 import org.apache.lens.api.APIResult.Status;
+import org.apache.lens.api.DateTime;
 import org.apache.lens.api.StringList;
 import org.apache.lens.api.metastore.*;
 
@@ -186,23 +188,22 @@ public class LensMetadataClient {
     return result;
   }
 
-  private Object readFromXML(String filename) throws JAXBException, IOException {
+  private <T> T readFromXML(String filename) throws JAXBException, IOException {
     if (filename.startsWith("/")) {
-      return ((JAXBElement) JAXB_UNMARSHALLER.unmarshal(new File(filename))).getValue();
+      return ((JAXBElement<T>) JAXB_UNMARSHALLER.unmarshal(new File(filename))).getValue();
     } else {
       // load from classpath
       InputStream file = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
       if (file == null) {
         throw new IOException("File not found:" + filename);
       }
-      return ((JAXBElement) JAXB_UNMARSHALLER.unmarshal(file)).getValue();
+      return ((JAXBElement<T>) JAXB_UNMARSHALLER.unmarshal(file)).getValue();
     }
   }
 
   public APIResult createCube(String cubeSpec) {
-    XCube cube;
     try {
-      cube = (XCube) readFromXML(cubeSpec);
+      return createCube(this.<XCube>readFromXML(cubeSpec));
     } catch (JAXBException e) {
       LOG.info("Unmarshalling error:", e);
       return new APIResult(Status.FAILED, "Unmarshalling failed");
@@ -210,7 +211,6 @@ public class LensMetadataClient {
       LOG.info("File error:", e);
       return new APIResult(Status.FAILED, "File not found");
     }
-    return createCube(cube);
   }
 
   public APIResult updateCube(String cubeName, XCube cube) {
@@ -223,9 +223,8 @@ public class LensMetadataClient {
   }
 
   public APIResult updateCube(String cubeName, String cubeSpec) {
-    XCube cube;
     try {
-      cube = (XCube) readFromXML(cubeSpec);
+      return updateCube(cubeName, this.<XCube>readFromXML(cubeSpec));
     } catch (JAXBException e) {
       LOG.info("Unmarshalling error:", e);
       return new APIResult(Status.FAILED, "Unmarshalling failed");
@@ -233,7 +232,6 @@ public class LensMetadataClient {
       LOG.info("File error:", e);
       return new APIResult(Status.FAILED, "File not found");
     }
-    return updateCube(cubeName, cube);
   }
 
   public XCube getCube(String cubeName) {
@@ -279,12 +277,15 @@ public class LensMetadataClient {
   }
 
   public APIResult createDimension(String dimSpec) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("dimensions")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(dimSpec)), APIResult.class);
-    return result;
+    try {
+      return createDimension(this.<XDimension>readFromXML(dimSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public APIResult updateDimension(String dimName, XDimension dimension) {
@@ -297,12 +298,15 @@ public class LensMetadataClient {
   }
 
   public APIResult updateDimension(String dimName, String dimSpec) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("dimensions").path(dimName)
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .put(Entity.xml(getContent(dimSpec)), APIResult.class);
-    return result;
+    try {
+      return updateDimension(dimName, this.<XDimension>readFromXML(dimSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public XDimension getDimension(String dimName) {
@@ -342,12 +346,15 @@ public class LensMetadataClient {
 
 
   public APIResult createNewStorage(String storage) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("storages")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(storage)), APIResult.class);
-    return result;
+    try {
+      return createNewStorage(this.<XStorage>readFromXML(storage));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public APIResult dropAllStorages() {
@@ -369,12 +376,15 @@ public class LensMetadataClient {
   }
 
   public APIResult updateStorage(String storageName, String storage) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("storages").path(storageName)
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .put(Entity.xml(getContent(storage)), APIResult.class);
-    return result;
+    try {
+      return updateStorage(storageName, this.<XStorage>readFromXML(storage));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public XStorage getStorage(String storageName) {
@@ -396,24 +406,30 @@ public class LensMetadataClient {
     return result;
   }
 
-  public List<XFactTable> getAllFactTables(String cubeName) {
+  public List<String> getAllFactTables(String cubeName) {
+    if (cubeName == null) {
+      return getAllFactTables();
+    }
     WebTarget target = getMetastoreWebTarget();
-    List<XFactTable> factTables = target.path("cubes").path(cubeName).path("facts")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .get(new GenericType<List<XFactTable>>() {
-      });
-    return factTables;
-  }
-
-  public List<String> getAllFactTables() {
-    WebTarget target = getMetastoreWebTarget();
-    StringList factTables = target.path("facts")
+    StringList factTables;
+    factTables = target.path("cubes").path(cubeName).path("facts")
       .queryParam("sessionid", this.connection.getSessionHandle())
       .request(MediaType.APPLICATION_XML)
       .get(StringList.class);
     return factTables.getElements();
   }
+
+  public List<String> getAllFactTables() {
+    WebTarget target = getMetastoreWebTarget();
+    StringList factTables;
+    factTables = target.path("facts")
+      .queryParam("sessionid", this.connection.getSessionHandle())
+      .request(MediaType.APPLICATION_XML)
+      .get(StringList.class);
+
+    return factTables.getElements();
+  }
+
 
   public APIResult deleteAllFactTables(boolean cascade) {
     WebTarget target = getMetastoreWebTarget();
@@ -452,18 +468,15 @@ public class LensMetadataClient {
   }
 
   public APIResult createFactTable(String factSpec) {
-    WebTarget target = getMetastoreWebTarget();
-    FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid")
-      .build(), this.connection.getSessionHandle(), MediaType.APPLICATION_XML_TYPE));
-    mp.bodyPart(new FormDataBodyPart(
-      FormDataContentDisposition.name("fact").fileName("fact").build(),
-      getContent(factSpec), MediaType.APPLICATION_XML_TYPE));
-    APIResult result = target.path("facts")
-      .request(MediaType.APPLICATION_XML_TYPE)
-      .post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE),
-        APIResult.class);
-    return result;
+    try {
+      return createFactTable(this.<XFactTable>readFromXML(factSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   private String getContent(String path) {
@@ -499,12 +512,15 @@ public class LensMetadataClient {
   }
 
   public APIResult updateFactTable(String factName, String table) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("facts").path(factName)
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML_TYPE)
-      .put(Entity.xml(getContent(table)), APIResult.class);
-    return result;
+    try {
+      return updateFactTable(factName, this.<XFactTable>readFromXML(table));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public APIResult dropFactTable(String factName, boolean cascade) {
@@ -548,13 +564,16 @@ public class LensMetadataClient {
     return result;
   }
 
-  public APIResult addStorageToFactTable(String factname, String storage) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("facts").path(factname).path("storages")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(storage)), APIResult.class);
-    return result;
+  public APIResult addStorageToFactTable(String factname, String storageSpec) {
+    try {
+      return addStorageToFactTable(factname, this.<XStorageTableElement>readFromXML(storageSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public APIResult dropStorageFromFactTable(String factName, String storageName) {
@@ -623,9 +642,23 @@ public class LensMetadataClient {
   }
 
 
+  public List<String> getAllDimensionTables(String dimensionName) {
+    if (dimensionName == null) {
+      return getAllDimensionTables();
+    }
+    WebTarget target = getMetastoreWebTarget();
+    StringList dimtables;
+    dimtables = target.path("dimensions").path(dimensionName).path("dimtables")
+      .queryParam("sessionid", this.connection.getSessionHandle())
+      .request(MediaType.APPLICATION_XML)
+      .get(StringList.class);
+    return dimtables.getElements();
+  }
+
   public List<String> getAllDimensionTables() {
     WebTarget target = getMetastoreWebTarget();
-    StringList dimtables = target.path("dimtables")
+    StringList dimtables;
+    dimtables = target.path("dimtables")
       .queryParam("sessionid", this.connection.getSessionHandle())
       .request(MediaType.APPLICATION_XML)
       .get(StringList.class);
@@ -649,19 +682,15 @@ public class LensMetadataClient {
   }
 
   public APIResult createDimensionTable(String tableXml) {
-    WebTarget target = getMetastoreWebTarget();
-
-    FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(),
-      this.connection.getSessionHandle(), MediaType.APPLICATION_XML_TYPE));
-    mp.bodyPart(new FormDataBodyPart(
-      FormDataContentDisposition.name("dimensionTable").fileName("dimtable").build(),
-      getContent(tableXml), MediaType.APPLICATION_XML_TYPE));
-
-    APIResult result = target.path("dimtables")
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), APIResult.class);
-    return result;
+    try {
+      return createDimensionTable(this.<XDimensionTable>readFromXML(tableXml));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
 
@@ -676,12 +705,18 @@ public class LensMetadataClient {
   }
 
   public APIResult updateDimensionTable(String dimTblName, String dimSpec) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("dimtables").path(dimTblName)
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .put(Entity.xml(getContent(dimSpec)), APIResult.class);
-    return result;
+    try {
+      XDimensionTable dimensionTable = readFromXML(dimSpec);
+      dimensionTable.setTableName(dimTblName);
+      return updateDimensionTable(dimensionTable);
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
+
   }
 
   public APIResult dropDimensionTable(String table, boolean cascade) {
@@ -728,12 +763,15 @@ public class LensMetadataClient {
   }
 
   public APIResult addStorageToDimTable(String dimTblName, String table) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("dimtables").path(dimTblName).path("storages")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(table)), APIResult.class);
-    return result;
+    try {
+      return addStorageToDimTable(dimTblName, this.<XStorageTableElement>readFromXML(table));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public XStorageTableElement getStorageOfDimensionTable(String dimTblName, String storage) {
@@ -825,15 +863,18 @@ public class LensMetadataClient {
   }
 
   public APIResult addPartitionToDimensionTable(String dimTblName, String storage,
-    String partition) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("dimtables").path(dimTblName)
-      .path("storages").path(storage).path("partition")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(partition)), APIResult.class);
-    return result;
+    String partitionSpec) {
+    try {
+      return addPartitionToDimensionTable(dimTblName, storage, (XPartition) readFromXML(partitionSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
+
   public APIResult addPartitionsToDimensionTable(String dimTblName, String storage,
     XPartitionList partitions) {
     WebTarget target = getMetastoreWebTarget();
@@ -846,14 +887,16 @@ public class LensMetadataClient {
   }
 
   public APIResult addPartitionsToDimensionTable(String dimTblName, String storage,
-    String partitions) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("dimtables").path(dimTblName)
-      .path("storages").path(storage).path("partitions")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(partitions)), APIResult.class);
-    return result;
+    String partitionsSpec) {
+    try {
+      return addPartitionsToDimensionTable(dimTblName, storage, (XPartitionList) readFromXML(partitionsSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
 
   public APIResult addPartitionToFactTable(String fact, String storage,
@@ -868,15 +911,18 @@ public class LensMetadataClient {
   }
 
   public APIResult addPartitionToFactTable(String fact, String storage,
-    String partition) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("facts").path(fact)
-      .path("storages").path(storage).path("partition")
-      .queryParam("sessionid", this.connection.getSessionHandle())
-      .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(partition)), APIResult.class);
-    return result;
+    String partitionSpec) {
+    try {
+      return addPartitionToFactTable(fact, storage, (XPartition) readFromXML(partitionSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
   }
+
   public APIResult addPartitionsToFactTable(String fact, String storage,
     XPartitionList partitions) {
     WebTarget target = getMetastoreWebTarget();
@@ -889,13 +935,23 @@ public class LensMetadataClient {
   }
 
   public APIResult addPartitionsToFactTable(String fact, String storage,
-    String partitions) {
-    WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("facts").path(fact)
-      .path("storages").path(storage).path("partitions")
+    String partitionsSpec) {
+    try {
+      return addPartitionsToFactTable(fact, storage, (XPartitionList) readFromXML(partitionsSpec));
+    } catch (JAXBException e) {
+      LOG.info("Unmarshalling error:", e);
+      return new APIResult(Status.FAILED, "Unmarshalling failed");
+    } catch (IOException e) {
+      LOG.info("File error:", e);
+      return new APIResult(Status.FAILED, "File not found");
+    }
+  }
+
+  public Date getLatestDateOfCube(String cubeName, String timePartition) {
+    return getMetastoreWebTarget().path("cubes").path(cubeName).path("latestdate")
+      .queryParam("timeDimension", timePartition)
       .queryParam("sessionid", this.connection.getSessionHandle())
       .request(MediaType.APPLICATION_XML)
-      .post(Entity.xml(getContent(partitions)), APIResult.class);
-    return result;
+      .get(DateTime.class).getDate();
   }
 }

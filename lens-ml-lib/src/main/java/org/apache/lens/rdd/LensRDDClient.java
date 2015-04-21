@@ -182,7 +182,7 @@ public class LensRDDClient {
    */
   public boolean isReadyForRDD(QueryHandle queryHandle) throws LensException {
     QueryStatus status = getClient().getQueryStatus(queryHandle);
-    return status.isFinished();
+    return status.finished();
   }
 
   /**
@@ -204,7 +204,7 @@ public class LensRDDClient {
    */
   public LensRDDResult getRDD(QueryHandle queryHandle) throws LensException {
     QueryStatus status = getClient().getQueryStatus(queryHandle);
-    if (!status.isFinished() && !status.isResultSetAvailable()) {
+    if (!status.finished() && !status.isResultSetAvailable()) {
       throw new LensException(queryHandle.getHandleId() + " query not finished or result unavailable");
     }
 
@@ -373,8 +373,8 @@ public class LensRDDClient {
         try {
           JavaPairRDD<WritableComparable, HCatRecord> javaPairRDD = HiveTableRDD.createHiveTableRDD(sparkContext,
             HIVE_CONF, "default", tempTableName, TEMP_TABLE_PART_COL + "='" + TEMP_TABLE_PART_VAL + "'");
-          LOG.info("Created RDD " + resultRDD.name() + " for table " + tempTableName);
           resultRDD = javaPairRDD.map(new HCatRecordToObjectListMapper()).rdd();
+          LOG.info("Created RDD " + resultRDD.name() + " for table " + tempTableName);
         } catch (IOException e) {
           throw new LensException("Error creating RDD for table " + tempTableName, e);
         }

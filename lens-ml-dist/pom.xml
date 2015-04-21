@@ -26,7 +26,7 @@
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
-    <version>2.1.7-inm-SNAPSHOT</version>
+    <version>2.2.0-inm-SNAPSHOT</version>
   </parent>
     
   <artifactId>lens-ml-dist</artifactId>
@@ -37,6 +37,46 @@
       <groupId>org.apache.lens</groupId>
       <artifactId>lens-ml-lib</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.lens</groupId>
+          <artifactId>lens-server-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lens</groupId>
+          <artifactId>lens-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lens</groupId>
+          <artifactId>lens-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.glassfish.jersey.media</groupId>
+          <artifactId>jersey-media-multipart</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+          <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.glassfish.jersey.test-framework</groupId>
+          <artifactId>jersey-test-framework-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+      </exclusions>
+
     </dependency>
   </dependencies>
 

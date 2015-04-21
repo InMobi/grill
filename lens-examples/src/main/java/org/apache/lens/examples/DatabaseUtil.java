@@ -39,7 +39,7 @@ public final class DatabaseUtil {
    *
    * @throws Exception the exception
    */
-  public static void initalizeDatabaseStorage() throws Exception {
+  public static void initializeDatabaseStorage() throws Exception {
 
     try {
       Class.forName("org.hsqldb.jdbcDriver");
@@ -52,7 +52,7 @@ public final class DatabaseUtil {
     Statement statement = con.createStatement();
 
     InputStream file = DatabaseUtil.class.getClassLoader().getResourceAsStream("db-storage-schema.sql");
-    BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(file, "UTF-8"));
     String line;
     while ((line = reader.readLine()) != null) {
       if (line.trim().equals("") || line.startsWith("--")) {
@@ -72,6 +72,6 @@ public final class DatabaseUtil {
    * @throws Exception the exception
    */
   public static void main(String[] args) throws Exception {
-    DatabaseUtil.initalizeDatabaseStorage();
+    DatabaseUtil.initializeDatabaseStorage();
   }
 }

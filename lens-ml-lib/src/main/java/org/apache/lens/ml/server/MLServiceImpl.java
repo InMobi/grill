@@ -29,7 +29,6 @@ import org.apache.lens.api.query.QueryHandle;
 import org.apache.lens.api.query.QueryStatus;
 import org.apache.lens.ml.algo.api.*;
 import org.apache.lens.ml.api.MLTestReport;
-import org.apache.lens.ml.impl.HiveMLUDF;
 import org.apache.lens.ml.impl.LensMLImpl;
 import org.apache.lens.ml.impl.ModelLoader;
 import org.apache.lens.ml.impl.QueryRunner;
@@ -41,7 +40,6 @@ import org.apache.lens.server.api.query.QueryExecutionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.ql.exec.FunctionRegistry;
 import org.apache.hive.service.CompositeService;
 
 /**
@@ -284,8 +282,6 @@ public class MLServiceImpl extends CompositeService implements MLService {
      */
     @Override
     public QueryHandle runQuery(String testQuery) throws LensException {
-      FunctionRegistry.registerTemporaryFunction("predict", HiveMLUDF.class);
-      LOG.info("Registered predict UDF");
       // Run the query in query executions service
       QueryExecutionService queryService = (QueryExecutionService) getServiceProvider().getService("query");
 
@@ -298,7 +294,7 @@ public class MLServiceImpl extends CompositeService implements MLService {
       // Wait for test query to complete
       LensQuery query = queryService.getQuery(sessionHandle, testQueryHandle);
       LOG.info("Submitted query " + testQueryHandle.getHandleId());
-      while (!query.getStatus().isFinished()) {
+      while (!query.getStatus().finished()) {
         try {
           Thread.sleep(500);
         } catch (InterruptedException e) {

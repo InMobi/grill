@@ -964,7 +964,7 @@ public class CubeTestSetup {
     client.clearHiveTableCache();
     table = client.getTable(MetastoreUtil.getStorageTableName(fact.getName(),
       Storage.getPrefix(c4)));
-    Assert.assertEquals(table.getParameters().get(MetastoreUtil.getPartitoinTimelineCachePresenceKey()), "true");
+    Assert.assertEquals(table.getParameters().get(MetastoreUtil.getPartitionTimelineCachePresenceKey()), "true");
     Assert.assertEquals(table.getParameters().get(MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.DAILY,
         "ttd")),
       EndsAndHolesPartitionTimeline.class.getCanonicalName());
@@ -1001,10 +1001,10 @@ public class CubeTestSetup {
     Assert.assertEquals(table.getParameters().get(
         MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.YEARLY, "ttd2")),
       EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
+    Assert.assertEquals(MetastoreUtil.getNamedStringValue(table.getParameters(),
         MetastoreUtil.getPartitionInfoKeyPrefix(UpdatePeriod.HOURLY, "ttd") + "partitions"),
       StringUtils.join(partitions, ","));
-    Assert.assertEquals(table.getParameters().get(
+    Assert.assertEquals(MetastoreUtil.getNamedStringValue(table.getParameters(),
         MetastoreUtil.getPartitionInfoKeyPrefix(UpdatePeriod.HOURLY, "ttd2") + "partitions"),
       StringUtils.join(partitions, ","));
     // Add all hourly partitions for TWO_DAYS_RANGE_BEFORE_4_DAYS
@@ -1776,6 +1776,20 @@ public class CubeTestSetup {
     storageTables.put(c1, s1);
 
     client.createCubeDimensionTable(dimName, dimTblName, dimColumns, 0L, dumpPeriods, dimProps, storageTables);
+    dimTblName = "countrytable_partitioned";
+
+    StorageTableDesc s2 = new StorageTableDesc();
+    s2.setInputFormat(TextInputFormat.class.getCanonicalName());
+    s2.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
+    ArrayList<FieldSchema> partCols = Lists.newArrayList();
+    partCols.add(dimColumns.remove(dimColumns.size() - 2));
+    s2.setPartCols(partCols);
+    dumpPeriods.clear();
+    dumpPeriods.put(c3, UpdatePeriod.HOURLY);
+    storageTables.clear();
+    storageTables.put(c3, s2);
+    dimProps.put(MetastoreUtil.getDimTablePartsKey(dimTblName), partCols.get(0).getName());
+    client.createCubeDimensionTable(dimName, dimTblName, dimColumns, 0L, dumpPeriods, dimProps, storageTables);
   }
 
   private void createStateTable(CubeMetastoreClient client) throws Exception {
@@ -1813,6 +1827,22 @@ public class CubeTestSetup {
     Map<String, StorageTableDesc> storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c1, s1);
 
+    client.createCubeDimensionTable(dimName, dimTblName, dimColumns, 0L, dumpPeriods, dimProps, storageTables);
+
+    // In this, country id will be a partition
+    dimTblName = "statetable_partitioned";
+
+    StorageTableDesc s2 = new StorageTableDesc();
+    s2.setInputFormat(TextInputFormat.class.getCanonicalName());
+    s2.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
+    partCols.add(dimColumns.remove(dimColumns.size() - 1));
+    s2.setPartCols(partCols);
+    s2.setTimePartCols(timePartCols);
+    dumpPeriods.clear();
+    dumpPeriods.put(c3, UpdatePeriod.HOURLY);
+    storageTables.clear();
+    storageTables.put(c3, s2);
+    dimProps.put(MetastoreUtil.getDimTablePartsKey(dimTblName), partCols.get(1).getName());
     client.createCubeDimensionTable(dimName, dimTblName, dimColumns, 0L, dumpPeriods, dimProps, storageTables);
   }
 
@@ -2045,7 +2075,7 @@ public class CubeTestSetup {
       for (String p : Arrays.asList("et", "it", "pt")) {
         String first = params.get(prefix + up + "." + p + "." + "first");
         String latest = params.get(prefix + up + "." + p + "." + "latest");
-        String holes = params.get(prefix + up + "." + p + "." + "holes");
+        String holes = MetastoreUtil.getNamedStringValue(params, prefix + up + "." + p + "." + "holes");
         String storageClass = params.get(prefix + up + "." + p + "." + "storage.class");
         Assert.assertNotNull(first);
         Assert.assertNotNull(latest);

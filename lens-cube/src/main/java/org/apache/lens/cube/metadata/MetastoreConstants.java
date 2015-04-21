@@ -42,6 +42,7 @@ public final class MetastoreConstants {
   // Uber dimension constants
   public static final String DIMENSION_PFX = "dimension.";
   public static final String ATTRIBUTES_LIST_SFX = ".attributes.list";
+  public static final String PARTCOLS_SFX = ".part.cols";
   public static final String TIMED_DIMENSION_SFX = ".timed.dimension";
 
   // fact constants
@@ -52,7 +53,9 @@ public final class MetastoreConstants {
   public static final String FACT_AGGREGATED_PROPERTY = "cube.fact.is.aggregated";
 
   // dim table constants
+  // TODO: remove this and move to "dimtable."
   public static final String DIM_TBL_PFX = "dimtble.";
+  public static final String DIM_TABLE_PFX = "dimtable.";
   public static final String DUMP_PERIOD_SFX = ".dumpperiod";
   public static final String STORAGE_LIST_SFX = ".storages";
   public static final String DIM_NAME_SFX = ".dim.name";
@@ -66,6 +69,7 @@ public final class MetastoreConstants {
   public static final String COST_SFX = ".cost";
   public static final String DESC_SFX = ".description";
   public static final String DISPLAY_SFX = ".displaystring";
+  public static final String NUM_DISTINCT_VALUES = ".num.distinct.values";
 
   // measure constants
   public static final String MEASURE_KEY_PFX = "cube.measure.";
