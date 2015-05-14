@@ -21,6 +21,8 @@ package org.apache.lens.cube.parse;
 
 import java.io.IOException;
 
+import org.apache.lens.server.api.error.LensException;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.parse.ParseException;
@@ -42,6 +44,16 @@ public abstract class TestQueryRewrite {
   private static CubeTestSetup setup;
   private static HiveConf hconf = new HiveConf(TestQueryRewrite.class);
 
+  public Configuration getConf() {
+    return hconf;
+  }
+
+  public Configuration getConfWithStorages(String storages) {
+    Configuration conf = new Configuration(getConf());
+    conf.set(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES, storages);
+    return conf;
+  }
+
   @BeforeSuite
   public static void setup() throws Exception {
     SessionState.start(hconf);
@@ -60,13 +72,14 @@ public abstract class TestQueryRewrite {
     SessionState.get().setCurrentDatabase(TestQueryRewrite.class.getSimpleName());
   }
 
-  protected String rewrite(String query, Configuration conf) throws SemanticException, ParseException {
+  protected String rewrite(String query, Configuration conf) throws SemanticException, ParseException, LensException {
     String rewrittenQuery = rewriteCtx(query, conf).toHQL();
     log.info("Rewritten query: {}", rewrittenQuery);
     return rewrittenQuery;
   }
 
-  protected CubeQueryContext rewriteCtx(String query, Configuration conf) throws SemanticException, ParseException {
+  protected CubeQueryContext rewriteCtx(String query, Configuration conf)
+    throws SemanticException, ParseException, LensException {
     log.info("User query: {}", query);
     CubeQueryRewriter driver = new CubeQueryRewriter(conf, hconf);
     return driver.rewrite(query);
@@ -82,7 +95,8 @@ public abstract class TestQueryRewrite {
     }
   }
 
-  protected SemanticException getSemanticExceptionInRewrite(String query, Configuration conf) throws ParseException {
+  protected SemanticException getSemanticExceptionInRewrite(String query, Configuration conf)
+    throws ParseException, LensException {
     try {
       String hql = rewrite(query, conf);
       Assert.fail("Should have thrown exception. But rewrote the query : " + hql);

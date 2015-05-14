@@ -28,12 +28,12 @@
     <dim_attribute name="age" type="INT" />
     <dim_attribute name="city_id" type="INT" />
     <dim_attribute name="customer_city_name" type="string" description="City name to which the customer belongs"
-      displayString=" Customer City">
+      display_string="Customer City">
       <ref_spec>
         <chain_ref_column chain_name="customer_city" ref_col="name" />
       </ref_spec>
     </dim_attribute>
-    <dim_attribute name="customer_credit_status" type="STRING" start_time='2015-03-01-00:00'/>
+    <dim_attribute name="customer_credit_status" type="STRING" start_time='2015-03-01T00:00:00'/>
   </attributes>
   <join_chains>
     <join_chain name="customer_city">

@@ -23,11 +23,11 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.lens.api.LensException;
 import org.apache.lens.cube.metadata.Storage.LatestInfo;
 import org.apache.lens.cube.metadata.Storage.LatestPartColumnInfo;
 import org.apache.lens.cube.metadata.timeline.PartitionTimeline;
 import org.apache.lens.cube.metadata.timeline.PartitionTimelineFactory;
+import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -230,6 +230,12 @@ public class CubeMetastoreClient {
       for (Partition partition : getPartitionsByFilter(storageTableName, null)) {
         UpdatePeriod period = deduceUpdatePeriod(partition);
         List<String> values = partition.getValues();
+        if (values.contains(StorageConstants.LATEST_PARTITION_VALUE)) {
+          log.info("dropping latest partition from fact storage table: " + storageTableName
+            + ". Spec: " + partition.getSpec());
+          getClient().dropPartition(storageTableName, values, false);
+          continue;
+        }
         for (int i = 0; i < partCols.size(); i++) {
           if (timeParts.contains(partCols.get(i).getName())) {
             addForBatchAddition(storageTableName, period, partCols.get(i).getName(), values.get(i));

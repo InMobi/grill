@@ -18,7 +18,10 @@
  */
 package org.apache.lens.cube.parse;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.lens.cube.metadata.CubeInterface;
 import org.apache.lens.cube.metadata.DerivedCube;
@@ -124,7 +127,7 @@ public class FieldValidator implements ContextRewriter {
             // this 'tabName' is a join chain, so add all source columns
             chainSourceColumns.addAll(cubeql.getJoinchains().get(tabName).getSourceColumns());
             nonQueryableColumns.add(tabName + "." + colName);
-          } else if (tabName.equalsIgnoreCase(cubeql.getAliasForTabName(cube.getName()))
+          } else if (tabName.equalsIgnoreCase(cubeql.getAliasForTableName(cube.getName()))
             && cube.getDimAttributeNames().contains(colName)) {
             // Alternatively, check if this is a dimension attribute, if yes add it to the dim attribute set
             // and non queryable fields set

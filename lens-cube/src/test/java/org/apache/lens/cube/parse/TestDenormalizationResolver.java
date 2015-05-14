@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
+import org.apache.lens.server.api.error.LensException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.ParseException;
@@ -51,7 +52,7 @@ public class TestDenormalizationResolver extends TestQueryRewrite {
   }
 
   @Test
-  public void testDenormsAsDirectFields() throws SemanticException, ParseException {
+  public void testDenormsAsDirectFields() throws SemanticException, ParseException, LensException {
     // denorm fields directly available
     String twoDaysITRange =
       "time_range_in(it, '" + CubeTestSetup.getDateUptoHours(TWODAYS_BACK) + "','"
@@ -60,7 +61,7 @@ public class TestDenormalizationResolver extends TestQueryRewrite {
     String expecteddim2big1 =
       getExpectedQuery(cubeName, "select testcube.dim2big1," + " max(testcube.msr3), sum(testcube.msr2) FROM ", null,
         " group by testcube.dim2big1", getWhereForDailyAndHourly2daysWithTimeDim(cubeName, "it", "C2_summary4"),
-        getNotLatestConditions(cubeName, "it", "C2_summary4"));
+        null);
     TestCubeRewriter.compareQueries(expecteddim2big1, hqlQuery);
     // with another table
     hqlQuery = rewrite("select dim2big1, citydim.name, max(msr3)," + " msr2 from testCube" + " where " + twoDaysITRange,
@@ -70,17 +71,15 @@ public class TestDenormalizationResolver extends TestQueryRewrite {
         + getDbName() + "c1_citytable citydim " + "on testcube.cityid = citydim.id and citydim.dt = 'latest' ", null,
       " group by testcube.dim2big1, citydim.name", null,
       getWhereForDailyAndHourly2daysWithTimeDim(cubeName, "it", "C2_summary4"),
-      getNotLatestConditions(cubeName, "it", "C2_summary4"));
+      null);
     TestCubeRewriter.compareQueries(expecteddim2big1WithAnotherTable, hqlQuery);
 
     hqlQuery = rewrite("select dim2big2, max(msr3)," + " msr2 from testCube" + " where " + twoDaysITRange, conf);
     String expecteddim2big2 =
       getExpectedQuery(cubeName, "select testcube.dim2big2, max(testcube.msr3), sum(testcube.msr2) FROM ", null,
         " group by testcube.dim2big2", getWhereForDailyAndHourly2daysWithTimeDim(cubeName, "it", "C2_summary4"),
-        getNotLatestConditions(cubeName, "it", "C2_summary4"));
+        null);
     TestCubeRewriter.compareQueries(expecteddim2big2, hqlQuery);
-    getSemanticExceptionInRewrite(
-      "select dim2bignew, max(msr3)," + " msr2 from testCube" + " where " + twoDaysITRange, conf);
 
     hqlQuery =
       rewrite("select testdim3.name, dim2big1, max(msr3)," + " msr2 from testCube" + " where " + twoDaysITRange, conf);
@@ -92,7 +91,7 @@ public class TestDenormalizationResolver extends TestQueryRewrite {
           + getDbName() + "c2_testdim3tbl testdim3 on " + "testdim2.testdim3id = testdim3.id", null,
         " group by testdim3.name, (testcube.dim2big1)", null,
         getWhereForDailyAndHourly2daysWithTimeDim(cubeName, "it", "C2_summary4"),
-        getNotLatestConditions(cubeName, "it", "C2_summary4"));
+        null);
     TestCubeRewriter.compareQueries(expected, hqlQuery);
 
     Configuration conf2 = new Configuration(conf);
@@ -104,7 +103,7 @@ public class TestDenormalizationResolver extends TestQueryRewrite {
   }
 
   @Test
-  public void testDenormsWithJoins() throws SemanticException, ParseException {
+  public void testDenormsWithJoins() throws SemanticException, ParseException, LensException {
     // all following queries use joins to get denorm fields
     Configuration tconf = new Configuration(this.conf);
     tconf.set(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES, "C1");

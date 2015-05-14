@@ -24,10 +24,10 @@ import java.util.UUID;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.lens.api.LensException;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.metastore.*;
 import org.apache.lens.server.LensServices;
+import org.apache.lens.server.api.error.LensException;
 import org.apache.lens.server.api.metastore.CubeMetastoreService;
 
 import org.apache.commons.logging.Log;
@@ -194,7 +194,7 @@ public class MetastoreUIResource {
         for (XExprColumn expr : table.getExpressions().getExpression()) {
           try {
             attribList.put(new JSONObject().put("name", expr.getName()).put("type", "expression")
-              .put("expression", expr.getExpr()));
+              .put("expression", expr.getExprSpec()));
           } catch (JSONException j) {
             LOG.error(j);
           }

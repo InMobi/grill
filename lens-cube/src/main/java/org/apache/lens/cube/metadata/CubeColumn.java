@@ -22,7 +22,16 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
+import org.apache.lens.cube.parse.TimeRange;
+
+import com.google.common.base.Optional;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public abstract class CubeColumn implements Named {
 
   private final String name;
@@ -36,7 +45,9 @@ public abstract class CubeColumn implements Named {
     new ThreadLocal<DateFormat>() {
       @Override
       protected SimpleDateFormat initialValue() {
-        return new SimpleDateFormat("yyyy-MM-dd-HH");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf;
       }
     };
 
@@ -51,12 +62,17 @@ public abstract class CubeColumn implements Named {
   }
 
   private Date getDate(String propKey, Map<String, String> props) {
-    String timeKey = props.get(propKey);
-    if (timeKey != null) {
+    String timeStr = props.get(propKey);
+    return getDate(timeStr);
+  }
+
+  protected Date getDate(String timeStr) {
+    if (timeStr != null) {
       try {
-        return COLUMN_TIME_FORMAT.get().parse(timeKey);
+        return COLUMN_TIME_FORMAT.get().parse(timeStr);
       } catch (Exception e) {
         // ignore and return null
+        log.warn("Column time passed:{} is not parsable, its ignored", timeStr, e);
       }
     }
     return null;
@@ -69,6 +85,7 @@ public abstract class CubeColumn implements Named {
         return Double.parseDouble(doubleStr);
       } catch (Exception e) {
         // ignore and return null
+        log.warn("Property {} value {} is not parsable, its ignored", propKey, doubleStr, e);
       }
     }
     return null;
@@ -101,6 +118,33 @@ public abstract class CubeColumn implements Named {
     return endTime;
   }
 
+  public Optional<Long> getStartTimeMillisSinceEpoch() {
+
+    if (startTime != null) {
+      return Optional.of(startTime.getTime());
+    }
+    return Optional.absent();
+  }
+
+  public Optional<Long> getEndTimeMillisSinceEpoch() {
+
+    if (endTime != null) {
+      return Optional.of(endTime.getTime());
+    }
+    return Optional.absent();
+  }
+
+  public boolean isColumnAvailableInTimeRange(final TimeRange range) {
+    return isColumnAvailableFrom(range.getFromDate()) && isColumnAvailableTill(range.getToDate());
+  }
+
+  public boolean isColumnAvailableFrom(@NonNull final Date date) {
+    return (getStartTime() == null) ? true : date.equals(getStartTime()) || date.after(getStartTime());
+  }
+
+  public boolean isColumnAvailableTill(@NonNull final Date date) {
+    return (getEndTime() == null) ? true : date.equals(getEndTime()) || date.before(getEndTime());
+  }
   /**
    * @return the cost
    */

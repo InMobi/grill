@@ -25,7 +25,7 @@
     <measure name="unit_sales" type="BIGINT" default_aggr="SUM" display_string="Unit Sales" format_string="#,###"/>
     <measure name="store_sales" type="DOUBLE" default_aggr="SUM" display_string="Store Sales" format_string="#,###.##"/>
     <measure name="store_cost" type="DOUBLE" default_aggr="SUM" display_string="Store Cost" format_string="#,###.00"
-     start_time='2015-03-01-00:00' />
+     start_time='2015-03-01T00:00:00' />
     <measure name="line_item_quantity" type="INT" default_aggr="SUM" display_string="Line item quantity"/>
     <measure name="line_item_product_price" type="FLOAT" default_aggr="SUM" display_string="Line item product price"/>
     <measure name="line_item_discount_amount" type="FLOAT" default_aggr="SUM" display_string="Line item discount"/>
@@ -33,11 +33,18 @@
     <measure name="max_line_item_price" type="FLOAT" default_aggr="MAX" display_string="Maximum Line item price"/>
     <measure name="max_line_item_discount" type="FLOAT" default_aggr="MAX"
      display_string="Maximum Line item discount"/>
+    <measure name="rating" type="FLOAT" default_aggr="AVG"
+      display_string="Rating"/>
   </measures>
   <expressions>
-    <expression name="profit" type="DOUBLE" expr="store_sales - store_cost" display_string="Profit"/>
-    <expression name="promotion_sales" type="DOUBLE" expr="sum(case when promotion_id = 0 then 0 else store_sales end)"
-     display_string="Promotion sales"/>
+    <expression name="profit" type="DOUBLE" display_string="Profit">
+      <expr_spec expr="store_sales - store_cost"/>
+    </expression>
+    <expression name="promotion_sales" type="DOUBLE" display_string="Promotion sales">
+      <expr_spec expr="sum(case when promotion_id = 0 then 0 else store_sales end)" start_time='2015-04-12T00:00:00'/>
+      <expr_spec expr="sum(case when promotion_id = -1 then 0 when promotion_id = -1 then 0 else store_sales end)"
+       end_time="2015-04-12T00:00:00"/>
+    </expression>
   </expressions>
   <dim_attributes>
     <dim_attribute name="customer_id" type="INT" />
@@ -47,23 +54,23 @@
     <dim_attribute name="order_line_number" type="INT" />
     <dim_attribute name="order_time" type="TIMESTAMP" />
     <dim_attribute name="delivery_time" type="TIMESTAMP" />
-    <dim_attribute name="customer_city_id" type="INT" start_time='2015-03-01-00:00' />
+    <dim_attribute name="customer_city_id" type="INT" start_time='2015-03-01T00:00:00' />
     <dim_attribute name="production_city_id" type="INT" />
     <dim_attribute name="delivery_city_id" type="INT" />
     <dim_attribute name="customer_city_name" type="string" description="City name to which the customer belongs"
-      displayString=" Customer City">
+      display_string="Customer City">
       <ref_spec>
         <chain_ref_column chain_name="customer_city" ref_col="name" />
       </ref_spec>
     </dim_attribute>
     <dim_attribute name="production_city_name" type="STRING" description="City name in which the product was produced"
-      displayString=" Production City">
+      display_string="Production City">
       <ref_spec>
         <chain_ref_column chain_name="production_city" ref_col="name" />
       </ref_spec>
     </dim_attribute>
     <dim_attribute name="delivery_city_name" type="STRING" description="City name to which the product was delivered"
-      displayString=" Delivery City">
+      display_string="Delivery City">
       <ref_spec>
         <chain_ref_column chain_name="delivery_city" ref_col="name" />
       </ref_spec>
@@ -147,5 +154,7 @@
     <property name="cube.sales.timed.dimensions.list" value="order_time,delivery_time" />
     <property name="cube.timedim.partition.order_time" value="ot" />
     <property name="cube.timedim.partition.delivery_time" value="dt" />
+    <property name="cube.timedim.relation.order_time" value="delivery_time+[-20 days,-1 hour]" />
+    <!-- means dt-20days <= ot <= dt-1hour -->
   </properties>
 </x_base_cube>

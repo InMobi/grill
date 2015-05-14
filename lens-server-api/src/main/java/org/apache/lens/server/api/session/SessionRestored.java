@@ -16,49 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/*
- *
- */
-package org.apache.lens.api;
 
-/**
- * The Class LensException.
- */
-@SuppressWarnings("serial")
-public class LensException extends Exception {
+package org.apache.lens.server.api.session;
+
+import org.apache.lens.api.LensSessionHandle;
+
+import lombok.ToString;
+
+@ToString(callSuper=true)
+public class SessionRestored extends SessionEvent {
 
   /**
-   * Instantiates a new lens exception.
+   * Instantiates a session restored event
    *
-   * @param msg the msg
+   * @param eventTime the event time
+   * @param handle    the session handle
    */
-  public LensException(String msg) {
-    super(msg);
-  }
-
-  /**
-   * Instantiates a new lens exception.
-   *
-   * @param msg the msg
-   * @param th  the th
-   */
-  public LensException(String msg, Throwable th) {
-    super(msg, th);
-  }
-
-  /**
-   * Instantiates a new lens exception.
-   */
-  public LensException() {
-    super();
-  }
-
-  /**
-   * Instantiates a new lens exception.
-   *
-   * @param th the th
-   */
-  public LensException(Throwable th) {
-    super(th);
+  public SessionRestored(long eventTime, LensSessionHandle handle) {
+    super(eventTime, handle);
   }
 }

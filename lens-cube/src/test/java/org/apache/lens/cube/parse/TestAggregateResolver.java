@@ -22,6 +22,8 @@ package org.apache.lens.cube.parse;
 import static org.apache.lens.cube.parse.CubeTestSetup.*;
 import static org.apache.lens.cube.parse.TestCubeRewriter.compareQueries;
 
+import org.apache.lens.server.api.error.LensException;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
@@ -30,8 +32,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import lombok.Getter;
+
 public class TestAggregateResolver extends TestQueryRewrite {
 
+  @Getter
   private Configuration conf;
   private final String cubeName = CubeTestSetup.TEST_CUBE_NAME;
 
@@ -42,14 +47,6 @@ public class TestAggregateResolver extends TestQueryRewrite {
     conf.setBoolean(CubeQueryConfUtil.DISABLE_AUTO_JOINS, true);
     conf.setBoolean(CubeQueryConfUtil.ENABLE_SELECT_TO_GROUPBY, true);
     conf.setBoolean(CubeQueryConfUtil.ENABLE_GROUP_BY_TO_SELECT, true);
-  }
-  private Configuration getConf() {
-    return new Configuration(conf);
-  }
-  private Configuration getConf(String storages) {
-    Configuration conf = getConf();
-    conf.set(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES, storages);
-    return conf;
   }
 
   private CubeQueryContext rewrittenQuery;
@@ -146,11 +143,11 @@ public class TestAggregateResolver extends TestQueryRewrite {
       compareQueries(expected[i], hql);
     }
     aggregateFactSelectionTests(conf);
-    rawFactSelectionTests(getConf("C1,C2"));
+    rawFactSelectionTests(getConfWithStorages("C1,C2"));
   }
 
   @Test
-  public void testDimOnlyDistinctQuery() throws SemanticException, ParseException {
+  public void testDimOnlyDistinctQuery() throws SemanticException, ParseException, LensException {
 
     conf.setBoolean(CubeQueryConfUtil.DISABLE_AGGREGATE_RESOLVER, false);
 
@@ -199,8 +196,8 @@ public class TestAggregateResolver extends TestQueryRewrite {
   }
 
   @Test
-  public void testAggregateResolverOff() throws SemanticException, ParseException {
-    Configuration conf2 = getConf("C1,C2");
+  public void testAggregateResolverOff() throws SemanticException, ParseException, LensException {
+    Configuration conf2 = getConfWithStorages("C1,C2");
     conf2.setBoolean(CubeQueryConfUtil.DISABLE_AGGREGATE_RESOLVER, true);
 
     // Test if raw fact is selected for query with no aggregate function on a
@@ -221,7 +218,7 @@ public class TestAggregateResolver extends TestQueryRewrite {
     rawFactSelectionTests(conf2);
   }
 
-  private void aggregateFactSelectionTests(Configuration conf) throws SemanticException, ParseException {
+  private void aggregateFactSelectionTests(Configuration conf) throws SemanticException, ParseException, LensException {
     String query = "SELECT count(distinct cityid) from testcube where " + TWO_DAYS_RANGE;
     CubeQueryContext cubeql = rewriteCtx(query, conf);
     String hQL = cubeql.toHQL();
@@ -265,7 +262,7 @@ public class TestAggregateResolver extends TestQueryRewrite {
     compareQueries(expectedQL, hQL);
   }
 
-  private void rawFactSelectionTests(Configuration conf) throws SemanticException, ParseException {
+  private void rawFactSelectionTests(Configuration conf) throws SemanticException, ParseException, LensException {
     // Check a query with non default aggregate function
     String query = "SELECT cityid, avg(testCube.msr2) FROM testCube WHERE " + TWO_DAYS_RANGE;
     CubeQueryContext cubeql = rewriteCtx(query, conf);

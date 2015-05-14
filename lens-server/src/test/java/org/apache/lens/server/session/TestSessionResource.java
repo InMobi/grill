@@ -32,17 +32,23 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.lens.api.*;
+import org.apache.lens.api.APIResult;
 import org.apache.lens.api.APIResult.Status;
+import org.apache.lens.api.LensConf;
+import org.apache.lens.api.LensSessionHandle;
+import org.apache.lens.api.StringList;
 import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.api.error.LensException;
+import org.apache.lens.server.api.metrics.MetricsService;
 import org.apache.lens.server.api.session.SessionService;
 import org.apache.lens.server.common.LenServerTestException;
 import org.apache.lens.server.common.LensServerTestFileUtils;
 import org.apache.lens.server.common.TestResourceFile;
 
 import org.apache.commons.io.FileUtils;
+
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.Database;
 import org.apache.hadoop.hive.ql.metadata.Hive;
@@ -63,6 +69,10 @@ import org.testng.annotations.Test;
 @Test(groups = "unit-test")
 public class TestSessionResource extends LensJerseyTest {
 
+
+  /** The metrics svc. */
+  MetricsService metricsSvc;
+
   /*
    * (non-Javadoc)
    *
@@ -70,6 +80,7 @@ public class TestSessionResource extends LensJerseyTest {
    */
   @BeforeTest
   public void setUp() throws Exception {
+    metricsSvc = (MetricsService) LensServices.get().getService(MetricsService.NAME);
     super.setUp();
   }
 
@@ -223,13 +234,14 @@ public class TestSessionResource extends LensJerseyTest {
     Assert.assertNotNull(handle);
 
     // add a resource
+    final String lensSiteFilePath = TestSessionResource.class.getClassLoader().getResource("lens-site.xml").getPath();
     final WebTarget resourcetarget = target().path("session/resources");
     final FormDataMultiPart mp1 = new FormDataMultiPart();
     mp1.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), handle,
       MediaType.APPLICATION_XML_TYPE));
     mp1.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("type").build(), "file"));
     mp1.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("path").build(),
-      "target/test-classes/lens-site.xml"));
+        lensSiteFilePath));
     APIResult result = resourcetarget.path("add").request()
       .put(Entity.entity(mp1, MediaType.MULTIPART_FORM_DATA_TYPE), APIResult.class);
     Assert.assertEquals(result.getStatus(), Status.SUCCEEDED);
@@ -245,7 +257,7 @@ public class TestSessionResource extends LensJerseyTest {
       MediaType.APPLICATION_XML_TYPE));
     mp2.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("type").build(), "file"));
     mp2.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("path").build(),
-      "target/test-classes/lens-site.xml"));
+        lensSiteFilePath));
     result = resourcetarget.path("delete").request()
       .put(Entity.entity(mp2, MediaType.MULTIPART_FORM_DATA_TYPE), APIResult.class);
     Assert.assertEquals(result.getStatus(), APIResult.Status.SUCCEEDED);
@@ -263,7 +275,7 @@ public class TestSessionResource extends LensJerseyTest {
   /**
    * Test aux jars.
    *
-   * @throws LensException the lens exception
+   * @throws org.apache.lens.server.api.error.LensException the lens exception
    */
   @Test
   public void testAuxJars() throws LensException, IOException, LenServerTestException {
@@ -464,5 +476,41 @@ public class TestSessionResource extends LensJerseyTest {
     } catch (ClientErrorException cee) {
       // PASS
     }
+  }
+
+  private FormDataMultiPart getMultiFormData(String username, String password) {
+    final FormDataMultiPart mp = new FormDataMultiPart();
+
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("username").build(), username));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("password").build(), password));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionconf").fileName("sessionconf").build(),
+        new LensConf(), MediaType.APPLICATION_XML_TYPE));
+    return mp;
+  }
+
+  @Test
+  public void testSessionEvents() {
+    final WebTarget target = target().path("session");
+    FormDataMultiPart mp = getMultiFormData("foo", "bar");
+
+    LensSessionHandle lensSessionHandle = target.request().post(
+        Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), LensSessionHandle.class);
+    Assert.assertTrue(lensSessionHandle != null);
+    Assert.assertTrue(metricsSvc.getTotalOpenedSessions() >= 1);
+    Assert.assertTrue(metricsSvc.getActiveSessions() >= 1);
+
+    LensSessionHandle lensSessionHandle1 = target.request().post(
+        Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), LensSessionHandle.class);
+    Assert.assertTrue(lensSessionHandle1 != null);
+    Assert.assertTrue(metricsSvc.getTotalOpenedSessions() >= 2);
+    Assert.assertTrue(metricsSvc.getActiveSessions() >= 2);
+
+    APIResult result = target.queryParam("sessionid", lensSessionHandle).request().delete(APIResult.class);
+    Assert.assertTrue(metricsSvc.getTotalOpenedSessions() >= 1);
+    Assert.assertTrue(metricsSvc.getTotalClosedSessions() >= 1);
+    Assert.assertTrue(metricsSvc.getActiveSessions() >= 1);
+
+    result = target.queryParam("sessionid", lensSessionHandle1).request().delete(APIResult.class);
+    Assert.assertTrue(metricsSvc.getTotalClosedSessions() >= 2);
   }
 }

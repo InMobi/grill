@@ -20,8 +20,8 @@ package org.apache.lens.cube.metadata;
 
 import java.util.Iterator;
 
-import org.apache.lens.api.LensException;
 import org.apache.lens.cube.parse.DateUtil;
+import org.apache.lens.server.api.error.LensException;
 
 import lombok.Data;
 
@@ -126,5 +126,9 @@ public class TimePartitionRange implements Iterable<TimePartition>, Named {
 
   public long size() {
     return DateUtil.getTimeDiff(begin.getDate(), end.getDate(), begin.getUpdatePeriod());
+  }
+
+  public boolean isValidAndNonEmpty() {
+    return begin.before(end);
   }
 }

@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.lens.api.LensException;
+import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -65,6 +65,10 @@ public class TimePartition implements Comparable<TimePartition>, Named {
         throw new LensException(getWrongUpdatePeriodMessage(updatePeriod, dateString), e);
       }
     }
+  }
+
+  public TimePartition withUpdatePeriod(UpdatePeriod period) throws LensException {
+    return TimePartition.of(period, getDate());
   }
 
   public String toString() {
@@ -140,5 +144,9 @@ public class TimePartition implements Comparable<TimePartition>, Named {
   @Override
   public String getName() {
     return getDateString();
+  }
+
+  public TimePartitionRange emptyRange() throws LensException {
+    return this.rangeUpto(this);
   }
 }
