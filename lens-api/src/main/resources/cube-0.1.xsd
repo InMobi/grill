@@ -1054,10 +1054,13 @@
           <xs:documentation>
             Properties that can be set for a fact are
 
-            1. cube.fact.{fact-name}.valid.columns : comma separated column names which are valid in the fact.
-            2. cube.fact.is.aggregated : Defaults to true. If the fact is a raw fact, this should be set to false,
-             otherwise true.
-
+            1. cube.fact.{fact-name}.valid.columns.size : This should be set to number of
+              cube.fact.{fact-name}.valid.columns strings.
+            2. cube.fact.{fact-name}.valid.columns{i} : This should be set to comma separated column names which are
+              valid in the fact, such that 0 &lt;= i &lt; cube.fact.{fact-name}.valid.columns.size and each of
+              cube.fact.{fact-name}.valid.columns{i} has maximum length of 3999.
+            3. cube.fact.is.aggregated : Defaults to true. If the fact is a raw fact, this should be set to false,
+              otherwise true.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
