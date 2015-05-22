@@ -19,12 +19,18 @@
 
 package org.apache.lens.cube.parse;
 
+import static org.apache.lens.cube.metadata.UpdatePeriod.*;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.lens.cube.metadata.*;
 import org.apache.lens.cube.metadata.timeline.EndsAndHolesPartitionTimeline;
+import org.apache.lens.cube.metadata.timeline.PartitionTimeline;
 import org.apache.lens.cube.metadata.timeline.StoreAllPartitionTimeline;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.error.LensException;
@@ -43,10 +49,11 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.mapred.TextInputFormat;
 
-import org.testng.Assert;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import com.google.common.collect.Sets;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /*
@@ -103,12 +110,15 @@ public class CubeTestSetup {
   public static final Date BEFORE_4_DAYS_END;
   public static final Date THIS_YEAR_START;
   public static final Date THIS_YEAR_END;
+  public static final Date LAST_YEAR_START;
+  public static final Date LAST_YEAR_END;
 
   // Time Ranges
   public static final String LAST_HOUR_TIME_RANGE;
   public static final String TWO_DAYS_RANGE;
   public static final String TWO_DAYS_RANGE_TTD;
   public static final String THIS_YEAR_RANGE;
+  public static final String LAST_YEAR_RANGE;
   public static final String TWO_MONTHS_RANGE_UPTO_MONTH;
   public static final String TWO_MONTHS_RANGE_UPTO_HOURS;
   public static final String TWO_DAYS_RANGE_BEFORE_4_DAYS;
@@ -119,6 +129,9 @@ public class CubeTestSetup {
   private static String c3 = "C3";
   private static String c4 = "C4";
   private static String c99 = "C99";
+  private static Map<String, String> factValidityProperties = Maps.newHashMap();
+  @Getter
+  private static Map<String, String> storageToUpdatePeriodMap = new LinkedHashMap<String, String>();
 
   static {
     Calendar cal = Calendar.getInstance();
@@ -154,8 +167,10 @@ public class CubeTestSetup {
     BEFORE_4_DAYS_START = cal.getTime();
 
 
-    THIS_YEAR_START = DateUtils.truncate(NOW, UpdatePeriod.YEARLY.calendarField());
+    THIS_YEAR_START = DateUtils.truncate(NOW, YEARLY.calendarField());
     THIS_YEAR_END = DateUtils.addYears(THIS_YEAR_START, 1);
+    LAST_YEAR_START = DateUtils.addYears(THIS_YEAR_START, -1);
+    LAST_YEAR_END = THIS_YEAR_START;
     TWO_DAYS_RANGE_BEFORE_4_DAYS =
       "time_range_in(d_time, '" + CubeTestSetup.getDateUptoHours(BEFORE_4_DAYS_START) + "','"
         + CubeTestSetup.getDateUptoHours(BEFORE_4_DAYS_END) + "')";
@@ -166,6 +181,8 @@ public class CubeTestSetup {
       + getDateUptoHours(NOW) + "')";
     THIS_YEAR_RANGE =
       "time_range_in(d_time, '" + getDateUptoHours(THIS_YEAR_START) + "','" + getDateUptoHours(THIS_YEAR_END) + "')";
+    LAST_YEAR_RANGE =
+      "time_range_in(d_time, '" + getDateUptoHours(LAST_YEAR_START) + "','" + getDateUptoHours(LAST_YEAR_END) + "')";
     TWO_MONTHS_RANGE_UPTO_MONTH =
       "time_range_in(d_time, '" + getDateUptoMonth(TWO_MONTHS_BACK) + "','" + getDateUptoMonth(NOW) + "')";
     TWO_MONTHS_RANGE_UPTO_HOURS =
@@ -173,6 +190,7 @@ public class CubeTestSetup {
 
     // calculate LAST_HOUR_TIME_RANGE
     LAST_HOUR_TIME_RANGE = getTimeRangeString(getDateUptoHours(LAST_HOUR), getDateUptoHours(NOW));
+    factValidityProperties.put(MetastoreConstants.FACT_RELATIVE_START_TIME, "now.year - 90 days");
   }
 
   public static boolean isZerothHour() {
@@ -195,8 +213,6 @@ public class CubeTestSetup {
   public static String getExpectedQuery(String cubeName, String selExpr, String whereExpr, String postWhereExpr,
     Map<String, String> storageTableToWhereClause, List<String> notLatestConditions) {
     StringBuilder expected = new StringBuilder();
-    int numTabs = storageTableToWhereClause.size();
-    Assert.assertEquals(1, numTabs);
     for (Map.Entry<String, String> entry : storageTableToWhereClause.entrySet()) {
       String storageTable = entry.getKey();
       expected.append(selExpr);
@@ -265,7 +281,7 @@ public class CubeTestSetup {
     List<String> notLatestConditions) {
     StringBuilder expected = new StringBuilder();
     int numTabs = storageTableToWhereClause.size();
-    Assert.assertEquals(1, numTabs);
+    assertEquals(1, numTabs);
     for (Map.Entry<String, String> entry : storageTableToWhereClause.entrySet()) {
       String storageTable = entry.getKey();
       expected.append(selExpr);
@@ -316,11 +332,21 @@ public class CubeTestSetup {
     return getWhereForDailyAndHourly2daysWithTimeDim(cubeName, timedDimension, TWODAYS_BACK, NOW, storageTables);
   }
 
+
   public static Map<String, String> getWhereForDailyAndHourly2daysWithTimeDim(String cubeName, String timedDimension,
     Date from, Date to, String... storageTables) {
     Map<String, String> storageTableToWhereClause = new LinkedHashMap<String, String>();
-    String whereClause = getWhereForDailyAndHourly2daysWithTimeDim(cubeName, timedDimension, from, to);
-    storageTableToWhereClause.put(getStorageTableString(storageTables), whereClause);
+    if (storageToUpdatePeriodMap.isEmpty()) {
+      String whereClause = getWhereForDailyAndHourly2daysWithTimeDim(cubeName, timedDimension, from, to);
+      storageTableToWhereClause.put(getStorageTableString(storageTables), whereClause);
+    } else {
+      for (String tbl : storageTables) {
+        String updatePeriod = storageToUpdatePeriodMap.get(tbl);
+        String whereClause = getWhereForDailyAndHourly2daysWithTimeDimUnionQuery(cubeName, timedDimension, from, to)
+            .get(updatePeriod);
+        storageTableToWhereClause.put(getStorageTableString(tbl), whereClause);
+      }
+    }
     return storageTableToWhereClause;
   }
 
@@ -342,19 +368,39 @@ public class CubeTestSetup {
     List<String> dailyparts = new ArrayList<String>();
     Date dayStart;
     if (!CubeTestSetup.isZerothHour()) {
-      addParts(hourlyparts, UpdatePeriod.HOURLY, from, DateUtil.getCeilDate(from, UpdatePeriod.DAILY));
-      addParts(hourlyparts, UpdatePeriod.HOURLY, DateUtil.getFloorDate(to, UpdatePeriod.DAILY),
-        DateUtil.getFloorDate(to, UpdatePeriod.HOURLY));
-      dayStart = DateUtil.getCeilDate(from, UpdatePeriod.DAILY);
+      addParts(hourlyparts, HOURLY, from, DateUtil.getCeilDate(from, DAILY));
+      addParts(hourlyparts, HOURLY, DateUtil.getFloorDate(to, DAILY),
+        DateUtil.getFloorDate(to, HOURLY));
+      dayStart = DateUtil.getCeilDate(from, DAILY);
     } else {
       dayStart = from;
     }
-    addParts(dailyparts, UpdatePeriod.DAILY, dayStart, DateUtil.getFloorDate(to, UpdatePeriod.DAILY));
+    addParts(dailyparts, DAILY, dayStart, DateUtil.getFloorDate(to, DAILY));
     List<String> parts = new ArrayList<String>();
     parts.addAll(hourlyparts);
     parts.addAll(dailyparts);
     Collections.sort(parts);
     return StorageUtil.getWherePartClause(timedDimension, cubeName, parts);
+  }
+
+  public static Map<String, String> getWhereForDailyAndHourly2daysWithTimeDimUnionQuery(String cubeName,
+      String timedDimension, Date from, Date to) {
+    Map<String, String> updatePeriodToWhereMap = new HashMap<String, String>();
+    List<String> hourlyparts = new ArrayList<String>();
+    List<String> dailyparts = new ArrayList<String>();
+    Date dayStart;
+    if (!CubeTestSetup.isZerothHour()) {
+      addParts(hourlyparts, HOURLY, from, DateUtil.getCeilDate(from, DAILY));
+      addParts(hourlyparts, HOURLY, DateUtil.getFloorDate(to, DAILY),
+          DateUtil.getFloorDate(to, HOURLY));
+      dayStart = DateUtil.getCeilDate(from, DAILY);
+    } else {
+      dayStart = from;
+    }
+    addParts(dailyparts, DAILY, dayStart, DateUtil.getFloorDate(to, DAILY));
+    updatePeriodToWhereMap.put("DAILY", StorageUtil.getWherePartClause(timedDimension, cubeName, dailyparts));
+    updatePeriodToWhereMap.put("HOURLY", StorageUtil.getWherePartClause(timedDimension, cubeName, hourlyparts));
+    return updatePeriodToWhereMap;
   }
 
   // storageTables[0] is hourly
@@ -368,22 +414,22 @@ public class CubeTestSetup {
     Date dayStart = TWO_MONTHS_BACK;
     Date monthStart = TWO_MONTHS_BACK;
     if (!CubeTestSetup.isZerothHour()) {
-      addParts(hourlyparts, UpdatePeriod.HOURLY, TWO_MONTHS_BACK,
-        DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.DAILY));
-      addParts(hourlyparts, UpdatePeriod.HOURLY, DateUtil.getFloorDate(NOW, UpdatePeriod.DAILY),
-        DateUtil.getFloorDate(NOW, UpdatePeriod.HOURLY));
-      dayStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.DAILY);
-      monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.MONTHLY);
+      addParts(hourlyparts, HOURLY, TWO_MONTHS_BACK,
+        DateUtil.getCeilDate(TWO_MONTHS_BACK, DAILY));
+      addParts(hourlyparts, HOURLY, DateUtil.getFloorDate(NOW, DAILY),
+        DateUtil.getFloorDate(NOW, HOURLY));
+      dayStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, DAILY);
+      monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, MONTHLY);
     }
     Calendar cal = new GregorianCalendar();
     cal.setTime(dayStart);
     if (cal.get(Calendar.DAY_OF_MONTH) != 1) {
-      addParts(dailyparts, UpdatePeriod.DAILY, dayStart, DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.MONTHLY));
-      monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, UpdatePeriod.MONTHLY);
+      addParts(dailyparts, DAILY, dayStart, DateUtil.getCeilDate(TWO_MONTHS_BACK, MONTHLY));
+      monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, MONTHLY);
     }
-    addParts(dailyparts, UpdatePeriod.DAILY, DateUtil.getFloorDate(NOW, UpdatePeriod.MONTHLY),
-      DateUtil.getFloorDate(NOW, UpdatePeriod.DAILY));
-    addParts(monthlyparts, UpdatePeriod.MONTHLY, monthStart, DateUtil.getFloorDate(NOW, UpdatePeriod.MONTHLY));
+    addParts(dailyparts, DAILY, DateUtil.getFloorDate(NOW, MONTHLY),
+      DateUtil.getFloorDate(NOW, DAILY));
+    addParts(monthlyparts, MONTHLY, monthStart, DateUtil.getFloorDate(NOW, MONTHLY));
     List<String> parts = new ArrayList<String>();
     parts.addAll(dailyparts);
     parts.addAll(hourlyparts);
@@ -411,10 +457,56 @@ public class CubeTestSetup {
     return storageTableToWhereClause;
   }
 
+  public static Map<String, String> getWhereForMonthlyDailyAndHourly2monthsUnionQuery(String storageTable) {
+    Map<String, List<String>> updatePeriodToPart = new LinkedHashMap<String, List<String>>();
+    List<String> hourlyparts = new ArrayList<String>();
+    List<String> dailyparts = new ArrayList<String>();
+    List<String> monthlyparts = new ArrayList<String>();
+
+    Date dayStart = TWO_MONTHS_BACK;
+    Date monthStart = TWO_MONTHS_BACK;
+    if (!CubeTestSetup.isZerothHour()) {
+      addParts(hourlyparts, HOURLY, TWO_MONTHS_BACK,
+          DateUtil.getCeilDate(TWO_MONTHS_BACK, DAILY));
+      addParts(hourlyparts, HOURLY, DateUtil.getFloorDate(NOW, DAILY),
+          DateUtil.getFloorDate(NOW, HOURLY));
+      dayStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, DAILY);
+      monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, MONTHLY);
+    }
+    Calendar cal = new GregorianCalendar();
+    cal.setTime(dayStart);
+    if (cal.get(Calendar.DAY_OF_MONTH) != 1) {
+      addParts(dailyparts, DAILY, dayStart, DateUtil.getCeilDate(TWO_MONTHS_BACK, MONTHLY));
+      monthStart = DateUtil.getCeilDate(TWO_MONTHS_BACK, MONTHLY);
+    }
+    addParts(dailyparts, DAILY, DateUtil.getFloorDate(NOW, MONTHLY),
+        DateUtil.getFloorDate(NOW, DAILY));
+    addParts(monthlyparts, MONTHLY, monthStart, DateUtil.getFloorDate(NOW, MONTHLY));
+
+    updatePeriodToPart.put("HOURLY", hourlyparts);
+    updatePeriodToPart.put("DAILY", dailyparts);
+    updatePeriodToPart.put("MONTHLY", monthlyparts);
+
+    List<String> unionParts = new ArrayList<String>();
+    for (Map.Entry<String, String> entry : storageToUpdatePeriodMap.entrySet()) {
+      String uperiod = entry.getKey();
+      String table = entry.getValue();
+      if (table.equals(storageTable) && updatePeriodToPart.containsKey(uperiod)) {
+        unionParts.addAll(updatePeriodToPart.get(uperiod));
+        Collections.sort(unionParts);
+      }
+    }
+
+    HashMap<String, String> tabWhere = new LinkedHashMap<String, String>();
+    tabWhere.put(getStorageTableString(storageTable), StorageUtil.getWherePartClause("dt", TEST_CUBE_NAME, unionParts));
+
+    return tabWhere;
+  }
+
   public static Map<String, String> getWhereForMonthly2months(String monthlyTable) {
     Map<String, String> storageTableToWhereClause = new LinkedHashMap<String, String>();
     List<String> parts = new ArrayList<String>();
-    addParts(parts, UpdatePeriod.MONTHLY, TWO_MONTHS_BACK, DateUtil.getFloorDate(NOW, UpdatePeriod.MONTHLY));
+    addParts(parts, MONTHLY, TWO_MONTHS_BACK, DateUtil.getFloorDate(NOW, MONTHLY));
     storageTableToWhereClause.put(getDbName() + monthlyTable,
       StorageUtil.getWherePartClause("dt", TEST_CUBE_NAME, parts));
     return storageTableToWhereClause;
@@ -427,7 +519,7 @@ public class CubeTestSetup {
   public static Map<String, String> getWhereForHourly2days(String alias, String hourlyTable) {
     Map<String, String> storageTableToWhereClause = new LinkedHashMap<String, String>();
     List<String> parts = new ArrayList<String>();
-    addParts(parts, UpdatePeriod.HOURLY, TWODAYS_BACK, DateUtil.getFloorDate(NOW, UpdatePeriod.HOURLY));
+    addParts(parts, HOURLY, TWODAYS_BACK, DateUtil.getFloorDate(NOW, HOURLY));
     storageTableToWhereClause.put(getDbName() + hourlyTable, StorageUtil.getWherePartClause("dt", alias, parts));
     return storageTableToWhereClause;
   }
@@ -748,12 +840,12 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.MINUTELY);
-    updates.add(UpdatePeriod.HOURLY);
-    updates.add(UpdatePeriod.DAILY);
-    updates.add(UpdatePeriod.MONTHLY);
-    updates.add(UpdatePeriod.QUARTERLY);
-    updates.add(UpdatePeriod.YEARLY);
+    updates.add(MINUTELY);
+    updates.add(HOURLY);
+    updates.add(DAILY);
+    updates.add(MONTHLY);
+    updates.add(QUARTERLY);
+    updates.add(YEARLY);
 
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
@@ -802,7 +894,8 @@ public class CubeTestSetup {
     factColumns.add(new FieldSchema("dim11", "string", "base dim"));
 
     // create cube fact
-    client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L, null, storageTables);
+    client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L,
+      factValidityProperties, storageTables);
 
     // create fact only with extra measures
     factName = "testFact2_BASE";
@@ -818,7 +911,13 @@ public class CubeTestSetup {
     factColumns.add(new FieldSchema("dim2", "int", "dim2 id"));
 
     // create cube fact
-    client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L, null, storageTables);
+    client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L,
+      factValidityProperties, storageTables);
+    Map<String, String> properties = Maps.newHashMap(factValidityProperties);
+    properties.put(MetastoreConstants.FACT_ABSOLUTE_END_TIME, DateUtil.relativeToAbsolute("now.day - 2 days"));
+    properties.put(MetastoreConstants.FACT_ABSOLUTE_START_TIME, DateUtil.relativeToAbsolute("now.day - 3 days"));
+    client.createCubeFactTable(BASE_CUBE_NAME, "testfact_deprecated", factColumns, storageAggregatePeriods, 5L,
+      properties, storageTables);
 
     // create fact only with extra measures
     factName = "testFact3_BASE";
@@ -833,7 +932,8 @@ public class CubeTestSetup {
     factColumns.add(new FieldSchema("dim11", "string", "base dim"));
 
     // create cube fact
-    client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L, null, storageTables);
+    client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L,
+      factValidityProperties, storageTables);
 
     // create raw fact only with extra measures
     factName = "testFact2_RAW_BASE";
@@ -850,14 +950,15 @@ public class CubeTestSetup {
 
     storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.HOURLY);
+    updates.add(HOURLY);
     storageAggregatePeriods.put(c1, updates);
 
     storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c1, s1);
 
     // create cube fact
-    Map<String, String> properties = new HashMap<String, String>();
+    properties.clear();
+    properties.putAll(factValidityProperties);
     properties.put(MetastoreConstants.FACT_AGGREGATED_PROPERTY, "false");
 
     client.createCubeFactTable(BASE_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 100L, properties,
@@ -878,7 +979,7 @@ public class CubeTestSetup {
 
     storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.HOURLY);
+    updates.add(HOURLY);
     storageAggregatePeriods.put(c1, updates);
 
     storageTables = new HashMap<String, StorageTableDesc>();
@@ -889,7 +990,7 @@ public class CubeTestSetup {
 
   }
 
-  private void createCubeFact(CubeMetastoreClient client) throws HiveException, LensException {
+  private void createCubeFact(CubeMetastoreClient client) throws Exception {
     String factName = "testFact";
     List<FieldSchema> factColumns = new ArrayList<FieldSchema>(cubeMeasures.size());
     for (CubeMeasure measure : cubeMeasures) {
@@ -906,12 +1007,12 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.MINUTELY);
-    updates.add(UpdatePeriod.HOURLY);
-    updates.add(UpdatePeriod.DAILY);
-    updates.add(UpdatePeriod.MONTHLY);
-    updates.add(UpdatePeriod.QUARTERLY);
-    updates.add(UpdatePeriod.YEARLY);
+    updates.add(MINUTELY);
+    updates.add(HOURLY);
+    updates.add(DAILY);
+    updates.add(MONTHLY);
+    updates.add(QUARTERLY);
+    updates.add(YEARLY);
 
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
@@ -944,14 +1045,15 @@ public class CubeTestSetup {
     storageTables.put(c2, s1);
     storageTables.put(c3, s1);
     // create cube fact
-    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L, null, storageTables);
+    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L,
+      factValidityProperties, storageTables);
     CubeFactTable fact = client.getFactTable(factName);
 
     Table table = client.getTable(MetastoreUtil.getStorageTableName(fact.getName(),
       Storage.getPrefix(c4)));
-    table.getParameters().put(MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.HOURLY, "ttd"),
+    table.getParameters().put(MetastoreUtil.getPartitionTimelineStorageClassKey(HOURLY, "ttd"),
       StoreAllPartitionTimeline.class.getCanonicalName());
-    table.getParameters().put(MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.HOURLY, "ttd2"),
+    table.getParameters().put(MetastoreUtil.getPartitionTimelineStorageClassKey(HOURLY, "ttd2"),
       StoreAllPartitionTimeline.class.getCanonicalName());
     client.pushHiveTable(table);
     // Add all hourly partitions for two days
@@ -960,12 +1062,21 @@ public class CubeTestSetup {
     Date temp = cal.getTime();
     List<StoragePartitionDesc> storagePartitionDescs = Lists.newArrayList();
     List<String> partitions = Lists.newArrayList();
+    StoreAllPartitionTimeline ttdStoreAll =
+      new StoreAllPartitionTimeline(MetastoreUtil.getFactStorageTableName(fact.getName(), c4), HOURLY,
+        "ttd");
+    StoreAllPartitionTimeline ttd2StoreAll =
+      new StoreAllPartitionTimeline(MetastoreUtil.getFactStorageTableName(fact.getName(), c4), HOURLY,
+        "ttd2");
     while (!(temp.after(NOW))) {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put("ttd", temp);
       timeParts.put("ttd2", temp);
-      partitions.add(UpdatePeriod.HOURLY.format().format(temp));
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      TimePartition tp = TimePartition.of(HOURLY, temp);
+      ttdStoreAll.add(tp);
+      ttd2StoreAll.add(tp);
+      partitions.add(HOURLY.format().format(temp));
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, HOURLY);
       storagePartitionDescs.add(sPartSpec);
       cal.add(Calendar.HOUR_OF_DAY, 1);
       temp = cal.getTime();
@@ -974,49 +1085,15 @@ public class CubeTestSetup {
     client.clearHiveTableCache();
     table = client.getTable(MetastoreUtil.getStorageTableName(fact.getName(),
       Storage.getPrefix(c4)));
-    Assert.assertEquals(table.getParameters().get(MetastoreUtil.getPartitionTimelineCachePresenceKey()), "true");
-    Assert.assertEquals(table.getParameters().get(MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.DAILY,
-        "ttd")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.DAILY, "ttd2")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.HOURLY, "ttd")),
-      StoreAllPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.HOURLY, "ttd2")),
-      StoreAllPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.MINUTELY, "ttd")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.MINUTELY, "ttd2")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.MONTHLY, "ttd")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.MONTHLY, "ttd2")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.QUARTERLY, "ttd")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.QUARTERLY, "ttd2")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.YEARLY, "ttd")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(table.getParameters().get(
-        MetastoreUtil.getPartitionTimelineStorageClassKey(UpdatePeriod.YEARLY, "ttd2")),
-      EndsAndHolesPartitionTimeline.class.getCanonicalName());
-    Assert.assertEquals(MetastoreUtil.getNamedStringValue(table.getParameters(),
-        MetastoreUtil.getPartitionInfoKeyPrefix(UpdatePeriod.HOURLY, "ttd") + "partitions"),
-      StringUtils.join(partitions, ","));
-    Assert.assertEquals(MetastoreUtil.getNamedStringValue(table.getParameters(),
-        MetastoreUtil.getPartitionInfoKeyPrefix(UpdatePeriod.HOURLY, "ttd2") + "partitions"),
-      StringUtils.join(partitions, ","));
+    assertEquals(table.getParameters().get(MetastoreUtil.getPartitionTimelineCachePresenceKey()), "true");
+    for(UpdatePeriod period: Lists.newArrayList(DAILY, MINUTELY, MONTHLY, YEARLY, QUARTERLY)) {
+      for(String partCol: Lists.newArrayList("ttd", "ttd2")) {
+        assertTimeline(client, fact.getName(), c4, period, partCol, EndsAndHolesPartitionTimeline.class);
+      }
+    }
+    assertTimeline(client, fact.getName(), c4, HOURLY, "ttd", ttdStoreAll);
+    assertTimeline(client, fact.getName(), c4, HOURLY, "ttd2", ttd2StoreAll);
+
     // Add all hourly partitions for TWO_DAYS_RANGE_BEFORE_4_DAYS
     cal.setTime(BEFORE_4_DAYS_START);
     temp = cal.getTime();
@@ -1024,11 +1101,39 @@ public class CubeTestSetup {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put("ttd", temp);
       timeParts.put("ttd2", temp);
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, HOURLY);
       client.addPartition(sPartSpec, c4);
       cal.add(Calendar.HOUR_OF_DAY, 1);
       temp = cal.getTime();
     }
+  }
+  private void assertTimeline(CubeMetastoreClient client, String factName, String storageName,
+    UpdatePeriod updatePeriod, String timeDim, PartitionTimeline expectedTimeline)
+    throws Exception {
+    assertNotNull(factName);
+    assertNotNull(storageName);
+    assertNotNull(updatePeriod);
+    assertNotNull(timeDim);
+    String storageTableName = MetastoreUtil.getFactStorageTableName(factName, storageName);
+    List<PartitionTimeline> timelines = client.getTimelines(factName, storageName, updatePeriod.name(), timeDim);
+    assertEquals(timelines.size(), 1);
+    PartitionTimeline actualTimeline = timelines.get(0);
+    assertEquals(actualTimeline, expectedTimeline);
+    assertEquals(client.getTable(storageTableName).getParameters()
+      .get(MetastoreUtil.getPartitionTimelineStorageClassKey(updatePeriod,
+        timeDim)), expectedTimeline.getClass().getCanonicalName());
+    expectedTimeline.init(client.getTable(MetastoreUtil.getFactStorageTableName(factName, storageName)));
+    assertEquals(actualTimeline, expectedTimeline);
+  }
+
+  private void assertTimeline(CubeMetastoreClient client, String factName, String storageName,
+    UpdatePeriod updatePeriod, String timeDim, Class<? extends PartitionTimeline> partitionTimelineClass)
+    throws Exception {
+    String storageTableName = MetastoreUtil.getFactStorageTableName(factName, storageName);
+    PartitionTimeline expectedTimeline = partitionTimelineClass.getConstructor(
+      String.class, UpdatePeriod.class, String.class)
+      .newInstance(storageTableName, updatePeriod, timeDim);
+    assertTimeline(client, factName, storageName, updatePeriod, timeDim, expectedTimeline);
   }
 
   private void createCubeCheapFact(CubeMetastoreClient client) throws HiveException, LensException {
@@ -1047,12 +1152,12 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.MINUTELY);
-    updates.add(UpdatePeriod.HOURLY);
-    updates.add(UpdatePeriod.DAILY);
-    updates.add(UpdatePeriod.MONTHLY);
-    updates.add(UpdatePeriod.QUARTERLY);
-    updates.add(UpdatePeriod.YEARLY);
+    updates.add(MINUTELY);
+    updates.add(HOURLY);
+    updates.add(DAILY);
+    updates.add(MONTHLY);
+    updates.add(QUARTERLY);
+    updates.add(YEARLY);
 
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
@@ -1079,7 +1184,8 @@ public class CubeTestSetup {
     Map<String, StorageTableDesc> storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c99, s2);
     // create cube fact
-    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 0L, null, storageTables);
+    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 0L,
+      factValidityProperties, storageTables);
 
     CubeFactTable fact = client.getFactTable(factName);
     // Add all hourly partitions for two days
@@ -1090,7 +1196,7 @@ public class CubeTestSetup {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put("ttd", temp);
       timeParts.put("ttd2", temp);
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, HOURLY);
       client.addPartition(sPartSpec, c99);
       cal.add(Calendar.HOUR_OF_DAY, 1);
       temp = cal.getTime();
@@ -1103,7 +1209,7 @@ public class CubeTestSetup {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put("ttd", temp);
       timeParts.put("ttd2", temp);
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, HOURLY);
       client.addPartition(sPartSpec, c99);
       cal.add(Calendar.HOUR_OF_DAY, 1);
       temp = cal.getTime();
@@ -1122,7 +1228,7 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.WEEKLY);
+    updates.add(WEEKLY);
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
     partCols.add(TestCubeMetastoreClient.getDatePartition());
@@ -1138,7 +1244,8 @@ public class CubeTestSetup {
     Map<String, StorageTableDesc> storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c1, s1);
     // create cube fact
-    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L, null, storageTables);
+    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L,
+      factValidityProperties, storageTables);
   }
 
   private void createCubeFactOnlyHourly(CubeMetastoreClient client) throws HiveException, LensException {
@@ -1156,7 +1263,7 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.HOURLY);
+    updates.add(HOURLY);
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
     partCols.add(TestCubeMetastoreClient.getDatePartition());
@@ -1174,7 +1281,8 @@ public class CubeTestSetup {
 
     // create cube fact
     client
-      .createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 10L, null, storageTables);
+      .createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 10L,
+        factValidityProperties, storageTables);
     CubeFactTable fact2 = client.getFactTable(factName);
     // Add all hourly partitions for two days
     Calendar cal = Calendar.getInstance();
@@ -1183,7 +1291,7 @@ public class CubeTestSetup {
     while (!(temp.after(NOW))) {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put(TestCubeMetastoreClient.getDatePartitionKey(), temp);
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact2.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact2.getName(), timeParts, null, HOURLY);
       try {
         client.addPartition(sPartSpec, c1);
       } catch (HiveException e) {
@@ -1201,7 +1309,7 @@ public class CubeTestSetup {
     while (!(temp.after(BEFORE_4_DAYS_END))) {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put(TestCubeMetastoreClient.getDatePartitionKey(), temp);
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact2.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact2.getName(), timeParts, null, HOURLY);
       client.addPartition(sPartSpec, c1);
       cal.add(Calendar.HOUR_OF_DAY, 1);
       temp = cal.getTime();
@@ -1226,7 +1334,7 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.HOURLY);
+    updates.add(HOURLY);
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
     partCols.add(TestCubeMetastoreClient.getDatePartition());
@@ -1245,6 +1353,7 @@ public class CubeTestSetup {
 
     // create cube fact
     Map<String, String> properties = new HashMap<String, String>();
+    properties.putAll(factValidityProperties);
     properties.put(MetastoreConstants.FACT_AGGREGATED_PROPERTY, "false");
 
     client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 100L, properties,
@@ -1259,7 +1368,7 @@ public class CubeTestSetup {
     while (!(temp.after(NOW))) {
       Map<String, Date> timeParts = new HashMap<String, Date>();
       timeParts.put(TestCubeMetastoreClient.getDatePartitionKey(), temp);
-      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact2.getName(), timeParts, null, UpdatePeriod.HOURLY);
+      StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact2.getName(), timeParts, null, HOURLY);
       client.addPartition(sPartSpec, c3);
       cal.add(Calendar.HOUR_OF_DAY, 1);
       temp = cal.getTime();
@@ -1278,7 +1387,7 @@ public class CubeTestSetup {
 
     Map<String, Set<UpdatePeriod>> storageAggregatePeriods = new HashMap<String, Set<UpdatePeriod>>();
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.MONTHLY);
+    updates.add(MONTHLY);
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
     partCols.add(TestCubeMetastoreClient.getDatePartition());
@@ -1295,7 +1404,8 @@ public class CubeTestSetup {
     storageTables.put(c2, s1);
 
     // create cube fact
-    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L, null, storageTables);
+    client.createCubeFactTable(TEST_CUBE_NAME, factName, factColumns, storageAggregatePeriods, 5L,
+      factValidityProperties, storageTables);
   }
 
   // DimWithTwoStorages
@@ -1344,7 +1454,7 @@ public class CubeTestSetup {
     Map<String, String> tblPros = Maps.newHashMap();
     tblPros.put(LensConfConstants.STORAGE_COST, "100");
     s1.setTblProps(tblPros);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1447,7 +1557,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1468,7 +1578,7 @@ public class CubeTestSetup {
     dimColumns.add(new FieldSchema("name", "string", "field1"));
     dimColumns.add(new FieldSchema("cityId", "string", "f-key to cityDim"));
     storageTables.put(c3, s1);
-    dumpPeriods.put(c3, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c3, HOURLY);
 
     client.createCubeDimensionTable(dimName, dimTblName, dimColumns, 10L, dumpPeriods, dimProps, storageTables);
 
@@ -1511,7 +1621,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c3, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c3, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1571,7 +1681,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1612,7 +1722,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1659,7 +1769,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1705,7 +1815,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     StorageTableDesc s2 = new StorageTableDesc();
     s2.setInputFormat(TextInputFormat.class.getCanonicalName());
@@ -1747,7 +1857,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
 
     Map<String, StorageTableDesc> storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c1, s1);
@@ -1797,7 +1907,7 @@ public class CubeTestSetup {
     partCols.add(dimColumns.remove(dimColumns.size() - 2));
     s2.setPartCols(partCols);
     dumpPeriods.clear();
-    dumpPeriods.put(c3, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c3, HOURLY);
     storageTables.clear();
     storageTables.put(c3, s2);
     dimProps.put(MetastoreUtil.getDimTablePartsKey(dimTblName), partCols.get(0).getName());
@@ -1835,7 +1945,7 @@ public class CubeTestSetup {
     s1.setOutputFormat(HiveIgnoreKeyTextOutputFormat.class.getCanonicalName());
     s1.setPartCols(partCols);
     s1.setTimePartCols(timePartCols);
-    dumpPeriods.put(c1, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c1, HOURLY);
     Map<String, StorageTableDesc> storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c1, s1);
 
@@ -1851,7 +1961,7 @@ public class CubeTestSetup {
     s2.setPartCols(partCols);
     s2.setTimePartCols(timePartCols);
     dumpPeriods.clear();
-    dumpPeriods.put(c3, UpdatePeriod.HOURLY);
+    dumpPeriods.put(c3, HOURLY);
     storageTables.clear();
     storageTables.put(c3, s2);
     dimProps.put(MetastoreUtil.getDimTablePartsKey(dimTblName), partCols.get(1).getName());
@@ -1907,7 +2017,7 @@ public class CubeTestSetup {
     metastore.dropDatabase(dbName, true, true, true);
   }
 
-  private void createCubeFactsWithValidColumns(CubeMetastoreClient client) throws HiveException, LensException {
+  private void createCubeFactsWithValidColumns(CubeMetastoreClient client) throws Exception {
     String factName = "summary1";
     StringBuilder commonCols = new StringBuilder();
     List<FieldSchema> factColumns = new ArrayList<FieldSchema>(cubeMeasures.size());
@@ -1925,9 +2035,9 @@ public class CubeTestSetup {
     factColumns.add(new FieldSchema("zipcode", "int", "zip"));
     factColumns.add(new FieldSchema("cityid", "int", "city id"));
     Set<UpdatePeriod> updates = new HashSet<UpdatePeriod>();
-    updates.add(UpdatePeriod.MINUTELY);
-    updates.add(UpdatePeriod.HOURLY);
-    updates.add(UpdatePeriod.DAILY);
+    updates.add(MINUTELY);
+    updates.add(HOURLY);
+    updates.add(DAILY);
 
     ArrayList<FieldSchema> partCols = new ArrayList<FieldSchema>();
     List<String> timePartCols = new ArrayList<String>();
@@ -1963,6 +2073,7 @@ public class CubeTestSetup {
 
     // create cube fact summary1
     Map<String, String> properties = new HashMap<String, String>();
+    properties.putAll(factValidityProperties);
     String validColumns = commonCols.toString() + ",dim1,testdim3id";
     properties.put(MetastoreUtil.getValidColumnsKey(factName), validColumns);
     CubeFactTable fact1 =
@@ -1972,7 +2083,6 @@ public class CubeTestSetup {
 
     // create summary2 - same schema, different valid columns
     factName = "summary2";
-    properties = new HashMap<String, String>();
     validColumns = commonCols.toString() + ",dim1,dim2";
     properties.put(MetastoreUtil.getValidColumnsKey(factName), validColumns);
     CubeFactTable fact2 =
@@ -1981,7 +2091,6 @@ public class CubeTestSetup {
     createPIEParts(client, fact2, c2);
 
     factName = "summary3";
-    properties = new HashMap<String, String>();
     validColumns = commonCols.toString() + ",dim1,dim2,cityid,stateid";
     properties.put(MetastoreUtil.getValidColumnsKey(factName), validColumns);
     CubeFactTable fact3 =
@@ -1996,7 +2105,6 @@ public class CubeTestSetup {
     storageTables = new HashMap<String, StorageTableDesc>();
     storageTables.put(c2, s2);
     factName = "summary4";
-    properties = new HashMap<String, String>();
     validColumns = commonCols.toString() + ",dim1,dim2big1,dim2big2,cityid";
     properties.put(MetastoreUtil.getValidColumnsKey(factName), validColumns);
     CubeFactTable fact4 =
@@ -2006,7 +2114,7 @@ public class CubeTestSetup {
   }
 
   private void createPIEParts(CubeMetastoreClient client, CubeFactTable fact, String storageName)
-    throws HiveException, LensException {
+    throws Exception {
     // Add partitions in PIE storage
     Calendar pcal = Calendar.getInstance();
     pcal.setTime(TWODAYS_BACK);
@@ -2014,6 +2122,17 @@ public class CubeTestSetup {
     Calendar ical = Calendar.getInstance();
     ical.setTime(TWODAYS_BACK);
     ical.set(Calendar.HOUR, 0);
+
+    Map<UpdatePeriod, TreeSet<Date>> pTimes = Maps.newHashMap();
+    pTimes.put(DAILY, Sets.<Date>newTreeSet());
+    pTimes.put(HOURLY, Sets.<Date>newTreeSet());
+    Map<UpdatePeriod, TreeSet<Date>> iTimes = Maps.newHashMap();
+    iTimes.put(DAILY, Sets.<Date>newTreeSet());
+    iTimes.put(HOURLY, Sets.<Date>newTreeSet());
+    Map<String, Map<UpdatePeriod, TreeSet<Date>>> times = Maps.newHashMap();
+    times.put("et", iTimes);
+    times.put("it", iTimes);
+    times.put("pt", pTimes);
     // pt=day1 and it=day1
     // pt=day2-hour[0-3] it = day1-hour[20-23]
     // pt=day2 and it=day1
@@ -2029,7 +2148,9 @@ public class CubeTestSetup {
         timeParts.put("pt", ptime);
         timeParts.put("it", itime);
         timeParts.put("et", itime);
-        StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.DAILY);
+        StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, DAILY);
+        pTimes.get(DAILY).add(ptime);
+        iTimes.get(DAILY).add(itime);
         client.addPartition(sPartSpec, storageName);
         pcal.add(Calendar.DAY_OF_MONTH, 1);
         ical.add(Calendar.HOUR_OF_DAY, 20);
@@ -2044,7 +2165,9 @@ public class CubeTestSetup {
         timeParts.put("it", itime);
         timeParts.put("et", itime);
         // pt=day2 and it=day1
-        StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.DAILY);
+        StoragePartitionDesc sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, DAILY);
+        pTimes.get(DAILY).add(ptime);
+        iTimes.get(DAILY).add(itime);
         client.addPartition(sPartSpec, storageName);
         // pt=day2-hour[0-3] it = day1-hour[20-23]
         // pt=day2-hour[4-23] it = day2-hour[0-19]
@@ -2054,13 +2177,17 @@ public class CubeTestSetup {
           timeParts.put("pt", ptime);
           timeParts.put("it", itime);
           timeParts.put("et", itime);
-          sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.HOURLY);
+          sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, HOURLY);
+          pTimes.get(HOURLY).add(ptime);
+          iTimes.get(HOURLY).add(itime);
           client.addPartition(sPartSpec, storageName);
           pcal.add(Calendar.HOUR_OF_DAY, 1);
           ical.add(Calendar.HOUR_OF_DAY, 1);
         }
         // pt=day2 and it=day2
-        sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.DAILY);
+        sPartSpec = new StoragePartitionDesc(fact.getName(), timeParts, null, DAILY);
+        pTimes.get(DAILY).add(ptime);
+        iTimes.get(DAILY).add(itime);
         client.addPartition(sPartSpec, storageName);
       } else if (p == 3) { // day3
         // pt=day3-hour[0-3] it = day2-hour[20-23]
@@ -2072,44 +2199,27 @@ public class CubeTestSetup {
           timeParts.put("it", itime);
           timeParts.put("et", itime);
           StoragePartitionDesc sPartSpec =
-            new StoragePartitionDesc(fact.getName(), timeParts, null, UpdatePeriod.HOURLY);
+            new StoragePartitionDesc(fact.getName(), timeParts, null, HOURLY);
+          pTimes.get(HOURLY).add(ptime);
+          iTimes.get(HOURLY).add(itime);
           client.addPartition(sPartSpec, storageName);
           pcal.add(Calendar.HOUR_OF_DAY, 1);
           ical.add(Calendar.HOUR_OF_DAY, 1);
         }
       }
     }
-    Map<String, String> params = client.getTable(MetastoreUtil.getStorageTableName(fact.getName(), Storage.getPrefix(
-      storageName))).getParameters();
+    String storageTableName = MetastoreUtil.getStorageTableName(fact.getName(), Storage.getPrefix(
+      storageName));
+    Map<String, String> params = client.getTable(storageTableName).getParameters();
     String prefix = MetastoreConstants.STORAGE_PFX + MetastoreConstants.PARTITION_TIMELINE_CACHE;
-    Assert.assertEquals(params.get(prefix + "present"), "true");
-    for (UpdatePeriod up : Arrays.asList(UpdatePeriod.DAILY, UpdatePeriod.HOURLY)) {
-      for (String p : Arrays.asList("et", "it", "pt")) {
-        String first = params.get(prefix + up + "." + p + "." + "first");
-        String latest = params.get(prefix + up + "." + p + "." + "latest");
-        String holes = MetastoreUtil.getNamedStringValue(params, prefix + up + "." + p + "." + "holes");
-        String storageClass = params.get(prefix + up + "." + p + "." + "storage.class");
-        Assert.assertNotNull(first);
-        Assert.assertNotNull(latest);
-        Assert.assertEquals(holes, "");
-        Assert.assertEquals(storageClass, EndsAndHolesPartitionTimeline.class.getCanonicalName());
-        try {
-          up.format().parse(first);
-          up.format().parse(latest);
-        } catch (java.text.ParseException e) {
-          Assert.fail("parse failed. first/latest not updated correctly in table");
-        }
-      }
-      for (String p : Arrays.asList("et", "it", "pt")) {
-        up = UpdatePeriod.MINUTELY;
-        String first = params.get(prefix + up + "." + p + "." + "first");
-        String latest = params.get(prefix + up + "." + p + "." + "latest");
-        String holes = MetastoreUtil.getNamedStringValue(params, prefix + up + "." + p + "." + "holes");
-        String storageClass = params.get(prefix + up + "." + p + "." + "storage.class");
-        Assert.assertEquals(first, "");
-        Assert.assertEquals(latest, "");
-        Assert.assertEquals(holes, "");
-        Assert.assertEquals(storageClass, EndsAndHolesPartitionTimeline.class.getCanonicalName());
+    assertEquals(params.get(prefix + "present"), "true");
+    for (String p : Arrays.asList("et", "it", "pt")) {
+      assertTimeline(client, fact.getName(), storageName, MINUTELY, p, EndsAndHolesPartitionTimeline.class);
+      for (UpdatePeriod up : Arrays.asList(DAILY, HOURLY)) {
+        EndsAndHolesPartitionTimeline timeline = new EndsAndHolesPartitionTimeline(storageTableName, up, p);
+        timeline.setFirst(TimePartition.of(up, times.get(p).get(up).first()));
+        timeline.setLatest(TimePartition.of(up, times.get(p).get(up).last()));
+        assertTimeline(client, fact.getName(), storageName, up, p, timeline);
       }
     }
   }

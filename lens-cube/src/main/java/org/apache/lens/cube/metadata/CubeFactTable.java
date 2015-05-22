@@ -28,6 +28,8 @@ import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Table;
 
+import com.google.common.collect.Lists;
+
 public final class CubeFactTable extends AbstractCubeTable {
   private String cubeName;
   private final Map<String, Set<UpdatePeriod>> storageUpdatePeriods;
@@ -219,7 +221,8 @@ public final class CubeFactTable extends AbstractCubeTable {
    * @return
    */
   public List<String> getValidColumns() {
-    String validColsStr = getProperties().get(MetastoreUtil.getValidColumnsKey(getName()));
+    String validColsStr =
+        MetastoreUtil.getNamedStringValue(getProperties(), MetastoreUtil.getValidColumnsKey(getName()));
     return validColsStr == null ? null : Arrays.asList(StringUtils.split(validColsStr.toLowerCase(), ','));
   }
 
@@ -317,5 +320,37 @@ public final class CubeFactTable extends AbstractCubeTable {
 
   public void setAggregated(boolean isAggregated) {
     getProperties().put(MetastoreConstants.FACT_AGGREGATED_PROPERTY, Boolean.toString(isAggregated));
+  }
+
+  public Date getAbsoluteStartTime() {
+    try {
+      return DateUtil.resolveAbsoluteDate(getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME));
+    } catch (Exception e) {
+      return new Date(Long.MIN_VALUE);
+    }
+  }
+
+  public Date getRelativeStartTime() {
+    try {
+      return DateUtil.resolveRelativeDate(getProperties().get(MetastoreConstants.FACT_RELATIVE_START_TIME), new Date());
+    } catch (Exception e) {
+      return new Date(Long.MIN_VALUE);
+    }
+  }
+
+  public Date getStartTime() {
+    return Collections.max(Lists.newArrayList(getRelativeStartTime(), getAbsoluteStartTime()));
+  }
+
+  public Date getAbsoluteEndTime() {
+    try {
+      return DateUtil.resolveAbsoluteDate(getProperties().get(MetastoreConstants.FACT_ABSOLUTE_END_TIME));
+    } catch (Exception e) {
+      return new Date(Long.MAX_VALUE);
+    }
+  }
+
+  public Date getEndTime() {
+    return getAbsoluteEndTime();
   }
 }

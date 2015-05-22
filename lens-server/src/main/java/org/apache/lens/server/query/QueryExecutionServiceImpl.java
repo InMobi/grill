@@ -411,8 +411,12 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
      */
     FinishedQuery(QueryContext ctx) {
       this.ctx = ctx;
-      this.finishTime = new Date();
-      ctx.setEndTime(this.finishTime.getTime());
+      if (ctx.getEndTime() == 0) {
+        this.finishTime = new Date();
+        ctx.setEndTime(this.finishTime.getTime());
+      } else {
+        this.finishTime = new Date(ctx.getEndTime());
+      }
     }
 
     /*
@@ -1283,6 +1287,9 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
             throw new NotFoundException("Result set not available for query:" + queryHandle);
           }
         }
+      }
+      if (resultSets.get(queryHandle) instanceof InMemoryResultSet) {
+        ((InMemoryResultSet) resultSets.get(queryHandle)).seekToStart();
       }
       return resultSets.get(queryHandle);
     }
@@ -2284,7 +2291,12 @@ public class QueryExecutionServiceImpl extends LensService implements QueryExecu
           .type(MediaType.APPLICATION_OCTET_STREAM).build();
       }
     } else {
-      throw new NotFoundException("Http result not available for query:" + queryHandle.toString());
+      String entity = "";
+      if (result instanceof InMemoryResultSet || result instanceof PersistentResultSet) {
+        entity = "Result is available in driver's "
+          + (result instanceof InMemoryResultSet ? "memory" : "persistence") + ".";
+      }
+      return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
     }
   }
 
