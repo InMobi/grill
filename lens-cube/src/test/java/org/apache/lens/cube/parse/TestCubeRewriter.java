@@ -44,6 +44,9 @@ import org.apache.hadoop.hive.ql.processors.CommandProcessorResponse;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class TestCubeRewriter extends TestQueryRewrite {
 
   private final String cubeName = CubeTestSetup.TEST_CUBE_NAME;
@@ -395,7 +398,6 @@ public class TestCubeRewriter extends TestQueryRewrite {
   @Test
   public void testCubeWhereQueryWithMultipleTables() throws Exception {
     Configuration conf = getConf();
-    conf.setBoolean(CubeQueryConfUtil.ENABLE_MULTI_TABLE_SELECT, false);
     conf.set(CubeQueryConfUtil.getValidStorageTablesKey("testfact"), "C1_testFact,C2_testFact");
     conf.set(CubeQueryConfUtil.getValidUpdatePeriodsKey("testfact", "C1"), "DAILY");
     conf.set(CubeQueryConfUtil.getValidUpdatePeriodsKey("testfact2", "C1"), "YEARLY");
@@ -428,7 +430,6 @@ public class TestCubeRewriter extends TestQueryRewrite {
   @Test
   public void testCubeWhereQueryWithMultipleTablesForMonth() throws Exception {
     Configuration conf = getConf();
-    conf.setBoolean(CubeQueryConfUtil.ENABLE_MULTI_TABLE_SELECT, false);
     conf.set(CubeQueryConfUtil.DRIVER_SUPPORTED_STORAGES, "");
     conf.set(CubeQueryConfUtil.getValidStorageTablesKey("testfact"), "");
     conf.set(CubeQueryConfUtil.getValidUpdatePeriodsKey("testfact", "C1"), "HOURLY");
@@ -1453,7 +1454,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
       assertTrue(hql.contains("`a measure`"));
       System.out.println("@@ hql: " + hql);
     } catch (NullPointerException npe) {
-      npe.printStackTrace();
+      log.error("Not expecting null pointer exception", npe);
       fail("Not expecting null pointer exception");
     }
   }
@@ -1504,7 +1505,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
       System.out.println("@@HQL " + hql);
     } catch (NullPointerException npe) {
       fail(npe.getMessage());
-      npe.printStackTrace();
+      log.error("Not expecting null pointer exception", npe);
     }
   }
 

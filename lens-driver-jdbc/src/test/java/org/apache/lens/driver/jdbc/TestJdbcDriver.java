@@ -24,10 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -46,8 +43,6 @@ import org.apache.lens.server.api.query.PreparedQueryContext;
 import org.apache.lens.server.api.query.QueryContext;
 import org.apache.lens.server.api.util.LensUtil;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.session.SessionState;
@@ -62,11 +57,13 @@ import org.testng.annotations.Test;
 import com.codahale.metrics.MetricRegistry;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The Class TestJdbcDriver.
  */
+@Slf4j
 public class TestJdbcDriver {
-  public static final Log LOG = LogFactory.getLog(TestJdbcDriver.class);
 
   /** The base conf. */
   Configuration baseConf;
@@ -131,7 +128,8 @@ public class TestJdbcDriver {
   }
 
   protected ExplainQueryContext createExplainContext(final String query, Configuration conf) {
-    ExplainQueryContext ectx = new ExplainQueryContext(query, "testuser", null, conf, drivers);
+    ExplainQueryContext ectx = new ExplainQueryContext(UUID.randomUUID().toString(), query, "testuser", null, conf,
+        drivers);
     return ectx;
   }
 
@@ -211,7 +209,7 @@ public class TestJdbcDriver {
     try {
       driver.rewriteQuery(createQueryContext(query));
     } catch (LensException e) {
-      e.printStackTrace();
+      log.error("Error running DDL query.", e);
       th = e;
     }
     Assert.assertNotNull(th);
@@ -222,7 +220,7 @@ public class TestJdbcDriver {
     try {
       driver.rewriteQuery(createQueryContext(query));
     } catch (LensException e) {
-      e.printStackTrace();
+      log.error("Error running DDL query", e);
       th = e;
     }
     Assert.assertNotNull(th);
@@ -233,7 +231,7 @@ public class TestJdbcDriver {
     try {
       driver.rewriteQuery(createQueryContext(query));
     } catch (LensException e) {
-      e.printStackTrace();
+      log.error("Error running DDL query", e);
       th = e;
     }
     Assert.assertNotNull(th);
@@ -244,7 +242,7 @@ public class TestJdbcDriver {
     try {
       driver.rewriteQuery(createQueryContext(query));
     } catch (LensException e) {
-      e.printStackTrace();
+      log.error("Error running DDL query", e);
       th = e;
     }
     Assert.assertNotNull(th);
@@ -272,7 +270,7 @@ public class TestJdbcDriver {
       driver.getEstimateConnectionConf().getInt(JDBCDriverConfConstants.JDBC_POOL_MAX_SIZE, 50);
     for (int i = 0; i < maxEstimateConnections + 10; i++) {
       try {
-        LOG.info("Iteration#" + (i + 1));
+        log.info("Iteration#" + (i + 1));
         String query = i > maxEstimateConnections ? "SELECT * FROM estimate_test" : "CREATE TABLE FOO(ID INT)";
         ExplainQueryContext context = createExplainContext(query, baseConf);
         cost = driver.estimate(context);
@@ -578,8 +576,8 @@ public class TestJdbcDriver {
     try {
       listenerNotificationLatch.await(1, TimeUnit.SECONDS);
     } catch (Exception e) {
-      fail("query completion listener was not notified - " + e.getMessage());
-      e.printStackTrace();
+      fail("Query completion listener was not notified - " + e.getMessage());
+      log.error("Query completion listener was not notified.", e);
     }
 
     LensResultSet grs = driver.fetchResultSet(context);
@@ -738,7 +736,7 @@ public class TestJdbcDriver {
       LensResultSet rs = driver.execute(ctx);
       fail("Should have thrown exception");
     } catch (LensException e) {
-      e.printStackTrace();
+      log.error("Encountered Lens exception.", e);
     }
 
     final CountDownLatch listenerNotificationLatch = new CountDownLatch(1);
@@ -778,7 +776,7 @@ public class TestJdbcDriver {
       driver.fetchResultSet(ctx);
       fail("should have thrown error");
     } catch (LensException e) {
-      e.printStackTrace();
+      log.error("Encountered Lens exception", e);
     }
     driver.closeQuery(handle);
   }
@@ -816,8 +814,8 @@ public class TestJdbcDriver {
     DataSourceConnectionProvider.DriverConfig queryCfg =
       queryCp.getDriverConfigfromConf(driver.getConf());
 
-    LOG.info("@@@ ESTIMATE_CFG " + estimateCfg);
-    LOG.info("@@@ QUERY CFG " + queryCfg);
+    log.info("@@@ ESTIMATE_CFG " + estimateCfg);
+    log.info("@@@ QUERY CFG " + queryCfg);
 
     // Get connection from each so that pools get initialized
     try {
@@ -825,14 +823,14 @@ public class TestJdbcDriver {
       estimateConn.close();
     } catch (SQLException e) {
       // Ignore exception
-      LOG.error("Error getting connection from estimate pool", e);
+      log.error("Error getting connection from estimate pool", e);
     }
 
     try {
       Connection queryConn = queryCp.getConnection(driver.getConf());
       queryConn.close();
     } catch (SQLException e) {
-      LOG.error("Error getting connection from query pool", e);
+      log.error("Error getting connection from query pool", e);
     }
 
 
