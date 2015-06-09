@@ -42,6 +42,7 @@ import org.apache.lens.server.api.session.SessionEvent;
 import org.apache.lens.server.api.session.SessionExpired;
 import org.apache.lens.server.api.session.SessionOpened;
 import org.apache.lens.server.api.session.SessionService;
+import org.apache.lens.server.session.DatabaseResourceService;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.AbstractService;
@@ -96,6 +97,9 @@ public class MetricsServiceImpl extends AbstractService implements MetricsServic
   /** The total expired sessions*/
   private Counter totalExpiredSessions;
 
+  /** The total errors while persisting server state */
+  private Counter totalServerStatePersistenceErrors;
+
   /** The total accepted queries. */
   private Counter totalAcceptedQueries;
 
@@ -110,6 +114,9 @@ public class MetricsServiceImpl extends AbstractService implements MetricsServic
 
   /** The total cancelled queries. */
   private Counter totalCancelledQueries;
+
+  /** The total errors while loading database resources */
+  private Counter totalDatabaseResourceLoadErrors;
 
   /** The opened sessions */
   private Gauge<Integer> activeSessions;
@@ -331,6 +338,9 @@ public class MetricsServiceImpl extends AbstractService implements MetricsServic
         }
       });
 
+    totalDatabaseResourceLoadErrors = metricRegistry.counter(MetricRegistry.name(DatabaseResourceService.class,
+        DatabaseResourceService.LOAD_RESOURCES_ERRORS));
+
     totalAcceptedQueries = metricRegistry.counter(MetricRegistry.name(QueryExecutionService.class, "total-"
       + ACCEPTED_QUERIES));
 
@@ -354,6 +364,9 @@ public class MetricsServiceImpl extends AbstractService implements MetricsServic
 
     totalExpiredSessions = metricRegistry.counter(MetricRegistry.name(QueryExecutionService.class, "total-"
         + EXPIRED_SESSIONS));
+
+    totalServerStatePersistenceErrors = metricRegistry.counter(MetricRegistry.name(LensServices.class,
+        LensServices.SERVER_STATE_PERSISTENCE_ERRORS));
 
     metricRegistry.register("gc", new GarbageCollectorMetricSet());
     metricRegistry.register("memory", new MemoryUsageGaugeSet());
@@ -480,6 +493,11 @@ public class MetricsServiceImpl extends AbstractService implements MetricsServic
   }
 
   @Override
+  public long getTotalDatabaseResourceLoadErrors() {
+    return totalDatabaseResourceLoadErrors.getCount();
+  }
+
+  @Override
   public long getQueuedQueries() {
     return queuedQueries.getValue();
   }
@@ -534,11 +552,16 @@ public class MetricsServiceImpl extends AbstractService implements MetricsServic
     return totalExpiredSessions.getCount();
   }
 
+  @Override
+  public long getTotalServerStatePersistenceErrors() {
+    return totalServerStatePersistenceErrors.getCount();
+  }
+
   /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.lens.server.api.metrics.MetricsService#publishReport()
-   */
+     * (non-Javadoc)
+     *
+     * @see org.apache.lens.server.api.metrics.MetricsService#publishReport()
+     */
   @Override
   public void publishReport() {
     if (reporters != null) {

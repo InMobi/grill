@@ -133,6 +133,8 @@ public interface MetricsService {
 
   String ACTIVE_SESSIONS = "active-sessions";
 
+  long getTotalDatabaseResourceLoadErrors();
+
   long getQueuedQueries();
 
   long getRunningQueries();
@@ -148,6 +150,8 @@ public interface MetricsService {
   long getTotalCancelledQueries();
 
   long getTotalFailedQueries();
+
+  long getTotalServerStatePersistenceErrors();
 
   /**
    * Publish report.
