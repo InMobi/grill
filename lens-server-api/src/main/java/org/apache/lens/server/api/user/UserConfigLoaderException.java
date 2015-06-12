@@ -16,32 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.cli.skel;
-
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.shell.plugin.support.DefaultPromptProvider;
-import org.springframework.stereotype.Component;
+package org.apache.lens.server.api.user;
 
 /**
- * The Class LensPromptProvider.
+ * The Class UserConfigLoaderException.
  */
-@Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class LensPromptProvider extends DefaultPromptProvider {
+public class UserConfigLoaderException extends RuntimeException {
 
-  @Override
-  public String getPrompt() {
-    return "lens-shell>";
+  /**
+   * Instantiates a new user config loader exception.
+   */
+  public UserConfigLoaderException() {
+    super();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Instantiates a new user config loader exception.
    *
-   * @see org.springframework.shell.plugin.support.DefaultPromptProvider#name()
+   * @param s the s
    */
-  @Override
-  public String getProviderName() {
-    return "lens prompt provider";
+  public UserConfigLoaderException(String s) {
+    super(s);
+  }
+
+  /**
+   * Instantiates a new user config loader exception.
+   *
+   * @param e the e
+   */
+  public UserConfigLoaderException(Throwable e) {
+    super(e);
+  }
+
+  /**
+   * Instantiates a new user config loader exception.
+   *
+   * @param message the message
+   * @param cause   the cause
+   */
+  public UserConfigLoaderException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

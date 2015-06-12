@@ -65,6 +65,10 @@
       <groupId>com.typesafe</groupId>
       <artifactId>config</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jvnet.jaxb2_commons</groupId>
+      <artifactId>jaxb2-basics-runtime</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -84,6 +88,7 @@
           <args>
             <arg>-extension</arg>
             <arg>-Xinheritance</arg>
+            <arg>-XtoString</arg>
           </args>
           <plugins>
             <plugin>
