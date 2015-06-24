@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.lens.api.response.LensResponse;
+import org.apache.lens.api.result.LensAPIResult;
 import org.apache.lens.server.api.error.LensException;
 
 @Provider
@@ -31,7 +31,7 @@ public class LensExceptionMapper implements ExceptionMapper<LensException> {
   @Override
   public Response toResponse(LensException exception) {
 
-    final LensResponse lensResponse = exception.getLensResponse();
-    return Response.status(lensResponse.getHttpStatusCode()).entity(lensResponse).build();
+    final LensAPIResult lensAPIResult = exception.getLensAPIResult();
+    return Response.status(lensAPIResult.getHttpStatusCode()).entity(lensAPIResult).build();
   }
 }

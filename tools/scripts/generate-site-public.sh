@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -29,12 +29,11 @@ STAGE=`pwd`/target/staging
 REST_DIR=`pwd`/lens-server/target/site/wsdocs
 VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version|grep -Ev '(^\[|Download\w+:)' || die "unable to get version")
 
-
 echo "Starting generate-site"
 CURR_BRANCH=`git branch | sed -n '/\* /s///p'`
 echo "Running site in current lens branch" $CURR_BRANCH
-mvn clean test -Dtest=org.apache.lens.doc.TestGenerateConfigDoc,org.apache.lens.cli.doc.TestGenerateCLIUserDoc || die "Unable to generate config docs"
-mvn install -DskipTests
+mvn clean test -Dtest=org.apache.lens.doc.TestGenerateConfigDoc,org.apache.lens.cli.doc.TestGenerateCLIUserDoc -DskipCheck || die "Unable to generate config docs"
+mvn install -DskipTests -DskipCheck
 mvn site site:stage -Ddependency.locations.enabled=false -Ddependency.details.enabled=false || die "unable to generate site"
 
 echo "Site gen complete"

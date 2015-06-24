@@ -19,7 +19,6 @@
 package org.apache.lens.server.session;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * Session resource api
- * <p/>
+ * <p></p>
  * This provides api for all things in session.
  */
 @Path("/session")
@@ -124,7 +123,7 @@ public class SessionResource {
 
   /**
    * Add a resource to the session to all LensServices running in this Lens server
-   * <p/>
+   * <p></p>
    * <p>
    * The returned @{link APIResult} will have status SUCCEEDED <em>only if</em> the add operation was successful for all
    * services running in this Lens server.
@@ -143,17 +142,14 @@ public class SessionResource {
   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult addResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
     @FormDataParam("type") String type, @FormDataParam("path") String path) {
-    Iterator<String> foundFiles = new ScannedPaths(path, type).iterator();
-    String matchedPath = null;
+    ScannedPaths scannedPaths = new ScannedPaths(path, type);
     int matchedPathsCount = 0;
 
-    if (foundFiles == null) {
-      return new APIResult(Status.FAILED, "No matching resources found for provided path.");
-    }
-
     int numAdded = 0;
-    while (foundFiles.hasNext()) {
-      matchedPath = foundFiles.next();
+    for (String matchedPath : scannedPaths) {
+      if (matchedPath.startsWith("file:") && !matchedPath.startsWith("file://")) {
+        matchedPath = "file://" + matchedPath.substring("file:".length());
+      }
       numAdded += sessionService.addResourceToAllServices(sessionid, type, matchedPath);
       matchedPathsCount++;
     }
@@ -203,20 +199,16 @@ public class SessionResource {
   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
   public APIResult deleteResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
     @FormDataParam("type") String type, @FormDataParam("path") String path) {
-    Iterator<String> foundFiles = new ScannedPaths(path, type).iterator();
-    String matchedPath = null;
-
-    if (foundFiles == null) {
-      return new APIResult(Status.PARTIAL, "No matching resources found for provided path.");
-    }
+    ScannedPaths scannedPaths = new ScannedPaths(path, type);
 
     int numDeleted = 0;
 
-    while(foundFiles.hasNext()) {
-      matchedPath = foundFiles.next();
-
+    for(String matchedPath : scannedPaths) {
       for (LensService service : LensServices.get().getLensServices()) {
         try {
+          if (matchedPath.startsWith("file:") && !matchedPath.startsWith("file://")) {
+            matchedPath = "file://" + matchedPath.substring("file:".length());
+          }
           service.deleteResource(sessionid, type, matchedPath);
           numDeleted++;
         } catch (LensException e) {
@@ -256,7 +248,7 @@ public class SessionResource {
 
   /**
    * Set value for a parameter specified by key
-   * <p/>
+   * <p></p>
    * The parameters can be a hive variable or a configuration. To set key as a hive variable, the key should be prefixed
    * with 'hivevar:'. To set key as configuration parameter, the key should be prefixed with 'hiveconf:' If no prefix is
    * attached, the parameter is set as configuration.

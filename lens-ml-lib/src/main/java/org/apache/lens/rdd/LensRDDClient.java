@@ -28,6 +28,7 @@ import java.util.UUID;
 import org.apache.lens.api.query.*;
 import org.apache.lens.client.LensClient;
 import org.apache.lens.client.LensClientResultSet;
+import org.apache.lens.client.exceptions.LensAPIException;
 import org.apache.lens.ml.algo.spark.HiveTableRDD;
 import org.apache.lens.server.api.error.LensException;
 
@@ -53,9 +54,8 @@ import org.apache.spark.rdd.RDD;
  * <p>
  * Create RDD from a Lens query. User can poll returned query handle with isReadyForRDD() until the RDD is ready to be
  * used.
- * <p/>
+ * </p>
  * Example -
- * <p/>
  * <pre>
  *   LensRDDClient client = new LensRDDClient(javaSparkContext);
  *   QueryHandle query = client.createLensRDDAsync("SELECT msr1 from TEST_CUBE WHERE ...", conf);
@@ -64,22 +64,17 @@ import org.apache.spark.rdd.RDD;
  *     Thread.sleep(1000);
  *   }
  *
- *   JavaRDD<ResultRow> rdd = client.getRDD(query).toJavaRDD();
+ *   JavaRDD&lt;ResultRow&gt; rdd = client.getRDD(query).toJavaRDD();
  *
  *   // Consume RDD here -
  *   rdd.map(...);
  * </pre>
- * <p/>
- * </p>
- * <p/>
  * <p>
  * Alternatively in blocking mode
- * <p/>
+ * </p>
  * <pre>
  * JavaRDD&lt;ResultRow&gt; rdd = client.createLensRDD(&quot;SELECT msr1 from TEST_CUBE WHERE ...&quot;, conf);
  * </pre>
- * <p/>
- * </p>
  */
 public class LensRDDClient {
 
@@ -167,10 +162,10 @@ public class LensRDDClient {
    *
    * @param query the query
    * @return the query handle
-   * @throws LensException the lens exception
+   * @throws LensAPIException the lens exception
    */
-  public QueryHandle createLensRDDAsync(String query) throws LensException {
-    return getClient().executeQueryAsynch(query, "");
+  public QueryHandle createLensRDDAsync(String query) throws LensAPIException {
+    return getClient().executeQueryAsynch(query, "").getData();
   }
 
   /**
@@ -305,7 +300,7 @@ public class LensRDDClient {
    * @return the lens rdd result
    * @throws LensException the lens exception
    */
-  public LensRDDResult createLensRDD(String query) throws LensException {
+  public LensRDDResult createLensRDD(String query) throws LensAPIException, LensException {
     QueryHandle queryHandle = createLensRDDAsync(query);
     while (!isReadyForRDD(queryHandle)) {
       try {

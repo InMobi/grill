@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,7 +23,7 @@ echo "LENS_CLIENT " $LENS_CLIENT
 echo "LENS_CLIENT_CONF " $LENS_CLIENT_CONF
 echo "LENS_ML " $LENS_ML
 echo "SPARK_HOME " $SPARK_HOME
- 
+
 #set ml classpath into LENS_EXT_CLASSPATH
 LENS_EXT_CLASSPATH=$LENS_EXT_CLASSPATH:`$LENS_ML/bin/lens-ml-classpath.sh`
 export LENS_EXT_CLASSPATH
@@ -32,7 +32,7 @@ SPARK_YARN_JAR=$SPARK_HOME/lib/spark-assembly-1.3.0-hadoop2.4.0.jar
 export SPARK_YARN_JAR
 echo "SPARK_YARN_JAR " $SPARK_YARN_JAR
 
-HIVE_AUX_JARS_PATH=$LENS_ML/lib/lens-ml-lib-2.2.0-beta-incubating-SNAPSHOT.jar,$SPARK_YARN_JAR
+HIVE_AUX_JARS_PATH=$LENS_ML/lib/lens-ml-lib-2.3.0-inm-SNAPSHOT.jar,$SPARK_YARN_JAR
 export HIVE_AUX_JARS_PATH
 
 echo "HIVE_AUX_JARS_PATH " $HIVE_AUX_JARS_PATH
@@ -45,7 +45,7 @@ sleep 20
 
 #start lens server
 echo "Starting Lens server..."
-$LENS_HOME/bin/lens-ctl start --conf $LENS_SERVER_CONF 
+$LENS_HOME/bin/lens-ctl start --conf $LENS_SERVER_CONF
 
 echo "Waiting for 60 secs for Lens Server to start ..."
 sleep 60
@@ -55,4 +55,4 @@ $LENS_CLIENT/bin/run-examples.sh sample-metastore --conf $LENS_CLIENT_CONF
 $LENS_CLIENT/bin/run-examples.sh populate-metastore --conf $LENS_CLIENT_CONF
 $LENS_CLIENT/bin/lens-cli.sh --conf $LENS_CLIENT_CONF
 
-/bin/bash
+/usr/bin/env bash

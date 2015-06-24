@@ -213,7 +213,7 @@ public class QueryContext extends AbstractQueryContext implements Comparable<Que
     super(userQuery, user, qconf, conf, drivers, mergeDriverConf);
     this.submissionTime = submissionTime;
     this.queryHandle = new QueryHandle(UUID.randomUUID());
-    this.status = new QueryStatus(0.0f, Status.NEW, "Query just got created", false, null, null);
+    this.status = new QueryStatus(0.0f, Status.NEW, "Query just got created", false, null, null, null);
     this.priority = Priority.NORMAL;
     this.lensConf = qconf;
     this.conf = conf;
@@ -329,7 +329,6 @@ public class QueryContext extends AbstractQueryContext implements Comparable<Que
   /**
    * Set whether result is persisted on driver to false. Set by drivers when drivers are not persisting
    *
-   * @return true/false
    */
   public void unSetDriverPersistent() {
     isDriverPersistent = false;
