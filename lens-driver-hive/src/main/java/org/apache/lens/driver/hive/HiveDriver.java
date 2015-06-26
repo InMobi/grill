@@ -449,9 +449,10 @@ public class HiveDriver implements LensDriver {
   public LensResultSet execute(QueryContext ctx) throws LensException {
     try {
       addPersistentPath(ctx);
-      ctx.getConf().set("mapred.job.name", ctx.getQueryHandle().toString());
+      Configuration qdconf = ctx.getDriverConf(this);
+      qdconf.set("mapred.job.name", ctx.getQueryHandle().toString());
       OperationHandle op = getClient().executeStatement(getSession(ctx), ctx.getSelectedDriverQuery(),
-        ctx.getSelectedDriverConf().getValByRegex(".*"));
+        qdconf.getValByRegex(".*"));
       log.info("The hive operation handle: " + op);
       ctx.setDriverOpHandle(op.toString());
       hiveHandles.put(ctx.getQueryHandle(), op);
@@ -486,14 +487,15 @@ public class HiveDriver implements LensDriver {
   public void executeAsync(QueryContext ctx) throws LensException {
     try {
       addPersistentPath(ctx);
-      ctx.getConf().set("mapred.job.name", ctx.getQueryHandle().toString());
+      Configuration qdconf = ctx.getDriverConf(this);
+      qdconf.set("mapred.job.name", ctx.getQueryHandle().toString());
       //Query is already explained.
       log.info("whetherCalculatePriority: " + whetherCalculatePriority);
       if (whetherCalculatePriority) {
         try {
           // Inside try since non-data fetching queries can also be executed by async method.
           String priority = queryPriorityDecider.decidePriority(ctx).toString();
-          ctx.getSelectedDriverConf().set("mapred.job.priority", priority);
+          qdconf.set("mapred.job.priority", priority);
           log.info("set priority to " + priority);
         } catch (Exception e) {
           // not failing query launch when setting priority fails
@@ -506,7 +508,7 @@ public class HiveDriver implements LensDriver {
         userConfigLoader.preSubmit(ctx);
       }
       OperationHandle op = getClient().executeStatementAsync(getSession(ctx), ctx.getSelectedDriverQuery(),
-        ctx.getConf().getValByRegex(".*"));
+        qdconf.getValByRegex(".*"));
       ctx.setDriverOpHandle(op.toString());
       log.info("QueryHandle: " + ctx.getQueryHandle() + " HiveHandle:" + op);
       hiveHandles.put(ctx.getQueryHandle(), op);
@@ -821,7 +823,8 @@ public class HiveDriver implements LensDriver {
    */
   void addPersistentPath(QueryContext context) throws IOException {
     String hiveQuery;
-    boolean addInsertOverwrite = context.getConf().getBoolean(
+    Configuration qdconf = context.getDriverConf(this);
+    boolean addInsertOverwrite = qdconf.getBoolean(
       LensConfConstants.QUERY_ADD_INSERT_OVEWRITE, LensConfConstants.DEFAULT_ADD_INSERT_OVEWRITE);
     if (context.isDriverPersistent() && addInsertOverwrite
       && (context.getSelectedDriverQuery().startsWith("SELECT")
@@ -833,7 +836,7 @@ public class HiveDriver implements LensDriver {
       StringBuilder builder = new StringBuilder("INSERT OVERWRITE DIRECTORY ");
       context.setHdfsoutPath(resultSetPath.makeQualified(resultSetPath.getFileSystem(context.getConf())).toString());
       builder.append('"').append(resultSetPath).append("\" ");
-      String outputDirFormat = context.getConf().get(LensConfConstants.QUERY_OUTPUT_DIRECTORY_FORMAT);
+      String outputDirFormat = qdconf.get(LensConfConstants.QUERY_OUTPUT_DIRECTORY_FORMAT);
       if (outputDirFormat != null) {
         builder.append(outputDirFormat);
       }
