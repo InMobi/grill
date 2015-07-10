@@ -16,8 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/** Test class which is added to test2.jar used in TestDatabaseResourceService */
-public class ClassLoaderTestClass2 {
-  public static final boolean TEST_FIELD = true;
-}
+/*
+ *
+ */
+package org.apache.lens.api.query;
 
+public enum QueryCostType {
+  LOW, MEDIUM, HIGH
+}

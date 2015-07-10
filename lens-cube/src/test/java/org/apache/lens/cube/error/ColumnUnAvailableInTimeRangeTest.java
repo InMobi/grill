@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,24 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.api.priority;
 
-import org.apache.lens.api.Priority;
-import org.apache.lens.server.api.error.LensException;
-import org.apache.lens.server.api.query.AbstractQueryContext;
+package org.apache.lens.cube.error;
 
-import org.apache.log4j.Logger;
+import org.apache.lens.api.serialize.SerializationTest;
 
-public interface QueryPriorityDecider {
-  /**
-   * The Constant LOG.
-   */
-  Logger LOG = Logger.getLogger(QueryPriorityDecider.class);
+import org.testng.annotations.Test;
 
-  /**
-   * @param queryContext
-   * @return calculated Priority based on the explained plans for each driver
-   * @throws LensException when can't decide priority.
-   */
-  Priority decidePriority(AbstractQueryContext queryContext) throws LensException;
+public class ColumnUnAvailableInTimeRangeTest {
+
+  @Test
+  public void testIfColumnUnAvailableInTimeRangeIsSerializable() {
+
+    /* Payload class has to be Serializable because it is part of QueryContext collaboration graph of failed queries,
+    which are serialized to be persisted on disk in lens */
+
+    SerializationTest st = new SerializationTest();
+    st.verifySerializationAndDeserialization(new ColUnAvailableInTimeRange("TestColumn", 1234L, 5678L));
+  }
 }
