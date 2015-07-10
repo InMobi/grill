@@ -19,8 +19,7 @@
   under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -115,7 +114,7 @@
 
   <groupId>org.apache.lens</groupId>
   <artifactId>apache-lens</artifactId>
-  <version>2.3.0-beta-incubating-SNAPSHOT</version>
+  <version>2.3.1-inm-SNAPSHOT</version>
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
@@ -144,9 +143,19 @@
   </ciManagement>
 
   <distributionManagement>
+    <repository>
+      <id>InMobiReleases</id>
+      <name>InMobi release Repository</name>
+      <url>https://github.com/InMobi/mvn-repo/raw/master/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>InMobiSnapshots</id>
+      <name>InMobi snapshot Repository</name>
+      <url>https://github.com/InMobi/mvn-repo/raw/master/snapshots</url>
+    </snapshotRepository>
     <site>
       <id>lens-site</id>
-      <url>http://lens.incubator.apache.org/</url>
+      <url>https://inmobi.github.io/grill/</url>
     </site>
   </distributionManagement>
 
@@ -297,9 +306,9 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-lens.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-lens.git</developerConnection>
-    <url>https://git-wip-us.apache.org/repos/asf/incubator-lens.git</url>
+    <connection>scm:git:https://github.com/InMobi/grill.git</connection>
+    <url>https://github.com/InMobi/grill</url>
+    <developerConnection>scm:git:https://github.com/InMobi/grill.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -481,6 +490,14 @@
           <version>${war.plugin.version}</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.1</version>
+          <configuration>
+            <arguments>${arguments}</arguments>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
           <version>${findbugs.plugin.version}</version>
@@ -576,7 +593,7 @@
           <dependency>
             <groupId>org.apache.lens</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>2.3.0-beta-incubating-SNAPSHOT</version>
+            <version>2.3.1-inm-SNAPSHOT</version>
           </dependency>
         </dependencies>
         <executions>
@@ -1325,7 +1342,7 @@
               <dependency>
                 <groupId>org.apache.lens</groupId>
                 <artifactId>checkstyle</artifactId>
-                <version>2.3.0-beta-incubating-SNAPSHOT</version>
+                <version>2.3.1-inm-SNAPSHOT</version>
               </dependency>
             </dependencies>
             <executions>
