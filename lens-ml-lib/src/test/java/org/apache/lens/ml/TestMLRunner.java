@@ -44,12 +44,12 @@ import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+//import org.testng.annotations.AfterTest;
+//import org.testng.annotations.BeforeTest;
+//import org.testng.annotations.Test;
 
 
-@Test
+//@Test
 public class TestMLRunner extends LensJerseyTest {
   private static final Log LOG = LogFactory.getLog(TestMLRunner.class);
   private static final String TEST_DB = TestMLRunner.class.getSimpleName();
@@ -76,7 +76,7 @@ public class TestMLRunner extends LensJerseyTest {
     config.register(MultiPartFeature.class);
   }
 
-  @BeforeTest
+  //@BeforeTest
   public void setUp() throws Exception {
     super.setUp();
     Hive hive = Hive.get(new HiveConf());
@@ -91,7 +91,7 @@ public class TestMLRunner extends LensJerseyTest {
     mlClient = new LensMLClient(client);
   }
 
-  @AfterTest
+  //@AfterTest
   public void tearDown() throws Exception {
     super.tearDown();
     Hive hive = Hive.get(new HiveConf());
@@ -99,7 +99,7 @@ public class TestMLRunner extends LensJerseyTest {
     mlClient.close();
   }
 
-  @Test
+  //@Test
   public void trainAndEval() throws Exception {
     LOG.info("Starting train & eval");
     String algoName = "spark_naive_bayes";
@@ -123,7 +123,7 @@ public class TestMLRunner extends LensJerseyTest {
     Assert.assertNotNull(reportID);
   }
 
-  @Test
+  //@Test
   public void trainAndEvalFromDir() throws Exception {
     LOG.info("Starting train & eval from Dir");
     MLRunner runner = new MLRunner();
