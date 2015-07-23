@@ -716,7 +716,7 @@ public final class LensConfConstants {
    * Interval at which lens session expiry service runs
    */
   public static final String SESSION_EXPIRY_SERVICE_INTERVAL_IN_SECS = SERVER_PFX
-      + "session.expiry.serivce.interval.secs";
+    + "session.expiry.serivce.interval.secs";
 
   public static final int DEFAULT_SESSION_EXPIRY_SERVICE_INTERVAL_IN_SECS = 3600;
 
@@ -892,4 +892,5 @@ public final class LensConfConstants {
   public static final String ESTIMATE_POOL_KEEP_ALIVE_MILLIS = SERVER_PFX + "estimate.pool.keepalive.millis";
   public static final int DEFAULT_ESTIMATE_POOL_KEEP_ALIVE_MILLIS = 60000; // 1 minute
 
+  public static final String QUERY_PHASE1_REWRITERS = SERVER_PFX + "query.phase1.rewriters";
 }
