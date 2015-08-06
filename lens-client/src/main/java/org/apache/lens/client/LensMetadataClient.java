@@ -21,33 +21,23 @@ package org.apache.lens.client;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.xml.XMLConstants;
 import javax.xml.bind.*;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.apache.lens.api.APIResult;
-import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.api.DateTime;
 import org.apache.lens.api.StringList;
+import org.apache.lens.api.jaxb.LensJAXBContext;
 import org.apache.lens.api.metastore.*;
 
 import org.glassfish.jersey.media.multipart.*;
-import org.xml.sax.SAXException;
 
 import com.google.common.base.Joiner;
-import com.google.common.io.Files;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,15 +51,9 @@ public class LensMetadataClient {
 
   static {
     try {
-      ClassLoader classLoader = LensMetadataClient.class.getClassLoader();
-      SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      URI uri = classLoader.getResource("cube-0.1.xsd").toURI();
-      log.info("URI for cube schema: {}", uri.toString());
-      Schema schema = sf.newSchema(uri.toURL());
-      JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+      JAXBContext jaxbContext = new LensJAXBContext(ObjectFactory.class);
       JAXB_UNMARSHALLER = jaxbContext.createUnmarshaller();
-      JAXB_UNMARSHALLER.setSchema(schema);
-    } catch (JAXBException | URISyntaxException | MalformedURLException | SAXException e) {
+    } catch (JAXBException e) {
       log.error("Could not initialize JAXBContext. ", e);
       throw new RuntimeException("Could not initialize JAXBContext. ", e);
     }
@@ -204,12 +188,8 @@ public class LensMetadataClient {
   public APIResult createCube(String cubeSpec) {
     try {
       return createCube(this.<XCube>readFromXML(cubeSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -225,12 +205,8 @@ public class LensMetadataClient {
   public APIResult updateCube(String cubeName, String cubeSpec) {
     try {
       return updateCube(cubeName, this.<XCube>readFromXML(cubeSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -298,12 +274,8 @@ public class LensMetadataClient {
   public APIResult createDimension(String dimSpec) {
     try {
       return createDimension(this.<XDimension>readFromXML(dimSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -319,12 +291,8 @@ public class LensMetadataClient {
   public APIResult updateDimension(String dimName, String dimSpec) {
     try {
       return updateDimension(dimName, this.<XDimension>readFromXML(dimSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -367,12 +335,8 @@ public class LensMetadataClient {
   public APIResult createNewStorage(String storage) {
     try {
       return createNewStorage(this.<XStorage>readFromXML(storage));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -397,12 +361,8 @@ public class LensMetadataClient {
   public APIResult updateStorage(String storageName, String storage) {
     try {
       return updateStorage(storageName, this.<XStorage>readFromXML(storage));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -489,37 +449,10 @@ public class LensMetadataClient {
   public APIResult createFactTable(String factSpec) {
     try {
       return createFactTable(this.<XFactTable>readFromXML(factSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
-
-  private String getContent(String path) {
-    try {
-      List<String> content = null;
-      if (path.startsWith("/")) {
-        // path provided is absolute path
-        content = Files.readLines(new File(path), Charset.defaultCharset());
-      } else {
-        // load from classpath
-        URI uri = Thread.currentThread().getContextClassLoader().getResource(path).toURI();
-        content = Files.readLines(new File(uri),
-          Charset.defaultCharset());
-      }
-      return Joiner.on("\n").skipNulls().join(content);
-    } catch (IOException e) {
-      log.error("IO Error reading content ", e);
-      throw new IllegalStateException(e);
-    } catch (URISyntaxException e) {
-      log.error("URI Error reading content ", e);
-      throw new IllegalStateException(e);
-    }
-  }
-
 
   public APIResult updateFactTable(String factName, XFactTable table) {
     WebTarget target = getMetastoreWebTarget();
@@ -533,12 +466,8 @@ public class LensMetadataClient {
   public APIResult updateFactTable(String factName, String table) {
     try {
       return updateFactTable(factName, this.<XFactTable>readFromXML(table));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -586,12 +515,8 @@ public class LensMetadataClient {
   public APIResult addStorageToFactTable(String factname, String storageSpec) {
     try {
       return addStorageToFactTable(factname, this.<XStorageTableElement>readFromXML(storageSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -703,12 +628,8 @@ public class LensMetadataClient {
   public APIResult createDimensionTable(String tableXml) {
     try {
       return createDimensionTable(this.<XDimensionTable>readFromXML(tableXml));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -728,14 +649,9 @@ public class LensMetadataClient {
       XDimensionTable dimensionTable = readFromXML(dimSpec);
       dimensionTable.setTableName(dimTblName);
       return updateDimensionTable(dimensionTable);
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
-
   }
 
   public APIResult dropDimensionTable(String table, boolean cascade) {
@@ -784,12 +700,8 @@ public class LensMetadataClient {
   public APIResult addStorageToDimTable(String dimTblName, String table) {
     try {
       return addStorageToDimTable(dimTblName, this.<XStorageTableElement>readFromXML(table));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -885,12 +797,8 @@ public class LensMetadataClient {
     String partitionSpec) {
     try {
       return addPartitionToDimensionTable(dimTblName, storage, (XPartition) readFromXML(partitionSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -909,12 +817,8 @@ public class LensMetadataClient {
     String partitionsSpec) {
     try {
       return addPartitionsToDimensionTable(dimTblName, storage, (XPartitionList) readFromXML(partitionsSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -933,12 +837,8 @@ public class LensMetadataClient {
     String partitionSpec) {
     try {
       return addPartitionToFactTable(fact, storage, (XPartition) readFromXML(partitionSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -957,14 +857,11 @@ public class LensMetadataClient {
     String partitionsSpec) {
     try {
       return addPartitionsToFactTable(fact, storage, (XPartitionList) readFromXML(partitionsSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
+
   public APIResult updatePartitionOfDimensionTable(String dimTblName, String storage,
     XPartition partition) {
     WebTarget target = getMetastoreWebTarget();
@@ -980,12 +877,8 @@ public class LensMetadataClient {
     String partitionSpec) {
     try {
       return updatePartitionOfDimensionTable(dimTblName, storage, (XPartition) readFromXML(partitionSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -1004,12 +897,8 @@ public class LensMetadataClient {
     String partitionsSpec) {
     try {
       return updatePartitionsOfDimensionTable(dimTblName, storage, (XPartitionList) readFromXML(partitionsSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -1028,12 +917,8 @@ public class LensMetadataClient {
     String partitionSpec) {
     try {
       return updatePartitionOfFactTable(fact, storage, (XPartition) readFromXML(partitionSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -1052,12 +937,8 @@ public class LensMetadataClient {
     String partitionsSpec) {
     try {
       return updatePartitionsOfFactTable(fact, storage, (XPartitionList) readFromXML(partitionsSpec));
-    } catch (JAXBException e) {
-      log.error("Unmarshalling error:", e);
-      return new APIResult(Status.FAILED, "Unmarshalling failed");
-    } catch (IOException e) {
-      log.error("File error:", e);
-      return new APIResult(Status.FAILED, "File not found");
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
     }
   }
 
@@ -1078,5 +959,10 @@ public class LensMetadataClient {
       .queryParam("sessionid", this.connection.getSessionHandle())
       .request(MediaType.APPLICATION_XML)
       .get(StringList.class).getElements();
+  }
+
+  private APIResult failureAPIResult(Exception e) {
+    log.error("Failed", e);
+    return APIResult.failure(e);
   }
 }

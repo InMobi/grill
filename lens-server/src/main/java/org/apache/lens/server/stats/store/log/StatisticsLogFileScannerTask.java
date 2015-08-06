@@ -32,21 +32,21 @@ import org.apache.lens.server.api.events.LensEventService;
 import org.apache.lens.server.api.metrics.MetricsService;
 import org.apache.lens.server.model.LogSegregationContext;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Timer class for monitoring log file rollup.
  */
+@Slf4j
 public class StatisticsLogFileScannerTask extends TimerTask {
-
-  /** The Constant LOG. */
-  private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(StatisticsLogFileScannerTask.class);
 
   /** The Constant LOG_SCANNER_ERRORS. */
   public static final String LOG_SCANNER_ERRORS = "log-scanner-errors";
@@ -88,13 +88,13 @@ public class StatisticsLogFileScannerTask extends TimerTask {
         try {
           service.notifyEvent(event);
         } catch (LensException e) {
-          LOG.warn("Unable to Notify partition event" + event.getEventName() + " with map  " + event.getPartMap());
+          log.warn("Unable to Notify partition event {} with map {}", event.getEventName(), event.getPartMap());
         }
       }
     } catch (Exception exc) {
-      MetricsService svc = (MetricsService) LensServices.get().getService(MetricsService.NAME);
+      MetricsService svc = LensServices.get().getService(MetricsService.NAME);
       svc.incrCounter(StatisticsLogFileScannerTask.class, LOG_SCANNER_ERRORS);
-      LOG.error("Unknown error in log file scanner ", exc);
+      log.error("Unknown error in log file scanner ", exc);
     }
   }
 
@@ -141,12 +141,12 @@ public class StatisticsLogFileScannerTask extends TimerTask {
       return;
     }
     String appenderName = event.substring(event.lastIndexOf(".") + 1, event.length());
-    Logger log = Logger.getLogger(event);
-    if (log.getAppender(appenderName) == null) {
-      LOG.error("Unable to find " + "statistics log appender for  " + event + " with appender name " + appenderName);
+    Logger logger = (Logger) LoggerFactory.getLogger(event);
+    if (logger.getAppender(appenderName) == null) {
+      log.error("Unable to find statistics log appender for {}  with appender name {}", event, appenderName);
       return;
     }
-    String location = ((FileAppender) log.getAppender(appenderName)).getFile();
+    String location = ((FileAppender<ILoggingEvent>) logger.getAppender(appenderName)).getFile();
     scanSet.put(appenderName, location);
     classSet.put(appenderName, event);
   }

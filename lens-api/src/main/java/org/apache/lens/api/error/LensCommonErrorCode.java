@@ -24,7 +24,9 @@ package org.apache.lens.api.error;
  */
 public enum LensCommonErrorCode {
 
-  INTERNAL_SERVER_ERROR(1001);
+  INTERNAL_SERVER_ERROR(1001),
+
+  INVALID_XML_ERROR(1002);
 
   public int getValue() {
     return this.errorCode;

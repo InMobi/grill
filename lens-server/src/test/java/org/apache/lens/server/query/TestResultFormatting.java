@@ -40,9 +40,7 @@ import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.LensTestUtil;
 import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.api.query.InMemoryOutputFormatter;
-import org.apache.lens.server.api.query.PersistedOutputFormatter;
-import org.apache.lens.server.api.query.QueryContext;
+import org.apache.lens.server.api.query.*;
 import org.apache.lens.server.common.TestResourceFile;
 
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
@@ -57,10 +55,13 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The Class TestResultFormatting.
  */
 @Test(groups = "unit-test")
+@Slf4j
 public class TestResultFormatting extends LensJerseyTest {
 
   /** The query service. */
@@ -77,7 +78,7 @@ public class TestResultFormatting extends LensJerseyTest {
   @BeforeTest
   public void setUp() throws Exception {
     super.setUp();
-    queryService = (QueryExecutionServiceImpl) LensServices.get().getService("query");
+    queryService = LensServices.get().getService(QueryExecutionService.NAME);
     lensSessionId = queryService.openSession("foo", "bar", new HashMap<String, String>());
     LensTestUtil.createTable(testTable, target(), lensSessionId,
       "(ID INT, IDSTR STRING, IDARR ARRAY<INT>, IDSTRARR ARRAY<STRING>)");
@@ -235,9 +236,9 @@ public class TestResultFormatting extends LensJerseyTest {
       if (qctx == null) {
         // This shouldn't occur. It is appearing when query gets purged. So adding extra logs
         // for debugging in the future.
-        LOG.info("successful query's QueryContext is null");
-        LOG.info("query handle: " + handle);
-        LOG.info("allQueries: " + queryService.allQueries);
+        log.info("successful query's QueryContext is null");
+        log.info("query handle: {}", handle);
+        log.info("allQueries: {}", queryService.allQueries);
         // not doing formatter validation if qctx is null
       } else if (!isDir) {
         // isDir is true if the formatter is skipped due to result being the max size allowed

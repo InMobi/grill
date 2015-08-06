@@ -18,6 +18,11 @@
  */
 package org.apache.lens.server.query;
 
+import static org.apache.lens.server.common.RestAPITestUtil.execute;
+import static org.apache.lens.server.common.RestAPITestUtil.waitForQueryToFinish;
+
+import static org.testng.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +33,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
@@ -40,10 +46,9 @@ import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.LensTestUtil;
 import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.api.query.QueryExecutionService;
 import org.apache.lens.server.common.TestResourceFile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -58,14 +63,14 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
 /**
  * The query completion email notifier
  */
 @Test(groups = "unit-test")
 public class TestQueryEndEmailNotifier extends LensJerseyTest {
 
-  /** The Constant LOG. */
-  public static final Log LOG = LogFactory.getLog(TestQueryEndEmailNotifier.class);
   private static final int NUM_ITERS = 30;
   /** The query service. */
   QueryExecutionServiceImpl queryService;
@@ -87,7 +92,7 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
     wiser = new Wiser();
     wiser.setHostname("localhost");
     wiser.setPort(25000);
-    queryService = (QueryExecutionServiceImpl) LensServices.get().getService("query");
+    queryService = LensServices.get().getService(QueryExecutionService.NAME);
     Map<String, String> sessionconf = new HashMap<String, String>();
     sessionconf.put("test.session.key", "svalue");
     sessionconf.put(LensConfConstants.QUERY_MAIL_NOTIFY, "true");
@@ -198,38 +203,28 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
   @Test
   public void testEmailNotification() throws InterruptedException {
     wiser.start();
+
     LensConf conf = new LensConf();
+
     // launch failure
-    QueryHandle handle = launchAndWaitForQuery(conf, "select ID from non_exist_table", QueryStatus.Status.FAILED);
+    final Response response = execute(target(), Optional.of(lensSessionId), Optional.of("select fail from non_exist"));
+    assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+    QueryHandle handle = response.readEntity(new GenericType<LensAPIResult<QueryHandle>>() {}).getData();
+    LensQuery lensQuery = waitForQueryToFinish(target(), lensSessionId, handle);
+
     List<WiserMessage> messages = new ArrayList<WiserMessage>();
     for (int i = 0; i < NUM_ITERS; i++) {
       messages = wiser.getMessages();
       if (messages.size() >= 4) {
         break;
       }
-      Thread.sleep(10000);
+      Thread.sleep(2000);
     }
 
     Assert.assertEquals(messages.size(), 4);
     Assert.assertTrue(messages.get(0).toString().contains(handle.toString()));
     Assert.assertTrue(messages.get(0).toString().contains("Launching query failed"));
     Assert.assertTrue(messages.get(0).toString().contains("Reason"));
-
-    // rewriter failure
-    handle = launchAndWaitForQuery(conf, "cube select ID from nonexist", QueryStatus.Status.FAILED);
-    messages = new ArrayList<WiserMessage>();
-    for (int i = 0; i < NUM_ITERS; i++) {
-      messages = wiser.getMessages();
-      if (messages.size() >= 8) {
-        break;
-      }
-      Thread.sleep(10000);
-    }
-
-    Assert.assertEquals(messages.size(), 8);
-    Assert.assertTrue(messages.get(4).toString().contains(handle.toString()));
-    Assert.assertTrue(messages.get(4).toString().contains("Launching query failed"));
-    Assert.assertTrue(messages.get(4).toString().contains("Reason"));
 
     // formatting failure
     conf = new LensConf();
@@ -238,19 +233,20 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
     conf.addProperty(LensConfConstants.QUERY_OUTPUT_SERDE, "NonexistentSerde.class");
     handle = launchAndWaitForQuery(conf, "select ID, IDSTR from " + TEST_TABLE,
       QueryStatus.Status.FAILED);
+
     messages = new ArrayList<WiserMessage>();
     for (int i = 0; i < NUM_ITERS; i++) {
       messages = wiser.getMessages();
-      if (messages.size() >= 12) {
+      if (messages.size() >= 8) {
         break;
       }
-      Thread.sleep(10000);
+      Thread.sleep(2000);
     }
 
-    Assert.assertEquals(messages.size(), 12);
-    Assert.assertTrue(messages.get(8).toString().contains(handle.toString()));
-    Assert.assertTrue(messages.get(8).toString().contains("Result formatting failed!"));
-    Assert.assertTrue(messages.get(8).toString().contains("Reason"));
+    Assert.assertEquals(messages.size(), 8);
+    Assert.assertTrue(messages.get(4).toString().contains(handle.toString()));
+    Assert.assertTrue(messages.get(4).toString().contains("Result formatting failed!"));
+    Assert.assertTrue(messages.get(4).toString().contains("Reason"));
 
     // execution failure
     conf = new LensConf();
@@ -262,16 +258,16 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
     messages = new ArrayList<WiserMessage>();
     for (int i = 0; i < NUM_ITERS; i++) {
       messages = wiser.getMessages();
-      if (messages.size() >= 16) {
+      if (messages.size() >= 8) {
         break;
       }
-      Thread.sleep(10000);
+      Thread.sleep(2000);
     }
 
-    Assert.assertEquals(messages.size(), 16);
-    Assert.assertTrue(messages.get(12).toString().contains(handle.toString()));
-    Assert.assertTrue(messages.get(12).toString().contains("Query execution failed!"));
-    Assert.assertTrue(messages.get(12).toString().contains("Reason"));
+    Assert.assertEquals(messages.size(), 12);
+    Assert.assertTrue(messages.get(8).toString().contains(handle.toString()));
+    Assert.assertTrue(messages.get(8).toString().contains("Query execution failed!"));
+    Assert.assertTrue(messages.get(8).toString().contains("Reason"));
 
     // successful query
     conf = new LensConf();
@@ -281,15 +277,15 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
     messages = new ArrayList<WiserMessage>();
     for (int i = 0; i < NUM_ITERS; i++) {
       messages = wiser.getMessages();
-      if (messages.size() >= 20) {
+      if (messages.size() >= 16) {
         break;
       }
-      Thread.sleep(10000);
+      Thread.sleep(2000);
     }
-    Assert.assertEquals(messages.size(), 20);
-    Assert.assertTrue(messages.get(16).toString().contains(handle.toString()));
-    Assert.assertTrue(messages.get(16).toString().contains("Query  SUCCESSFUL"));
-    Assert.assertTrue(messages.get(16).toString().contains("Result available at"));
+    Assert.assertEquals(messages.size(), 16);
+    Assert.assertTrue(messages.get(12).toString().contains(handle.toString()));
+    Assert.assertTrue(messages.get(12).toString().contains("Query  SUCCESSFUL"));
+    Assert.assertTrue(messages.get(12).toString().contains("Result available at"));
     wiser.stop();
   }
 }

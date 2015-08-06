@@ -43,13 +43,12 @@ import org.apache.lens.server.LensAllApplicationJerseyTest;
 import org.apache.lens.server.LensApplication;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.LensTestUtil;
+import org.apache.lens.server.api.metastore.CubeMetastoreService;
 import org.apache.lens.server.api.metrics.MethodMetrics;
 import org.apache.lens.server.api.metrics.MetricsService;
 import org.apache.lens.server.common.TestResourceFile;
 import org.apache.lens.server.metastore.CubeMetastoreServiceImpl;
 import org.apache.lens.server.query.TestQueryService;
-
-import org.apache.log4j.BasicConfigurator;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -61,7 +60,10 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Test(groups = "unit-test")
+@Slf4j
 public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
   private CubeMetastoreServiceImpl metastoreService;
   private MetricsServiceImpl metricsSvc;
@@ -77,9 +79,8 @@ public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
   @BeforeTest
   public void setUp() throws Exception {
     super.setUp();
-    BasicConfigurator.configure();
-    metricsSvc = (MetricsServiceImpl) LensServices.get().getService(MetricsService.NAME);
-    metastoreService = (CubeMetastoreServiceImpl) LensServices.get().getService(CubeMetastoreServiceImpl.NAME);
+    metricsSvc = LensServices.get().getService(MetricsService.NAME);
+    metastoreService = LensServices.get().getService(CubeMetastoreService.NAME);
     lensSessionId = metastoreService.openSession("foo", "bar", new HashMap<String, String>());
     methodMetricsMap = metricsSvc.getMethodMetricsFactory().getMethodMetricsMap();
     //reset
@@ -123,16 +124,16 @@ public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
     disableResourceMethodMetering();
     metricsSvc.setEnableResourceMethodMetering(true);
     Assert.assertEquals(methodMetricsMap.size(), 0);
-    LOG.info("database operations");
+    log.info("database operations");
     databaseOperations();
     Assert.assertEquals(methodMetricsMap.size(), 3);
-    LOG.info("create table");
+    log.info("create table");
     createTable(TestQueryService.TEST_TABLE);
     Assert.assertEquals(methodMetricsMap.size(), 5);
-    LOG.info("load data");
+    log.info("load data");
     loadData(TestQueryService.TEST_TABLE, TestResourceFile.TEST_DATA2_FILE.getValue());
     Assert.assertEquals(methodMetricsMap.size(), 5);
-    LOG.info("execute async");
+    log.info("execute async");
     executeAsync();
     verifyValues();
     makeClientError();
@@ -149,7 +150,7 @@ public class TestResourceMethodMetrics extends LensAllApplicationJerseyTest {
       fail("Should get 404");
     } catch (NotAllowedException e) {
       // expected
-      LOG.error(e);
+      log.error("Not found excepiton:", e);
     }
   }
 

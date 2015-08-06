@@ -20,12 +20,12 @@ package org.apache.lens.server;
 
 import org.apache.lens.server.api.metrics.MetricsService;
 
-import org.apache.log4j.Logger;
-
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The listener interface for receiving lensApplication events. The class that is interested in processing a
@@ -34,10 +34,8 @@ import org.glassfish.jersey.server.monitoring.RequestEventListener;
  * When the lensApplication event occurs, that object's appropriate method is invoked.
  *
  */
+@Slf4j
 public class LensApplicationListener implements ApplicationEventListener {
-
-  /** The Constant LOG. */
-  public static final Logger LOG = Logger.getLogger(LensApplicationListener.class);
 
   /** The req listener. */
 
@@ -52,7 +50,7 @@ public class LensApplicationListener implements ApplicationEventListener {
   public RequestEventListener onRequest(RequestEvent requestEvent) {
     // Request start events are sent to application listener and not request listener
     if (RequestEvent.Type.START == requestEvent.getType()) {
-      MetricsService metricsSvc = (MetricsService) LensServices.get().getService(MetricsService.NAME);
+      MetricsService metricsSvc = LensServices.get().getService(MetricsService.NAME);
       if (metricsSvc != null) {
         metricsSvc.incrCounter(LensRequestListener.class, LensRequestListener.HTTP_REQUESTS_STARTED);
       }
@@ -71,10 +69,10 @@ public class LensApplicationListener implements ApplicationEventListener {
   public void onEvent(ApplicationEvent event) {
     switch (event.getType()) {
     case INITIALIZATION_FINISHED:
-      LOG.info("Application " + event.getResourceConfig().getApplicationName() + " was initialized.");
+      log.info("Application {} was initialized.", event.getResourceConfig().getApplicationName());
       break;
     case DESTROY_FINISHED:
-      LOG.info("Application " + event.getResourceConfig().getApplicationName() + " was destroyed");
+      log.info("Application {} was destroyed", event.getResourceConfig().getApplicationName());
       break;
     default:
       break;

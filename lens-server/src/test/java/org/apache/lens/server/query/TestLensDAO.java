@@ -37,6 +37,7 @@ import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.query.FinishedLensQuery;
 import org.apache.lens.server.api.query.QueryContext;
+import org.apache.lens.server.api.query.QueryExecutionService;
 
 import org.apache.hadoop.conf.Configuration;
 
@@ -44,10 +45,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The Class TestLensDAO.
  */
 @Test(groups = "unit-test")
+@Slf4j
 public class TestLensDAO extends LensJerseyTest {
 
   /**
@@ -57,7 +61,7 @@ public class TestLensDAO extends LensJerseyTest {
    */
   @Test
   public void testLensServerDAO() throws Exception {
-    QueryExecutionServiceImpl service = (QueryExecutionServiceImpl) LensServices.get().getService("query");
+    QueryExecutionServiceImpl service = LensServices.get().getService(QueryExecutionService.NAME);
 
     // Test insert query
     QueryContext queryContext = service.createContext("SELECT ID FROM testTable", "foo@localhost", new LensConf(),
@@ -85,12 +89,12 @@ public class TestLensDAO extends LensJerseyTest {
 
       String jsonMetadata = MAPPER.writeValueAsString(jdbcRsMeta);
 
-      LOG.info("@@@JSON " + jsonMetadata);
+      log.info("@@@JSON {}" + jsonMetadata);
 
       finishedLensQuery.setMetadata(MAPPER.writeValueAsString(jdbcRsMeta));
       finishedLensQuery.setMetadataClass(JDBCResultSet.JDBCResultSetMetadata.class.getName());
     } catch (SQLException ex) {
-      LOG.error("Error creating result set ", ex);
+      log.error("Error creating result set ", ex);
     } finally {
       if (stmt != null) {
         stmt.close();

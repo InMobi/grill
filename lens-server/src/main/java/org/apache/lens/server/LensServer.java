@@ -25,16 +25,15 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.apache.lens.api.result.LensJAXBContextResolver;
+import org.apache.lens.api.jaxb.LensJAXBContextResolver;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.api.metrics.MetricsService;
 import org.apache.lens.server.error.LensExceptionMapper;
+import org.apache.lens.server.error.LensJAXBValidationExceptionMapper;
 import org.apache.lens.server.metrics.MetricsServiceImpl;
 import org.apache.lens.server.model.MappedDiagnosticLogSegregationContext;
 import org.apache.lens.server.ui.UIApp;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
 
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -47,14 +46,13 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.codahale.metrics.servlets.AdminServlet;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class LensServer.
  */
+@Slf4j
 public class LensServer {
-
-  /** The Constant LOG. */
-  public static final Log LOG = LogFactory.getLog(LensServer.class);
 
   private static final String SEP_LINE =
     "\n###############################################################\n";
@@ -91,10 +89,10 @@ public class LensServer {
     serverList.add(server);
 
     WebappContext adminCtx = new WebappContext("admin", "");
-    adminCtx.setAttribute("com.codahale.metrics.servlets.MetricsServlet.registry", ((MetricsServiceImpl) LensServices
-      .get().getService(MetricsService.NAME)).getMetricRegistry());
-    adminCtx.setAttribute("com.codahale.metrics.servlets.HealthCheckServlet.registry",
-      ((MetricsServiceImpl) LensServices.get().getService(MetricsService.NAME)).getHealthCheck());
+    MetricsServiceImpl metricsService = LensServices.get().getService(MetricsService.NAME);
+    adminCtx
+      .setAttribute("com.codahale.metrics.servlets.MetricsServlet.registry", (metricsService.getMetricRegistry()));
+    adminCtx.setAttribute("com.codahale.metrics.servlets.HealthCheckServlet.registry", metricsService.getHealthCheck());
 
     final ServletRegistration sgMetrics = adminCtx.addServlet("admin", new AdminServlet());
     sgMetrics.addMapping("/admin/*");
@@ -115,6 +113,7 @@ public class LensServer {
     ResourceConfig app = ResourceConfig.forApplicationClass(LensApplication.class);
     app.register(new LoggingFilter(Logger.getLogger(LensServer.class.getName() + ".request"), true));
     app.register(LensExceptionMapper.class);
+    app.register(LensJAXBValidationExceptionMapper.class);
     app.register(LensJAXBContextResolver.class);
     app.setApplicationName("AllApps");
     return app;
@@ -169,11 +168,11 @@ public class LensServer {
         try {
           wait(2000);
         } catch (InterruptedException e) {
-          LOG.warn("Received an interrupt in the main loop", e);
+          log.warn("Received an interrupt in the main loop", e);
         }
       }
     }
-    LOG.info("Exiting main run loop...");
+    log.info("Exiting main run loop...");
   }
 
   /**
@@ -197,11 +196,11 @@ public class LensServer {
       thisServer.start();
       thisServer.join();
     } catch (Exception exc) {
-      LOG.fatal("Error while creating Lens server", exc);
+      log.error("Error while creating Lens server", exc);
       try {
         LensServices.get().stop();
       } catch (Exception e) {
-        LOG.error("Error stopping services", e);
+        log.error("Error stopping services", e);
       }
     }
   }
@@ -230,7 +229,7 @@ public class LensServer {
       buffer.append("*** Unable to get build info ***");
     }
     buffer.append(SEP_LINE);
-    LOG.info(buffer.toString());
+    log.info(buffer.toString());
   }
 
   /**
@@ -241,7 +240,7 @@ public class LensServer {
     buffer.append(SEP_LINE);
     buffer.append("                    Lens Server (SHUTDOWN)");
     buffer.append(SEP_LINE);
-    LOG.info(buffer.toString());
+    log.info(buffer.toString());
   }
 
   /**
@@ -253,7 +252,7 @@ public class LensServer {
       @Override
       public void run() {
         Thread.currentThread().setName("Shutdown");
-        LOG.info("Server has been requested to be stopped.");
+        log.info("Server has been requested to be stopped.");
         thisServer.canRun = false;
         thisServer.stop();
       }
@@ -265,7 +264,7 @@ public class LensServer {
     Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
       @Override
       public void uncaughtException(Thread t, Throwable e) {
-        LOG.fatal("Uncaught exception in Thread " + t, e);
+        log.error("Uncaught exception in Thread " + t, e);
       }
     });
   }
