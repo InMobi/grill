@@ -143,7 +143,8 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
   /**
    * The accepted queries.
    */
-  private FairPriorityBlockingQueue<QueryContext> queuedQueries = new FairPriorityBlockingQueue<QueryContext>();
+  private FairPriorityBlockingQueue<QueryContext> queuedQueries
+    = new FairPriorityBlockingQueue<QueryContext>(new QueryContextPriorityComparator());
 
   /**
    * The launched queries.
@@ -912,11 +913,13 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
               if (set != null && PersistentResultSet.class.isAssignableFrom(set.getClass())) {
                 LensResultSetMetadata metadata = set.getMetadata();
                 String outputPath = ((PersistentResultSet) set).getOutputPath();
-                int rows = set.size();
+                Long fileSize = ((PersistentResultSet) set).fileSize();
+                Integer rows = set.size();
                 finishedQuery.setMetadataClass(metadata.getClass().getName());
                 finishedQuery.setResult(outputPath);
                 finishedQuery.setMetadata(MAPPER.writeValueAsString(metadata));
                 finishedQuery.setRows(rows);
+                finishedQuery.setFileSize(fileSize);
               }
             }
           }
@@ -1418,7 +1421,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       try {
         Class<LensResultSetMetadata> mdKlass = (Class<LensResultSetMetadata>) Class.forName(query.getMetadataClass());
         return new LensPersistentResult(MAPPER.readValue(query.getMetadata(), mdKlass), query.getResult(),
-          query.getRows());
+          query.getRows(), query.getFileSize());
       } catch (Exception e) {
         throw new LensException(e);
       }
@@ -1450,7 +1453,8 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
                 new LensPersistentResult(
                   ctx.getQueryOutputFormatter().getMetadata(),
                   ctx.getQueryOutputFormatter().getFinalOutputPath(),
-                  ctx.getQueryOutputFormatter().getNumRows()));
+                  ctx.getQueryOutputFormatter().getNumRows(),
+                  ctx.getQueryOutputFormatter().getFileSize()));
           } else if (allQueries.get(queryHandle).isResultAvailableInDriver()) {
             resultSet = allQueries.get(queryHandle).getSelectedDriver().fetchResultSet(allQueries.get(queryHandle));
             resultSets.put(queryHandle, resultSet);
@@ -1758,7 +1762,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    * @return the query context
    * @throws LensException the lens exception
    */
-  private QueryContext getQueryContext(LensSessionHandle sessionHandle, QueryHandle queryHandle) throws LensException {
+  QueryContext getQueryContext(LensSessionHandle sessionHandle, QueryHandle queryHandle) throws LensException {
     try {
       acquire(sessionHandle);
       QueryContext ctx = allQueries.get(queryHandle);
@@ -2739,9 +2743,8 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     String uri = res.getLocation();
     // Hive doesn't and URIs starting with file:/ correctly, so we have to change it to file:///
     // See: org.apache.hadoop.hive.ql.exec.Utilities.addToClassPath
-    if (uri.startsWith("file:") && !uri.startsWith("file://")) {
-      uri = "file://" + uri.substring("file:".length());
-    }
+    uri = removePrefixBeforeURI(uri);
+
     String command = "add " + res.getType().toLowerCase() + " " + uri;
     driver.execute(createResourceQuery(command, sessionHandle, driver));
     log.info("Added resource to hive driver for session {} cmd: {}", sessionIdentifier, command);

@@ -92,7 +92,7 @@ User CLI Commands
 *--+--+
 |close/bye|Releases all resources of the server session and exits the shell|
 *--+--+
-|debug [[--enable] To print all logs on cli for debugging purpose]|prints all class level logs and verbose logs on cli for debugging purpose. 'debug false' to turn off all class level logging and verbose level logging |
+|debug [[--enable] ]|prints all class level logs and verbose logs on cli for debugging purpose. 'debug false' to turn off all class level logging and verbose level logging |
 *--+--+
 |get [--key] \<key\>|Fetches and prints session parameter specified with name <<<key>>> from lens server|
 *--+--+
@@ -108,7 +108,7 @@ User CLI Commands
 *--+--+
 |show params|Fetches and prints all session parameter from lens server|
 *--+--+
-|verbose [[--enable] Print the clilogger logs on cli]|Show cliLogger logs on cli. 'verbose false'  turns off the cliLogger logs on console|
+|verbose [[--enable] ]|Show cliLogger logs on cli. 'verbose false'  turns off the cliLogger logs on console|
 *--+--+
   <<Lens Connection Commands>>
 
@@ -351,6 +351,19 @@ User CLI Commands
 |query status [--query_handle] \<query_handle\>|Fetch status of executed query having query handle <<<query_handle>>>|
 *--+--+
   <<Lens Query Commands>>
+
+===
+
+** Access to Log Resouces
+
+  This section provides commands for fetching logs under LENS_LOG_DIR.
+
+*--+--+
+|<<Command>>|<<Description>>|
+*--+--+
+|show logs [--log_handle] log handle can be be query_handle for queries [--save_location \<save_location\>]|show logs for a given query handle or log file|
+*--+--+
+  <<Lens Log Resource Commands>>
 
 ===
 

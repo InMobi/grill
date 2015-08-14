@@ -121,7 +121,7 @@
   </property>
 
   <property>
-    <!-- Immediately insert all finished queries to DB -->
+    <!-- Keep only the last query in memory -->
     <name>lens.server.max.finished.queries</name>
     <value>1</value>
   </property>
@@ -135,7 +135,6 @@
     <name>lens.server.servicenames</name>
     <value>session,query,metastore,scheduler,quota,mocknonlens</value>
   </property>
-
 
   <property>
     <name>lens.server.mocknonlens.service.impl</name>
@@ -158,6 +157,12 @@
   <property>
     <name>lens.server.database.resource.dir</name>
     <value>target/resources</value>
+  </property>
+
+  <property>
+    <name>lens.server.statistics.warehouse.dir</name>
+    <value>file://${project.build.directory}/lens/statistics/warehouse</value>
+    <description>Default top level location where stats are moved by the log statistics store.</description>
   </property>
 
   <property>

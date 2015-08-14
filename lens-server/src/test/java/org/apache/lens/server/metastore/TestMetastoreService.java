@@ -22,6 +22,7 @@ import static org.apache.lens.cube.metadata.UpdatePeriod.*;
 
 import static org.testng.Assert.*;
 
+import java.io.File;
 import java.util.*;
 
 import javax.ws.rs.BadRequestException;
@@ -48,6 +49,7 @@ import org.apache.lens.server.api.metastore.CubeMetastoreService;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.metastore.TableType;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.session.SessionState;
@@ -295,7 +297,7 @@ public class TestMetastoreService extends LensJerseyTest {
     xcc.setChainName("chain1");
     xcc.setRefCol("col2");
     xd3.setRefSpec(cubeObjectFactory.createXDimAttributeRefSpec());
-    xd3.getRefSpec().setChainRefColumn(xcc);
+    xd3.getRefSpec().getChainRefColumn().add(xcc);
     xd3.setNumDistinctValues(1000L);
 
     // add attribute with complex type
@@ -636,7 +638,7 @@ public class TestMetastoreService extends LensJerseyTest {
       boolean chainValidated = false;
       for (XDimAttribute attr : actual.getDimAttributes().getDimAttribute()) {
         if (attr.getName().equalsIgnoreCase("testdim2col2")) {
-          assertEquals(attr.getRefSpec().getChainRefColumn().getDestTable(), "testdim");
+          assertEquals(attr.getRefSpec().getChainRefColumn().get(0).getDestTable(), "testdim");
           chainValidated = true;
           break;
         }
@@ -653,13 +655,12 @@ public class TestMetastoreService extends LensJerseyTest {
       assertEquals(hcube.getDimAttributeByName("testdim2col2").getDescription(), "ref chained dimension");
       assertEquals(((BaseDimAttribute) hcube.getDimAttributeByName("dim4")).getType(),
         "struct<a:int,b:array<string>,c:map<int,array<struct<x:int,y:array<int>>>");
-      assertEquals(((ReferencedDimAtrribute) hcube.getDimAttributeByName("testdim2col2")).getType(), "string");
-      assertEquals(((ReferencedDimAtrribute) hcube.getDimAttributeByName("testdim2col2")).getChainName(), "chain1");
-      assertEquals(((ReferencedDimAtrribute) hcube.getDimAttributeByName("testdim2col2")).getRefColumn(), "col2");
-      assertEquals((((ReferencedDimAtrribute) hcube.getDimAttributeByName("testdim2col2"))
-        .getNumOfDistinctValues().get()), Long.valueOf(1000));
-      assertEquals((((ReferencedDimAtrribute) hcube.getDimAttributeByName("testdim2col2"))
-        .getNumOfDistinctValues().get()), Long.valueOf(1000));
+      ReferencedDimAtrribute testdim2col2 = (ReferencedDimAtrribute) hcube.getDimAttributeByName("testdim2col2");
+      assertEquals(testdim2col2.getType(), "string");
+      assertEquals(testdim2col2.getChainRefColumns().get(0).getChainName(), "chain1");
+      assertEquals(testdim2col2.getChainRefColumns().get(0).getRefColumn(), "col2");
+      assertEquals(testdim2col2.getNumOfDistinctValues().get(), Long.valueOf(1000));
+      assertEquals((testdim2col2.getNumOfDistinctValues().get()), Long.valueOf(1000));
 
       assertEquals(((BaseDimAttribute) hcube.getDimAttributeByName("dim2")).getNumOfDistinctValues().isPresent(),
         false);
@@ -945,7 +946,7 @@ public class TestMetastoreService extends LensJerseyTest {
     xs1.setFieldDelimiter("\t");
     xs1.setLineDelimiter("\n");
     xs1.setMapKeyDelimiter("\r");
-    xs1.setTableLocation("/tmp/" + name);
+    xs1.setTableLocation(new Path(new File("target").getAbsolutePath(), name).toString());
     xs1.setExternal(true);
     xs1.setPartCols(new XColumns());
     xs1.setTableParameters(new XProperties());
@@ -1850,7 +1851,7 @@ public class TestMetastoreService extends LensJerseyTest {
   private XPartition createPartition(String cubeTableName, final List<XTimePartSpecElement> timePartSpecs) {
 
     XPartition xp = cubeObjectFactory.createXPartition();
-    xp.setLocation("file:///tmp/part/test_part");
+    xp.setLocation(new Path(new File("target").getAbsolutePath(), "part/test_part").toString());
     xp.setFactOrDimensionTableName(cubeTableName);
     xp.setNonTimePartitionSpec(new XPartSpec());
     xp.setTimePartitionSpec(new XTimePartSpec());
