@@ -106,11 +106,12 @@ public class TimeRange {
 
   public void validate() throws LensException {
     if (partitionColumn == null || fromDate == null || toDate == null || fromDate.equals(toDate)) {
-      throw new LensException(LensCubeErrorCode.INVALID_TIME_RANGE.getValue());
+      throw new LensException(LensCubeErrorCode.INVALID_TIME_RANGE.getLensErrorInfo());
     }
 
     if (fromDate.after(toDate)) {
-      throw new LensException(LensCubeErrorCode.FROM_AFTER_TO.getValue(), fromDate.toString(), toDate.toString());
+      throw new LensException(LensCubeErrorCode.FROM_AFTER_TO.getLensErrorInfo(),
+          fromDate.toString(), toDate.toString());
     }
   }
 
@@ -197,7 +198,7 @@ public class TimeRange {
       @Override
       public Date next() {
         Date cur = calendar.getTime();
-        calendar.add(updatePeriod.calendarField(), increment);
+        updatePeriod.increment(calendar, increment);
         counter++;
         return cur;
       }

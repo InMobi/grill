@@ -16,25 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.cli;
+package org.apache.lens.cli.commands;
 
-import static org.testng.Assert.assertTrue;
+import org.apache.lens.cli.table.XFlattenedColumnTable;
+import org.apache.lens.cli.table.XJoinChainTable;
 
-import org.apache.lens.cli.commands.LensQueryCommands;
-import org.apache.lens.client.LensClient;
-
-public class ExecuteQueryCommandIT extends LensCliApplicationTest {
-
- // @Test
-  public void testExecuteSyncQueryWithSyntaxError() {
-
-    LensQueryCommands lensQueryCommands = new LensQueryCommands();
-    lensQueryCommands.setClient(new LensClient());
-
-    final String actualResult = lensQueryCommands.executeQuery("mock-query", false, "testQuery");
-
-    assertTrue(actualResult.contains("Query Id: "));
-    assertTrue(actualResult.contains("\n" + "Error Code: 3001\n"
-        + "Error Message: Syntax Error: line 1:0 cannot recognize input near 'mock' '-' 'query'"));
+public abstract class ConceptualTableCrudCommand<T> extends LensCRUDCommand<T> {
+  public String getAllFields(String table, boolean flattened) {
+    return new XFlattenedColumnTable(getClient().getQueryableFields(table, flattened), table).toString();
+  }
+  public String getAllJoinChains(String table) {
+    return new XJoinChainTable(getClient().getJoinChains(table)).toString();
   }
 }
