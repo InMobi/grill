@@ -26,7 +26,15 @@ public enum LensCommonErrorCode {
 
   INTERNAL_SERVER_ERROR(1001),
 
-  INVALID_XML_ERROR(1002);
+  INVALID_XML_ERROR(1002),
+
+  RESOURCE_NOT_FOUND(1003),
+
+  NOT_AUTHORIZED(1004),
+
+  MISSING_PARAMETERS(1005),
+
+  INVALID_PARAMETER_VALUE(1006);
 
   public int getValue() {
     return this.errorCode;
