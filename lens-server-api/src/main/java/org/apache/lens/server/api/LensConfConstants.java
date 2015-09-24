@@ -731,7 +731,7 @@ public final class LensConfConstants {
    * Interval at which lens session expiry service runs
    */
   public static final String SESSION_EXPIRY_SERVICE_INTERVAL_IN_SECS = SERVER_PFX
-    + "session.expiry.serivce.interval.secs";
+    + "session.expiry.service.interval.secs";
 
   public static final int DEFAULT_SESSION_EXPIRY_SERVICE_INTERVAL_IN_SECS = 3600;
 
@@ -774,14 +774,14 @@ public final class LensConfConstants {
   // Query Purge Configuration
 
   /**
-   * The Constant MAX_NUMBER_OF_FINISHED_QUERY.
+   * The Constant PURGE_INTERVAL.
    */
-  public static final String MAX_NUMBER_OF_FINISHED_QUERY = SERVER_PFX + "max.finished.queries";
+  public static final String PURGE_INTERVAL = SERVER_PFX + "querypurger.sleep.interval";
 
   /**
-   * The Constant DEFAULT_FINISHED_QUERIES.
+   * The Constant DEFAULT_PURGE_INTERVAL.
    */
-  public static final int DEFAULT_FINISHED_QUERIES = 100;
+  public static final int DEFAULT_PURGE_INTERVAL = 10000;
 
   // Server DB configuration
   /**

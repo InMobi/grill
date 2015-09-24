@@ -87,7 +87,7 @@
     <!-- test -->
     <testng.version>6.8</testng.version>
     <mockito.version>1.9.5</mockito.version>
-    <powermock.version>1.4.12</powermock.version>
+    <powermock.version>1.5.6</powermock.version>
 
     <!-- maven plugins -->
     <jaxb2.plugin.version>0.12.3</jaxb2.plugin.version>
@@ -106,6 +106,11 @@
     <findbugs.plugin.version>3.0.1</findbugs.plugin.version>
     <antrun.plugin.version>1.8</antrun.plugin.version>
     <cobertura.plugin.version>2.7</cobertura.plugin.version>
+
+    <!-- UI -->
+    <frontend.maven.plugin>0.0.23</frontend.maven.plugin>
+    <nodeVersion>v4.0.0</nodeVersion>
+    <npmVersion>2.7.6</npmVersion>
 
     <!-- debian -->
     <mvn.deb.build.dir>${project.build.directory}/debian</mvn.deb.build.dir>
@@ -565,6 +570,8 @@
             <exclude>**/*.iml</exclude>
             <exclude>**/.classpath</exclude>
             <exclude>**/.project</exclude>
+            <exclude>**/node/**</exclude>
+            <exclude>**/node_modules/**</exclude>
             <exclude>**/.checkstyle</exclude>
             <exclude>**/.settings/**</exclude>
             <exclude>**/maven-eclipse.xml</exclude>
@@ -585,6 +592,7 @@
             <exclude>**/codemirror.min.*</exclude>
             <exclude>**/*.js</exclude>
             <exclude>**/*.properties</exclude>
+            <exclude>**/*.json</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -1540,6 +1548,7 @@
     <module>lens-ml-lib</module>
     <module>lens-ml-dist</module>
     <module>lens-regression</module>
+    <module>lens-ui</module>
   </modules>
 
   <profiles>
