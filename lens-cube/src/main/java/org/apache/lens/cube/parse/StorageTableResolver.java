@@ -627,9 +627,10 @@ class StorageTableResolver implements ContextRewriter {
               if (!newset.isEmpty()) {
                 // Get partitions for look ahead process time
                 log.debug("Looking for process time partitions between {} and {}", pdt, nextPdt);
+                PartitionRangesForPartitionColumns missingLookAhead = new PartitionRangesForPartitionColumns();
                 Set<FactPartition> processTimeParts =
                   getPartitions(fact, TimeRange.getBuilder().fromDate(pdt).toDate(nextPdt).partitionColumn(
-                    processTimePartCol).build(), newset, true, false, skipStorageCauses, missingPartitions);
+                    processTimePartCol).build(), newset, true, false, skipStorageCauses, missingLookAhead);
                 log.debug("Look ahead partitions: {}", processTimeParts);
                 TimeRange timeRange = TimeRange.getBuilder().fromDate(dt).toDate(nextDt).build();
                 for (FactPartition pPart : processTimeParts) {
