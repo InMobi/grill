@@ -29,7 +29,7 @@
   <groupId>org.apache.lens</groupId>
   <artifactId>checkstyle</artifactId>
   <name>Lens Checkstyle Rules</name>
-  <version>2.4.1-inm-breakfix</version>
+  <version>2.4.2-inm-breakfix-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -49,8 +49,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <scm>
-    <tag>apache-lens-2.4.1-inm-breakfix</tag>
-  </scm>
 </project>
