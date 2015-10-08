@@ -683,7 +683,7 @@ class StorageTableResolver implements ContextRewriter {
         updatePeriods, addNonExistingParts, failOnPartialData, skipStorageCauses, missingPartitions);
   }
 
-  void updateFactPartitionStorageTablesFrom(CubeFactTable fact,
+  private void updateFactPartitionStorageTablesFrom(CubeFactTable fact,
     FactPartition part, Set<String> storageTableNames) throws LensException, HiveException, ParseException {
     for (String storageTableName : storageTableNames) {
       if (client.factPartitionExists(fact, part, storageTableName)) {
@@ -693,7 +693,7 @@ class StorageTableResolver implements ContextRewriter {
     }
   }
 
-  void updateFactPartitionStorageTablesFrom(CubeFactTable fact,
+  private void updateFactPartitionStorageTablesFrom(CubeFactTable fact,
     FactPartition part, FactPartition pPart) throws LensException, HiveException, ParseException {
     updateFactPartitionStorageTablesFrom(fact, part, pPart.getStorageTables());
     part.setFound(part.isFound() && pPart.isFound());
