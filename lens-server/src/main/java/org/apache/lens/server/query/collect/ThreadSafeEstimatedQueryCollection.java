@@ -46,7 +46,7 @@ public class ThreadSafeEstimatedQueryCollection implements EstimatedQueryCollect
 
   @Override
   public synchronized int getQueriesCount(LensDriver driver) {
-    return this.estimatedQueries.getQueriesCount();
+    return this.estimatedQueries.getQueriesCount(driver);
   }
 
   @Override
