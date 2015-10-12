@@ -108,9 +108,9 @@
     <cobertura.plugin.version>2.7</cobertura.plugin.version>
 
     <!-- UI -->
-    <frontend.maven.plugin>0.0.23</frontend.maven.plugin>
-    <nodeVersion>v4.0.0</nodeVersion>
-    <npmVersion>2.7.6</npmVersion>
+    <nodejs.plugin.version>1.0.0</nodejs.plugin.version>
+    <nodeVersion>0.10.32</nodeVersion>
+    <npmVersion>1.4.9</npmVersion>
 
     <!-- debian -->
     <mvn.deb.build.dir>${project.build.directory}/debian</mvn.deb.build.dir>
@@ -125,7 +125,7 @@
 
   <groupId>org.apache.lens</groupId>
   <artifactId>apache-lens</artifactId>
-  <version>2.4.1-inm-breakfix-SNAPSHOT</version>
+  <version>2.4.2-inm-SNAPSHOT</version>
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
@@ -543,6 +543,21 @@
           <artifactId>findbugs-maven-plugin</artifactId>
           <version>${findbugs.plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>io.wcm.maven.plugins</groupId>
+          <artifactId>nodejs-maven-plugin</artifactId>
+          <version>${nodejs.plugin.version}</version>
+          <configuration>
+            <npmVersion>${npmVersion}</npmVersion>
+            <nodeJsVersion>${nodeVersion}</nodeJsVersion>
+            <nodeJsDirectory>${project.basedir}/node</nodeJsDirectory>
+            <tasks>
+              <npmInstallTask>
+                <workingDirectory>${project.basedir}</workingDirectory>
+              </npmInstallTask>
+            </tasks>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -639,7 +654,7 @@
           <dependency>
             <groupId>org.apache.lens</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>2.4.1-inm-breakfix-SNAPSHOT</version>
+            <version>2.4.2-inm-SNAPSHOT</version>
           </dependency>
         </dependencies>
         <executions>
@@ -1647,7 +1662,7 @@
               <dependency>
                 <groupId>org.apache.lens</groupId>
                 <artifactId>checkstyle</artifactId>
-                <version>2.4.1-inm-breakfix-SNAPSHOT</version>
+                <version>2.4.2-inm-SNAPSHOT</version>
               </dependency>
             </dependencies>
             <executions>

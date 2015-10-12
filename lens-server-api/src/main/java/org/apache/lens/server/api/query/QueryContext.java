@@ -43,11 +43,13 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class QueryContext.
  */
 @ToString
+@Slf4j
 public class QueryContext extends AbstractQueryContext {
 
   /**
@@ -145,7 +147,7 @@ public class QueryContext extends AbstractQueryContext {
 
   @Getter
   @Setter
-  private transient QueryOutputFormatter queryOutputFormatter;
+  private QueryOutputFormatter queryOutputFormatter;
 
   /**
    * The finished query persisted.
@@ -334,6 +336,7 @@ public class QueryContext extends AbstractQueryContext {
 
   public synchronized void setStatus(final QueryStatus newStatus) throws LensException {
     validateTransition(newStatus);
+    log.info("Updating status of {} from {} to {}", getQueryHandle(), this.status, newStatus);
     this.status = newStatus;
   }
 

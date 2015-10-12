@@ -79,12 +79,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.cli.CLIService;
-import org.apache.hive.service.cli.ColumnDescriptor;
-import org.apache.hive.service.cli.TypeDescriptor;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,11 +131,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    * The Constant NAME.
    */
   public static final String NAME = "query";
-
-  /**
-   * The Constant MAPPER.
-   */
-  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   /**
    * The accepted queries.
@@ -348,7 +338,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       for (Class<?> driverClass : driverClasses) {
         try {
           LensDriver driver = (LensDriver) driverClass.newInstance();
-          driver.configure(LensServerConf.getConf());
+          driver.configure(LensServerConf.getConfForDrivers());
           if (driver instanceof HiveDriver) {
             driver.registerDriverEventListener(driverEventListener);
           }
@@ -680,7 +670,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
             }
 
             logSegregationContext.setLogSegragationAndQueryId(ctx.getQueryHandleString());
-            log.info("Polling status for {}", ctx.getQueryHandle());
+            log.debug("Polling status for {}", ctx.getQueryHandle());
             try {
               // session is not required to update status of the query
               // don't need to wrap this with acquire/release
@@ -780,7 +770,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       synchronized (ctx) {
         QueryStatus before = ctx.getStatus();
         if (!ctx.queued() && !ctx.finished() && !ctx.getDriverStatus().isFinished()) {
-          log.info("Updating status for {}", ctx.getQueryHandle());
+          log.debug("Updating status for {}", ctx.getQueryHandle());
           try {
             ctx.getSelectedDriver().updateStatus(ctx);
             ctx.setStatus(ctx.getDriverStatus().toQueryStatus());
@@ -918,7 +908,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
                         Integer rows = set.size();
                         finishedQuery.setMetadataClass(metadata.getClass().getName());
                         finishedQuery.setResult(outputPath);
-                        finishedQuery.setMetadata(MAPPER.writeValueAsString(metadata));
+                        finishedQuery.setMetadata(metadata.toJson());
                         finishedQuery.setRows(rows);
                         finishedQuery.setFileSize(fileSize);
                       }
@@ -1063,31 +1053,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     } catch (Exception e) {
       log.warn("Unable to create finished query table, query purger will not purge queries", e);
     }
-    SimpleModule module = new SimpleModule("HiveColumnModule", new Version(1, 0, 0, null));
-    module.addSerializer(ColumnDescriptor.class, new JsonSerializer<ColumnDescriptor>() {
-      @Override
-      public void serialize(ColumnDescriptor columnDescriptor, JsonGenerator jsonGenerator,
-        SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("name", columnDescriptor.getName());
-        jsonGenerator.writeStringField("comment", columnDescriptor.getComment());
-        jsonGenerator.writeNumberField("position", columnDescriptor.getOrdinalPosition());
-        jsonGenerator.writeStringField("type", columnDescriptor.getType().getName());
-        jsonGenerator.writeEndObject();
-      }
-    });
-    module.addDeserializer(ColumnDescriptor.class, new JsonDeserializer<ColumnDescriptor>() {
-      @Override
-      public ColumnDescriptor deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-        throws IOException, JsonProcessingException {
-        ObjectCodec oc = jsonParser.getCodec();
-        JsonNode node = oc.readTree(jsonParser);
-        org.apache.hive.service.cli.Type t = org.apache.hive.service.cli.Type.getType(node.get("type").asText());
-        return new ColumnDescriptor(node.get("name").asText(), node.get("comment").asText(), new TypeDescriptor(t),
-          node.get("position").asInt());
-      }
-    });
-    MAPPER.registerModule(module);
   }
 
   /*
@@ -1423,7 +1388,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
         throw new NotFoundException("InMemory Query result purged " + queryHandle);
       }
       try {
-        return new LensPersistentResult(query, conf, MAPPER);
+        return new LensPersistentResult(query, conf);
       } catch (Exception e) {
         throw new LensException(e);
       }
