@@ -32,6 +32,7 @@ import org.apache.lens.client.LensClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.testng.annotations.Test;
 
 /**
@@ -122,7 +123,12 @@ public class TestLensCubeCommands extends LensCliApplicationTest {
     chain2.getPaths().getPath().add(path2);
     chain2.setDestTable("test_dim");
     chains.getJoinChain().add(chain2);
-    assertEquals(joinChains, new XJoinChainTable(chains).toString());
+    chains.getJoinChain().add(chain1);
+    XJoinChains chainsInDiffOrder = new XJoinChains();
+    chainsInDiffOrder.getJoinChain().add(chain1);
+    chainsInDiffOrder.getJoinChain().add(chain2);
+    assertTrue(joinChains.equals(new XJoinChainTable(chains).toString())
+        || joinChains.equals(new XJoinChainTable(chainsInDiffOrder).toString()));
   }
 
   private void testFields(LensCubeCommands command) {
