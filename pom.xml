@@ -125,7 +125,7 @@
 
   <groupId>org.apache.lens</groupId>
   <artifactId>apache-lens</artifactId>
-  <version>2.4.1-inm=breakfix3-SNAPSHOT</version>
+  <version>2.4.1-inm-breakfix3-SNAPSHOT</version>
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
