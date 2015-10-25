@@ -1073,6 +1073,29 @@ public class TestColumnarSQLRewriter {
     compareQueries(expected, actual);
   }
 
+  @Test
+  public void testReplaceBackQuote() throws LensException {
+
+    String query = "select fact.time_key `time_key`,time_dim.day_of_week `day of week`,"
+            + " sum(fact.item_sold) as `total item sold`, count(fact.item_sold) as `total_item_count` "
+            + "from db.sales_fact as fact "
+            + "inner join time_dim as time_dim on fact.time_key = time_dim.time_key ";
+
+    SessionState.start(hconf);
+
+    String actual = qtest.rewrite(query, conf, hconf);
+    String expected = "select ( sales_fact__db_sales_fact_fact . time_key ) time_key , "
+            + "( time_dim___time_dim . day_of_week ) as \"day of week\" , "
+            + "sum(( sales_fact__db_sales_fact_fact . item_sold )) as \"total item sold\" , "
+            + "count(( sales_fact__db_sales_fact_fact . item_sold )) total_item_count  "
+            + "from db.sales_fact sales_fact__db_sales_fact_fact  inner join "
+            + "(select time_key,day_of_week from time_dim) time_dim___time_dim on "
+            + "(( sales_fact__db_sales_fact_fact . time_key ) = "
+            + "( time_dim___time_dim . time_key ))";
+
+    compareQueries(expected, actual);
+  }
+
 
   /**
    * Test replace db name.
