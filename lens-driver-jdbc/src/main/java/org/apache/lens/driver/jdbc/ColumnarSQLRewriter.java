@@ -80,7 +80,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   protected StringBuilder allSubQueries = new StringBuilder();
 
   /** The fact keys. */
-  Set<String> factKeys = new HashSet<String>();
+  Set<String> factKeys = new LinkedHashSet<String>();
 
   /** The rewritten query. */
   protected StringBuilder rewrittenQuery = new StringBuilder();
@@ -92,7 +92,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   protected StringBuilder factFilterPush = new StringBuilder();
 
   /** The join list. */
-  protected ArrayList<String> joinList = new ArrayList<String>();
+  protected List<String> joinList = new ArrayList<String>();
 
   /** The join condition. */
   protected StringBuilder joinCondition = new StringBuilder();
@@ -113,19 +113,20 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   private String leftFilter;
 
   /** The map agg tab alias. */
-  private final Map<String, String> mapAggTabAlias = new HashMap<String, String>();
+  private final Map<String, String> mapAggTabAlias = new LinkedHashMap<String, String>();
 
   /** The map aliases. */
-  private final Map<String, String> mapAliases = new HashMap<String, String>();
+  private final Map<String, String> mapAliases = new LinkedHashMap<String, String>();
 
   /** The table to alias map. */
-  private final Map<String, String> tableToAliasMap = new HashMap<String, String>();
+  private final Map<String, String> tableToAliasMap = new LinkedHashMap<String, String>();
 
   /** The tables to accessed column map. */
-  private final Map<String, HashSet<String>> tableToAccessedColMap = new HashMap<String, HashSet<String>>();
+  private final Map<String, LinkedHashSet<String>> tableToAccessedColMap =
+    new LinkedHashMap<String, LinkedHashSet<String>>();
 
   /** The dimension table to subquery map. */
-  private final Map<String, String> dimTableToSubqueryMap = new HashMap<String, String>();
+  private final Map<String, String> dimTableToSubqueryMap = new LinkedHashMap<String, String>();
 
   /** The where tree. */
   private String whereTree;
@@ -175,6 +176,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   /** The from ast. */
   @Getter
   protected ASTNode fromAST;
+  private HashMap<String, String> regexReplaceMap = new HashMap<>();
 
   /**
    * Instantiates a new columnar sql rewriter.
@@ -184,6 +186,14 @@ public class ColumnarSQLRewriter implements QueryRewriter {
 
   @Override
   public void init(Configuration conf) {
+    if (conf.get(JDBCDriverConfConstants.REGEX_REPLACEMENT_VALUES) != null) {
+      for (String kv : conf.get(JDBCDriverConfConstants.REGEX_REPLACEMENT_VALUES).split("(?<!\\\\),")) {
+        String[] kvArray = kv.split("=");
+        String key = kvArray[0].replaceAll("\\\\,", ",").trim();
+        String value = kvArray[1].replaceAll("\\\\,", ",").trim();
+        regexReplaceMap.put(key, value);
+      }
+    }
   }
 
   public String getClause() {
@@ -388,22 +398,56 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   }
 
   /**
-   * Check if expression is used in select
+   * Check if expression is answerable from fact, then push it to fact pushdown subquery
    *
    * @param node
    * @return true if expressions is used
    */
-  public boolean isExpressionsUsed(ASTNode node) {
+  public boolean isExpressionsAnswerableFromFact(ASTNode node) {
+    boolean isAnswerable = true;
     for (int i = 0; i < node.getChildCount(); i++) {
       if (node.getChild(i).getType() == HiveParser.TOK_SELEXPR) {
         int cnt = getColumnCount((ASTNode) node.getChild(i));
         if (cnt >= 2) {
-          return true;
+          if (cnt == getNumFactTableInExpressions((ASTNode) node.getChild(i), new MutableInt(0))) {
+            isAnswerable = true;
+          } else {
+            isAnswerable = false;
+          }
         }
       }
     }
-    return false;
+    return isAnswerable;
   }
+
+  /**
+   * Get number of fact columns used in the an expression
+   *
+   * @param node
+   * @param count
+   * @return Number of fact columns used in expression
+   */
+  private int getNumFactTableInExpressions(ASTNode node, MutableInt count) {
+
+    if (node == null) {
+      log.debug("ASTNode is null ");
+      return 0;
+    }
+    if (node.getToken().getType() == HiveParser.TOK_TABLE_OR_COL) {
+      String factAlias = getFactAlias();
+      String table = node.getChild(0).getText();
+      if (table.equals(factAlias)) {
+        count.add(1);
+      }
+    }
+    for (int i = 0; i < node.getChildCount(); i++) {
+      ASTNode child = (ASTNode) node.getChild(i);
+      getNumFactTableInExpressions(child, count);
+    }
+
+    return count.intValue();
+  }
+
 
   /*
    * Get filter conditions if user has specified a join condition for filter pushdown.
@@ -498,15 +542,19 @@ public class ColumnarSQLRewriter implements QueryRewriter {
       log.debug("AST is null ");
       return;
     }
-    if (node.getToken().getType() == HiveParser.DOT
-      && node.getParent().getChild(0).getType() != HiveParser.Identifier) {
-      String table = HQLParser.findNodeByPath(node, TOK_TABLE_OR_COL, Identifier).toString();
-      String column = node.getChild(1).toString().toLowerCase();
+    if (HQLParser.isAggregateAST(node)) {
+      return;
+    } else {
+      if (node.getToken().getType() == HiveParser.DOT
+              && node.getParent().getChild(0).getType() != HiveParser.Identifier) {
+        String table = HQLParser.findNodeByPath(node, TOK_TABLE_OR_COL, Identifier).toString();
+        String column = node.getChild(1).toString().toLowerCase();
 
-      String factAlias = getFactAlias();
+        String factAlias = getFactAlias();
 
-      if (table.equals(factAlias)) {
-        factKeys.add(factAlias + "." + column);
+        if (table.equals(factAlias)) {
+          factKeys.add(factAlias + "." + column);
+        }
       }
     }
 
@@ -552,9 +600,9 @@ public class ColumnarSQLRewriter implements QueryRewriter {
         String alias = tableToAliasMap.get(tab);
 
         if ((table.equals(tab) || table.equals(alias)) && column != null) {
-          HashSet<String> cols;
+          LinkedHashSet<String> cols;
           if (!tableToAccessedColMap.containsKey(tab)) {
-            cols = new HashSet<String>();
+            cols = new LinkedHashSet<String>();
             cols.add(column);
             tableToAccessedColMap.put(tab, cols);
           } else {
@@ -580,7 +628,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     while (iterator.hasNext()) {
       StringBuilder query = new StringBuilder();
       String tab = (String) iterator.next();
-      HashSet<String> cols = tableToAccessedColMap.get(tab);
+      LinkedHashSet<String> cols = tableToAccessedColMap.get(tab);
       query.append("(").append("select ").append(StringUtils.join(cols, ","))
           .append(" from ").append(tab).append(")");
       dimTableToSubqueryMap.put(tab, query.toString());
@@ -625,7 +673,10 @@ public class ColumnarSQLRewriter implements QueryRewriter {
           .replaceAll("[(,)]", "");
         String dimJoinKeys = HQLParser.getString(right).replaceAll("\\s+", "")
           .replaceAll("[(,)]", "");
-        String dimTableName = dimJoinKeys.substring(0, dimJoinKeys.indexOf("__"));
+        int dimTableDelimIndex = dimJoinKeys.indexOf("__");
+        String dimTableName = dimJoinKeys.substring(0, dimTableDelimIndex);
+        String dimAlias = dimJoinKeys.
+            substring(dimTableDelimIndex + 3, dimJoinKeys.indexOf('.')).trim();
 
         // Construct part of subquery by referring join condition
         // fact.fact_key = dim_table.dim_key
@@ -638,19 +689,21 @@ public class ColumnarSQLRewriter implements QueryRewriter {
         getAllFilters(whereAST);
         rightFilter.add(leftFilter);
 
-        Set<String> setAllFilters = new HashSet<String>(rightFilter);
+        Set<String> setAllFilters = new LinkedHashSet<String>(rightFilter);
 
         // Check the occurrence of dimension table in the filter list and
         // combine all filters of same dimension table with and .
         // eg. "dim_table.key1 = 'abc' and dim_table.key2 = 'xyz'"
-        if (setAllFilters.toString().matches("(.*)" + dimTableName + "(.*)")) {
+        if (setAllFilters.toString().replaceAll("\\s+", "")
+            .matches("(.*)" + dimAlias + "(.*)")) {
 
           factFilters.delete(0, factFilters.length());
 
           // All filters in where clause
           for (int i = 0; i < setAllFilters.toArray().length; i++) {
 
-            if (setAllFilters.toArray()[i].toString().matches("(.*)" + dimTableName + ("(.*)"))) {
+            if (setAllFilters.toArray()[i].toString().replaceAll("\\s+", "")
+                .matches("(.*)" + dimAlias + ("(.*)"))) {
               String filters2 = setAllFilters.toArray()[i].toString();
               filters2 = filters2.replaceAll(
                 getTableOrAlias(filters2, "alias"),
@@ -691,7 +744,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
       ref = keyString.substring(0, keyString.indexOf("__")).replaceAll("[(,)]", "");
     }
     if (type.equals("alias")) {
-      ref = keyString.substring(0, keyString.lastIndexOf(".")).replaceAll("[(,)]", "");
+      ref = keyString.substring(0, keyString.indexOf(".")).replaceAll("[(,)]", "");
     }
     return ref;
   }
@@ -827,7 +880,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
   public String getFactNameAlias(ASTNode fromAST) {
     String factTable;
     String factAlias;
-    ArrayList<String> allTables = new ArrayList<String>();
+    ArrayList<String> allTables = new ArrayList<>();
     getAllTablesfromFromAST(fromAST, allTables);
 
     String[] keys = allTables.get(0).trim().split(" +");
@@ -897,13 +950,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
    * @return the string
    */
   public String replaceUDFForDB(String query) {
-    Map<String, String> imputnmatch = new HashMap<String, String>();
-    imputnmatch.put("to_date", "date");
-    imputnmatch.put("format_number", "format");
-    imputnmatch.put("date_sub\\((.*?),\\s*([0-9]+\\s*)\\)", "date_sub($1, interval $2 day)");
-    imputnmatch.put("date_add\\((.*?),\\s*([0-9]+\\s*)\\)", "date_add($1, interval $2 day)");
-
-    for (Map.Entry<String, String> entry : imputnmatch.entrySet()) {
+    for (Map.Entry<String, String> entry : regexReplaceMap.entrySet()) {
       query = query.replaceAll(entry.getKey(), entry.getValue());
     }
     return query;
@@ -956,7 +1003,11 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     replaceWithUnderlyingStorage(hconf);
     replaceAliasInAST();
     getFilterInJoinCond(fromAST);
-    getAggregateColumns(selectAST, new MutableInt(0));
+    MutableInt alaisCount = new MutableInt(0);
+    getAggregateColumns(selectAST, alaisCount);
+    if (havingAST != null) {
+      getAggregateColumns(havingAST, alaisCount);
+    }
     constructJoinChain();
     getAllFilters(whereAST);
     buildSubqueries(fromAST);
@@ -971,9 +1022,8 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     // Construct the final fact in-line query with keys,
     // measures and individual sub queries built.
 
-
     if (whereTree == null || joinTree == null || allSubQueries.length() == 0
-        || aggColumn.isEmpty() || isExpressionsUsed(selectAST)) {
+        || aggColumn.isEmpty() || !isExpressionsAnswerableFromFact(selectAST)) {
       log.info("@@@Query not eligible for inner subquery rewrite");
       // construct query without fact sub query
       constructQuery(selectTree, whereTree, groupByTree, havingTree, orderByTree, limit);
@@ -1131,10 +1181,12 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     } else {
       finalJoinClause = factNameAndAlias;
     }
-    rewrittenQuery.append("select ").append(selecttree).append(" from ");
+    //Replace backquotes with double quotes
+    rewrittenQuery.append("select ").append(selecttree.replaceAll("`", "\"")).append(" from ");
     if (factInLineQuery.length() != 0) {
-      rewrittenQuery.append(finalJoinClause.replaceFirst(factNameAndAlias.substring(0, factNameAndAlias.indexOf(' ')),
-        factInLineQuery.toString()));
+      finalJoinClause = finalJoinClause.substring(finalJoinClause.indexOf(" "));
+      rewrittenQuery.append(factInLineQuery);
+      rewrittenQuery.append(finalJoinClause);
     } else {
       rewrittenQuery.append(finalJoinClause);
     }
@@ -1169,8 +1221,9 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     reset();
 
     try {
+      String finalRewrittenQuery;
       if (query.toLowerCase().matches("(.*)union all(.*)")) {
-        String finalRewrittenQuery = "";
+        finalRewrittenQuery = "";
         String[] queries = query.toLowerCase().split("union all");
         for (int i = 0; i < queries.length; i++) {
           log.info("Union Query Part {} : {}", i, queries[i]);
@@ -1180,16 +1233,14 @@ public class ColumnarSQLRewriter implements QueryRewriter {
           finalRewrittenQuery = mergedQuery.toString().substring(0, mergedQuery.lastIndexOf("union all"));
           reset();
         }
-        queryReplacedUdf = replaceUDFForDB(finalRewrittenQuery);
-        log.info("Input Query : {}", query);
-        log.info("Rewritten Query : {}", queryReplacedUdf);
       } else {
         ast = HQLParser.parseHQL(query, metastoreConf);
         buildQuery(conf, metastoreConf);
-        queryReplacedUdf = replaceUDFForDB(rewrittenQuery.toString());
-        log.info("Input Query : {}", query);
-        log.info("Rewritten Query :  {}", queryReplacedUdf);
+        finalRewrittenQuery = rewrittenQuery.toString();
       }
+      queryReplacedUdf = replaceUDFForDB(finalRewrittenQuery);
+      log.info("Input Query : {}", query);
+      log.info("Rewritten Query : {}", queryReplacedUdf);
     } catch (SemanticException e) {
       throw new LensException(e);
     }
@@ -1199,7 +1250,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
 
   @NoArgsConstructor
   private static class NativeTableInfo {
-    private Map<String, String> columnMapping = new HashMap<>();
+    private Map<String, String> columnMapping = new LinkedHashMap<>();
     NativeTableInfo(Table tbl) {
       String columnMappingProp = tbl.getProperty(LensConfConstants.NATIVE_TABLE_COLUMN_MAPPING);
       if (StringUtils.isNotBlank(columnMappingProp)) {
@@ -1216,7 +1267,7 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     }
   }
 
-  private Map<String, NativeTableInfo> aliasToNativeTableInfo = new HashMap<>();
+  private Map<String, NativeTableInfo> aliasToNativeTableInfo = new LinkedHashMap<>();
 
   /**
    * Replace with underlying storage.
