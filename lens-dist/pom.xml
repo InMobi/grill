@@ -26,11 +26,7 @@
   <parent>
     <artifactId>apache-lens</artifactId>
     <groupId>org.apache.lens</groupId>
-<<<<<<< HEAD
-    <version>2.4.2-inm-SNAPSHOT</version>
-=======
-    <version>2.4.3-inm-SNAPSHOT</version>
->>>>>>> 7eb0a48025d223583d669295cc54f43ff2a5cb30
+    <version>2.5.0-inm-SNAPSHOT</version>
   </parent>
 
   <artifactId>lens-dist</artifactId>
@@ -51,6 +47,12 @@
       <groupId>org.apache.lens</groupId>
       <artifactId>lens-examples</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lens</groupId>
+      <artifactId>lens-ship-jars</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>

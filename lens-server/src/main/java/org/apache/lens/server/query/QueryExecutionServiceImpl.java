@@ -200,6 +200,11 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
   private final Thread prepareQueryPurger = new Thread(new PreparedQueryPurger(), "PrepareQueryPurger");
 
   /**
+   * The query result purger
+   */
+  private QueryResultPurger queryResultPurger;
+
+  /**
    * The query acceptors.
    */
   private List<QueryAcceptor> queryAcceptors = new ArrayList<QueryAcceptor>();
@@ -906,7 +911,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
                         String outputPath = set.getOutputPath();
                         Long fileSize = ((PersistentResultSet) set).getFileSize();
                         Integer rows = set.size();
-                        finishedQuery.setMetadataClass(metadata.getClass().getName());
                         finishedQuery.setResult(outputPath);
                         finishedQuery.setMetadata(metadata.toJson());
                         finishedQuery.setRows(rows);
@@ -1088,6 +1092,11 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     }
 
     estimatePool.shutdownNow();
+
+    if (null != queryResultPurger) {
+      queryResultPurger.stop();
+    }
+
     log.info("Query execution service stopped");
   }
 
@@ -1124,6 +1133,13 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     prepareQueryPurger.start();
 
     startEstimatePool();
+
+    if (conf.getBoolean(RESULTSET_PURGE_ENABLED, DEFAULT_RESULTSET_PURGE_ENABLED)) {
+      queryResultPurger = new QueryResultPurger();
+      queryResultPurger.init(conf);
+    } else {
+      log.info("Query result purger is not enabled");
+    }
   }
 
   private void startEstimatePool() {
@@ -2041,10 +2057,10 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    * (non-Javadoc)
    *
    * @see org.apache.lens.server.api.query.QueryExecutionService#getAllQueries(org.apache.lens.api.LensSessionHandle,
-   * java.lang.String, java.lang.String, java.lang.String, long, long)
+   * java.lang.String, java.lang.String, java.lang.String, java.lang.String, long, long)
    */
   @Override
-  public List<QueryHandle> getAllQueries(LensSessionHandle sessionHandle, String state, String userName,
+  public List<QueryHandle> getAllQueries(LensSessionHandle sessionHandle, String state, String userName, String driver,
     String queryName, long fromDate, long toDate) throws LensException {
     validateTimeRange(fromDate, toDate);
     userName = UtilityMethods.removeDomain(userName);
@@ -2063,6 +2079,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       if (StringUtils.isBlank(userName)) {
         userName = getSession(sessionHandle).getLoggedInUser();
       }
+      boolean filterByDriver = StringUtils.isNotBlank(driver);
 
       List<QueryHandle> all = new ArrayList<QueryHandle>(allQueries.keySet());
       Iterator<QueryHandle> itr = all.iterator();
@@ -2072,6 +2089,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
         long querySubmitTime = context.getSubmissionTime();
         if ((filterByStatus && status != context.getStatus().getStatus())
           || (filterByQueryName && !context.getQueryName().toLowerCase().contains(queryName))
+          || (filterByDriver && !context.getSelectedDriver().getClass().getName().equalsIgnoreCase(driver))
           || (!"all".equalsIgnoreCase(userName) && !userName.equalsIgnoreCase(context.getSubmittedUser()))
           || (!(fromDate <= querySubmitTime && querySubmitTime <= toDate))) {
           itr.remove();
@@ -2083,8 +2101,8 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
         if ("all".equalsIgnoreCase(userName)) {
           userName = null;
         }
-        List<QueryHandle> persistedQueries = lensServerDao.findFinishedQueries(state, userName, queryName, fromDate,
-          toDate);
+        List<QueryHandle> persistedQueries = lensServerDao.findFinishedQueries(state, userName, driver, queryName,
+          fromDate, toDate);
         if (persistedQueries != null && !persistedQueries.isEmpty()) {
           log.info("Adding persisted queries {}", persistedQueries.size());
           all.addAll(persistedQueries);
@@ -2327,6 +2345,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
         if (driverAvailable) {
           String clsName = in.readUTF();
           ctx.getDriverContext().setSelectedDriver(drivers.get(clsName));
+          ctx.setDriverQuery(ctx.getSelectedDriver(), ctx.getSelectedDriverQuery());
         }
         allQueries.put(ctx.getQueryHandle(), ctx);
       }
@@ -2438,6 +2457,11 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     if (querySubmitterRunnable.pausedForTest) {
       isHealthy = false;
       details.append("QuerySubmitter paused for test.");
+    }
+
+    if (null != this.queryResultPurger && !this.queryResultPurger.isHealthy()) {
+      isHealthy = false;
+      details.append("QueryResultPurger is dead.");
     }
 
     if (!isHealthy) {
