@@ -39,7 +39,7 @@
     <servlet.api.version>2.5</servlet.api.version>
     <jsp.api.version>2.0</jsp.api.version>
     <ws.rs.version>2.0</ws.rs.version>
-    <jaxb.api.version>2.1</jaxb.api.version>
+    <jaxb.api.version>2.2.11</jaxb.api.version>
     <javax.mail.version>1.4</javax.mail.version>
 
     <!-- hadoop stack -->
@@ -90,8 +90,8 @@
     <powermock.version>1.5.6</powermock.version>
 
     <!-- maven plugins -->
-    <jaxb2.plugin.version>0.12.3</jaxb2.plugin.version>
-    <jaxb2.basics.plugin.version>0.6.3</jaxb2.basics.plugin.version>
+    <jaxb2.plugin.version>0.13.0</jaxb2.plugin.version>
+    <jaxb2.basics.plugin.version>0.9.5</jaxb2.basics.plugin.version>
     <jetty.plugin.version>${jetty.version}</jetty.plugin.version>
     <exec.plugin.version>1.2.1</exec.plugin.version>
     <enunciate.plugin.version>1.28</enunciate.plugin.version>
@@ -200,7 +200,7 @@
       <name>Amareshwari Sriramadasu</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -210,7 +210,16 @@
       <name>Arshad Matin</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
+        <role>Committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>deepakbarr</id>
+      <email>deepakbarr@apache.org</email>
+      <name>Deepak Kumar Barr</name>
+      <timezone>+5.5</timezone>
+      <roles>
         <role>Committer</role>
       </roles>
     </developer>
@@ -220,7 +229,7 @@
       <name>Gunther Hagleitner</name>
       <timezone>-8</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -230,7 +239,7 @@
       <name>Himanshu Gahlaut</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -240,7 +249,7 @@
       <name>Jaideep Dhok</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -250,7 +259,7 @@
       <name>Raghavendra Singh</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -260,7 +269,7 @@
       <name>Rajat Khandelwal</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -270,7 +279,7 @@
       <name>Raju Bairishetti</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -280,7 +289,7 @@
       <name>Sharad Agarwal</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -290,7 +299,7 @@
       <name>Sreekanth Ramakrishnan</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -300,7 +309,7 @@
       <name>Srikanth Sundarrajan</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -310,7 +319,7 @@
       <name>Suma Shivaprasad</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -320,7 +329,7 @@
       <name>Vikram Dixit</name>
       <timezone>-8</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -330,7 +339,16 @@
       <name>Yash Sharma</name>
       <timezone>+5.5</timezone>
       <roles>
-        <role>PPMC</role>
+        <role>PMC</role>
+        <role>Committer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>amrk7</id>
+      <email>amrk7@apache.org</email>
+      <name>Amruth S</name>
+      <timezone>+5.5</timezone>
+      <roles>
         <role>Committer</role>
       </roles>
     </developer>
