@@ -39,6 +39,7 @@ import org.apache.lens.cube.parse.CandidateTablePruneCause.SkipStorageCode;
 import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang.time.DateUtils;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
@@ -54,6 +55,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -563,7 +565,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
       // Union query
       String hqlQuery = rewrite("select SUM(msr2) from testCube" + " where " + TWO_MONTHS_RANGE_UPTO_HOURS, conf);
       System.out.println("HQL:" + hqlQuery);
-      ArrayList<String> storages = Lists.newArrayList("c1_testfact", "c3_testfact", "c2_testfact");
+      ArrayList<String> storages = Lists.newArrayList("c1_testfact", "c2_testfact", "c3_testfact");
       String expected = getExpectedUnionQuery(cubeName, storages, provider,
         "select sum(testcube.alias0)", null, null,
         "select sum(testcube.msr2) as `alias0` from ", null, null

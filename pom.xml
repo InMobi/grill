@@ -352,6 +352,15 @@
         <role>Committer</role>
       </roles>
     </developer>
+    <developer>
+      <id>sushilmohanty</id>
+      <email>sushilmohanty@apache.org</email>
+      <name>SushilMohanty</name>
+      <timezone>+5.5</timezone>
+      <roles>
+        <role>Committer</role>
+      </roles>
+    </developer>
   </developers>
   <scm>
     <connection>scm:git:https://github.com/InMobi/grill.git</connection>
