@@ -22,10 +22,7 @@ import static org.apache.hadoop.hive.ql.parse.HiveParser.*;
 
 import java.util.*;
 
-import org.apache.lens.cube.metadata.AbstractCubeTable;
-import org.apache.lens.cube.metadata.CubeFactTable;
-import org.apache.lens.cube.metadata.CubeInterface;
-import org.apache.lens.cube.metadata.FactPartition;
+import org.apache.lens.cube.metadata.*;
 import org.apache.lens.cube.parse.HQLParser.ASTNodeVisitor;
 import org.apache.lens.cube.parse.HQLParser.TreeNode;
 import org.apache.lens.server.api.error.LensException;
@@ -35,7 +32,6 @@ import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
-import org.apache.hadoop.hive.ql.parse.ParseException;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 import org.antlr.runtime.CommonToken;
@@ -162,12 +158,7 @@ public class CandidateFact implements CandidateTable {
       TimeRange range = cubeql.getTimeRanges().get(i);
       String rangeWhere = rangeToWhereClause.get(range);
       if (!StringUtils.isBlank(rangeWhere)) {
-        ASTNode rangeAST;
-        try {
-          rangeAST = HQLParser.parseExpr(rangeWhere);
-        } catch (ParseException e) {
-          throw new LensException(e);
-        }
+        ASTNode rangeAST = HQLParser.parseExpr(rangeWhere);
         rangeAST.setParent(timenodes.get(i).parent);
         timenodes.get(i).parent.setChild(timenodes.get(i).childIndex, rangeAST);
       }

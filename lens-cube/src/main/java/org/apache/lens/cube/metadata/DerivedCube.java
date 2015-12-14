@@ -137,16 +137,16 @@ public class DerivedCube extends AbstractCubeTable implements CubeInterface {
   @Override
   public void addProperties() {
     super.addProperties();
-    refreshMeasureProperties();
-    refreshDimProperties();
+    updateMeasureProperties();
+    updateDimAttributeProperties();
     getProperties().put(MetastoreUtil.getParentCubeNameKey(getName()), parent.getName().toLowerCase());
     getProperties().put(MetastoreUtil.getParentCubeNameKey(getName()), parent.getName().toLowerCase());
   }
-  public void refreshDimProperties() {
+  public void updateDimAttributeProperties() {
     MetastoreUtil.addNameStrings(getProperties(), MetastoreUtil.getCubeDimensionListKey(getName()),
       MetastoreUtil.getNamedSetFromStringSet(dimensions));
   }
-  public void refreshMeasureProperties() {
+  public void updateMeasureProperties() {
     MetastoreUtil.addNameStrings(getProperties(), MetastoreUtil.getCubeMeasureListKey(getName()),
       MetastoreUtil.getNamedSetFromStringSet(measures));
   }
@@ -241,7 +241,7 @@ public class DerivedCube extends AbstractCubeTable implements CubeInterface {
    */
   public void addMeasure(String measure) throws HiveException {
     measures.add(measure.toLowerCase());
-    refreshMeasureProperties();
+    updateMeasureProperties();
   }
 
   /**
@@ -252,7 +252,7 @@ public class DerivedCube extends AbstractCubeTable implements CubeInterface {
    */
   public void addDimension(String dimension) throws HiveException {
     dimensions.add(dimension.toLowerCase());
-    refreshDimProperties();
+    updateDimAttributeProperties();
   }
 
   /**
@@ -262,7 +262,7 @@ public class DerivedCube extends AbstractCubeTable implements CubeInterface {
    */
   public void removeDimension(String dimName) {
     dimensions.remove(dimName.toLowerCase());
-    refreshDimProperties();
+    updateDimAttributeProperties();
   }
 
   /**
@@ -272,7 +272,7 @@ public class DerivedCube extends AbstractCubeTable implements CubeInterface {
    */
   public void removeMeasure(String msrName) {
     measures.remove(msrName.toLowerCase());
-    refreshMeasureProperties();
+    updateMeasureProperties();
   }
 
   @Override
