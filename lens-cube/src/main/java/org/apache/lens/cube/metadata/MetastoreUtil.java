@@ -36,8 +36,6 @@ import org.apache.hadoop.hive.ql.parse.ParseUtils;
 
 import com.google.common.collect.Sets;
 
-import com.google.common.collect.Sets;
-
 public class MetastoreUtil {
   private MetastoreUtil() {
 
