@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,28 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.cube.parse;
+package org.apache.lens.server.api.error;
 
-import org.apache.lens.cube.metadata.Named;
+import org.apache.lens.server.api.LensErrorInfo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public enum LensDriverErrorCode {
 
-@Data
-@AllArgsConstructor
-public class Aliased<T extends Named> {
-  T object;
-  String alias;
+  SEMANTIC_ERROR(4001, 10000), DRIVER_ERROR(4002, 10000);
 
-  public static <K extends Named> Aliased<K> create(K obj) {
-    return create(obj, null);
+  public LensErrorInfo getLensErrorInfo() {
+    return this.errorInfo;
   }
 
-  public static <K extends Named> Aliased<K> create(K obj, String alias) {
-    return new Aliased<K>(obj, alias);
+  LensDriverErrorCode(final int code, final int weight) {
+    this.errorInfo = new LensErrorInfo(code, weight, name());
   }
 
-  public String getName() {
-    return object.getName();
-  }
+  private final LensErrorInfo errorInfo;
 }

@@ -151,6 +151,7 @@ class ExpressionResolver implements ContextRewriter {
     }
 
     void addDirectlyAvailable(CandidateTable cTable) {
+      log.debug("Directly available in {}", cTable);
       directlyAvailableIn.add(cTable);
     }
 
@@ -432,7 +433,7 @@ class ExpressionResolver implements ContextRewriter {
     }
 
     public Set<Dimension> rewriteExprCtx(CandidateFact cfact, Map<Dimension, CandidateDim> dimsToQuery,
-      boolean replaceFact) throws LensException {
+      QueryAST queryAST) throws LensException {
       Set<Dimension> exprDims = new HashSet<Dimension>();
       if (!allExprsQueried.isEmpty()) {
         // pick expressions for fact
@@ -446,7 +447,8 @@ class ExpressionResolver implements ContextRewriter {
           }
         }
         // Replace picked expressions in all the base trees
-        replacePickedExpressions(cfact, replaceFact);
+        replacePickedExpressions(queryAST);
+        log.debug("Picked expressions: {}", pickedExpressions);
         for (Set<PickedExpression> peSet : pickedExpressions.values()) {
           for (PickedExpression pe : peSet) {
             exprDims.addAll(pe.pickedCtx.exprDims);
@@ -457,21 +459,13 @@ class ExpressionResolver implements ContextRewriter {
       return exprDims;
     }
 
-    private void replacePickedExpressions(CandidateFact cfact, boolean replaceFact)
+    private void replacePickedExpressions(QueryAST queryAST)
       throws LensException {
-      if (replaceFact) {
-        replaceAST(cubeql, cfact.getSelectAST());
-        replaceAST(cubeql, cfact.getWhereAST());
-        replaceAST(cubeql, cfact.getJoinTree());
-        replaceAST(cubeql, cfact.getGroupByAST());
-        replaceAST(cubeql, cfact.getHavingAST());
-      } else {
-        replaceAST(cubeql, cubeql.getSelectAST());
-        replaceAST(cubeql, cubeql.getWhereAST());
-        replaceAST(cubeql, cubeql.getJoinTree());
-        replaceAST(cubeql, cubeql.getGroupByAST());
-        replaceAST(cubeql, cubeql.getHavingAST());
-      }
+      replaceAST(cubeql, queryAST.getSelectAST());
+      replaceAST(cubeql, queryAST.getWhereAST());
+      replaceAST(cubeql, queryAST.getJoinAST());
+      replaceAST(cubeql, queryAST.getGroupByAST());
+      replaceAST(cubeql, queryAST.getHavingAST());
       replaceAST(cubeql, cubeql.getOrderByAST());
     }
 
@@ -526,6 +520,7 @@ class ExpressionResolver implements ContextRewriter {
         for (ExpressionContext ec : ecSet) {
           if (ec.getSrcTable().getName().equals(cTable.getBaseTable().getName())) {
             if (!ec.directlyAvailableIn.contains(cTable)) {
+              log.debug("{} is not directly evaluable in {}", ec, cTable);
               if (ec.evaluableExpressions.get(cTable) != null && !ec.evaluableExpressions.get(cTable).isEmpty()) {
                 // pick first evaluable expression
                 Set<PickedExpression> peSet = pickedExpressions.get(ecEntry.getKey());

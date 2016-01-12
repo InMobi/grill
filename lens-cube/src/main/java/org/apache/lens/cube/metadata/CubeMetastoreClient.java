@@ -19,6 +19,7 @@
 
 package org.apache.lens.cube.metadata;
 
+import static org.apache.lens.cube.metadata.DateUtil.resolveDate;
 import static org.apache.lens.cube.metadata.MetastoreUtil.*;
 
 import java.text.ParseException;
@@ -84,7 +85,6 @@ public class CubeMetastoreClient {
   PartitionTimelineCache partitionTimelineCache = new PartitionTimelineCache();
   // dbname to client mapping
   private static final Map<String, CubeMetastoreClient> CLIENT_MAPPING = Maps.newConcurrentMap();
-  private SchemaGraph schemaGraph;
   // Set of all storage table names for which latest partitions exist
   private final Set<String> latestLookupCache = Sets.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
@@ -626,7 +626,8 @@ public class CubeMetastoreClient {
    * @throws HiveException
    */
   public void createCube(String name, Set<CubeMeasure> measures, Set<CubeDimAttribute> dimensions,
-    Set<ExprColumn> expressions, Set<JoinChain> chains, Map<String, String> properties) throws HiveException {
+    Set<ExprColumn> expressions, Set<JoinChain> chains, Map<String, String> properties)
+    throws HiveException {
     Cube cube = new Cube(name, measures, dimensions, expressions, chains, properties, 0L);
     createCube(cube);
   }
@@ -1857,13 +1858,6 @@ public class CubeMetastoreClient {
     return false;
   }
 
-  public synchronized SchemaGraph getSchemaGraph() throws HiveException {
-    if (schemaGraph == null) {
-      schemaGraph = new SchemaGraph(this);
-    }
-    return schemaGraph;
-  }
-
   /**
    *
    * @param table     table name
@@ -2161,5 +2155,35 @@ public class CubeMetastoreClient {
     } else {
       throw new HiveException(dimTableName + " is not a dimension table");
     }
+  }
+  public boolean isStorageTableCandidateForRange(String storageTableName, Date fromDate, Date toDate) throws
+    HiveException, LensException {
+    Date now = new Date();
+    String startProperty = getTable(storageTableName).getProperty(getStoragetableStartTimesKey());
+    if (StringUtils.isNotBlank(startProperty)) {
+      for (String timeStr : startProperty.split("\\s*,\\s*")) {
+        if (fromDate.before(resolveDate(timeStr, now))) {
+          log.info("from date {} is before validity start time: {}, hence discarding {}",
+            fromDate, timeStr, storageTableName);
+          return false;
+        }
+      }
+    }
+    String endProperty = getTable(storageTableName).getProperty(getStoragetableEndTimesKey());
+    if (StringUtils.isNotBlank(endProperty)) {
+      for (String timeStr : endProperty.split("\\s*,\\s*")) {
+        if (toDate.after(resolveDate(timeStr, now))) {
+          log.info("to date {} is after validity end time: {}, hence discarding {}",
+            toDate, timeStr, storageTableName);
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  public boolean isStorageTableCandidateForRange(String storageTableName, String fromDate, String toDate) throws
+    HiveException, LensException {
+    Date now = new Date();
+    return isStorageTableCandidateForRange(storageTableName, resolveDate(fromDate, now), resolveDate(toDate, now));
   }
 }

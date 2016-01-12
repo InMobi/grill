@@ -50,6 +50,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 
 public class TestBaseCubeQueries extends TestQueryRewrite {
@@ -420,15 +421,15 @@ public class TestBaseCubeQueries extends TestQueryRewrite {
   @Test
   public void testMultiFactQueryWithJoins() throws Exception {
     // query with join
-    String hqlQuery = rewrite("select testdim2.name, msr12, roundedmsr2 from basecube where " + TWO_DAYS_RANGE, conf);
+    String hqlQuery = rewrite("select dim2chain.name, msr12, roundedmsr2 from basecube where " + TWO_DAYS_RANGE, conf);
     String expected1 = getExpectedQuery(cubeName,
-        "select testdim2.name as `name`, sum(basecube.msr12) as `msr12` FROM ", " JOIN " + getDbName()
-            + "c1_testdim2tbl testdim2 ON basecube.dim2 = " + " testdim2.id and (testdim2.dt = 'latest') ", null,
-        " group by testdim2.name", null, getWhereForDailyAndHourly2days(cubeName, "C1_testFact2_BASE"));
+        "select dim2chain.name as `name`, sum(basecube.msr12) as `msr12` FROM ", " JOIN " + getDbName()
+            + "c1_testdim2tbl dim2chain ON basecube.dim2 = " + " dim2chain.id and (dim2chain.dt = 'latest') ", null,
+        " group by dim2chain.name", null, getWhereForDailyAndHourly2days(cubeName, "C1_testFact2_BASE"));
     String expected2 = getExpectedQuery(cubeName,
-        "select testdim2.name as `name`, round(sum(basecube.msr2)/1000) as `roundedmsr2` FROM ", " JOIN " + getDbName()
-            + "c1_testdim2tbl testdim2 ON basecube.dim2 = " + " testdim2.id and (testdim2.dt = 'latest') ", null,
-        " group by testdim2.name", null, getWhereForHourly2days(cubeName, "C1_testfact1_raw_base"));
+        "select dim2chain.name as `name`, round(sum(basecube.msr2)/1000) as `roundedmsr2` FROM ", " JOIN " + getDbName()
+            + "c1_testdim2tbl dim2chain ON basecube.dim2 = " + " dim2chain.id and (dim2chain.dt = 'latest') ", null,
+        " group by dim2chain.name", null, getWhereForHourly2days(cubeName, "C1_testfact1_raw_base"));
     TestCubeRewriter.compareContains(expected1, hqlQuery);
     TestCubeRewriter.compareContains(expected2, hqlQuery);
     assertTrue(hqlQuery.toLowerCase().startsWith(
@@ -443,9 +444,9 @@ public class TestBaseCubeQueries extends TestQueryRewrite {
   public void testMultiFactQueryWithDenormColumn() throws Exception {
     // query with denorm variable
     String hqlQuery = rewrite("select dim2, msr13, roundedmsr2 from basecube" + " where " + TWO_DAYS_RANGE, conf);
-    String expected1 = getExpectedQuery(cubeName, "select testdim2.id as `dim2`, max(basecube.msr13) as `msr13` FROM ",
-        " JOIN " + getDbName() + "c1_testdim2tbl testdim2 ON basecube.dim12 = "
-            + " testdim2.id and (testdim2.dt = 'latest') ", null, " group by testdim2.id", null,
+    String expected1 = getExpectedQuery(cubeName, "select dim2chain.id as `dim2`, max(basecube.msr13) as `msr13` FROM ",
+        " JOIN " + getDbName() + "c1_testdim2tbl dim2chain ON basecube.dim12 = "
+            + " dim2chain.id and (dim2chain.dt = 'latest') ", null, " group by dim2chain.id", null,
         getWhereForHourly2days(cubeName, "C1_testFact3_RAW_BASE"));
     String expected2 = getExpectedQuery(cubeName,
         "select basecube.dim2 as `dim2`, round(sum(basecube.msr2)/1000) as `roundedmsr2` FROM ", null,
@@ -469,10 +470,10 @@ public class TestBaseCubeQueries extends TestQueryRewrite {
         "select booleancut, round(sum(msr2)/1000), avg(msr13 + msr14) from basecube" + " where " + TWO_DAYS_RANGE,
         conf);
     String expected1 =
-      getExpectedQuery(cubeName, "select basecube.dim1 != 'x' AND testdim2.id != 10 as `booleancut`,"
+      getExpectedQuery(cubeName, "select basecube.dim1 != 'x' AND dim2chain.id != 10 as `booleancut`,"
           + " avg(basecube.msr13 + basecube.msr14) as `expr3` FROM ", " JOIN " + getDbName()
-          + "c1_testdim2tbl testdim2 ON basecube.dim12 = " + " testdim2.id and (testdim2.dt = 'latest') ", null,
-        " group by basecube.dim1 != 'x' AND testdim2.id != 10", null,
+          + "c1_testdim2tbl dim2chain ON basecube.dim12 = " + " dim2chain.id and (dim2chain.dt = 'latest') ", null,
+        " group by basecube.dim1 != 'x' AND dim2chain.id != 10", null,
         getWhereForHourly2days(cubeName, "C1_testfact3_raw_base"));
     String expected2 =
       getExpectedQuery(cubeName, "select basecube.dim1 != 'x' AND basecube.dim2 != 10 as `booleancut`,"
@@ -546,17 +547,24 @@ public class TestBaseCubeQueries extends TestQueryRewrite {
     assertEquals(ctx.getCandidateFactSets().size(), 1);
     assertEquals(ctx.getCandidateFactSets().iterator().next().size(), 1);
     CandidateFact cfact = ctx.getCandidateFactSets().iterator().next().iterator().next();
-    assertEquals(cfact.getRangeToWhereClause().size(), 2);
-    for(Map.Entry<TimeRange, String> entry: cfact.getRangeToWhereClause().entrySet()) {
+
+    assertEquals(cfact.getRangeToStoragePartMap().size(), 2);
+    Set<String> storages = Sets.newHashSet();
+    for(Map<String, String> entry: cfact.getRangeToStorageWhereMap().values()) {
+      storages.addAll(entry.keySet());
+    }
+    assertEquals(storages.size(), 1);
+    String storage = storages.iterator().next();
+    for(Map.Entry<TimeRange, Map<String, String>> entry: cfact.getRangeToStorageWhereMap().entrySet()) {
       if (entry.getKey().getPartitionColumn().equals("dt")) {
-        ASTNode parsed = HQLParser.parseExpr(entry.getValue());
+        ASTNode parsed = HQLParser.parseExpr(entry.getValue().get(storage));
         assertEquals(parsed.getToken().getType(), KW_AND);
-        assertTrue(entry.getValue().substring(((CommonToken) parsed.getToken()).getStopIndex() + 1).toLowerCase()
-          .contains(dTimeWhereClause));
-        assertFalse(entry.getValue().substring(0, ((CommonToken) parsed.getToken()).getStartIndex()).toLowerCase()
-          .contains("and"));
+        assertTrue(entry.getValue().get(storage).substring(((CommonToken) parsed.getToken()).getStopIndex() + 1)
+          .toLowerCase().contains(dTimeWhereClause));
+        assertFalse(entry.getValue().get(storage).substring(0, ((CommonToken) parsed.getToken()).getStartIndex())
+          .toLowerCase().contains("and"));
       } else if (entry.getKey().getPartitionColumn().equals("ttd")) {
-        assertFalse(entry.getValue().toLowerCase().contains("and"));
+        assertFalse(entry.getValue().get(storage).toLowerCase().contains("and"));
       } else {
         throw new LensException("Unexpected");
       }

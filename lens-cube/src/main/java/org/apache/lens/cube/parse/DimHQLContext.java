@@ -44,7 +44,11 @@ abstract class DimHQLContext extends SimpleHQLContext {
   public CubeQueryContext getQuery() {
     return query;
   }
-
+  DimHQLContext(CubeQueryContext query, Map<Dimension, CandidateDim> dimsToQuery,
+    Set<Dimension> queriedDims, QueryAST ast) throws LensException {
+    this(query, dimsToQuery, queriedDims, ast.getSelectTree(), ast.getWhereTree(), ast.getGroupByTree(),
+      ast.getOrderByTree(), ast.getHavingTree(), ast.getLimitValue());
+  }
   DimHQLContext(CubeQueryContext query, Map<Dimension, CandidateDim> dimsToQuery,
     Set<Dimension> queriedDims, String select, String where,
     String groupby, String orderby, String having, Integer limit) throws LensException {
@@ -101,9 +105,9 @@ abstract class DimHQLContext extends SimpleHQLContext {
       boolean added = (originalWhere != null);
       for (Dimension dim : queriedDims) {
         CandidateDim cdim = dimsToQuery.get(dim);
+        String alias = query.getAliasForTableName(dim.getName());
         if (!cdim.isWhereClauseAdded() && !StringUtils.isBlank(cdim.getWhereClause())) {
-          appendWhereClause(whereBuf, StorageUtil.getWhereClause(cdim, query.getAliasForTableName(dim.getName())),
-            added);
+          appendWhereClause(whereBuf, StorageUtil.getWhereClause(cdim, alias), added);
           added = true;
         }
       }
