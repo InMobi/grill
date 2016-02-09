@@ -31,26 +31,29 @@ import java.util.Map;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.query.InMemoryQueryResult;
 import org.apache.lens.api.query.QueryHandle;
 import org.apache.lens.api.query.QueryResult;
 import org.apache.lens.api.query.QueryStatus.Status;
 import org.apache.lens.api.result.LensAPIResult;
 import org.apache.lens.server.LensJerseyTest;
+import org.apache.lens.server.LensServerConf;
 import org.apache.lens.server.LensServerTestUtil;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.LensConfConstants;
+import org.apache.lens.server.api.driver.InMemoryResultSet;
+import org.apache.lens.server.api.error.LensException;
+import org.apache.lens.server.api.query.QueryContext;
 import org.apache.lens.server.api.query.QueryExecutionService;
 import org.apache.lens.server.common.TestResourceFile;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.test.TestProperties;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 import org.testng.annotations.*;
@@ -64,6 +67,7 @@ import com.google.common.base.Optional;
 public class TestQueryEndEmailNotifier extends LensJerseyTest {
 
   private static final int NUM_ITERS = 30;
+
   /** The query service. */
   QueryExecutionServiceImpl queryService;
 
@@ -121,17 +125,9 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
    */
   @Override
   protected Application configure() {
+    enable(TestProperties.LOG_TRAFFIC);
+    enable(TestProperties.DUMP_ENTITY);
     return new QueryApp();
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.glassfish.jersey.test.JerseyTest#configureClient(org.glassfish.jersey.client.ClientConfig)
-   */
-  @Override
-  protected void configureClient(ClientConfig config) {
-    config.register(MultiPartFeature.class);
   }
 
   /** The test table. */
@@ -144,7 +140,7 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
    * @throws InterruptedException the interrupted exception
    */
   private void createTable(String tblName) throws InterruptedException {
-    LensServerTestUtil.createTable(tblName, target(), lensSessionId);
+    LensServerTestUtil.createTable(tblName, target(), lensSessionId, defaultMT);
   }
 
   /**
@@ -155,7 +151,7 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
    * @throws InterruptedException the interrupted exception
    */
   private void loadData(String tblName, final String testDataFile) throws InterruptedException {
-    LensServerTestUtil.loadDataFromClasspath(tblName, testDataFile, target(), lensSessionId);
+    LensServerTestUtil.loadDataFromClasspath(tblName, testDataFile, target(), lensSessionId, defaultMT);
   }
 
   /**
@@ -165,13 +161,13 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
    * @throws InterruptedException the interrupted exception
    */
   private void dropTable(String tblName) throws InterruptedException {
-    LensServerTestUtil.dropTable(tblName, target(), lensSessionId);
+    LensServerTestUtil.dropTable(tblName, target(), lensSessionId, defaultMT);
   }
 
-  private QueryHandle launchAndWaitForQuery(LensConf conf, String query, Status expectedStatus)
+  private QueryHandle launchAndWaitForQuery(LensConf conf, String query, Status expectedStatus, MediaType mt)
     throws InterruptedException {
     return executeAndWaitForQueryToFinish(target(), lensSessionId, query, Optional.of(conf),
-      Optional.of(expectedStatus)).getQueryHandle();
+      Optional.of(expectedStatus), mt).getQueryHandle();
   }
 
   private WiserMessage getMessage() throws InterruptedException {
@@ -200,61 +196,75 @@ public class TestQueryEndEmailNotifier extends LensJerseyTest {
    *
    * @throws InterruptedException the interrupted exception
    */
-  @Test
-  public void testLaunchFailure() throws InterruptedException {
+  @Test(dataProvider = "mediaTypeData")
+  public void testLaunchFailure(MediaType mt) throws InterruptedException {
     // launch failure
-    final Response response = execute(target(), Optional.of(lensSessionId), Optional.of("select fail from non_exist"));
+    final Response response = execute(target(), Optional.of(lensSessionId), Optional.of("select fail from non_exist"),
+      mt);
     assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     QueryHandle handle = response.readEntity(new GenericType<LensAPIResult<QueryHandle>>() {}).getData();
     assertKeywordsContains(getMessage(), handle, "Launching query failed", "Reason");
   }
 
-  @Test
-  public void testFormattingFailure() throws InterruptedException {
+  @Test(dataProvider = "mediaTypeData")
+  public void testFormattingFailure(MediaType mt) throws InterruptedException {
     // formatting failure
     LensConf conf = getLensConf(
       LensConfConstants.QUERY_PERSISTENT_RESULT_SET, "true",
       LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "false",
       LensConfConstants.QUERY_OUTPUT_SERDE, "NonexistentSerde.class");
-    QueryHandle handle = launchAndWaitForQuery(conf, "select ID, IDSTR from " + TEST_TABLE, Status.FAILED);
+    QueryHandle handle = launchAndWaitForQuery(conf, "select ID, IDSTR from " + TEST_TABLE, Status.FAILED, mt);
     assertKeywordsContains(getMessage(), handle, "Result formatting failed!", "Reason");
   }
 
-  @Test
-  public void testExecutionFailure() throws InterruptedException {
+  @Test(dataProvider = "mediaTypeData")
+  public void testExecutionFailure(MediaType mt) throws InterruptedException {
     // execution failure
     LensConf conf = getLensConf(
       LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, "true",
       HiveConf.ConfVars.COMPRESSRESULT.name(), "true",
       "mapred.compress.map.output", "true",
       "mapred.map.output.compression.codec", "nonexisting");
-    QueryHandle handle = launchAndWaitForQuery(conf, "select count(ID) from " + TEST_TABLE, Status.FAILED);
+    QueryHandle handle = launchAndWaitForQuery(conf, "select count(ID) from " + TEST_TABLE, Status.FAILED, mt);
     assertKeywordsContains(getMessage(), handle, "Query execution failed!", "Reason");
   }
 
   @DataProvider(name = "success-tests")
   public Object[][] persistenceConfigDataProvider() {
     return new Object[][]{
-      {false, false, },
-      {true, false, },
-      {false, true, },
-      {true, true, },
+      {false, false, MediaType.APPLICATION_XML_TYPE},
+      {true, false, MediaType.APPLICATION_XML_TYPE},
+      {false, true, MediaType.APPLICATION_XML_TYPE},
+      {true, true, MediaType.APPLICATION_XML_TYPE},
+      {false, false, MediaType.APPLICATION_JSON_TYPE},
+      {true, false, MediaType.APPLICATION_JSON_TYPE},
+      {false, true, MediaType.APPLICATION_JSON_TYPE},
+      {true, true, MediaType.APPLICATION_JSON_TYPE},
     };
   }
 
   @Test(dataProvider = "success-tests")
-  public void testSuccessfulQuery(Boolean lensPersistence, Boolean driverPersistence) throws InterruptedException {
+  public void testSuccessfulQuery(Boolean lensPersistence, Boolean driverPersistence, MediaType mt)
+    throws InterruptedException, LensException {
     // successful query
     LensConf conf = getLensConf(
       LensConfConstants.QUERY_PERSISTENT_RESULT_SET, lensPersistence,
       LensConfConstants.QUERY_PERSISTENT_RESULT_INDRIVER, driverPersistence);
-    QueryHandle handle = launchAndWaitForQuery(conf, "select ID, IDSTR from " + TEST_TABLE, Status.SUCCESSFUL);
     String expectedKeywords;
+    QueryHandle handle = launchAndWaitForQuery(conf, "select ID, IDSTR from " + TEST_TABLE, Status.SUCCESSFUL, mt);
     if (lensPersistence || driverPersistence) {
-      QueryResult result = getLensQueryResult(target(), lensSessionId, handle);
+      QueryResult result = getLensQueryResult(target(), lensSessionId, handle, mt);
       expectedKeywords = result.toPrettyString();
     } else {
-      expectedKeywords = InMemoryQueryResult.DECLARATION;
+      QueryContext context = queryService.getQueryContext(handle);
+      long creationTime = ((InMemoryResultSet) (context.getSelectedDriver().fetchResultSet(context))).getCreationTime();
+      long inMemoryResultsetTTLSecs =
+          LensServerConf.getHiveConf().getInt(LensConfConstants.INMEMORY_RESULT_SET_TTL_SECS,
+              LensConfConstants.DEFAULT_INMEMORY_RESULT_SET_TTL_SECS);
+      expectedKeywords =
+          QueryEndNotifier.RESULT_AVAILABLE_UNTIL_MSG
+              + QueryEndNotifier.MESSAGE_DATE_FORMATTER.print(creationTime + inMemoryResultsetTTLSecs);
+      getLensQueryResultAsString(target(), lensSessionId, handle, mt); //Reading it so that query can be purged
     }
     WiserMessage message = getMessage();
     assertKeywordsContains(message, handle, "Query SUCCESSFUL", expectedKeywords);

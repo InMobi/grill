@@ -39,8 +39,6 @@ public abstract class InMemoryResultSet extends LensResultSet {
   @Getter
   private long creationTime = System.currentTimeMillis();;
 
-  public abstract boolean seekToStart() throws LensException;
-
   @Override
   public boolean canBePurged() {
     return fullyAccessed;
@@ -80,11 +78,11 @@ public abstract class InMemoryResultSet extends LensResultSet {
    * @see org.apache.lens.server.api.driver.LensResultSet#toQueryResult()
    */
   public InMemoryQueryResult toQueryResult() throws LensException {
-    List<ResultRow> rows = new ArrayList<ResultRow>();
+    List<ResultRow> rows = new ArrayList<>();
     while (hasNext()) {
       rows.add(next());
     }
-    fullyAccessed = true;
+    this.setFullyAccessed(true);
     return new InMemoryQueryResult(rows);
   }
   public boolean isHttpResultAvailable() throws LensException {

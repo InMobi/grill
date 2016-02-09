@@ -48,7 +48,6 @@ import lombok.*;
  * Instantiates a new query cost.
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class QueryCostTO extends QuerySubmitResult implements Serializable {
 
   /**
@@ -70,6 +69,6 @@ public class QueryCostTO extends QuerySubmitResult implements Serializable {
    */
   @XmlElement
   @Getter
-  private QueryCostType type;
+  private QueryCostType costType;
 
 }

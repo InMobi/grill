@@ -166,9 +166,9 @@ public class TestLensDimensionTableCommands extends LensCliApplicationTest {
 
       String desc = command.describeDimensionTable("dim_table2");
       log.debug(desc);
-      String propString = "name : dim2.prop  value : d2";
-      String propString1 = "name : dim2.prop  value : d1";
-      String propString2 = "name : dim2.prop1  value : d2";
+      String propString = "dim2.prop: d2";
+      String propString1 = "dim2.prop: d1";
+      String propString2 = "dim2.prop1: d2";
       assertTrue(desc.contains(propString));
 
       command.updateDimensionTable("dim_table2", new File("target/local-dim1.xml"));
@@ -214,7 +214,7 @@ public class TestLensDimensionTableCommands extends LensCliApplicationTest {
     URL resource = TestLensDimensionTableCommands.class.getClassLoader().getResource("dim-local-storage-element.xml");
     command.addNewDimStorage("dim_table2", new File(resource.toURI()));
     result = command.getDimStorages("dim_table2");
-    assertEquals(DIM_LOCAL, result);
+    assertEquals(result, DIM_LOCAL);
 
     result = command.getStorageFromDim("dim_table2", DIM_LOCAL);
     String partString = "DAILY";
