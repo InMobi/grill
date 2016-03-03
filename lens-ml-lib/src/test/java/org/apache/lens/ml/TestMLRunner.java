@@ -29,7 +29,7 @@ import org.apache.lens.client.LensMLClient;
 import org.apache.lens.ml.impl.MLRunner;
 import org.apache.lens.ml.impl.MLTask;
 import org.apache.lens.ml.server.MLApp;
-import org.apache.lens.server.LensJerseyTest;
+//import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.metastore.MetastoreResource;
 import org.apache.lens.server.query.QueryServiceResource;
@@ -48,29 +48,29 @@ import lombok.extern.slf4j.Slf4j;
 
 //@Test
 @Slf4j
-public class TestMLRunner extends LensJerseyTest {
+public class TestMLRunner { //extends LensJerseyTest {
   private static final String TEST_DB = TestMLRunner.class.getSimpleName();
 
   private LensMLClient mlClient;
 
-  @Override
+  //@Override
   protected int getTestPort() {
     return 10058;
   }
 
-  @Override
+  //@Override
   protected Application configure() {
     return new MLApp(SessionResource.class, QueryServiceResource.class, MetastoreResource.class);
   }
 
-  @Override
+  //@Override
   protected URI getBaseUri() {
     return UriBuilder.fromUri("http://localhost/").port(getTestPort()).path("/lensapi").build();
   }
 
   //@BeforeTest
   public void setUp() throws Exception {
-    super.setUp();
+    //super.setUp();
     Hive hive = Hive.get(new HiveConf());
     Database db = new Database();
     db.setName(TEST_DB);
@@ -85,7 +85,7 @@ public class TestMLRunner extends LensJerseyTest {
 
   //@AfterTest
   public void tearDown() throws Exception {
-    super.tearDown();
+    //super.tearDown();
     Hive hive = Hive.get(new HiveConf());
     hive.dropDatabase(TEST_DB);
     mlClient.close();
