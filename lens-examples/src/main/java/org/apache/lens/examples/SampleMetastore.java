@@ -96,6 +96,8 @@ public class SampleMetastore {
     createDimension("city.xml");
     createDimension("customer.xml");
     createDimension("product.xml");
+    createDimension("customer-interests.xml");
+    createDimension("interests.xml");
   }
 
   private void createStorage(String fileName) throws JAXBException, IOException {
@@ -117,6 +119,7 @@ public class SampleMetastore {
     createCubes();
     createDimensions();
     createFacts();
+    createCubeSegmentations();
     createDimensionTables();
     try {
       DatabaseUtil.initializeDatabaseStorage();
@@ -146,6 +149,8 @@ public class SampleMetastore {
     createDimTable("product_table.xml");
     createDimTable("product_db_table.xml");
     createDimTable("customer_table.xml");
+    createDimTable("customer_interests_table.xml");
+    createDimTable("interests_table.xml");
   }
 
   private void createFact(String factSpec) {
@@ -164,6 +169,15 @@ public class SampleMetastore {
     createFact("sales-aggr-fact1.xml");
     createFact("sales-aggr-fact2.xml");
     createFact("sales-aggr-continuous-fact.xml");
+  }
+
+  private void createCubeSegmentations() throws JAXBException, IOException {
+    result = metaClient.createCubeSegmentation("seg1.xml");
+    if (result.getStatus().equals(APIResult.Status.FAILED)) {
+      System.err.println("Creating cubesegmentation from : " + "seg1.xml"
+          + " failed, reason:" + result.getMessage());
+      retCode = 1;
+    }
   }
 
   public static void main(String[] args) throws Exception {
@@ -185,6 +199,7 @@ public class SampleMetastore {
       System.out.println("Dimensions:" + metastore.metaClient.getAllDimensions());
       System.out.println("Fact tables:" + metastore.metaClient.getAllFactTables());
       System.out.println("Dimension tables:" + metastore.metaClient.getAllDimensionTables());
+      System.out.println("CubeSegmentations:" + metastore.metaClient.getAllCubeSegmentations());
       if (metastore.retCode != 0) {
         System.exit(metastore.retCode);
       }

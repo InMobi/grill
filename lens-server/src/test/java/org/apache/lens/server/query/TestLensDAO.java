@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
+import org.apache.lens.api.Priority;
 import org.apache.lens.api.query.LensQuery;
 import org.apache.lens.api.query.QueryHandle;
 import org.apache.lens.api.query.QueryStatus;
@@ -69,6 +70,7 @@ public class TestLensDAO {
     queryContext.getDriverContext().setSelectedDriver(new MockDriver());
     FinishedLensQuery finishedLensQuery = new FinishedLensQuery(queryContext);
     finishedLensQuery.setStatus(QueryStatus.Status.SUCCESSFUL.name());
+    finishedLensQuery.setPriority(Priority.NORMAL.toString());
 
     // Validate JDBC driver RS Meta can be deserialized
 
@@ -120,6 +122,7 @@ public class TestLensDAO {
     Assert.assertEquals(actualRsMeta.getColumns().get(0).getName().toLowerCase(), "handle");
 
     Assert.assertEquals(actual.getHandle(), finishedHandle);
+    Assert.assertEquals(Priority.valueOf(actual.getPriority()), Priority.NORMAL);
 
     // Test find finished queries
     LensSessionHandle session = service.openSession("foo@localhost", "bar", new HashMap<String, String>());
@@ -142,5 +145,6 @@ public class TestLensDAO {
       Long.MAX_VALUE);
     Assert.assertEquals(daoTestQueryHandles.size(), 1);
     Assert.assertEquals(daoTestQueryHandles.get(0).getHandleId().toString(), finishedHandle);
+    service.closeSession(session);
   }
 }

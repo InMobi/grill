@@ -538,9 +538,9 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       if (ctx.isResultAvailableInDriver()) {
         try {
           driverRS = ctx.getSelectedDriver().fetchResultSet(getCtx());
-        } catch (LensException e) {
+        } catch (Exception e) {
           log.error(
-              "Error while getting result ser form driver {}. Driver result set based purging logic will be ignored",
+              "Error while getting result set form driver {}. Driver result set based purging logic will be ignored",
               ctx.getSelectedDriver(), e);
         }
       }
@@ -1274,8 +1274,9 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     };
 
     log.debug("starting estimate pool");
+
     ThreadPoolExecutor estimatePool = new ThreadPoolExecutor(minPoolSize, maxPoolSize, keepAlive, TimeUnit.MILLISECONDS,
-      new LinkedBlockingQueue<Runnable>(), threadFactory);
+      new SynchronousQueue<Runnable>(), threadFactory);
     estimatePool.allowCoreThreadTimeOut(true);
     estimatePool.prestartCoreThread();
     this.estimatePool = estimatePool;
@@ -1387,6 +1388,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       ctx.setSelectedDriver(driver);
       QueryCost selectedDriverQueryCost = ctx.getDriverContext().getDriverQueryCost(driver);
       ctx.setSelectedDriverQueryCost(selectedDriverQueryCost);
+      driver.decidePriority(ctx);
       selectGauge.markSuccess();
     } finally {
       parallelCallGauge.markSuccess();
@@ -1782,7 +1784,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
 
     ctx.setLensSessionIdentifier(sessionHandle.getPublicId().toString());
     rewriteAndSelect(ctx);
-    ctx.getSelectedDriver().decidePriority(ctx);
     return submitQuery(ctx);
   }
 
@@ -2000,7 +2001,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       result.setStatus(queryCtx.getStatus());
       return result;
     }
-
     QueryCompletionListenerImpl listener = new QueryCompletionListenerImpl(handle);
     synchronized (queryCtx) {
       if (!queryCtx.getStatus().finished()) {

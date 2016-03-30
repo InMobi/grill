@@ -24,12 +24,14 @@ import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.lens.api.APIResult;
 import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.StringList;
+import org.apache.lens.api.error.ErrorCollection;
 import org.apache.lens.server.BaseLensService;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.error.LensException;
@@ -52,6 +54,8 @@ public class SessionResource {
   /** The session service. */
   private SessionService sessionService;
 
+  private final ErrorCollection errorCollection;
+
   /**
    * API to know if session service is up and running
    *
@@ -70,6 +74,7 @@ public class SessionResource {
    */
   public SessionResource() throws LensException {
     sessionService = LensServices.get().getService(SessionService.NAME);
+    errorCollection = LensServices.get().getErrorCollection();
   }
 
   /**
@@ -83,11 +88,11 @@ public class SessionResource {
    */
   @POST
   @Consumes({MediaType.MULTIPART_FORM_DATA})
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public LensSessionHandle openSession(@FormDataParam("username") String username,
     @FormDataParam("password") String password,
     @FormDataParam("database")  @DefaultValue("") String database,
-    @FormDataParam("sessionconf") LensConf sessionconf) {
+    @FormDataParam("sessionconf") LensConf sessionconf) throws LensException {
     try {
       Map<String, String> conf;
       if (sessionconf != null) {
@@ -97,7 +102,10 @@ public class SessionResource {
       }
       return sessionService.openSession(username, password, database,   conf);
     } catch (LensException e) {
-      throw new WebApplicationException(e);
+      e.buildLensErrorResponse(errorCollection, null,
+          LensServices.get().getLogSegregationContext().getLogSegragationId());
+      Response response = Response.status(e.getLensAPIResult().getHttpStatusCode()).build();
+      throw new WebApplicationException(response);
     }
   }
 
@@ -108,11 +116,12 @@ public class SessionResource {
    * @return APIResult object indicating if the operation was successful (check result.getStatus())
    */
   @DELETE
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public APIResult closeSession(@QueryParam("sessionid") LensSessionHandle sessionid) {
     try {
       sessionService.closeSession(sessionid);
     } catch (LensException e) {
+      log.error("Got an exception while closing {} session: ", sessionid, e);
       return new APIResult(Status.FAILED, e.getMessage());
     }
     return new APIResult(Status.SUCCEEDED, "Close session with id" + sessionid + "succeeded");
@@ -136,7 +145,7 @@ public class SessionResource {
   @PUT
   @Path("resources/add")
   @Consumes({MediaType.MULTIPART_FORM_DATA})
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public APIResult addResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
     @FormDataParam("type") String type, @FormDataParam("path") String path) {
     ScannedPaths scannedPaths = new ScannedPaths(path, type);
@@ -169,7 +178,7 @@ public class SessionResource {
    */
   @GET
   @Path("resources/list")
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public StringList listResources(@QueryParam("sessionid") LensSessionHandle sessionid,
     @QueryParam("type") String type) {
     List<String> resources = sessionService.listAllResources(sessionid, type);
@@ -193,7 +202,7 @@ public class SessionResource {
   @Path("resources/delete")
 
   @Consumes({MediaType.MULTIPART_FORM_DATA})
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public APIResult deleteResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
     @FormDataParam("type") String type, @FormDataParam("path") String path) {
     ScannedPaths scannedPaths = new ScannedPaths(path, type);
@@ -232,7 +241,7 @@ public class SessionResource {
    */
   @GET
   @Path("params")
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public StringList getParams(@QueryParam("sessionid") LensSessionHandle sessionid,
     @DefaultValue("false") @QueryParam("verbose") boolean verbose, @DefaultValue("") @QueryParam("key") String key) {
     try {
@@ -257,7 +266,7 @@ public class SessionResource {
    */
   @PUT
   @Path("params")
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
   public APIResult setParam(@FormDataParam("sessionid") LensSessionHandle sessionid, @FormDataParam("key") String key,
     @FormDataParam("value") String value) {
     sessionService.setSessionParameter(sessionid, key, value);

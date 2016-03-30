@@ -89,6 +89,10 @@ public final class LensConfConstants {
    */
   public static final String WS_FEATURE_NAMES = SERVER_PFX + "ws.featurenames";
 
+  public static final String MAX_SESSIONS_PER_USER = SERVER_PFX + "max.sessions.per.user";
+
+  public static final Integer DEFAULT_MAX_SESSIONS_PER_USER = 10;
+
   /**
    * The Constant SERVICE_IMPL_SFX.
    */
@@ -406,6 +410,11 @@ public final class LensConfConstants {
    * The property name for setting the column mapping, if column names in native table are different
    */
   public static final String NATIVE_TABLE_COLUMN_MAPPING = METASTORE_PFX + "native.table.column.mapping";
+
+  /**
+   * The property name for setting the column mapping, if column names in cubes are different
+   */
+  public static final String CUBE_COLUMN_MAPPING = METASTORE_PFX + "cube.column.mapping";
 
   /**
    * The Constant ES_INDEX_NAME.
