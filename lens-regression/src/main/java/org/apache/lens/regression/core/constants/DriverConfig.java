@@ -17,24 +17,22 @@
  * under the License.
  */
 
-import org.apache.hadoop.hive.ql.exec.UDF;
-import org.apache.hadoop.io.Text;
+package org.apache.lens.regression.core.constants;
 
-public final class SampleUdf extends UDF {
-  public Text evaluate(final Text s, Text sleepTime) throws InterruptedException {
+import org.apache.lens.server.api.query.constraint.MaxConcurrentDriverQueriesConstraintFactory;
 
-    Long time = 180*1000L;
+public class DriverConfig {
 
-    if(sleepTime != null){
-      time = Long.parseLong(sleepTime.toString()) * 1000L;
-    }
+  private DriverConfig() {
 
-    System.out.println("Sleep Time : " + time);
-
-    Thread.sleep(time);
-
-    if (s == null) { return null; }
-
-    return new Text(s.toString().toLowerCase());
   }
+
+  public static final String MAX_CONCURRENT_QUERIES = MaxConcurrentDriverQueriesConstraintFactory.
+      MAX_CONCURRENT_QUERIES_KEY;
+  public static final String PRIORITY_MAX_CONCURRENT = MaxConcurrentDriverQueriesConstraintFactory.
+      MAX_CONCURRENT_QUERIES_PER_PRIORITY_KEY;
+  public static final String QUEUE_MAX_CONCURRENT = MaxConcurrentDriverQueriesConstraintFactory.
+      MAX_CONCURRENT_QUERIES_PER_QUEUE_KEY;
+
 }
+
