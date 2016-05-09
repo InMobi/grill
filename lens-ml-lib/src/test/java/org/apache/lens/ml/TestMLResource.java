@@ -68,6 +68,9 @@ public class TestMLResource { //extends LensJerseyTest {
   private WebTarget mlTarget;
   private LensMLClient mlClient;
 
+  protected int getTestPort() {
+    return 10058;
+  }
 
   //@Override
   protected Application configure() {

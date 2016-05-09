@@ -53,6 +53,10 @@ public class TestMLRunner { //extends LensJerseyTest {
 
   private LensMLClient mlClient;
 
+  protected int getTestPort() {
+    return 10058;
+  }
+
   //@Override
   protected Application configure() {
     return new MLApp(SessionResource.class, QueryServiceResource.class, MetastoreResource.class);
