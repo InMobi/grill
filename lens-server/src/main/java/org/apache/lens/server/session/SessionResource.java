@@ -24,15 +24,12 @@ import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.lens.api.APIResult;
 import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.StringList;
-import org.apache.lens.api.error.ErrorCollection;
-import org.apache.lens.server.BaseLensService;
 import org.apache.lens.server.LensServices;
 import org.apache.lens.server.api.error.LensException;
 import org.apache.lens.server.api.session.SessionService;
@@ -54,8 +51,6 @@ public class SessionResource {
   /** The session service. */
   private SessionService sessionService;
 
-  private final ErrorCollection errorCollection;
-
   /**
    * API to know if session service is up and running
    *
@@ -74,7 +69,6 @@ public class SessionResource {
    */
   public SessionResource() throws LensException {
     sessionService = LensServices.get().getService(SessionService.NAME);
-    errorCollection = LensServices.get().getErrorCollection();
   }
 
   /**
@@ -93,20 +87,13 @@ public class SessionResource {
     @FormDataParam("password") String password,
     @FormDataParam("database")  @DefaultValue("") String database,
     @FormDataParam("sessionconf") LensConf sessionconf) throws LensException {
-    try {
-      Map<String, String> conf;
-      if (sessionconf != null) {
-        conf = sessionconf.getProperties();
-      } else {
-        conf = new HashMap<String, String>();
-      }
-      return sessionService.openSession(username, password, database,   conf);
-    } catch (LensException e) {
-      e.buildLensErrorResponse(errorCollection, null,
-          LensServices.get().getLogSegregationContext().getLogSegragationId());
-      Response response = Response.status(e.getLensAPIResult().getHttpStatusCode()).build();
-      throw new WebApplicationException(response);
+    Map<String, String> conf;
+    if (sessionconf != null) {
+      conf = sessionconf.getProperties();
+    } else {
+      conf = new HashMap();
     }
+    return sessionService.openSession(username, password, database,   conf);
   }
 
   /**
@@ -149,21 +136,23 @@ public class SessionResource {
   public APIResult addResource(@FormDataParam("sessionid") LensSessionHandle sessionid,
     @FormDataParam("type") String type, @FormDataParam("path") String path) {
     ScannedPaths scannedPaths = new ScannedPaths(path, type);
-    int matchedPathsCount = 0;
 
     int numAdded = 0;
     for (String matchedPath : scannedPaths) {
-      if (matchedPath.startsWith("file:") && !matchedPath.startsWith("file://")) {
-        matchedPath = "file://" + matchedPath.substring("file:".length());
+      try {
+        if (matchedPath.startsWith("file:") && !matchedPath.startsWith("file://")) {
+          matchedPath = "file://" + matchedPath.substring("file:".length());
+        }
+        sessionService.addResource(sessionid, type, matchedPath);
+        numAdded++;
+      } catch (Exception e) {
+        log.error("Failed to add resource {} ", matchedPath, e);
+        if (numAdded != 0) {
+          return new APIResult(Status.PARTIAL, "Add resource is partial");
+        } else {
+          return new APIResult(Status.FAILED, "Add resource has failed");
+        }
       }
-      numAdded += sessionService.addResourceToAllServices(sessionid, type, matchedPath);
-      matchedPathsCount++;
-    }
-
-    if (numAdded == 0) {
-      return new APIResult(Status.FAILED, "Add resource has failed");
-    } else if ((numAdded / matchedPathsCount) != LensServices.get().getLensServices().size()) {
-      return new APIResult(Status.PARTIAL, "Add resource is partial");
     }
     return new APIResult(Status.SUCCEEDED, "Add resource succeeded");
   }
@@ -210,20 +199,18 @@ public class SessionResource {
     int numDeleted = 0;
 
     for(String matchedPath : scannedPaths) {
-      for (BaseLensService service : LensServices.get().getLensServices()) {
-        try {
-          if (matchedPath.startsWith("file:") && !matchedPath.startsWith("file://")) {
-            matchedPath = "file://" + matchedPath.substring("file:".length());
-          }
-          service.deleteResource(sessionid, type, matchedPath);
-          numDeleted++;
-        } catch (LensException e) {
-          log.error("Failed to delete resource in service:{}", service, e);
-          if (numDeleted != 0) {
-            return new APIResult(Status.PARTIAL, "Delete resource is partial, failed for service:" + service.getName());
-          } else {
-            return new APIResult(Status.FAILED, "Delete resource has failed");
-          }
+      try {
+        if (matchedPath.startsWith("file:") && !matchedPath.startsWith("file://")) {
+          matchedPath = "file://" + matchedPath.substring("file:".length());
+        }
+        sessionService.deleteResource(sessionid, type, matchedPath);
+        numDeleted++;
+      } catch (Exception e) {
+        log.error("Failed to delete resource {} ", matchedPath, e);
+        if (numDeleted != 0) {
+          return new APIResult(Status.PARTIAL, "Delete resource is partial");
+        } else {
+          return new APIResult(Status.FAILED, "Delete resource has failed");
         }
       }
     }

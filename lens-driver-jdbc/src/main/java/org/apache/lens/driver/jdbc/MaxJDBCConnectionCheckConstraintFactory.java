@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.error;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+package org.apache.lens.driver.jdbc;
 
-import org.apache.lens.api.result.LensAPIResult;
-import org.apache.lens.server.api.error.LensException;
+import static org.apache.lens.driver.jdbc.JDBCDriverConfConstants.ConnectionPoolProperties.JDBC_POOL_MAX_SIZE;
 
-@Provider
-public class LensExceptionMapper implements ExceptionMapper<LensException> {
+import org.apache.lens.server.api.common.ConfigBasedObjectCreationFactory;
+import org.apache.lens.server.api.query.constraint.QueryLaunchingConstraint;
+
+import org.apache.hadoop.conf.Configuration;
+
+public class MaxJDBCConnectionCheckConstraintFactory implements
+    ConfigBasedObjectCreationFactory<QueryLaunchingConstraint> {
 
   @Override
-  public Response toResponse(LensException exception) {
+  public MaxJDBCConnectionCheckConstraint create(Configuration conf) {
+    final int poolMaxSize = Integer.parseInt(conf.get(JDBC_POOL_MAX_SIZE.getConfigKey()));
 
-    final LensAPIResult lensAPIResult = exception.getLensAPIResult();
-    return Response.status(lensAPIResult.getHttpStatusCode()).entity(lensAPIResult).build();
+    return new MaxJDBCConnectionCheckConstraint(poolMaxSize);
   }
 }

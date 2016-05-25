@@ -373,6 +373,15 @@
         <role>Committer</role>
       </roles>
     </developer>
+    <developer>
+      <id>archanah</id>
+      <email>archanah@apache.org</email>
+      <name>Archana H</name>
+      <timezone>+5.5</timezone>
+      <roles>
+        <role>Committer</role>
+      </roles>
+    </developer>
   </developers>
   <scm>
     <connection>scm:git:https://github.com/InMobi/grill.git</connection>

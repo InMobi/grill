@@ -31,7 +31,6 @@ import org.apache.lens.api.APIResult;
 import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.error.ErrorCollection;
 import org.apache.lens.api.query.*;
 import org.apache.lens.api.result.LensAPIResult;
 import org.apache.lens.server.LensServices;
@@ -59,8 +58,6 @@ public class QueryServiceResource {
 
   /** The query server. */
   private QueryExecutionService queryServer;
-
-  private final ErrorCollection errorCollection;
 
   private final LogSegregationContext logSegregationContext;
 
@@ -125,7 +122,6 @@ public class QueryServiceResource {
    */
   public QueryServiceResource() throws LensException {
     queryServer = LensServices.get().getService(QueryExecutionService.NAME);
-    errorCollection = LensServices.get().getErrorCollection();
     logSegregationContext = LensServices.get().getLogSegregationContext();
   }
 
@@ -191,7 +187,11 @@ public class QueryServiceResource {
    *                      {@link org.apache.lens.api.query.SubmitOp#EXECUTE} and
    *                      {@link org.apache.lens.api.query.SubmitOp#EXECUTE_WITH_TIMEOUT}
    * @param conf          The configuration for the query
-   * @param timeoutmillis The timeout for the query, honored only in case of value {@link
+   * @param timeoutmillis The timeout for the query. If the query does not finish within the specified
+   *                      timeout, it is automatically cancelled unless user specified otherwise
+   *                      by setting configuration lens.query.cancel.on.timeout = false.
+   *                      <br>
+   *                      Note: The timeout parameter is honored only in case of {@link
    *                      org.apache.lens.api.query.SubmitOp#EXECUTE_WITH_TIMEOUT} operation
    * @param queryName     human readable query name set by user (optional parameter)
 
@@ -214,34 +214,30 @@ public class QueryServiceResource {
 
     final String requestId = this.logSegregationContext.getLogSegragationId();
 
-    try {
-      validateSessionId(sessionid);
-      SubmitOp sop = checkAndGetQuerySubmitOperation(operation);
-      validateQuery(query);
+    validateSessionId(sessionid);
+    SubmitOp sop = checkAndGetQuerySubmitOperation(operation);
+    validateQuery(query);
 
-      QuerySubmitResult result;
-      switch (sop) {
-      case ESTIMATE:
-        result = new QueryCostTOBuilder(queryServer.estimate(requestId, sessionid, query, conf)).build();
-        break;
-      case EXECUTE:
-        result = queryServer.executeAsync(sessionid, query, conf, queryName);
-        break;
-      case EXPLAIN:
-        result = queryServer.explain(requestId, sessionid, query, conf);
-        break;
-      case EXECUTE_WITH_TIMEOUT:
-        result = queryServer.execute(sessionid, query, timeoutmillis, conf, queryName);
-        break;
-      default:
-        throw new UnSupportedQuerySubmitOpException();
-      }
-
-      return LensAPIResult.composedOf(null, requestId, result);
-    } catch (LensException e) {
-      e.buildLensErrorResponse(errorCollection, null, requestId);
-      throw e;
+    QuerySubmitResult result;
+    switch (sop) {
+    case ESTIMATE:
+      result = new QueryCostTOBuilder(queryServer.estimate(requestId, sessionid, query, conf)).build();
+      break;
+    case EXECUTE:
+      result = queryServer.executeAsync(sessionid, query, conf, queryName);
+      break;
+    case EXPLAIN:
+      result = queryServer.explain(requestId, sessionid, query, conf);
+      break;
+    case EXECUTE_WITH_TIMEOUT:
+      result = queryServer.execute(sessionid, query, timeoutmillis, conf, queryName);
+      break;
+    default:
+      throw new UnSupportedQuerySubmitOpException();
     }
+
+    return LensAPIResult.composedOf(null, requestId, result);
+
   }
 
   /**
@@ -357,34 +353,29 @@ public class QueryServiceResource {
       @DefaultValue("") @FormDataParam("queryName") String queryName) throws LensException {
     final String requestId = this.logSegregationContext.getLogSegragationId();
 
+    checkSessionId(sessionid);
+    checkQuery(query);
+    SubmitOp sop = null;
+    QuerySubmitResult result;
     try {
-      checkSessionId(sessionid);
-      checkQuery(query);
-      SubmitOp sop = null;
-      QuerySubmitResult result;
-      try {
-        sop = SubmitOp.valueOf(operation.toUpperCase());
-      } catch (IllegalArgumentException e) {
-        log.error("Illegal argument for submitop: " + operation, e);
-      }
-      if (sop == null) {
-        throw new BadRequestException("Invalid operation type: " + operation + prepareClue);
-      }
-      switch (sop) {
-      case PREPARE:
-        result = queryServer.prepare(sessionid, query, conf, queryName);
-        break;
-      case EXPLAIN_AND_PREPARE:
-        result = queryServer.explainAndPrepare(sessionid, query, conf, queryName);
-        break;
-      default:
-        throw new BadRequestException("Invalid operation type: " + operation + prepareClue);
-      }
-      return LensAPIResult.composedOf(null, requestId, result);
-    } catch (LensException e) {
-      e.buildLensErrorResponse(errorCollection, null, requestId);
-      throw e;
+      sop = SubmitOp.valueOf(operation.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      log.error("Illegal argument for submitop: " + operation, e);
     }
+    if (sop == null) {
+      throw new BadRequestException("Invalid operation type: " + operation + prepareClue);
+    }
+    switch (sop) {
+    case PREPARE:
+      result = queryServer.prepare(sessionid, query, conf, queryName);
+      break;
+    case EXPLAIN_AND_PREPARE:
+      result = queryServer.explainAndPrepare(sessionid, query, conf, queryName);
+      break;
+    default:
+      throw new BadRequestException("Invalid operation type: " + operation + prepareClue);
+    }
+    return LensAPIResult.composedOf(null, requestId, result);
   }
   /**
    * Destroy all the prepared queries; Can be filtered with user.
@@ -766,7 +757,7 @@ public class QueryServiceResource {
     try {
       queryServer.closeResultSet(sessionid, getQueryHandle(queryHandle));
       return new APIResult(Status.SUCCEEDED,
-        "Close on the result set" + " for query " + queryHandle + " is successful");
+        "Close on the result set for query " + queryHandle + " is successful");
 
     } catch (LensException e) {
       throw new WebApplicationException(e);

@@ -151,6 +151,18 @@ public final class LensConfConstants {
   public static final boolean DEFAULT_SERVER_STATE_PERSISTENCE_ENABLED = true;
 
   /**
+   * If this is false and same query is submitted by a user in the same session
+   * and with the same configuration while earlier query is not completed then
+   * lens server will return the handle of the previous query.
+   */
+  public static final String SERVER_DUPLICATE_QUERY_ALLOWED = SERVER_PFX + "duplicate.query.allowed";
+
+  /**
+   * By default same query by same user is not allowed.
+   */
+  public static final boolean DEFAULT_SERVER_DUPLICATE_QUERY_ALLOWED = false;
+
+  /**
    * The Constant SERVER_STATE_PERSIST_LOCATION.
    */
   public static final String SERVER_STATE_PERSIST_LOCATION = SERVER_PFX + "persist.location";
@@ -1070,4 +1082,15 @@ public final class LensConfConstants {
    * Default value of DEFAULT_STATUS_UPDATE_EXPONENTIAL_WAIT_FACTOR is 30000 millis (30 seconds)
    */
   public static final long DEFAULT_STATUS_UPDATE_EXPONENTIAL_WAIT_FACTOR = 30000;
+
+  /**
+   * Specifies whether to attempt cancellation of a query whose execution takes longer than the timeout value
+   * specified while submitting the query for execution.
+   */
+  public static final String CANCEL_QUERY_ON_TIMEOUT = QUERY_PFX + "cancel.on.timeout";
+
+  /**
+   * Default value of "lens.query.cancel.on.timeout"
+   */
+  public static final boolean DEFAULT_CANCEL_QUERY_ON_TIMEOUT = true;
 }

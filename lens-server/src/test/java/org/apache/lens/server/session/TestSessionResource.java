@@ -25,6 +25,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
@@ -39,6 +40,7 @@ import org.apache.lens.api.APIResult.Status;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.StringList;
+import org.apache.lens.api.jaxb.LensJAXBContextResolver;
 import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.LensServerConf;
 import org.apache.lens.server.LensServices;
@@ -50,6 +52,7 @@ import org.apache.lens.server.common.LenServerTestException;
 import org.apache.lens.server.common.LensServerTestFileUtils;
 import org.apache.lens.server.common.RestAPITestUtil;
 import org.apache.lens.server.common.TestResourceFile;
+import org.apache.lens.server.error.GenericExceptionMapper;
 
 import org.apache.commons.io.FileUtils;
 
@@ -107,7 +110,15 @@ public class TestSessionResource extends LensJerseyTest {
   protected Application configure() {
     enable(TestProperties.LOG_TRAFFIC);
     enable(TestProperties.DUMP_ENTITY);
-    return new SessionApp();
+    return new SessionApp() {
+      @Override
+      public Set<Class<?>> getClasses() {
+        final Set<Class<?>> classes = super.getClasses();
+        classes.add(GenericExceptionMapper.class);
+        classes.add(LensJAXBContextResolver.class);
+        return classes;
+      }
+    };
   }
 
   @Test
@@ -291,7 +302,7 @@ public class TestSessionResource extends LensJerseyTest {
     StringList listResourcesAfterDeletion = resourcetarget.path("list").queryParam("sessionid", handle)
       .request(mt).get(StringList.class);
     Assert.assertTrue(listResourcesAfterDeletion.getElements() == null
-      || listResourcesAfterDeletion.getElements().isEmpty());
+      || listResourcesAfterDeletion.getElements().isEmpty(), " Found :" + listResourcesAfterDeletion.getElements());
 
     // close session
     result = target.queryParam("sessionid", handle).request(mt).delete(APIResult.class);

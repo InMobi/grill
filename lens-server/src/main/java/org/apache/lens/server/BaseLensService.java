@@ -295,7 +295,7 @@ public abstract class BaseLensService extends CompositeService implements Extern
       String publicId = sessionHandle.getPublicId().toString();
       SESSION_MAP.remove(publicId);
       decrementSessionCountForUser(sessionHandle, userName);
-    } catch (Exception e) {
+    } catch (HiveSQLException e) {
       throw new LensException(e);
     }
   }
@@ -401,28 +401,6 @@ public abstract class BaseLensService extends CompositeService implements Extern
    */
   protected LensSessionHandle getSessionHandle(String sessionid) {
     return SESSION_MAP.get(sessionid);
-  }
-
-  /**
-   * Adds the resource.
-   *
-   * @param sessionHandle the session handle
-   * @param type          the type
-   * @param path          the path
-   * @throws LensException the lens exception
-   */
-  public void addResource(LensSessionHandle sessionHandle, String type, String path) throws LensException {
-  }
-
-  /**
-   * Delete resource.
-   *
-   * @param sessionHandle the session handle
-   * @param type          the type
-   * @param path          the path
-   * @throws LensException the lens exception
-   */
-  public void deleteResource(LensSessionHandle sessionHandle, String type, String path) throws LensException {
   }
 
   /**

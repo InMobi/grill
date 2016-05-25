@@ -526,6 +526,15 @@
   </property>
 
   <property>
+    <name>hive.server2.logging.operation.enabled</name>
+    <value>false</value>
+    <description>Disable the operation logging, since there are no execution operation happening in lens session.
+      Keeping it true might conflict with Hive Server if both are running on the same machine causing disappearance
+      of the operation log directory.
+    </description>
+  </property>
+
+  <property>
     <name>hive.server2.authentication</name>
     <value>NONE</value>
     <description>
@@ -840,6 +849,14 @@
     <value>1800</value>
     <description>The maximum delay in seconds for next status update to happen after any transient failure. This will
       be used a maximum delay sothat exponential wait times not to grow to bigger value.
+    </description>
+  </property>
+  <property>
+    <name>lens.server.duplicate.query.allowed</name>
+    <value>false</value>
+    <description>If this is false and same query is submitted by a user in the same session
+      and with the same configuration while earlier query is not completed then
+      lens server will return the handle of the previous query
     </description>
   </property>
   <property>
