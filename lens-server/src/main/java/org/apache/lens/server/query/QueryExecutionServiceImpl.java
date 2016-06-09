@@ -911,10 +911,10 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     QueryContext ctx = allQueries.get(handle);
     if (ctx != null) {
       logSegregationContext.setLogSegragationAndQueryId(ctx.getLogHandle());
+      log.info("Updating status for {}", ctx.getQueryHandle());
       synchronized (ctx) {
         QueryStatus before = ctx.getStatus();
         if (!ctx.queued() && !ctx.finished() && !ctx.getDriverStatus().isFinished()) {
-          log.debug("Updating status for {}", ctx.getQueryHandle());
           try {
             ctx.updateDriverStatus(statusUpdateRetryHandler);
           } catch (LensException exc) {
@@ -1223,6 +1223,22 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     }
   }
 
+  private void awaitTermination(ExecutorService service) {
+    try {
+      service.awaitTermination(1, TimeUnit.MINUTES);
+    } catch (InterruptedException e) {
+      log.info("Couldn't finish executor service within 1 minute: {}", service);
+    }
+  }
+
+  private void awaitTermination(QueryResultPurger service) {
+    try {
+      service.awaitTermination(1, TimeUnit.MINUTES);
+    } catch (InterruptedException e) {
+      log.info("Couldn't finish query result purger within 1 minute: {}", service);
+    }
+  }
+
   /*
    * (non-Javadoc)
    *
@@ -1230,10 +1246,39 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    */
   public void prepareStopping() {
     super.prepareStopping();
-    querySubmitter.interrupt();
-    statusPoller.interrupt();
-    queryPurger.interrupt();
-    prepareQueryPurger.interrupt();
+    Thread[] threadsToStop = new Thread[]{querySubmitter, statusPoller, queryPurger, prepareQueryPurger};
+    // Nudge the threads to stop
+    for (Thread th : threadsToStop) {
+      th.interrupt();
+    }
+
+    // Nudge executor pools to stop
+
+    // Hard shutdown, since it doesn't matter whether waiting queries were selected, all will be
+    // selected in the next restart
+    waitingQueriesSelectionSvc.shutdownNow();
+    // Soft shutdown, Wait for current estimate tasks
+    estimatePool.shutdown();
+    // Soft shutdown for result purger too. Purging shouldn't take much time.
+    if (null != queryResultPurger) {
+      queryResultPurger.shutdown();
+    }
+    // Soft shutdown right now, will await termination in this method itself, since cancellation pool
+    // should be terminated before query state gets persisted.
+    queryCancellationPool.shutdown();
+
+    // Join the threads.
+    for (Thread th : threadsToStop) {
+      try {
+        log.debug("Waiting for {}", th.getName());
+        th.join();
+      } catch (InterruptedException e) {
+        log.error("Error waiting for thread: {}", th.getName(), e);
+      }
+    }
+    // Needs to be done before queries' states are persisted, hence doing here. Await of other
+    // executor services can be done after persistence, hence they are done in #stop
+    awaitTermination(queryCancellationPool);
   }
 
   /*
@@ -1243,26 +1288,9 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    */
   public synchronized void stop() {
     super.stop();
-
-    waitingQueriesSelectionSvc.shutdown();
-
-    for (Thread th : new Thread[]{querySubmitter, statusPoller, queryPurger, prepareQueryPurger}) {
-      try {
-        log.debug("Waiting for {}", th.getName());
-        th.join();
-      } catch (InterruptedException e) {
-        log.error("Error waiting for thread: {}", th.getName(), e);
-      }
-    }
-
-    estimatePool.shutdownNow();
-
-    if (null != queryResultPurger) {
-      queryResultPurger.stop();
-    }
-
-    queryCancellationPool.shutdown();
-
+    awaitTermination(waitingQueriesSelectionSvc);
+    awaitTermination(estimatePool);
+    awaitTermination(queryResultPurger);
     log.info("Query execution service stopped");
   }
 
@@ -1306,6 +1334,14 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
             launchedQueries.add(ctx);
           } catch (final Exception e) {
             log.error("Query not restored:QueryContext:{}", ctx, e);
+          }
+          // If EXECUTED, try to nudge result formatting forward
+          if (ctx.getStatus().getStatus() == EXECUTED) {
+            try {
+              getEventService().notifyEvent(newStatusChangeEvent(ctx, null, ctx.getStatus().getStatus()));
+            } catch (LensException e) {
+              log.error("Couldn't notify event for query executed for {}", ctx, e);
+            }
           }
           break;
         case SUCCESSFUL:
@@ -1867,7 +1903,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    *
    * @param query
    * @param sessionHandle
-   * @param qconf
+   * @param conf
    * @param queryName
    * @return
    */
@@ -2136,7 +2172,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
   private QueryHandleWithResultSet executeTimeoutInternal(LensSessionHandle sessionHandle, QueryContext ctx,
     long timeoutMillis, Configuration conf) throws LensException {
     QueryHandle handle = submitQuery(ctx);
-    long timeOutTime = System.currentTimeMillis() + timeoutMillis;
+    long timeOutTime = ctx.getSubmissionTime() + timeoutMillis;
     QueryHandleWithResultSet result = new QueryHandleWithResultSet(handle);
 
     boolean isQueued = true;
@@ -2161,21 +2197,31 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     }
 
     QueryCompletionListenerImpl listener = new QueryCompletionListenerImpl(handle);
-    long waitTime = timeOutTime - System.currentTimeMillis();
-    if (waitTime > 0 && !queryCtx.getStatus().finished()) {
-      synchronized (queryCtx) {
-        queryCtx.getSelectedDriver().registerForCompletionNotification(handle, waitTime, listener);
-        try {
-          synchronized (listener) {
-            listener.wait(waitTime);
+    long totalWaitTime = timeOutTime - System.currentTimeMillis();
+
+    if (totalWaitTime > 0 && !queryCtx.getStatus().executed() && !queryCtx.getStatus().finished()) {
+      log.info("Registering for query {} completion notification", ctx.getQueryHandleString());
+      queryCtx.getSelectedDriver().registerForCompletionNotification(handle, totalWaitTime, listener);
+      try {
+        // We will wait for a few millis at a time until we reach max required wait time and also check the state
+        // each time we come out of the wait.
+        // This is done because the registerForCompletionNotification and query execution completion can happen
+        // parallely especailly in case of drivers like JDBC and in that case completion notification may not be
+        //  received by this listener. So its better to break the wait into smaller ones.
+        long waitMillisPerCheck = totalWaitTime/10;
+        waitMillisPerCheck = (waitMillisPerCheck > 500) ? 500 : waitMillisPerCheck; // Lets keep max as 500
+        long totalWaitMillisSoFar = 0;
+        synchronized (listener) {
+          while (totalWaitMillisSoFar < totalWaitTime
+            && !queryCtx.getStatus().executed() && !queryCtx.getStatus().finished()) {
+            listener.wait(waitMillisPerCheck);
+            totalWaitMillisSoFar += waitMillisPerCheck;
           }
-        } catch (InterruptedException e) {
-          log.info("Waiting thread interrupted");
         }
+      } catch (InterruptedException e) {
+        log.info("{} query completion notification wait interrupted", queryCtx.getQueryHandleString());
       }
     }
-
-
 
     // At this stage (since the listener waits only for driver completion and not server that may include result
     // formatting and persistence) the query status can be RUNNING or EXECUTED or FAILED or SUCCESSFUL
@@ -2384,6 +2430,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       release(sessionHandle);
     }
   }
+
 
   private boolean cancelQuery(@NonNull QueryHandle queryHandle) throws LensException {
     QueryContext ctx =  allQueries.get(queryHandle);
