@@ -44,7 +44,7 @@
     <!-- hadoop stack -->
     <hadoop.version>2.6.0</hadoop.version>
     <spark.version>1.3.0</spark.version>
-    <hive.version>2.1.1-inm</hive.version>
+    <hive.version>2.1.0</hive.version>
 
     <!-- jest client for elasticsearch -->
     <jest.version>0.1.5</jest.version>
@@ -637,7 +637,7 @@
           <useIdeaDefaultExcludes>true</useIdeaDefaultExcludes>
           <useEclipseDefaultExcludes>true</useEclipseDefaultExcludes>
           <excludes>
-            <exclude>README.*</exclude>
+            <exclude>**/README.*</exclude>
             <exclude>DEPENDENCIES</exclude>
             <exclude>**/LICENSE*</exclude>
             <!-- Local git repo -->
@@ -674,6 +674,11 @@
             <exclude>**/*.js</exclude>
             <exclude>**/*.properties</exclude>
             <exclude>**/*.json</exclude>
+            <!-- python client -->
+            <exclude>**/.tox/</exclude>
+            <exclude>**/.cache/</exclude>
+            <exclude>**/*.egg-info/**</exclude>
+            <exclude>**/*.egg</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -764,23 +769,6 @@
     </plugins>
   </build>
   <repositories>
-    <repository>
-      <id>inmobi.repo</id>
-      <url>https://github.com/InMobi/mvn-repo/raw/master/releases</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>inmobi.snapshots</id>
-      <url>https://github.com/InMobi/mvn-repo/raw/master/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
     <repository>
       <id>central</id>
       <url>http://repo1.maven.org/maven2</url>

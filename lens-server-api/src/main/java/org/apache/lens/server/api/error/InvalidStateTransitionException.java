@@ -16,14 +16,31 @@
  * limitations under the License.
  */
 
-package org.apache.lens.server.api.scheduler;
-
-import lombok.Data;
+package org.apache.lens.server.api.error;
 
 /**
- * Stats for a scheduler's job.
+ * Exception thrown during state transition of jobs and job instances.
  */
-@Data
-public class SchedulerJobStats {
+public class InvalidStateTransitionException extends LensException {
+  /**
+   * @param e Exception
+   */
+  public InvalidStateTransitionException(Throwable e) {
+    super(e);
+  }
 
+  /**
+   * @param message - custom exception message
+   * @param e
+   */
+  public InvalidStateTransitionException(String message, Throwable e) {
+    super(message, e);
+  }
+
+  /**
+   * @param message - custom exception message
+   */
+  public InvalidStateTransitionException(String message) {
+    super(message);
+  }
 }

@@ -1,4 +1,7 @@
 {
   "isPersistent": true,
-  "baseURL": "/serverproxy/"
+  "baseURL": "/serverproxy/",
+  "password_required" : false,
+  "display_tables":false,
+  "cubes_type":"base"
 }

@@ -151,7 +151,15 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
     }
     try {
       String result = qCom.executeQuery(sql, false, "testQuerySync");
-      assertTrue(result.contains("1\tfirst"), result);
+      if (shouldPass) {
+        assertTrue(result.contains("1\tfirst"), result);
+      } else {
+        assertTrue(result.contains("Error"));
+        if (closeConn) {
+          closeClientConnection(qCom);
+        }
+        return;
+      }
     } catch (Exception e) {
       if (closeConn) {
         closeClientConnection(qCom);
@@ -389,7 +397,6 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
     }
 
     System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    closeClientConnection(qCom);
   }
 
   private String readFile(String path) throws FileNotFoundException {
@@ -441,9 +448,6 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
     LensDimensionTableCommands dimTableCmd = new LensDimensionTableCommands();
     dimTableCmd.setClient(client);
     dimTableCmd.dropDimensionTable("dim_table", true);
-
-    // close client connection
-    client.closeConnection();
   }
 
   /**
@@ -495,7 +499,6 @@ public class TestLensQueryCommands extends LensCliApplicationTest {
     String qh = qCom.executeQuery(sql, true, "testQuery4");
     String result = qCom.getQueryResults(qh, null, false);
     assertTrue(result.contains("1\tfirst"), result);
-    closeClientConnection(qCom);
   }
 
   /**

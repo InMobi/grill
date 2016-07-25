@@ -28,7 +28,6 @@ import org.apache.lens.server.api.error.LensException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.lib.Node;
-import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 import org.apache.hadoop.hive.ql.parse.HiveParser;
 import org.apache.hadoop.hive.ql.session.SessionState;
@@ -181,8 +180,6 @@ public class CandidateFact implements CandidateTable, QueryAST {
    * @throws LensException
    */
   public void updateASTs(CubeQueryContext cubeql) throws LensException {
-    Set<String> cubeCols = cubeql.getCube().getAllFieldNames();
-
     // update select AST with selected fields
     int currentChild = 0;
     for (int i = 0; i < cubeql.getSelectAST().getChildCount(); i++) {
@@ -190,7 +187,9 @@ public class CandidateFact implements CandidateTable, QueryAST {
       Set<String> exprCols = HQLParser.getColsInExpr(cubeql.getAliasForTableName(cubeql.getCube()), selectExpr);
       if (getColumns().containsAll(exprCols)) {
         selectIndices.add(i);
-        if (cubeql.getCube().getDimAttributeNames().containsAll(exprCols)) {
+        if (exprCols.isEmpty() // no direct fact columns
+          // does not have measure names
+          || (!containsAny(cubeql.getCube().getMeasureNames(), exprCols))) {
           dimFieldIndices.add(i);
         }
         ASTNode aliasNode = HQLParser.findNodeByPath(selectExpr, Identifier);
@@ -219,6 +218,19 @@ public class CandidateFact implements CandidateTable, QueryAST {
     // are assumed to be common in multi fact queries.
 
     // push down of having clauses happens just after this call in cubequerycontext
+  }
+
+  // The source set contains atleast one column in the colSet
+  static boolean containsAny(Collection<String> srcSet, Collection<String> colSet) {
+    if (colSet == null || colSet.isEmpty()) {
+      return true;
+    }
+    for (String column : colSet) {
+      if (srcSet.contains(column)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
@@ -331,11 +343,7 @@ public class CandidateFact implements CandidateTable, QueryAST {
     Set<String> timePartDimensions = new HashSet<String>();
     String singleStorageTable = storageTables.iterator().next();
     List<FieldSchema> partitionKeys = null;
-    try {
-      partitionKeys = query.getMetastoreClient().getTable(singleStorageTable).getPartitionKeys();
-    } catch (HiveException e) {
-      throw new LensException(e);
-    }
+    partitionKeys = query.getMetastoreClient().getTable(singleStorageTable).getPartitionKeys();
     for (FieldSchema fs : partitionKeys) {
       if (cubeTimeDimensions.contains(CubeQueryContext.getTimeDimOfPartitionColumn(baseTable, fs.getName()))) {
         timePartDimensions.add(fs.getName());

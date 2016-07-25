@@ -188,46 +188,6 @@ public final class LensConfConstants {
   public static final long SESSION_TIMEOUT_SECONDS_DEFAULT = 1440 * 60; // Default is one day
 
   /**
-   * The Constant
-   */
-  public static final String SERVER_UI_ENABLE = SERVER_PFX + "ui.enable";
-
-  /**
-   * The Constant
-   */
-  public static final boolean DEFAULT_SERVER_UI_ENABLE = true;
-
-  /**
-   * The Constant SERVER_UI_URI.
-   */
-  public static final String SERVER_UI_URI = SERVER_PFX + "ui.base.uri";
-
-  /**
-   * The Constant DEFAULT_SERVER_UI_URI.
-   */
-  public static final String DEFAULT_SERVER_UI_URI = "http://0.0.0.0:19999/";
-
-  /**
-   * The Constant SERVER_UI_STATIC_DIR.
-   */
-  public static final String SERVER_UI_STATIC_DIR = SERVER_PFX + ".ui.static.dir";
-
-  /**
-   * The Constant DEFAULT_SERVER_UI_STATIC_DIR.
-   */
-  public static final String DEFAULT_SERVER_UI_STATIC_DIR = "webapp/lens-server/static";
-
-  /**
-   * The Constant SERVER_UI_ENABLE_CACHING.
-   */
-  public static final String SERVER_UI_ENABLE_CACHING = SERVER_PFX + "ui.enable.caching";
-
-  /**
-   * The Constant DEFAULT_SERVER_UI_ENABLE_CACHING.
-   */
-  public static final boolean DEFAULT_SERVER_UI_ENABLE_CACHING = true;
-
-  /**
    * The Constant SERVER_STATE_PERSISTENCE_INTERVAL_MILLIS.
    */
   public static final String SERVER_STATE_PERSISTENCE_INTERVAL_MILLIS =
@@ -926,6 +886,26 @@ public final class LensConfConstants {
   public static final String ESTIMATE_POOL_KEEP_ALIVE_MILLIS = SERVER_PFX + "estimate.pool.keepalive.millis";
   public static final int DEFAULT_ESTIMATE_POOL_KEEP_ALIVE_MILLIS = 60000; // 1 minute
 
+  /**
+   * Key used to get minimum number of threads in the launcher thread pool
+   */
+  public static final String LAUNCHER_POOL_MIN_THREADS = SERVER_PFX + "launcher.pool.min.threads";
+  public static final int DEFAULT_LAUNCHER_POOL_MIN_THREADS = 3;
+
+  /**
+   * Key used to get maximum number of threads in the laucnher thread pool
+   */
+  public static final String LAUNCHER_POOL_MAX_THREADS = SERVER_PFX + "launcher.pool.max.threads";
+  // keeping the default to hundred, we may never grow till there, it would go to max for concurrrent queries allowed on
+  // all drivers together.
+  public static final int DEFAULT_LAUNCHER_POOL_MAX_THREADS = 100;
+
+  /**
+   * Key used to get keep alive time for threads in the launcher thread pool
+   */
+  public static final String LAUNCHER_POOL_KEEP_ALIVE_MILLIS = SERVER_PFX + "launcher.pool.keepalive.millis";
+  public static final int DEFAULT_LAUNCHER_POOL_KEEP_ALIVE_MILLIS = 60000; // 1 minute
+
   public static final String QUERY_PHASE1_REWRITERS = SERVER_PFX + "query.phase1.rewriters";
 
   /**
@@ -1108,4 +1088,10 @@ public final class LensConfConstants {
    * Default value of "lens.query.cancel.on.timeout"
    */
   public static final boolean DEFAULT_CANCEL_QUERY_ON_TIMEOUT = true;
+
+  /**
+   * Scheduler store class
+   */
+  public static final java.lang.String SCHEDULER_STORE_CLASS = SERVER_PFX + "scheduler.store.class";
+
 }

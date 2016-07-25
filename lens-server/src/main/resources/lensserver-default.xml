@@ -55,7 +55,7 @@
 
   <property>
     <name>lens.server.servicenames</name>
-    <value>session,query,metastore,scheduler,quota</value>
+    <value>session,query,savedquery,metastore,scheduler,quota</value>
     <description>These services would be started in the specified order when lens-server starts up</description>
   </property>
 
@@ -99,30 +99,6 @@
     <name>lens.server.base.url</name>
     <value>http://0.0.0.0:9999/lensapi/</value>
     <description>The base url for the lens server</description>
-  </property>
-
-  <property>
-    <name>lens.server.ui.base.uri</name>
-    <value>http://0.0.0.0:19999/</value>
-    <description>The base url for the Lens UI Server</description>
-  </property>
-
-  <property>
-    <name>lens.server.ui.static.dir</name>
-    <value>webapp/lens-server/static</value>
-    <description>The base directory to server UI static files from</description>
-  </property>
-
-  <property>
-    <name>lens.server.ui.enable</name>
-    <value>true</value>
-    <description>Bringing up the ui server is optional. By default it brings up UI server.</description>
-  </property>
-
-  <property>
-    <name>lens.server.ui.enable.caching</name>
-    <value>true</value>
-    <description>Set this to false to disable static file caching in the UI server</description>
   </property>
 
   <property>
@@ -395,7 +371,7 @@
 
   <property>
     <name>lens.server.ws.resourcenames</name>
-    <value>session,metastore,query,quota,scheduler,index,log</value>
+    <value>session,metastore,query,savedquery,quota,scheduler,index,log</value>
     <description>These JAX-RS resources would be started in the specified order when lens-server starts up</description>
   </property>
 
@@ -472,14 +448,14 @@
   </property>
   <property>
     <name>lens.server.ws.filternames</name>
-    <value>authentication,consistentState,serverMode</value>
+    <value>requestlogger,consistentState,serverMode</value>
     <description>These JAX-RS filters would be started in the specified order when lens-server starts up</description>
   </property>
 
   <property>
-    <name>lens.server.authentication.ws.filter.impl</name>
-    <value>org.apache.lens.server.AuthenticationFilter</value>
-    <description>Implementation class for Authentication Filter</description>
+    <name>lens.server.requestlogger.ws.filter.impl</name>
+    <value>org.apache.lens.server.LensRequestLoggingFilter</value>
+    <description>Implementation class for Request logging Filter</description>
   </property>
 
   <property>
@@ -772,6 +748,28 @@
   </property>
 
   <property>
+    <name>lens.server.launcher.pool.min.threads</name>
+    <value>3</value>
+    <description>Minimum number of threads in the query launcher thread pool</description>
+  </property>
+
+  <property>
+    <name>lens.server.launcher.pool.max.threads</name>
+    <value>100</value>
+    <description>Maximum number of threads in the query launcher thread pool. Keeping the default to hundred, we may
+      never grow till there, it would go to max for concurrrent queries allowed on all drivers together.
+      This value should be greater than the max concurrent queries allowed on all drivers. </description>
+  </property>
+
+  <property>
+    <name>lens.server.launcher.pool.keepalive.millis</name>
+    <value>60000</value>
+    <description>Thread keep alive time in milliseconds for the query launcher thread pool.
+      If there are no query launches for this period,then cached threads will be released from the pool.
+    </description>
+  </property>
+
+  <property>
     <name>lens.server.session.expiry.service.interval.secs</name>
     <value>3600</value>
     <description>Interval at which lens session expiry service runs</description>
@@ -857,6 +855,12 @@
     <description>If this is false and same query is submitted by a user in the same session
       and with the same configuration while earlier query is not completed then
       lens server will return the handle of the previous query
+    </description>
+  </property>
+   <property>
+    <name>lens.server.scheduler.store.class</name>
+    <value>org.apache.lens.server.scheduler.SchedulerDAO$SchedulerHsqlDBStore</value>
+    <description>A subclass of SchedulerDBStore class used for storing scheduler related information.
     </description>
   </property>
   <property>

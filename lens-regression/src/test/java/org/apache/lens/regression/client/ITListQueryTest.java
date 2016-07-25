@@ -19,7 +19,6 @@
 
 package org.apache.lens.regression.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -49,21 +48,16 @@ public class ITListQueryTest extends BaseTestClass {
   SessionHelper sHelper = getSessionHelper();
   QueryHelper qHelper = getQueryHelper();
 
-  private final String hdfsJarPath = lens.getServerHdfsUrl() + "/tmp";
-  private final String localJarPath = new File("").getAbsolutePath() + "/lens-regression/target/testjars/";
-  private final String hiveUdfJar = "hiveudftest.jar";
-  private final String serverResourcePath = "/tmp/regression/resources";
   String jdbcDriver = "jdbc/jdbc1", hiveDriver = "hive/hive1";
-
+  String sleepQuery = QueryInventory.getSleepQuery("5");
 
   private static Logger logger = Logger.getLogger(ITListQueryTest.class);
 
   @BeforeClass(alwaysRun = true)
   public void initialize() throws IOException, JAXBException, LensException {
     servLens = ServiceManagerHelper.init();
-//        HadoopUtil.uploadJars(localJarPath + "/" + hiveUdfJar, hdfsJarPath);
     logger.info("Creating a new Session");
-    sessionHandleString = lens.openSession(lens.getCurrentDB());
+    sessionHandleString = sHelper.openSession(lens.getCurrentDB());
   }
 
   @BeforeMethod(alwaysRun = true)
@@ -71,10 +65,17 @@ public class ITListQueryTest extends BaseTestClass {
     logger.info("Test Name: " + method.getName());
   }
 
+  @AfterMethod(alwaysRun = true)
+  public void afterMethod(Method method) throws Exception {
+    logger.info("Test Name: " + method.getName());
+    qHelper.killQuery(null, "QUEUED", "all");
+    qHelper.killQuery(null, "RUNNING", "all");
+  }
+
   @AfterClass(alwaysRun = true)
   public void closeSession() throws Exception {
     logger.info("Closing Session");
-    lens.closeSession();
+    sHelper.closeSession();
   }
 
   @DataProvider(name = "query-provider")
@@ -192,7 +193,7 @@ public class ITListQueryTest extends BaseTestClass {
   public void listQuerySpecificUserAllUser() throws Exception {
     String diffUser = "diff";
     String diffPass = "diff";
-    String diffSessionHandleString = sHelper.openNewSession(diffUser, diffPass, lens.getCurrentDB());
+    String diffSessionHandleString = sHelper.openSession(diffUser, diffPass, lens.getCurrentDB());
 
     //Running Query with user1
     QueryHandle queryHandle1 = (QueryHandle) qHelper.executeQuery(QueryInventory.QUERY).getData();
@@ -254,11 +255,11 @@ public class ITListQueryTest extends BaseTestClass {
     Assert.assertEquals(lensQuery.getStatus().getStatus(), QueryStatus.Status.SUCCESSFUL, "Query did not succeed");
 
     //Running Query
-    QueryHandle queryHandle3 = (QueryHandle) qHelper.executeQuery(QueryInventory.SLEEP_QUERY).getData();
+    QueryHandle queryHandle3 = (QueryHandle) qHelper.executeQuery(sleepQuery).getData();
     qHelper.waitForQueryToRun(queryHandle3);
 
     //Cancelled Query
-    QueryHandle queryHandle4 = (QueryHandle) qHelper.executeQuery(QueryInventory.SLEEP_QUERY).getData();
+    QueryHandle queryHandle4 = (QueryHandle) qHelper.executeQuery(sleepQuery).getData();
     qHelper.waitForQueryToRun(queryHandle4);
     qHelper.killQueryByQueryHandle(queryHandle4);
 
@@ -375,7 +376,7 @@ public class ITListQueryTest extends BaseTestClass {
     QueryHandle q2 = (QueryHandle) qHelper.executeQuery(QueryInventory.HIVE_DIM_QUERY).getData();
 
     //Running Query with diff user
-    String diffSession = sHelper.openNewSession("diff", "diff", lens.getCurrentDB());
+    String diffSession = sHelper.openSession("diff", "diff", lens.getCurrentDB());
     QueryHandle q3 = (QueryHandle) qHelper.executeQuery(QueryInventory.JDBC_CUBE_QUERY, null, diffSession).getData();
     QueryHandle q4 = (QueryHandle) qHelper.executeQuery(QueryInventory.HIVE_CUBE_QUERY, null, diffSession).getData();
 
@@ -402,10 +403,10 @@ public class ITListQueryTest extends BaseTestClass {
   public void listQueryByDriverNStatus() throws Exception {
 
     String user = "new", pwd = "new";
-    String newSession = sHelper.openNewSession(user, pwd, mHelper.getCurrentDB());
+    String newSession = sHelper.openSession(user, pwd, mHelper.getCurrentDB());
 
     //Cancelled hive Query
-    QueryHandle q1 = (QueryHandle) qHelper.executeQuery(QueryInventory.SLEEP_QUERY, null, newSession).getData();
+    QueryHandle q1 = (QueryHandle) qHelper.executeQuery(sleepQuery, null, newSession).getData();
     qHelper.waitForQueryToRun(q1, newSession);
     qHelper.killQueryByQueryHandle(q1);
 
@@ -415,10 +416,10 @@ public class ITListQueryTest extends BaseTestClass {
 
     //Successful jdbc Query
     QueryHandle q3 = (QueryHandle) qHelper.executeQuery(QueryInventory.JDBC_CUBE_QUERY, null, newSession).getData();
-    qHelper.waitForCompletion(newSession, q2);
+    qHelper.waitForCompletion(newSession, q3);
 
     //Running hive Query
-    QueryHandle q4 = (QueryHandle) qHelper.executeQuery(QueryInventory.SLEEP_QUERY, null, newSession).getData();
+    QueryHandle q4 = (QueryHandle) qHelper.executeQuery(sleepQuery, null, newSession).getData();
     qHelper.waitForQueryToRun(q4, newSession);
 
     List<QueryHandle> cancelledHive = qHelper.getQueryHandleList(null, "CANCELED", user, sessionHandleString, null,
@@ -453,8 +454,8 @@ public class ITListQueryTest extends BaseTestClass {
     String user1 = "diff", pwd1 = "diff";
     String user2 = "diff1", pwd2 = "diff1";
 
-    String diffSession1 = sHelper.openNewSession(user1, pwd1, lens.getCurrentDB());
-    String diffSession2 = sHelper.openNewSession(user2, pwd2, lens.getCurrentDB());
+    String diffSession1 = sHelper.openSession(user1, pwd1, lens.getCurrentDB());
+    String diffSession2 = sHelper.openSession(user2, pwd2, lens.getCurrentDB());
 
     String startTime1 = String.valueOf(System.currentTimeMillis());
     QueryHandle q1 = (QueryHandle) qHelper.executeQuery(QueryInventory.QUERY, queryName1).getData();
@@ -466,7 +467,7 @@ public class ITListQueryTest extends BaseTestClass {
 
     String startTime2 = String.valueOf(System.currentTimeMillis());
     Thread.sleep(2000);
-    QueryHandle q2 = (QueryHandle) qHelper.executeQuery(QueryInventory.SLEEP_QUERY, queryName2, diffSession1).getData();
+    QueryHandle q2 = (QueryHandle) qHelper.executeQuery(sleepQuery, queryName2, diffSession1).getData();
     Thread.sleep(2000);
     String endTime2 = String.valueOf(System.currentTimeMillis());
 
@@ -474,7 +475,7 @@ public class ITListQueryTest extends BaseTestClass {
 
     String startTime3 = String.valueOf(System.currentTimeMillis());
     Thread.sleep(2000);
-    QueryHandle q3 = (QueryHandle) qHelper.executeQuery(QueryInventory.SLEEP_QUERY, queryName3, diffSession2).getData();
+    QueryHandle q3 = (QueryHandle) qHelper.executeQuery(sleepQuery, queryName3, diffSession2).getData();
     qHelper.killQueryByQueryHandle(q3);
     String endTime3 = String.valueOf(System.currentTimeMillis());
 
