@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
@@ -41,6 +42,7 @@ import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.StringList;
 import org.apache.lens.api.jaxb.LensJAXBContextResolver;
+import org.apache.lens.api.query.*;
 import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.LensServerConf;
 import org.apache.lens.server.LensServices;
@@ -379,63 +381,6 @@ public class TestSessionResource extends LensJerseyTest {
   }
 
   @Test(dataProvider = "mediaTypeData")
-  public void testServerMustRestartOnManualDeletionOfAddedResources(MediaType mt)
-    throws IOException, LensException, LenServerTestException {
-
-    /* Begin: Setup */
-
-    /* Add a resource jar to current working directory */
-    File jarFile = new File(TestResourceFile.TEST_RESTART_ON_RESOURCE_MOVE_JAR.getValue());
-    FileUtils.touch(jarFile);
-
-    /* Add the created resource jar to lens server */
-    LensSessionHandle sessionHandle = openSession("foo", "bar", new LensConf(), mt);
-    addResource(sessionHandle, "jar", jarFile.getPath(), mt);
-
-    /* Delete resource jar from current working directory */
-    LensServerTestFileUtils.deleteFile(jarFile);
-
-    /* End: Setup */
-
-    /* Verification Steps: server should restart without exceptions */
-    restartLensServer();
-    HiveSessionService service = LensServices.get().getService(SessionService.NAME);
-    service.closeSession(sessionHandle);
-  }
-
-  private LensSessionHandle openSession(final String userName, final String passwd, final LensConf conf, MediaType mt) {
-
-    final WebTarget target = target().path("session");
-    final FormDataMultiPart mp = new FormDataMultiPart();
-
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("username").build(), userName));
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("password").build(), passwd));
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionconf").fileName("sessionconf").build(),
-        conf, mt));
-
-    return target.request(mt).post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE),
-      LensSessionHandle.class);
-
-  }
-
-  private void addResource(final LensSessionHandle lensSessionHandle, final String resourceType,
-    final String resourcePath, MediaType mt) {
-    final WebTarget target = target().path("session/resources");
-    final FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), lensSessionHandle,
-      mt));
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("type").build(), resourceType));
-    mp.bodyPart(
-      new FormDataBodyPart(FormDataContentDisposition.name("path").build(), resourcePath));
-    APIResult result = target.path("add").request(mt)
-      .put(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE), APIResult.class);
-
-    if (!result.getStatus().equals(Status.SUCCEEDED)) {
-      throw new RuntimeException("Could not add resource:" + result);
-    }
-  }
-
-  @Test(dataProvider = "mediaTypeData")
   public void testOpenSessionWithDatabase(MediaType mt) throws Exception {
     // TEST1 - Check if call with database parameter sets current database
     // Create the test DB
@@ -481,6 +426,21 @@ public class TestSessionResource extends LensJerseyTest {
     } catch (NotFoundException nfe) {
       // PASS
     }
+  }
+
+  /**
+   * Test multiple closeSession invocations for a session
+   */
+  @Test(dataProvider = "mediaTypeData")
+  public void testCloseSessionMultipleTimes(MediaType mt) throws Exception {
+    HiveSessionService sessionService = LensServices.get().getService(SessionService.NAME);
+
+    LensSessionHandle sessionHandle = sessionService.openSession("foo@localhost", "bar", new HashMap<String, String>());
+    Assert.assertNotNull(sessionHandle, "Expected session to be opened");
+    sessionService.getSession(sessionHandle).addToActiveQueries(QueryHandle.fromString(UUID.randomUUID().toString()));
+    // Closing multiple times should not cause any issues
+    sessionService.closeSession(sessionHandle);
+    sessionService.closeSession(sessionHandle);
   }
 
   /**
