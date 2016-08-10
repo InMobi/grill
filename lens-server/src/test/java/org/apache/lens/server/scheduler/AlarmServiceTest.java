@@ -159,10 +159,9 @@ public class AlarmServiceTest {
     SchedulerJobHandle jobHandle = new SchedulerJobHandle(UUID.randomUUID());
     System.out.println("jobHandle = " + jobHandle);
     XFrequency frequency = new XFrequency();
-    frequency.setCronExpression("0 0 12 * * ?");
+    frequency.setCronExpression("0/1 * * * * ?");
     alarmService.schedule(start, end, frequency, jobHandle.toString());
-    Thread.sleep(1000);
-    alarmService.unSchedule(jobHandle);
+    Thread.sleep(2000);
     // Assert that the events are fired and at per second interval.
     assertTrue(events.size() > 1);
   }

@@ -18,19 +18,14 @@
  */
 package org.apache.lens.api.scheduler;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * POJO to represent the <code>job</code> table in the database.
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-@XmlRootElement
 public class SchedulerJobInfo {
 
   /**
@@ -70,4 +65,5 @@ public class SchedulerJobInfo {
    * @return last modified time for this job
    */
   private long modifiedOn;
+
 }
