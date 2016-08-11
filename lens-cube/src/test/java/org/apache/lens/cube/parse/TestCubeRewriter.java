@@ -617,6 +617,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
   public void testCubeGroupbyQuery() throws Exception {
     Configuration conf = getConf();
     conf.set(DRIVER_SUPPORTED_STORAGES, "C2");
+
     String hqlQuery =
       rewrite("select name, SUM(msr2) from" + " testCube join citydim on testCube.cityid = citydim.id where "
         + TWO_DAYS_RANGE, conf);
@@ -692,6 +693,23 @@ public class TestCubeRewriter extends TestQueryRewrite {
     expected =
       getExpectedQuery(TEST_CUBE_NAME, "select round(testcube.zipcode) as `rzc`," + " sum(testcube.msr2) FROM ", null,
         " group by testcube.zipcode  order by rzc asc", getWhereForDailyAndHourly2days(TEST_CUBE_NAME, "C2_testfact"));
+    compareQueries(hqlQuery, expected);
+
+    //Dim attribute with aggregate function
+    hqlQuery =
+        rewrite("select countofdistinctcityid, zipcode from" + " testCube where " + TWO_DAYS_RANGE, conf);
+    expected =
+        getExpectedQuery(TEST_CUBE_NAME, "select " + " count(distinct (testcube.cityid)), (testcube.zipcode) FROM ",
+            null, " group by (testcube.zipcode)", getWhereForDailyAndHourly2days(TEST_CUBE_NAME, "C2_testfact"));
+    compareQueries(hqlQuery, expected);
+
+    //Dim attribute with single row function
+    hqlQuery =
+        rewrite("select notnullcityid, zipcode from" + " testCube where " + TWO_DAYS_RANGE, conf);
+    expected =
+        getExpectedQuery(TEST_CUBE_NAME, "select " + " distinct case  when (testcube.cityid) is null then 0 "
+                + "else (testcube.cityid) end, (testcube.zipcode)  FROM ", null,
+            "", getWhereForDailyAndHourly2days(TEST_CUBE_NAME, "C2_testfact"));
     compareQueries(hqlQuery, expected);
 
     // rewrite with expressions
@@ -1514,6 +1532,26 @@ public class TestCubeRewriter extends TestQueryRewrite {
     String query = "select count (distinct dim1) from testCube where " + TWO_DAYS_RANGE;
     String hql = rewrite(query, getConf());
     assertTrue(hql.contains("summary1"));
+  }
+
+  @Test
+  public void testFactColumnStartAndEndTime() throws Exception{
+    // Start time for dim attribute user_id_added_in_past is 2016-01-01
+    String query1 = "select user_id_added_in_past from basecube where " + TWO_DAYS_RANGE;
+    String hql1 = rewrite(query1, getConf());
+    assertTrue(hql1.contains("c1_testfact4_raw_base"));
+    // Start time for dim attribute user_id_added_far_future is 2099-01-01
+    String query2 = "select user_id_added_far_future from basecube where " + TWO_DAYS_RANGE;
+    LensException e1 = getLensExceptionInRewrite(query2, getConf());
+    assertTrue(e1.getMessage().contains("NO_FACT_HAS_COLUMN"));
+    // End time for dim attribute user_id_deprecated is 2016-01-01
+    String query3 = "select user_id_deprecated from basecube where " + TWO_DAYS_RANGE;
+    LensException e2 = getLensExceptionInRewrite(query3, getConf());
+    assertTrue(e2.getMessage().contains("NO_FACT_HAS_COLUMN"));
+    // Start time for ref column user_id_added_far_future_chain is 2099-01-01
+    String query4 = "select user_id_added_far_future_chain.name from basecube where " + TWO_DAYS_RANGE;
+    LensException e3 = getLensExceptionInRewrite(query4, getConf());
+    assertTrue(e3.getMessage().contains("NO_FACT_HAS_COLUMN"));
   }
 
   @Test

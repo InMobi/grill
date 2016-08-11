@@ -55,7 +55,7 @@
 
   <property>
     <name>lens.server.servicenames</name>
-    <value>session,query,savedquery,metastore,scheduler,quota</value>
+    <value>session,alarm,query,savedquery,metastore,scheduler,quota</value>
     <description>These services would be started in the specified order when lens-server starts up</description>
   </property>
 
@@ -87,6 +87,12 @@
     <name>lens.server.metastore.service.impl</name>
     <value>org.apache.lens.server.metastore.CubeMetastoreServiceImpl</value>
     <description>Implementation class for metastore service</description>
+  </property>
+
+  <property>
+    <name>lens.server.alarm.service.impl</name>
+    <value>org.apache.lens.server.scheduler.AlarmService</value>
+    <description>Implementation class for alarm service</description>
   </property>
 
   <property>
@@ -875,4 +881,18 @@
     <description>Query current time in millis. This is used to resolve 'now'. If value is set to zero, 'now' is
      resolved to current value</description>
   </property>
+
+  <property>
+    <name>lens.server.http.notification.conn.timeout.millis</name>
+    <value>5000</value>
+    <description>This is the connection timeout for all HTTP Notifications sent by lens server.
+      Default connection timeout is 5 secs</description>
+  </property>
+  <property>
+    <name>lens.server.http.notification.read.timeout.millis</name>
+    <value>10000</value>
+    <description>This is the read timeout for all HTTP Notifications sent by lens server.
+      Default read timeout is 10 secs</description>
+  </property>
+
 </configuration>

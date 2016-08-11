@@ -16,58 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.api.scheduler;
+package org.apache.lens.api.session;
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.lens.api.query.QueryHandle;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * POJO to represent the <code>job</code> table in the database.
- */
 @Data
+@XmlRootElement
 @AllArgsConstructor
 @NoArgsConstructor
-@XmlRootElement
-public class SchedulerJobInfo {
-
-  /**
-   * ID of the job.
-   * Each job has a unique id which can be used to query it.
-   *
-   * @param id new value for ID.
-   * @return ID for the current job.
-   */
-  private SchedulerJobHandle id;
-
-  /**
-   * Definition of the job scheduled.
-   */
-  private XJob job;
-
-  /**
-   * @param userName userName to be set.
-   * @return name of the user who scheduled this job.
-   */
+@XmlAccessorType(XmlAccessType.FIELD)
+public class UserSessionInfo {
+  @XmlElement
+  private String handle;
+  @XmlElement
   private String userName;
+  @XmlElement
+  private List<QueryHandle> activeQueries;
+  @XmlElement
+  private long creationTime;
+  @XmlElement
+  private long lastAccessTime;
 
-  /**
-   * @param jobstate of this job.
-   * @return current status of this job
-   */
-  private SchedulerJobState jobState;
-
-  /**
-   * @param createdOn time to be set when it was created.
-   * @return time when this job was submitted.
-   */
-  private long createdOn;
-
-  /**
-   * @param modifiedOn time to be set as modifiedOn time for this job.
-   * @return last modified time for this job
-   */
-  private long modifiedOn;
+  @Override
+  public String toString() {
+    return handle + " " + userName + " " + creationTime + " " + activeQueries + " " + lastAccessTime;
+  }
 }
