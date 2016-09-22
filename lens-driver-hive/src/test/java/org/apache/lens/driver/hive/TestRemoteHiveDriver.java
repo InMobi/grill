@@ -21,6 +21,7 @@ package org.apache.lens.driver.hive;
 import static org.testng.Assert.assertEquals;
 
 import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,8 +105,14 @@ public class TestRemoteHiveDriver extends TestHiveDriver {
     hiveConf.addResource(remoteConf);
     server.init(hiveConf);
     server.start();
-    // TODO figure out a better way to wait for thrift service to start
-    Thread.sleep(7000);
+    while (true) {
+      try {
+        new Socket(HS2_HOST, HS2_PORT);
+        break;
+      } catch (Throwable th) {
+        Thread.sleep(1000);
+      }
+    }
   }
 
   /**
@@ -172,12 +179,14 @@ public class TestRemoteHiveDriver extends TestHiveDriver {
     final int THREADS = 5;
     final long POLL_DELAY = 500;
     List<Thread> thrs = new ArrayList<Thread>();
+    List<QueryContext> queries = new ArrayList<>();
     final AtomicInteger errCount = new AtomicInteger();
     for (int q = 0; q < QUERIES; q++) {
       final QueryContext qctx;
       try {
         qctx = createContext("SELECT * FROM test_multithreads", queryConf, thrDriver);
         thrDriver.executeAsync(qctx);
+        queries.add(qctx);
       } catch (LensException e) {
         errCount.incrementAndGet();
         log.info(q + " executeAsync error: " + e.getCause());
@@ -198,7 +207,6 @@ public class TestRemoteHiveDriver extends TestHiveDriver {
                 thrDriver.updateStatus(qctx);
                 if (qctx.getDriverStatus().isFinished()) {
                   log.info("@@ " + handle.getHandleId() + " >> " + qctx.getDriverStatus().getState());
-                  thrDriver.closeQuery(handle);
                   break;
                 }
                 Thread.sleep(POLL_DELAY);
@@ -225,6 +233,9 @@ public class TestRemoteHiveDriver extends TestHiveDriver {
       } catch (InterruptedException e) {
         log.warn("Not ended yet: " + th.getName());
       }
+    }
+    for (QueryContext queryContext: queries) {
+      thrDriver.closeQuery(queryContext.getQueryHandle());
     }
     Assert.assertEquals(0, thrDriver.getHiveHandleSize());
     log.info("@@ Completed all pollers. Total thrift errors: " + errCount.get());

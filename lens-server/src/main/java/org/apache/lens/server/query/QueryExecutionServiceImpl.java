@@ -196,6 +196,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    */
   protected Thread querySubmitter;
 
+  private final AsyncStatusUpdater asyncStatusUpdater = new AsyncStatusUpdater();
   /**
    * The status poller.
    */
@@ -745,6 +746,9 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
 
     QueryLauncher(QueryContext query) {
       this.query = query;
+      log.info("Query launcher created for query {} on driver {}", query.getQueryHandle(),
+        query.getSelectedDriver().getFullyQualifiedName());
+      query.setLaunchTime(System.currentTimeMillis());
     }
 
     @Override
@@ -752,11 +756,11 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       synchronized (query) {
         try {
           logSegregationContext.setLogSegragationAndQueryId(query.getQueryHandleString());
+          log.info("Starting to launch query {} on driver {}", query.getQueryHandle(),
+            query.getSelectedDriver().getFullyQualifiedName());
           // acquire session before launching query.
           acquire(query.getLensSessionIdentifier());
-          if (query.getStatus().cancelled()) {
-            return;
-          } else {
+          if (!query.getStatus().cancelled()) {
             launchQuery(query);
           }
         } catch (Exception e) {
@@ -784,6 +788,10 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       checkEstimatedQueriesState(query);
       query.getSelectedDriver().getQueryHook().preLaunch(query);
       QueryStatus oldStatus = query.getStatus();
+      // If driver supports async updates.
+      if (query.getSelectedDriver().getStatusUpdateMethod() == StatusUpdateMethod.PUSH) {
+        query.registerStatusUpdateListener(asyncStatusUpdater);
+      }
       QueryStatus newStatus = new QueryStatus(query.getStatus().getProgress(), null,
         QueryStatus.Status.LAUNCHED, "Query is launched on driver", false, null, null, null);
       query.validateTransition(newStatus);
@@ -791,9 +799,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       addSessionResourcesToDriver(query);
       query.getSelectedDriver().executeAsync(query);
       query.setStatusSkippingTransitionTest(newStatus);
-      query.setLaunchTime(System.currentTimeMillis());
       query.clearTransientStateAfterLaunch();
-
       log.info("Added to launched queries. QueryId:{}", query.getQueryHandleString());
       fireStatusChangeEvent(query, newStatus, oldStatus);
     }
@@ -814,6 +820,17 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     querySubmitterRunnable.pausedForTest = pause;
   }
 
+  private class AsyncStatusUpdater implements QueryDriverStatusUpdateListener {
+
+    @Override
+    public void onDriverStatusUpdated(QueryHandle handle, DriverQueryStatus status) {
+      try {
+        updateStatus(handle, false);
+      } catch (LensException e) {
+        log.error("Unable to update status from driver status for query {}", handle, e);
+      }
+    }
+  }
   /**
    * The Class StatusPoller.
    */
@@ -843,7 +860,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
             if (ctx.isLaunching()) {
               continue;
             }
-
             logSegregationContext.setLogSegragationAndQueryId(ctx.getQueryHandleString());
             log.debug("Polling status for {}", ctx.getQueryHandle());
             try {
@@ -941,20 +957,25 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    * @throws LensException the lens exception
    */
   private void updateStatus(final QueryHandle handle) throws LensException {
+    updateStatus(handle, true);
+  }
+  private void updateStatus(final QueryHandle handle, boolean updateDriverStatus) throws LensException {
     QueryContext ctx = allQueries.get(handle);
     if (ctx != null) {
       logSegregationContext.setLogSegragationAndQueryId(ctx.getLogHandle());
       log.info("Updating status for {}", ctx.getQueryHandle());
       synchronized (ctx) {
         QueryStatus before = ctx.getStatus();
-        if (!ctx.queued() && !ctx.finished() && !ctx.getDriverStatus().isFinished()) {
-          try {
-            ctx.updateDriverStatus(statusUpdateRetryHandler);
-          } catch (LensException exc) {
-            // Status update from driver failed
-            setFailedStatus(ctx, "Status update failed", exc);
-            log.error("Status update failed for {}", handle, exc);
-            return;
+        if (!ctx.queued() && !ctx.finished()) {
+          if (updateDriverStatus) {
+            try {
+              ctx.updateDriverStatus(statusUpdateRetryHandler);
+            } catch (LensException exc) {
+              // Status update from driver failed
+              setFailedStatus(ctx, "Status update failed", exc);
+              log.error("Status update failed for {}", handle, exc);
+              return;
+            }
           }
           ctx.setStatus(ctx.getDriverStatus().toQueryStatus());
           // query is successfully executed by driver and
@@ -2256,6 +2277,7 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     long timeoutMillis, Configuration conf) throws LensException {
     QueryHandle handle = submitQuery(ctx);
     long timeOutTime = ctx.getSubmissionTime() + timeoutMillis;
+    log.info("query {} is executed with a timeout of {} and will timeout by {}", handle, timeoutMillis, timeOutTime);
     QueryHandleWithResultSet result = new QueryHandleWithResultSet(handle);
 
     boolean isQueued = true;
@@ -2282,25 +2304,24 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     QueryCompletionListenerImpl listener = new QueryCompletionListenerImpl(handle);
     long totalWaitTime = timeOutTime - System.currentTimeMillis();
 
-    if (totalWaitTime > 0 && !queryCtx.getStatus().executed() && !queryCtx.getStatus().finished()) {
+    if (System.currentTimeMillis() < timeOutTime
+      && !queryCtx.getStatus().executed() && !queryCtx.getStatus().finished()) {
       log.info("Registering for query {} completion notification", ctx.getQueryHandleString());
-      queryCtx.getSelectedDriver().registerForCompletionNotification(handle, totalWaitTime, listener);
+      queryCtx.getSelectedDriver().registerForCompletionNotification(ctx, totalWaitTime, listener);
       try {
         // We will wait for a few millis at a time until we reach max required wait time and also check the state
         // each time we come out of the wait.
         // This is done because the registerForCompletionNotification and query execution completion can happen
-        // parallely especailly in case of drivers like JDBC and in that case completion notification may not be
-        //  received by this listener. So its better to break the wait into smaller ones.
+        // parallely especially in case of drivers like JDBC and in that case completion notification may not be
+        // received by this listener. So its better to break the wait into smaller ones.
         long waitMillisPerCheck = totalWaitTime/10;
-        waitMillisPerCheck = (waitMillisPerCheck > 500) ? 500 : waitMillisPerCheck; // Lets keep max as 500
-        long totalWaitMillisSoFar = 0;
+        waitMillisPerCheck = (waitMillisPerCheck > 500) ? 500 : waitMillisPerCheck; // Lets keep max as 0.5 sec
         synchronized (listener) {
-          while (totalWaitMillisSoFar < totalWaitTime
+          while (System.currentTimeMillis() < timeOutTime
             && !listener.querySuccessful
             && !queryCtx.getStatus().executed()
             && !queryCtx.getStatus().finished()) {
             listener.wait(waitMillisPerCheck);
-            totalWaitMillisSoFar += waitMillisPerCheck;
             if (!listener.querySuccessful) {
               //update ths status in case query is not successful yet
               queryCtx = getUpdatedQueryContext(sessionHandle, handle);
@@ -2367,9 +2388,12 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
    */
   private void addQueryToCancellationPool(QueryContext queryCtx, Configuration config, long timeoutMillis) {
     if (config.getBoolean(CANCEL_QUERY_ON_TIMEOUT, DEFAULT_CANCEL_QUERY_ON_TIMEOUT)) {
-      log.info("Query {} will be cancelled as it could not be completed within the specified timeout interval {}",
-        queryCtx.getQueryHandle(), timeoutMillis);
+      log.info("Query {} could not be completed within the specified timeout interval. It will be cancelled",
+        queryCtx.getQueryHandleString());
       queryCancellationPool.submit(new CancelQueryTask(queryCtx.getQueryHandle()));
+    } else {
+      log.info("Query {} could not be completed within the specified timeout interval. Query cancellation is disabled",
+        queryCtx.getQueryHandleString());
     }
   }
 
@@ -2385,7 +2409,8 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
   /**
    * The Class QueryCompletionListenerImpl.
    */
-  class QueryCompletionListenerImpl implements QueryCompletionListener {
+  @Data
+  class QueryCompletionListenerImpl extends QueryCompletionListener {
 
     /**
      * The succeeded.
@@ -2395,23 +2420,8 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
     /**
      * The handle.
      */
-    QueryHandle handle;
+    final QueryHandle handle;
 
-    /**
-     * Instantiates a new query completion listener impl.
-     *
-     * @param handle the handle
-     */
-    QueryCompletionListenerImpl(QueryHandle handle) {
-      this.handle = handle;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.apache.lens.server.api.driver.QueryCompletionListener#onCompletion(org.apache.lens.api.query.QueryHandle)
-     */
     @Override
     public void onCompletion(QueryHandle handle) {
       synchronized (this) {
@@ -2421,12 +2431,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
       }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.lens.server.api.driver.QueryCompletionListener#onError(org.apache.lens.api.query.QueryHandle,
-     * java.lang.String)
-     */
     @Override
     public void onError(QueryHandle handle, String error) {
       synchronized (this) {
@@ -2435,7 +2439,6 @@ public class QueryExecutionServiceImpl extends BaseLensService implements QueryE
         this.notify();
       }
     }
-
   }
 
   /*

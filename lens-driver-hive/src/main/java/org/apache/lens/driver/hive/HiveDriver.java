@@ -582,70 +582,57 @@ public class HiveDriver extends AbstractLensDriver {
     throw new LensException(DRIVER_ERROR.getLensErrorInfo(), ex, ex.getMessage());
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.apache.lens.server.api.driver.LensDriver#updateStatus(org.apache.lens.server.api.query.QueryContext)
-   */
-  @Override
-  public void updateStatus(QueryContext context) throws LensException {
-    log.debug("GetStatus: {}", context.getQueryHandle());
-    if (context.getDriverStatus().isFinished()) {
-      return;
+  private DriverQueryStatus updateDriverStateFromOperationStatus(OperationHandle handle, DriverQueryStatus status)
+    throws LensException, HiveSQLException, IOException {
+    if (status == null) {
+      status = new DriverQueryStatus();
     }
-    OperationHandle hiveHandle = getHiveHandle(context.getQueryHandle());
-    ByteArrayInputStream in = null;
-    try {
-      // Get operation status from hive server
-      log.debug("GetStatus hiveHandle: {}", hiveHandle);
-      fetchLogs(hiveHandle);
-      OperationStatus opStatus = getClient().getOperationStatus(hiveHandle);
-      log.debug("GetStatus on hiveHandle: {} returned state:", hiveHandle, opStatus.getState().name());
-      switch (opStatus.getState()) {
-      case CANCELED:
-        context.getDriverStatus().setState(DriverQueryState.CANCELED);
-        context.getDriverStatus().setStatusMessage("Query has been cancelled!");
-        break;
-      case CLOSED:
-        context.getDriverStatus().setState(DriverQueryState.CLOSED);
-        context.getDriverStatus().setStatusMessage("Query has been closed!");
-        break;
-      case ERROR:
-        context.getDriverStatus().setState(DriverQueryState.FAILED);
-        context.getDriverStatus().setStatusMessage("Query execution failed!");
-        context.getDriverStatus().setErrorMessage(
-          "Query failed with errorCode:" + opStatus.getOperationException().getErrorCode() + " with errorMessage: "
-            + opStatus.getOperationException().getMessage());
-        break;
-      case FINISHED:
-        context.getDriverStatus().setState(DriverQueryState.SUCCESSFUL);
-        context.getDriverStatus().setStatusMessage("Query is successful!");
-        context.getDriverStatus().setResultSetAvailable(hiveHandle.hasResultSet());
-        break;
-      case INITIALIZED:
-        context.getDriverStatus().setState(DriverQueryState.INITIALIZED);
-        context.getDriverStatus().setStatusMessage("Query is initiazed in HiveServer!");
-        break;
-      case RUNNING:
-        context.getDriverStatus().setState(DriverQueryState.RUNNING);
-        context.getDriverStatus().setStatusMessage("Query is running in HiveServer!");
-        break;
-      case PENDING:
-        context.getDriverStatus().setState(DriverQueryState.PENDING);
-        context.getDriverStatus().setStatusMessage("Query is pending in HiveServer");
-        break;
-      case UNKNOWN:
-      default:
-        throw new LensException("Query is in unknown state at HiveServer");
-      }
-
-      float progress = 0f;
-      String jsonTaskStatus = opStatus.getTaskStatus();
-      String errorMsg = null;
-      if (StringUtils.isNotBlank(jsonTaskStatus)) {
+    OperationStatus opStatus = getClient().getOperationStatus(handle);
+    log.debug("GetStatus on hiveHandle: {} returned state:", handle, opStatus.getState().name());
+    switch (opStatus.getState()) {
+    case CANCELED:
+      status.setState(DriverQueryState.CANCELED);
+      status.setStatusMessage("Query has been cancelled!");
+      break;
+    case CLOSED:
+      status.setState(DriverQueryState.CLOSED);
+      status.setStatusMessage("Query has been closed!");
+      break;
+    case ERROR:
+      status.setState(DriverQueryState.FAILED);
+      status.setStatusMessage("Query execution failed!");
+      status.setErrorMessage(
+        "Query failed with errorCode:" + opStatus.getOperationException().getErrorCode() + " with errorMessage: "
+          + opStatus.getOperationException().getMessage());
+      break;
+    case FINISHED:
+      status.setState(DriverQueryState.SUCCESSFUL);
+      status.setStatusMessage("Query is successful!");
+      status.setResultSetAvailable(handle.hasResultSet());
+      break;
+    case INITIALIZED:
+      status.setState(DriverQueryState.INITIALIZED);
+      status.setStatusMessage("Query is initiazed in HiveServer!");
+      break;
+    case RUNNING:
+      status.setState(DriverQueryState.RUNNING);
+      status.setStatusMessage("Query is running in HiveServer!");
+      break;
+    case PENDING:
+      status.setState(DriverQueryState.PENDING);
+      status.setStatusMessage("Query is pending in HiveServer");
+      break;
+    case UNKNOWN:
+    default:
+      throw new LensException("Query is in unknown state at HiveServer");
+    }
+    float progress = 0f;
+    String jsonTaskStatus = opStatus.getTaskStatus();
+    String errorMsg = null;
+    if (StringUtils.isNotBlank(jsonTaskStatus)) {
+      try (ByteArrayInputStream in = new ByteArrayInputStream(jsonTaskStatus.getBytes("UTF-8"))) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        in = new ByteArrayInputStream(jsonTaskStatus.getBytes("UTF-8"));
         List<TaskDisplay> taskStatuses = mapper.readValue(in, new TypeReference<List<TaskDisplay>>() {
         });
         int completedTasks = 0;
@@ -662,32 +649,44 @@ public class HiveDriver extends AbstractLensDriver {
         }
         progress = taskStatuses.size() == 0 ? 0 : (float) completedTasks / taskStatuses.size();
         errorMsg = errorMessage.toString();
-      } else {
-        log.warn("Empty task statuses");
       }
-      String error = null;
-      if (StringUtils.isNotBlank(errorMsg)) {
-        error = errorMsg;
-      } else if (opStatus.getState().equals(OperationState.ERROR)) {
-        error = context.getDriverStatus().getErrorMessage();
-      }
-      context.getDriverStatus().setErrorMessage(error);
-      context.getDriverStatus().setProgressMessage(jsonTaskStatus);
-      context.getDriverStatus().setProgress(progress);
-      context.getDriverStatus().setDriverStartTime(opStatus.getOperationStarted());
-      context.getDriverStatus().setDriverFinishTime(opStatus.getOperationCompleted());
+    } else {
+      log.warn("Empty task statuses");
+    }
+    String error = null;
+    if (StringUtils.isNotBlank(errorMsg)) {
+      error = errorMsg;
+    } else if (status.getState().equals(DriverQueryState.FAILED)) {
+      error = status.getErrorMessage();
+    }
+    status.setErrorMessage(error);
+    status.setProgressMessage(jsonTaskStatus);
+    status.setProgress(progress);
+    status.setDriverStartTime(opStatus.getOperationStarted());
+    status.setDriverFinishTime(opStatus.getOperationCompleted());
+    return status;
+  }
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.apache.lens.server.api.driver.LensDriver#updateStatus(org.apache.lens.server.api.query.QueryContext)
+   */
+  @Override
+  public void updateStatus(QueryContext context) throws LensException {
+    log.debug("GetStatus: {}", context.getQueryHandle());
+    if (context.getDriverStatus().isFinished()) {
+      return;
+    }
+    OperationHandle hiveHandle = getHiveHandle(context.getQueryHandle());
+    try {
+      // Get operation status from hive server
+      log.debug("GetStatus hiveHandle: {}", hiveHandle);
+      fetchLogs(hiveHandle);
+      updateDriverStateFromOperationStatus(hiveHandle, context.getDriverStatus());
     } catch (Exception e) {
       log.error("Error getting query status", e);
       handleHiveServerError(context, e);
       throw new LensException("Error getting query status", e);
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          log.error("Error closing stream.", e);
-        }
-      }
     }
   }
 
@@ -1047,8 +1046,7 @@ public class HiveDriver extends AbstractLensDriver {
      * @param listener      the listener
      * @throws LensException the lens exception
      */
-    QueryCompletionNotifier(QueryHandle handle, long timeoutMillis, QueryCompletionListener listener)
-      throws LensException {
+    QueryCompletionNotifier(QueryHandle handle, long timeoutMillis, QueryCompletionListener listener) {
       this.handle = handle;
       this.timeoutMillis = timeoutMillis;
       this.listener = listener;
@@ -1073,7 +1071,7 @@ public class HiveDriver extends AbstractLensDriver {
           try {
             hiveHandle = getHiveHandle(handle);
             if (isFinished(hiveHandle)) {
-              listener.onCompletion(handle);
+              listener.onDriverStatusUpdated(handle, updateDriverStateFromOperationStatus(hiveHandle, null));
               return;
             }
           } catch (LensException e) {
@@ -1117,13 +1115,12 @@ public class HiveDriver extends AbstractLensDriver {
    *
    * @see
    * org.apache.lens.server.api.driver.LensDriver#registerForCompletionNotification
-   * (org.apache.lens.api.query.QueryHandle, long, org.apache.lens.server.api.driver.QueryCompletionListener)
+   * (org.apache.lens.api.query.QueryHandle, long, org.apache.lens.server.api.driver.QueryDriverStatusUpdateListener)
    */
   @Override
   public void registerForCompletionNotification(
-    QueryHandle handle, long timeoutMillis, QueryCompletionListener listener)
-    throws LensException {
-    Thread th = new Thread(new QueryCompletionNotifier(handle, timeoutMillis, listener));
+    QueryContext context, long timeoutMillis, QueryCompletionListener listener) {
+    Thread th = new Thread(new QueryCompletionNotifier(context.getQueryHandle(), timeoutMillis, listener));
     th.start();
   }
 

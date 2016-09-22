@@ -46,7 +46,7 @@ import lombok.ToString;
  *
  * @see java.lang.Object#hashCode()
  */
-@EqualsAndHashCode(exclude = "selectedDriver")
+@EqualsAndHashCode(exclude = {"selectedDriver", "conf"})
 /*
  * (non-Javadoc)
  *
@@ -174,6 +174,17 @@ public class FinishedLensQuery {
   @Setter
   private String priority;
 
+  @Getter
+  @Setter
+  private LensConf conf;
+
+  /**
+   * The selected driver's query.
+   */
+  @Getter
+  @Setter
+  private String driverQuery;
+
   /**
    * Instantiates a new finished lens query.
    */
@@ -204,11 +215,13 @@ public class FinishedLensQuery {
     this.selectedDriver = ctx.getSelectedDriver();
     if (null != ctx.getSelectedDriver()) {
       this.driverName = ctx.getSelectedDriver().getFullyQualifiedName();
+      this.driverQuery = ctx.getSelectedDriverQuery();
     }
     //Priority can be null in case no driver is fit to execute a query and launch fails.
     if (null != ctx.getPriority()) {
       this.priority = ctx.getPriority().toString();
     }
+    this.conf = ctx.getLensConf();
   }
 
   public QueryContext toQueryContext(Configuration conf, Collection<LensDriver> drivers) {
@@ -218,7 +231,7 @@ public class FinishedLensQuery {
     }
 
     QueryContext qctx =
-      new QueryContext(userQuery, submitter, new LensConf(), conf, drivers, selectedDriver, submissionTime,
+      new QueryContext(userQuery, submitter, this.conf, conf, drivers, selectedDriver, submissionTime,
         false);
 
     qctx.setQueryHandle(QueryHandle.fromString(handle));
@@ -230,6 +243,9 @@ public class FinishedLensQuery {
     qctx.getDriverStatus().setDriverFinishTime(getDriverEndTime());
     qctx.setResultSetPath(getResult());
     qctx.setQueryName(getQueryName());
+    if (null != driverQuery){
+      qctx.setSelectedDriverQuery(driverQuery);
+    }
     if (getPriority() != null) {
       qctx.setPriority(Priority.valueOf(getPriority()));
     }

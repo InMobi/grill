@@ -16,28 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.error;
+package org.apache.lens.server.api.driver;
 
-import org.apache.lens.server.api.LensErrorInfo;
+import org.apache.lens.api.query.QueryHandle;
 
-public enum LensServerErrorCode {
-
-  SESSION_ID_NOT_PROVIDED(2001, 0),
-  NULL_OR_EMPTY_OR_BLANK_QUERY(2002, 0),
-  UNSUPPORTED_OPERATION(2003, 0),
-  TOO_MANY_OPEN_SESSIONS(2004, 0),
-  SESSION_CLOSED(2005, 0),
-  INVALID_HANDLE(2006, 0),
-  NULL_OR_EMPTY_ARGUMENT(2007, 0);
-
-  public LensErrorInfo getLensErrorInfo() {
-    return this.errorInfo;
-  }
-
-  LensServerErrorCode(final int code, final int weight) {
-    this.errorInfo = new LensErrorInfo(code, weight, name());
-  }
-
-  private final LensErrorInfo errorInfo;
-
+/**
+ * This listener has callback method for status update events
+ */
+public interface QueryDriverStatusUpdateListener {
+  void onDriverStatusUpdated(QueryHandle handle, DriverQueryStatus status);
 }
