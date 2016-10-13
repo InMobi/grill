@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.lens.cube.error.LensCubeErrorCode;
 import org.apache.lens.server.api.error.LensException;
 
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -488,5 +489,26 @@ public class TestHQLParser {
     String expr = "insert overwrite " + dirString + " select * from table";
     ASTNode tree = HQLParser.parseHQL(expr, conf);
     Assert.assertEquals(HQLParser.getString((ASTNode) tree.getChild(1).getChild(0)), dirString);
+  }
+
+  @DataProvider
+  public Object[][] exprDataProvider() {
+    return new Object[][] {
+      {"a.b", null, true},
+      {"a.date", null, false},
+      {"a.date", conf, true},
+    };
+  }
+
+  @Test(dataProvider = "exprDataProvider")
+  public void testParseExpr(String expr, HiveConf conf, boolean success) {
+    try {
+      HQLParser.parseExpr(expr, conf);
+      Assert.assertTrue(success);
+    } catch (LensException e) {
+      Assert.assertFalse(success);
+      Assert.assertTrue(e.getMessage().contains(expr));
+      Assert.assertTrue(e.getMessage().contains(LensCubeErrorCode.COULD_NOT_PARSE_EXPRESSION.name()));
+    }
   }
 }

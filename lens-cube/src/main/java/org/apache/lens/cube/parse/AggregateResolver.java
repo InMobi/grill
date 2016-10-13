@@ -119,7 +119,7 @@ class AggregateResolver implements ContextRewriter {
              cubeql.getExprCtx().getAllExprsQueried().get(expr).iterator(); itrContext.hasNext();) {
           for (Iterator<ExprColumn.ExprSpec> itrCol =
                itrContext.next().getExprCol().getExpressionSpecs().iterator(); itrCol.hasNext();) {
-            ASTNode exprAST = HQLParser.parseExpr(itrCol.next().getExpr());
+            ASTNode exprAST = HQLParser.parseExpr(itrCol.next().getExpr(), cubeql.getConf());
             if (HQLParser.isAggregateAST(exprAST)) {
               return true;
             }
@@ -159,15 +159,6 @@ class AggregateResolver implements ContextRewriter {
         if (wrapped != node) {
           if (parent != null) {
             parent.setChild(nodePos, wrapped);
-            // Check if this node has an alias
-            ASTNode sibling = HQLParser.findNodeByPath(parent, Identifier);
-            String expr;
-            if (sibling != null) {
-              expr = HQLParser.getString(parent);
-            } else {
-              expr = HQLParser.getString(wrapped);
-            }
-            cubeql.addAggregateExpr(expr.trim());
           } else {
             return wrapped;
           }
@@ -341,20 +332,5 @@ class AggregateResolver implements ContextRewriter {
     }
 
     return false;
-  }
-
-  static void updateAggregates(ASTNode root, CubeQueryContext cubeql) {
-    if (root == null) {
-      return;
-    }
-
-    if (HQLParser.isAggregateAST(root)) {
-      cubeql.addAggregateExpr(HQLParser.getString(root).trim());
-    } else {
-      for (int i = 0; i < root.getChildCount(); i++) {
-        ASTNode child = (ASTNode) root.getChild(i);
-        updateAggregates(child, cubeql);
-      }
-    }
   }
 }

@@ -448,6 +448,18 @@
           </reportSet>
         </reportSets>
       </plugin>
+
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <configuration>
+                <formats>
+                    <format>html</format>
+                    <format>xml</format>
+                </formats>
+            </configuration>
+        </plugin>
+
     </plugins>
   </reporting>
 
@@ -1723,6 +1735,7 @@
     <module>lens-ml-dist</module>
     <module>lens-regression</module>
     <module>lens-ui</module>
+    <module>contrib</module>
   </modules>
 
   <profiles>

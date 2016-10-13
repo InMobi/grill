@@ -111,22 +111,34 @@ class MultiFactHQLContext extends SimpleHQLContext {
       }
       if (selectToFactIndex.get(i).size() == 1) {
         select.append("mq").append(selectToFactIndex.get(i).get(0)).append(".")
-          .append(query.getSelectAlias(i)).append(" ");
+          .append(query.getSelectPhrases().get(i).getSelectAlias()).append(" ");
       } else {
         select.append("COALESCE(");
         String sep = "";
         for (Integer factIndex : selectToFactIndex.get(i)) {
-          select.append(sep).append("mq").append(factIndex).append(".").append(query.getSelectAlias(i));
+          select.append(sep).append("mq").append(factIndex).append(".").append(
+            query.getSelectPhrases().get(i).getSelectAlias());
           sep = ", ";
         }
         select.append(") ");
       }
-      select.append(query.getSelectFinalAlias(i));
+      select.append(query.getSelectPhrases().get(i).getFinalAlias());
       if (i != query.getSelectAST().getChildCount() - 1) {
         select.append(", ");
       }
     }
     return select.toString();
+  }
+
+  private String getMultiFactJoinCondition(int i, String dim) {
+    StringBuilder joinCondition = new StringBuilder();
+    if (i <= 1) {
+      return "".toString();
+    } else {
+      joinCondition.append("mq").append(i - 2).append(".").append(dim).append(" <=> ").
+          append("mq").append(i - 1).append(".").append(dim);
+    }
+    return joinCondition.toString();
   }
 
   private String getFromString() throws LensException {
@@ -137,23 +149,16 @@ class MultiFactHQLContext extends SimpleHQLContext {
       SimpleHQLContext facthql = factHQLContextMap.get(fact);
       fromBuilder.append(sep).append("(").append(facthql.toHQL()).append(")").append(" mq").append(aliasCount++);
       sep = " full outer join ";
-    }
-    CandidateFact firstFact = facts.iterator().next();
-    if (!firstFact.getDimFieldIndices().isEmpty()) {
-      fromBuilder.append(" on ");
-    }
-    for (int i = 2; i <= facts.size(); i++) {
-      Iterator<Integer> dimIter = firstFact.getDimFieldIndices().iterator();
-      while (dimIter.hasNext()) {
-        String dim = query.getSelectAlias(dimIter.next());
-        fromBuilder.append("mq1").append(".").append(dim).append(" <=> ").append("mq").append(i).append(".")
-          .append(dim);
-        if (dimIter.hasNext()) {
-          fromBuilder.append(" AND ");
+      if (!fact.getDimFieldIndices().isEmpty() && aliasCount > 2) {
+        fromBuilder.append(" on ");
+        Iterator<Integer> dimIter = fact.getDimFieldIndices().iterator();
+        while (dimIter.hasNext()) {
+          String dim = query.getSelectPhrases().get(dimIter.next()).getSelectAlias();
+          fromBuilder.append(getMultiFactJoinCondition(aliasCount, dim));
+          if (dimIter.hasNext()) {
+            fromBuilder.append(" AND ");
+          }
         }
-      }
-      if (i != facts.size() && firstFact.getDimFieldIndices().size() > 0) {
-        fromBuilder.append(" AND ");
       }
     }
     return fromBuilder.toString();

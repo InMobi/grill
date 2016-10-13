@@ -22,6 +22,33 @@ import java.util.Map;
 import java.util.Set;
 
 interface TrackQueriedColumns {
+
+  /**
+   * Get tblAlias to column
+   * @return map of tblAliasToColumns
+   */
   Map<String, Set<String>> getTblAliasToColumns();
-  void addColumnsQueried(String alias, String column);
+
+  /**
+   * Get columns queried by tblAlias
+   *
+   * @param tblAlias tbl alias name
+   *
+   * @return set of column names
+   */
+  Set<String> getColumnsQueried(String tblAlias);
+
+  /**
+   * Add given table alias and column
+   * @param tblAlias Table alias
+   * @param column column
+   */
+  void addColumnsQueried(String tblAlias, String column);
+
+  /**
+   * Add given map of tblAliasToColumns.
+   *
+   * @param tblAliasToColumns map of tblAliasToColumns
+   */
+  void addColumnsQueried(Map<String, Set<String>> tblAliasToColumns);
 }
