@@ -24,10 +24,11 @@ import static org.testng.Assert.*;
 import java.util.List;
 
 import org.apache.lens.api.LensConf;
-import org.apache.lens.server.api.common.*;
 import org.apache.lens.server.api.driver.LensDriver;
 import org.apache.lens.server.api.driver.MockDriver;
 import org.apache.lens.server.api.error.LensException;
+import org.apache.lens.server.api.retry.BackOffRetryHandler;
+import org.apache.lens.server.api.retry.FibonacciExponentialBackOffRetryHandler;
 
 import org.apache.hadoop.conf.Configuration;
 
@@ -73,7 +74,7 @@ public class TestQueryContext {
   }
 
   @Test
-  public void testUpdateDriverStatusRetrieExhausts() throws LensException {
+  public void testUpdateDriverStatusRetriesExhaust() throws LensException {
     Configuration conf = new Configuration();
     List<LensDriver> drivers = MockQueryContext.getDrivers(conf);
     MockQueryContext ctx = new MockQueryContext("simulate status failure", new LensConf(), conf, drivers);
