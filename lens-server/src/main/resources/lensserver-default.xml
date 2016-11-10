@@ -291,6 +291,14 @@
   </property>
 
   <property>
+    <name>lens.server.query.expiry.check.interval.millis</name>
+    <value>60000</value>
+    <description>The interval(milliseconds) with which query expiry will run periodically. Default is 1 minute. The
+      value needs to be much lower than lens.query.timeout.millis. If the final deployment values of query timeout
+      can be smaller, then reduce this value to be much lower.
+    </description>
+  </property>
+  <property>
     <name>lens.server.inmemory.resultset.ttl.secs</name>
     <value>300</value>
     <description>This property defines the TTL(time to live) in seconds for all result sets of type InMemoryResultSet
@@ -917,10 +925,16 @@
     <value>40</value>
     <description>Max pool size for lens grizzly server</description>
   </property>
-
+   <property>
+    <name>lens.server.scheduler.instance.waiting.thread.interval.millis</name>
+    <value>300000</value>
+    <description>Thread interval for checking the waiting instances in milliseconds</description>
+  </property>
   <property>
     <name>lens.server.scheduler.max.job.per.user</name>
     <value>-1</value>
-    <description>The maximum number of jobs per user which can be scheduled. -1 means unlimited jobs.</description>
+    <description>Maximum number of jobs that can be scheduled by a single user. If the number is less than zero,
+       then there is no restriction on the number of jobs scheduled.
+    </description>
   </property>
 </configuration>

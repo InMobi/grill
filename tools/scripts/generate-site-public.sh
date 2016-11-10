@@ -26,7 +26,7 @@ die() {
 REPO=git@github.com:InMobi/grill.git
 TMP=/tmp/grill-site-stage
 STAGE=`pwd`/target/staging
-REST_DIR=`pwd`/lens-server/target/site/wsdocs
+REST_DIR=`pwd`/lens-server/target/enunciate/lens-server/apidocs
 VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version|grep -Ev '(^\[|Download\w+:)' || die "unable to get version")
 
 echo "Starting generate-site"

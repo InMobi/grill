@@ -1165,6 +1165,25 @@ public final class LensConfConstants {
   public static final String QUERY_HTTP_NOTIFICATION_TYPE_FINISHED = QUERY_HTTP_NOTIFICATION_TYPE_PFX + "FINISHED";
 
   /**
+   * This is the property to specify the timeout for a query after running for configured time.
+   */
+  public static final String QUERY_TIMEOUT_MILLIS = QUERY_PFX + "timeout.millis";
+
+  /**
+   * This is the default timeout for query to get killed after running for configured time.
+   */
+  public static final int DEFAULT_QUERY_TIMEOUT_MILLIS = 24 * 60 * 60 * 1000; // 1day
+
+  /**
+   * Specifies how often query expiry will run
+   */
+  public static final String QUERY_EXPIRY_INTERVAL_MILLIS = SERVER_PFX + "query.expiry.check.interval.millis";
+  /**
+   * Default value for query expiry interval
+   */
+  public static final long DEFAULT_QUERY_EXPIRY_INTERVAL_MILLIS = 1 * 60 * 60 * 1000; // 1 hour
+
+  /**
    * The Constant GRIZZLY_CORE_POOL_SIZE.
    */
   public static final String GRIZZLY_CORE_POOL_SIZE = SERVER_PFX + "grizzly.core.pool.size";
@@ -1185,14 +1204,23 @@ public final class LensConfConstants {
   public static final int DEFAULT_GRIZZLY_MAX_POOL_SIZE = 40;
 
   /**
-   * Maximum Scheduled job per user.
+   * Thread interval for checking the waiting instances
    */
-  public static final String MAX_SCHEDULED_JOB_PER_USER = SERVER_PFX + "scheduler.max.job.per.user";
+  public static final String SCHEDULED_INSTANCE_WAITING_THREAD_INTERVAL_MILLIS =
+    SERVER_PFX + "scheduler.instance.waiting.thread.interval";
 
   /**
-   * -1 represents that the default is unlimited
+   * Default waiting thread interval in milliseconds
    */
+  public static final long DEFAULT_SCHEDULED_INSTANCE_WAITING_THREAD_INTERVAL_MILLIS = 60 * 5 * 1000;
 
+  /**
+   * Default value is less than zero, that means an user can scheduler unlimited number of jobs.
+   */
   public static final int DEFAULT_MAX_SCHEDULED_JOB_PER_USER = -1;
 
+  /**
+   * Maximum number of scheduled job per user.
+   */
+  public static final String MAX_SCHEDULED_JOB_PER_USER  = SERVER_PFX + "scheduler.max.job.per.user";
 }

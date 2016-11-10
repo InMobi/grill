@@ -222,6 +222,7 @@
       <name>Deepak Kumar Barr</name>
       <timezone>+5.5</timezone>
       <roles>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
@@ -231,6 +232,7 @@
       <name>Puneet Gupta</name>
       <timezone>+5.5</timezone>
       <roles>
+        <role>PMC</role>
         <role>Committer</role>
       </roles>
     </developer>
