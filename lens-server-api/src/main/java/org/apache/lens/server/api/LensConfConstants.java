@@ -20,7 +20,11 @@ package org.apache.lens.server.api;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.lens.api.parse.Parser;
 import org.apache.lens.server.api.error.LensException;
+import org.apache.lens.server.api.metastore.*;
+import org.apache.lens.server.api.query.cost.FactPartitionBasedQueryCost;
+import org.apache.lens.server.api.query.cost.QueryCost;
 
 /**
  * The Class LensConfConstants.
@@ -966,7 +970,7 @@ public final class LensConfConstants {
   /**
    * Driver hook property
    */
-  public static final String DRIVER_HOOK_CLASS_SFX = "query.hook.class";
+  public static final String DRIVER_HOOK_CLASSES_SFX = "query.hook.classes";
 
   /**
    * Default driver weight
@@ -1219,8 +1223,34 @@ public final class LensConfConstants {
    */
   public static final int DEFAULT_MAX_SCHEDULED_JOB_PER_USER = -1;
 
+  public static final String QUERY_COST_PARSER = SERVER_PFX + "query.cost.parser.class";
+  public static final Class<? extends Parser<? extends QueryCost>> DEFAULT_QUERY_COST_PARSER
+    = FactPartitionBasedQueryCost.Parser.class;
+
   /**
    * Maximum number of scheduled job per user.
    */
   public static final String MAX_SCHEDULED_JOB_PER_USER  = SERVER_PFX + "scheduler.max.job.per.user";
+
+  /**
+   * The class that implements the DataCompletenessChecker Interface. This will take effect if the flag
+   * "lens.cube.metastore.enable.datacompleteness.check" is set.
+   */
+  public static final String COMPLETENESS_CHECKER_CLASS = "lens.cube.metastore.completeness.checker.class";
+
+  /**
+   * The default implementation of DataCompletenessChecker
+   */
+  public static final Class<? extends DataCompletenessChecker> DEFAULT_COMPLETENESS_CHECKER =
+          DefaultChecker.class.asSubclass(DataCompletenessChecker.class);
+
+  /**
+   * This property is to enable Data Completeness Checks while resolving partitions.
+   */
+  public static final String ENABLE_DATACOMPLETENESS_CHECK = "lens.cube.metastore.enable.datacompleteness.check";
+
+  /**
+   * Default Value of the config "lens.cube.metastore.enable.datacompleteness.check"
+   */
+  public static final boolean DEFAULT_ENABLE_DATACOMPLETENESS_CHECK = false;
 }

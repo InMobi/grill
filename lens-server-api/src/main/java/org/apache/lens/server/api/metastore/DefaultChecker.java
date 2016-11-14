@@ -16,26 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/*
- *
- */
-package org.apache.lens.server.api.query.cost;
+package org.apache.lens.server.api.metastore;
 
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.lens.api.query.QueryCostType;
+import org.apache.lens.server.api.error.LensException;
 
-/**
- * QueryCost Interface.
- * @param <T>
- */
-public interface QueryCost<T extends QueryCost> extends Comparable<T> {
+public class DefaultChecker implements DataCompletenessChecker {
 
-  T add(final T queryCost);
-
-  QueryCostType getQueryCostType();
-
-  long getEstimatedExecTimeMillis() throws UnsupportedOperationException;
-
-  double getEstimatedResourceUsage() throws UnsupportedOperationException;
-
+  @Override
+  public Map<String, Map<Date, Float>> getCompleteness(String factTag, Date start, Date end, Set<String> measureTag)
+    throws LensException {
+    return null;
+  }
 }
