@@ -182,7 +182,7 @@
     <xs:element type="x_properties" name="properties" maxOccurs="1" minOccurs="0">
       <xs:annotation>
         <xs:documentation>
-          Properties that can be set for a virtual fact are
+          Properties that can be set for a virtual fact are :
           1. cube.fact.query.where.filter : filter string that needs to be added in WHERE clause. This string would be added as an additional
           filter when the query is being constructed in the cube query writing phase.
           2. cube.fact.absolute.start.time: start time of the fact. For queries that ask for time before this,

@@ -16,9 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.lens.cube.metadata;
 
-public enum CubeTableType {
-  CUBE, DIMENSION, FACT, DIM_TABLE, STORAGE, SEGMENTATION, VIRTUAL_FACT
+import lombok.Getter;
+import org.apache.hadoop.hive.ql.metadata.Table;
+
+import java.util.*;
+
+public class CubeVirtualFactTable extends CubeFactTable{
+
+    @Getter
+    private CubeFactTable sourceCubeFactTable;
+
+    public CubeVirtualFactTable(Table hiveTable) {
+        super(hiveTable);
+    }
+
+    public CubeVirtualFactTable(String cubeName, String factName, double weight, Map<String, String> properties, CubeFactTable sourceFact) {
+        super(cubeName, factName, sourceFact.getColumns(), sourceFact.getUpdatePeriods(), weight, properties);
+        this.sourceCubeFactTable = sourceFact;
+    }
+
+    @Override
+    public CubeTableType getTableType() {
+        return CubeTableType.VIRTUAL_FACT;
+    }
+
 }

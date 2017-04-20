@@ -749,6 +749,19 @@ public final class JAXBUtils {
     return fact;
   }
 
+
+  public static XVirtualFactTable virtualFactTableFromVirtualCubeFactTable(CubeVirtualFactTable vFact) {
+    XVirtualFactTable fact = XCF.createXVirtualFactTable();
+    fact.setName(vFact.getName());
+    fact.setProperties(new XProperties());
+
+    fact.getProperties().getProperty().addAll(xPropertiesFromMap(vFact.getProperties()));
+
+    fact.setWeight(vFact.weight());
+    fact.setCubeName(vFact.getCubeName());
+    return fact;
+  }
+
   public static XSegmentation xsegmentationFromSegmentation(Segmentation cSeg) {
     XSegmentation seg = XCF.createXSegmentation();
     seg.setName(cSeg.getName());
