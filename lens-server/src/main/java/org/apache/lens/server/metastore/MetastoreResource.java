@@ -789,8 +789,8 @@ public class MetastoreResource {
    * Delete all virtual fact tables
    *
    * @param sessionid The sessionid in which user is working
-   * @param cascade   if set to true, all the underlying tables will be dropped, if set to false, only the virtual fact table
-   *                  will be dropped
+   * @param cascade   if set to true, all the underlying tables will be dropped, if set to false, only the virtual fact
+   *                  table will be dropped
    * @return APIResult with state {@link Status#SUCCEEDED} in case of successful delete. APIResult with state {@link
    * Status#FAILED} in case of delete failure. APIResult with state {@link Status#PARTIAL} in case of partial delete.
    */
@@ -840,7 +840,7 @@ public class MetastoreResource {
   @GET
   @Path("/virtualfacts/{virtualFactName}")
   public JAXBElement<XVirtualFactTable> getVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-                                              @PathParam("factName") String factName)
+                                              @PathParam("virtualFactName") String factName)
           throws LensException {
     checkSessionId(sessionid);
     return X_CUBE_OBJECT_FACTORY.createXVirtualFactTable(getSvc().getVirtualFactTable(sessionid, factName));
@@ -1004,7 +1004,7 @@ public class MetastoreResource {
   @DELETE
   @Path("/virtualfacts/{virtualFactName}")
   public APIResult dropVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-                                 @PathParam("factName") String factName)
+                                 @PathParam("virtualFactName") String factName)
           throws LensException {
     return Entity.VIRTUALFACT.delete(sessionid, factName);
   }

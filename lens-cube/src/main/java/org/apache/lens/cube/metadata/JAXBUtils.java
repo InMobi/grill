@@ -718,6 +718,15 @@ public final class JAXBUtils {
       mapFromXProperties(fact.getProperties()), storageTablePrefixMap);
   }
 
+  public static CubeVirtualFactTable cubeVirtualFactFromFactTable(XVirtualFactTable fact, CubeFactTable sourceFactTable)
+    throws LensException {
+    //Update properties from source fact
+    Map<String, String> allProperties = sourceFactTable.getProperties();
+    allProperties.putAll(mapFromXProperties(fact.getProperties()));
+    return new CubeVirtualFactTable(fact.getCubeName(), fact.getName(),
+      fact.getWeight() != null ? fact.getWeight() : sourceFactTable.weight(), allProperties, sourceFactTable);
+  }
+
   public static Segmentation segmentationFromXSegmentation(XSegmentation seg) throws LensException {
 
     Map<String, String> props = new HashMap<>();
@@ -749,7 +758,6 @@ public final class JAXBUtils {
     return fact;
   }
 
-
   public static XVirtualFactTable virtualFactTableFromVirtualCubeFactTable(CubeVirtualFactTable vFact) {
     XVirtualFactTable fact = XCF.createXVirtualFactTable();
     fact.setName(vFact.getName());
@@ -758,6 +766,7 @@ public final class JAXBUtils {
     fact.getProperties().getProperty().addAll(xPropertiesFromMap(vFact.getProperties()));
 
     fact.setWeight(vFact.weight());
+    fact.setSourceFactName(vFact.getSourceCubeFactTable().getName());
     fact.setCubeName(vFact.getCubeName());
     return fact;
   }

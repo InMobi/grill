@@ -135,8 +135,10 @@ public class TestCubeMetastoreClient {
   }
 
   @BeforeClass
-  public static void setup() throws HiveException, AlreadyExistsException, LensException {
+  public static void setup() throws HiveException, AlreadyExistsException, LensException, Exception {
+    Hive.get().dropDatabase(TestCubeMetastoreClient.class.getSimpleName(), true, true, true);
     SessionState.start(conf);
+
     Database database = new Database();
     database.setName(TestCubeMetastoreClient.class.getSimpleName());
     Hive.get(conf).createDatabase(database);
@@ -1222,6 +1224,78 @@ public class TestCubeMetastoreClient {
     assertFalse(client.factPartitionExists(cubeFact.getName(), c1, HOURLY, timeParts, emptyHashMap));
     assertFalse(client.factPartitionExists(cubeFact.getName(), c1, HOURLY, timeParts2, emptyHashMap));
     assertFalse(client.latestPartitionExists(cubeFact.getName(), c1, getDatePartitionKey()));
+  }
+
+
+  @Test(priority = 2)
+  public void testVirtualCubeFact() throws Exception {
+
+    String sourceFactName = "testMetastoreFact1";
+    List<FieldSchema> factColumns = new ArrayList<>(cubeMeasures.size());
+    for (CubeMeasure measure : cubeMeasures) {
+      factColumns.add(measure.getColumn());
+    }
+
+    // add one dimension of the cube
+    factColumns.add(new FieldSchema("zipcode", "int", "zip"));
+
+    StorageTableDesc s1 = new StorageTableDesc(TextInputFormat.class, HiveIgnoreKeyTextOutputFormat.class,
+      datePartSingleton, datePartKeySingleton);
+
+    s1.getTblProps().put(MetastoreUtil.getStoragetableStartTimesKey(), "2015, now.day -10 days");
+    s1.getTblProps().put(MetastoreUtil.getStoragetableEndTimesKey(), "now.day - 1 day");
+
+    Map<String, Set<UpdatePeriod>> updatePeriods = getHashMap(c1, Sets.newHashSet(HOURLY, DAILY));
+    Map<String, StorageTableDesc> storageTables = getHashMap(c1, s1);
+
+    Map<String, String> sourceFactPropertiesMap = getHashMap("name1", "value1", "name2", "value2");
+    CubeFactTable cubeFact = new CubeFactTable(CUBE_NAME, sourceFactName, factColumns, updatePeriods, 10.0,
+      sourceFactPropertiesMap);
+
+    // create cube fact
+    client.createCubeFactTable(CUBE_NAME, sourceFactName, factColumns, updatePeriods, 10.0,
+      sourceFactPropertiesMap, storageTables);
+
+    String virtualFactName = "testMetastoreVirtualFact";
+
+    Map<String, String> virtualFactPropertiesMap = getHashMap("name1", "newvalue1");
+
+    Map<String, String> virtualFactAllPropertiesMap = cubeFact.getProperties();
+    virtualFactAllPropertiesMap.putAll(virtualFactPropertiesMap);
+    CubeVirtualFactTable cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
+      virtualFactAllPropertiesMap, cubeFact);
+
+    // create virtual cube fact
+    client.createVirtualFactTable(CUBE_NAME, virtualFactName, sourceFactName, null, virtualFactPropertiesMap);
+    assertTrue(client.tableExists(virtualFactName));
+    Table cubeTbl = client.getHiveTable(virtualFactName);
+    assertTrue(client.isVirtualFactTable(cubeTbl));
+    assertTrue(client.isVirtualFactTableForCube(cubeTbl, CUBE_NAME));
+    assertEquals(cubeVirtualFact.weight(), 10.0);
+
+    //get virtual fact
+    assertEquals(client.getAllVirtualFacts(client.getCube(CUBE_NAME)).get(0).getName(), virtualFactName.toLowerCase());
+    assertEquals(client.getAllVirtualFacts(client.getCube(DERIVED_CUBE_NAME)).get(0).getName(),
+      virtualFactName.toLowerCase());
+
+    CubeVirtualFactTable cubeFact2 = new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
+    assertTrue(cubeVirtualFact.equals(cubeFact2));
+
+    //alter virtual fact
+    Map<String, String> alterVirtualFactPropertiesMap = getHashMap("name1", "newvalue2", "name3", "value3");
+    Map<String, String> alterVirtualFactAllPropertiesMap = cubeVirtualFact.getProperties();
+    alterVirtualFactAllPropertiesMap.putAll(alterVirtualFactPropertiesMap);
+    cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName, alterVirtualFactPropertiesMap, cubeFact);
+    client.alterVirtualCubeFactTable(virtualFactName, cubeVirtualFact);
+    cubeFact2 = new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
+    assertEquals(cubeFact2.getProperties().get("name1"), "newvalue2");
+    assertEquals(cubeFact2.getProperties().get("name3"), "value3");
+
+    //drop virtual fact
+    client.dropVirtualFact(virtualFactName);
+    client.dropFact(sourceFactName, true);
+
+    assertFalse(client.tableExists(virtualFactName));
   }
 
   @Test(priority = 1)

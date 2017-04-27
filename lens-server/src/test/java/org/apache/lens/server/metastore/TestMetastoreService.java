@@ -1856,6 +1856,24 @@ public class TestMetastoreService extends LensJerseyTest {
     return f;
   }
 
+
+  private XVirtualFactTable createVirtualFactTable(String factName, String sourceFactName) {
+    return createVirtualFactTable(factName, "testCube", sourceFactName);
+  }
+
+  private XVirtualFactTable createVirtualFactTable(String factName, final String cubeName, String sourceFactName) {
+    XVirtualFactTable f = cubeObjectFactory.createXVirtualFactTable();
+    f.setProperties(new XProperties());
+    f.setName(factName);
+    f.setWeight(10.0);
+    f.setCubeName(cubeName);
+    f.setSourceFactName(sourceFactName);
+
+    Map<String, String> properties = LensUtil.getHashMap("foo", "bar");
+    f.getProperties().getProperty().addAll(JAXBUtils.xPropertiesFromMap(properties));
+    return f;
+  }
+
   @Test(dataProvider = "mediaTypeData")
   public void testCreateFactTableWithMultipleUpdatePeriods(MediaType mediaType) throws Exception {
 
@@ -2032,6 +2050,7 @@ public class TestMetastoreService extends LensJerseyTest {
 
   @Test(dataProvider = "mediaTypeData")
   public void testCreateFactTable(MediaType mediaType) throws Exception {
+
     final String table = "testCreateFactTable";
     final String DB = dbPFX + "testCreateFactTable_DB" + mediaType.getSubtype();
     String prevDb = getCurrentDatabase(mediaType);
@@ -2220,6 +2239,220 @@ public class TestMetastoreService extends LensJerseyTest {
       dropDatabase(DB, mediaType);
     }
   }
+
+  @Test(dataProvider = "mediaTypeData")
+  public void testCreateVirtualFactTable(MediaType mediaType) throws Exception {
+    final String table = "testCreateVirtualFactTable";
+    final String sourceTable = "testCreateVirtualFactSourceTable";
+    final String DB = dbPFX + "testCreateVirtualFactTable_DB" + mediaType.getSubtype();
+    String prevDb = getCurrentDatabase(mediaType);
+    createDatabase(DB, mediaType);
+    setCurrentDatabase(DB, mediaType);
+    createStorage("S1", mediaType);
+    createStorage("S2", mediaType);
+    try {
+
+      //first create source fact table
+      XFactTable source = createFactTable(sourceTable);
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("S1", table, "HOURLY"));
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("S2", table, "DAILY"));
+
+      APIResult result = target()
+        .path("metastore")
+        .path("facts").queryParam("sessionid", lensSessionId)
+        .request(mediaType)
+        .post(Entity.entity(
+          new GenericEntity<JAXBElement<XFactTable>>(cubeObjectFactory.createXFactTable(source)) {
+          }, mediaType),
+          APIResult.class);
+      assertSuccess(result);
+
+      //now create virtual fact table
+      XVirtualFactTable f = createVirtualFactTable(table, sourceTable);
+
+      result = target()
+        .path("metastore")
+        .path("virtualfacts").queryParam("sessionid", lensSessionId)
+        .request(mediaType)
+        .post(Entity.entity(
+          new GenericEntity<JAXBElement<XVirtualFactTable>>(cubeObjectFactory.createXVirtualFactTable(f)) {
+          }, mediaType),
+          APIResult.class);
+      assertSuccess(result);
+
+      // Get all virtual fact names, this should contain the virtual fact table
+      StringList virtualFactNames = target().path("metastore/virtualfacts")
+        .queryParam("sessionid", lensSessionId).request(mediaType).get(StringList.class);
+      assertTrue(virtualFactNames.getElements().contains(table.toLowerCase()));
+
+      // Get the created table
+      JAXBElement<XVirtualFactTable> gotFactElement = target().path("metastore/virtualfacts").path(table)
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .get(new GenericType<JAXBElement<XVirtualFactTable>>() {
+        });
+      XVirtualFactTable gotFact = gotFactElement.getValue();
+      assertTrue(gotFact.getName().equalsIgnoreCase(table));
+      assertEquals(gotFact.getWeight(), 10.0);
+      CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact, JAXBUtils.cubeFactFromFactTable(source));
+
+      // Check for a column
+      boolean foundC1 = false;
+      for (FieldSchema fs : cvf.getColumns()) {
+        if (fs.getName().equalsIgnoreCase("c1") && fs.getType().equalsIgnoreCase("string")) {
+          foundC1 = true;
+          break;
+        }
+      }
+
+      //Check for column with start time
+      Map<String, String> props = JAXBUtils.mapFromXProperties(gotFact.getProperties());
+      assertEquals(props.get(MetastoreConstants.FACT_COL_START_TIME_PFX.concat("c3")), "2016-01-01");
+      assertEquals(props.get(MetastoreConstants.FACT_COL_END_TIME_PFX.concat("c3")), "2017-01-01");
+
+      assertTrue(foundC1);
+      assertEquals(cvf.getProperties().get("foo"), "bar");
+      assertTrue(cvf.getStorages().contains("S1"));
+      assertTrue(cvf.getStorages().contains("S2"));
+      assertTrue(cvf.getUpdatePeriods().get("S1").contains(HOURLY));
+      assertTrue(cvf.getUpdatePeriods().get("S2").contains(DAILY));
+
+      // drop the virtual fact table
+      result = target().path("metastore").path("virtualfacts").path(table)
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .delete(APIResult.class);
+
+      assertSuccess(result);
+
+      // drop the source fact table
+      result = target().path("metastore").path("facts").path(sourceTable)
+        .queryParam("cascade", "true")
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .delete(APIResult.class);
+
+      assertSuccess(result);
+
+      // Drop again, this time it should give a 404
+      try {
+        target().path("metastore").path("virtualfacts").path(table)
+          .queryParam("sessionid", lensSessionId).request(mediaType)
+          .delete(APIResult.class);
+        fail("Expected 404");
+      } catch (NotFoundException nfe) {
+        // PASS
+      }
+    } finally {
+      setCurrentDatabase(prevDb, mediaType);
+      dropDatabase(DB, mediaType);
+    }
+  }
+
+  @Test(dataProvider = "mediaTypeData")
+  public void testUpdateVirtualFactTable(MediaType mediaType) throws Exception {
+    final String table = "testUpdateVirtualFactTable";
+    final String sourceTable = "testCreateVirtualFactSourceTable";
+    final String DB = dbPFX + "testUpdateFactTable_DB" + mediaType.getSubtype();
+    String prevDb = getCurrentDatabase(mediaType);
+    createDatabase(DB, mediaType);
+    setCurrentDatabase(DB, mediaType);
+    createStorage("S1", mediaType);
+    createStorage("S2", mediaType);
+    createStorage("S3", mediaType);
+    try {
+
+      //first create source fact table
+      XFactTable source = createFactTable(sourceTable);
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("S1", table, "HOURLY"));
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("S2", table, "DAILY"));
+
+      APIResult result = target()
+        .path("metastore")
+        .path("facts").queryParam("sessionid", lensSessionId)
+        .request(mediaType)
+        .post(Entity.entity(
+          new GenericEntity<JAXBElement<XFactTable>>(cubeObjectFactory.createXFactTable(source)) {
+          }, mediaType),
+          APIResult.class);
+      assertSuccess(result);
+
+      //now create virtual fact table
+      XVirtualFactTable f = createVirtualFactTable(table, sourceTable);
+
+      result = target()
+        .path("metastore")
+        .path("virtualfacts").queryParam("sessionid", lensSessionId)
+        .request(mediaType)
+        .post(Entity.entity(
+          new GenericEntity<JAXBElement<XVirtualFactTable>>(cubeObjectFactory.createXVirtualFactTable(f)) {
+          }, mediaType),
+          APIResult.class);
+      assertSuccess(result);
+
+      // Get all virtual fact names, this should contain the virtual fact table
+      StringList virtualFactNames = target().path("metastore/virtualfacts")
+        .queryParam("sessionid", lensSessionId).request(mediaType).get(StringList.class);
+      assertTrue(virtualFactNames.getElements().contains(table.toLowerCase()));
+
+      // Get the created table
+      JAXBElement<XVirtualFactTable> gotFactElement = target().path("metastore/virtualfacts").path(table)
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .get(new GenericType<JAXBElement<XVirtualFactTable>>() {
+        });
+      XVirtualFactTable gotFact = gotFactElement.getValue();
+      assertTrue(gotFact.getName().equalsIgnoreCase(table));
+      assertEquals(gotFact.getWeight(), 10.0);
+      CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact, JAXBUtils.cubeFactFromFactTable(source));
+
+      // Do some changes to test update
+      cvf.alterWeight(20.0);
+
+      XVirtualFactTable update = JAXBUtils.virtualFactTableFromVirtualCubeFactTable(cvf);
+      // Update
+      result = target().path("metastore").path("virtualfacts").path(table)
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .put(Entity.entity(new GenericEntity<JAXBElement<XVirtualFactTable>>(cubeObjectFactory.createXVirtualFactTable(update)) {},
+          mediaType), APIResult.class);
+      assertSuccess(result);
+
+      // Get the updated table
+      gotFactElement = target().path("metastore/virtualfacts").path(table)
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .get(new GenericType<JAXBElement<XVirtualFactTable>>() {
+        });
+      gotFact = gotFactElement.getValue();
+      CubeVirtualFactTable ucf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact, JAXBUtils.cubeFactFromFactTable(source));
+
+      assertEquals(ucf.weight(), 20.0);
+
+      // drop the virtual fact table
+      result = target().path("metastore").path("virtualfacts").path(table)
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .delete(APIResult.class);
+
+      assertSuccess(result);
+
+      // drop the source fact table
+      result = target().path("metastore").path("facts").path(sourceTable)
+        .queryParam("cascade", "true")
+        .queryParam("sessionid", lensSessionId).request(mediaType)
+        .delete(APIResult.class);
+
+      assertSuccess(result);
+
+      // Drop again, this time it should give a 404
+      try {
+        target().path("metastore").path("virtualfacts").path(table)
+          .queryParam("sessionid", lensSessionId).request(mediaType)
+          .delete(APIResult.class);
+        fail("Expected 404");
+      } catch (NotFoundException nfe) {
+        // PASS
+      }
+    } finally {
+      setCurrentDatabase(prevDb, mediaType);
+      dropDatabase(DB, mediaType);
+    }
+  }
+
 
   @Test(dataProvider = "mediaTypeData")
   public void testFactStorages(MediaType mediaType) throws Exception {

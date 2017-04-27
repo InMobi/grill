@@ -21,6 +21,7 @@ package org.apache.lens.server.api.util;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.lens.server.api.common.ConfigBasedObjectCreationFactory;
