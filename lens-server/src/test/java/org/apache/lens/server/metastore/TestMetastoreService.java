@@ -2293,7 +2293,8 @@ public class TestMetastoreService extends LensJerseyTest {
       XVirtualFactTable gotFact = gotFactElement.getValue();
       assertTrue(gotFact.getName().equalsIgnoreCase(table));
       assertEquals(gotFact.getWeight(), 10.0);
-      CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact, JAXBUtils.cubeFactFromFactTable(source));
+      CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact,
+        JAXBUtils.cubeFactFromFactTable(source));
 
       // Check for a column
       boolean foundC1 = false;
@@ -2400,7 +2401,8 @@ public class TestMetastoreService extends LensJerseyTest {
       XVirtualFactTable gotFact = gotFactElement.getValue();
       assertTrue(gotFact.getName().equalsIgnoreCase(table));
       assertEquals(gotFact.getWeight(), 10.0);
-      CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact, JAXBUtils.cubeFactFromFactTable(source));
+      CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact,
+        JAXBUtils.cubeFactFromFactTable(source));
 
       // Do some changes to test update
       cvf.alterWeight(20.0);
@@ -2409,17 +2411,17 @@ public class TestMetastoreService extends LensJerseyTest {
       // Update
       result = target().path("metastore").path("virtualfacts").path(table)
         .queryParam("sessionid", lensSessionId).request(mediaType)
-        .put(Entity.entity(new GenericEntity<JAXBElement<XVirtualFactTable>>(cubeObjectFactory.createXVirtualFactTable(update)) {},
-          mediaType), APIResult.class);
+        .put(Entity.entity(new GenericEntity<JAXBElement<XVirtualFactTable>>(cubeObjectFactory
+                             .createXVirtualFactTable(update)) {}, mediaType), APIResult.class);
       assertSuccess(result);
 
       // Get the updated table
       gotFactElement = target().path("metastore/virtualfacts").path(table)
         .queryParam("sessionid", lensSessionId).request(mediaType)
-        .get(new GenericType<JAXBElement<XVirtualFactTable>>() {
-        });
+        .get(new GenericType<JAXBElement<XVirtualFactTable>>() {});
       gotFact = gotFactElement.getValue();
-      CubeVirtualFactTable ucf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact, JAXBUtils.cubeFactFromFactTable(source));
+      CubeVirtualFactTable ucf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact,
+        JAXBUtils.cubeFactFromFactTable(source));
 
       assertEquals(ucf.weight(), 20.0);
 

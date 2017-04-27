@@ -2744,8 +2744,8 @@ public class CubeMetastoreClient {
   /**
    * Alter a virtual cube fact with new definition
    *
-   * @param factTableName     fact table name
-   * @param cubeVirtualFactTable     cube virtual fact table
+   * @param factTableName   virtual fact table name
+   * @param cubeVirtualFactTable  cube virtual fact table
    * @throws HiveException
    */
   public void alterVirtualCubeFactTable(String factTableName, CubeVirtualFactTable cubeVirtualFactTable)
