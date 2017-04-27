@@ -135,8 +135,7 @@ public class TestCubeMetastoreClient {
   }
 
   @BeforeClass
-  public static void setup() throws HiveException, AlreadyExistsException, LensException, Exception {
-    Hive.get().dropDatabase(TestCubeMetastoreClient.class.getSimpleName(), true, true, true);
+  public static void setup() throws HiveException, AlreadyExistsException, LensException {
     SessionState.start(conf);
 
     Database database = new Database();
