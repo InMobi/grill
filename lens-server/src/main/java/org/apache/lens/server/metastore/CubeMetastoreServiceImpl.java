@@ -432,9 +432,9 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
       if (cubeName != null && fact == null) {
         throw new LensException("Could not get table: " + cubeName + " as a cube");
       }
-      Collection<CubeFactTable> facts = client.getAllFacts(fact);
+      Collection<FactTableInterface> facts = client.getAllFacts(fact);
       List<String> factNames = new ArrayList<>(facts.size());
-      for (CubeFactTable cft : facts) {
+      for (FactTableInterface cft : facts) {
         factNames.add(cft.getName());
       }
       return factNames;
@@ -494,9 +494,9 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
       if (cubeName != null && fact == null) {
         throw new LensException("Could not get table: " + cubeName + " as a cube");
       }
-      Collection<CubeVirtualFactTable> virtualFacts = client.getAllVirtualFacts(fact);
+      Collection<FactTableInterface> virtualFacts = client.getAllVirtualFacts(fact);
       List<String> factNames = new ArrayList<>(virtualFacts.size());
-      for (CubeVirtualFactTable cft : virtualFacts) {
+      for (FactTableInterface cft : virtualFacts) {
         factNames.add(cft.getName());
       }
       return factNames;
