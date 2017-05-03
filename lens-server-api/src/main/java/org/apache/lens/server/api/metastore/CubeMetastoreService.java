@@ -425,11 +425,11 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    * Get virtual fact table given by name
    *
    * @param sessionid The sessionid
-   * @param fact      The virtual fact table name
+   * @param virtualFact      The virtual fact table name
    * @return {@link XFactTable}
    * @throws LensException
    */
-  XVirtualFactTable getVirtualFactTable(LensSessionHandle sessionid, String fact) throws LensException;
+  XVirtualFactTable getVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException;
 
   /**
    * Create virtual fact table
@@ -444,19 +444,19 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    * Update/Alter virtual fact table
    *
    * @param sessionid The sessionid
-   * @param fact      The virtual fact table's new definition
+   * @param virtualFact      The virtual fact table's new definition
    * @throws LensException
    */
-  void updateVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable fact) throws LensException;
+  void updateVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable virtualFact) throws LensException;
 
   /**
    * Drop virtual fact table.
    *
    * @param sessionid The sessionid
-   * @param fact      The virtual fact table name
+   * @param virtualFact      The virtual fact table name
    * @throws LensException
    */
-  void dropVirtualFactTable(LensSessionHandle sessionid, String fact) throws LensException;
+  void dropVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException;
 
   /**
    * Get all virtual fact names

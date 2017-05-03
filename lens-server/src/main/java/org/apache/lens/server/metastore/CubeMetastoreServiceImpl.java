@@ -442,10 +442,10 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
   }
 
   @Override
-  public XVirtualFactTable getVirtualFactTable(LensSessionHandle sessionid, String fact) throws LensException {
+  public XVirtualFactTable getVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)) {
       CubeMetastoreClient msClient = getClient(sessionid);
-      CubeVirtualFactTable cft = msClient.getVirtualFactTable(fact);
+      CubeVirtualFactTable cft = msClient.getVirtualFactTable(virtualFact);
       XVirtualFactTable factTable = JAXBUtils.virtualFactTableFromVirtualCubeFactTable(cft);
       factTable.setSourceFactName(cft.getSourceCubeFactTable().getName());
       return factTable;
@@ -465,13 +465,13 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
   }
 
   @Override
-  public void updateVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable fact) throws LensException {
+  public void updateVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable virtualFact) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)) {
-      CubeVirtualFactTable cubeVirtualFactTable = cubeVirtualFactFromFactTable(fact,
-        getClient(sessionid).getCubeFact(fact.getSourceFactName()));
+      CubeVirtualFactTable cubeVirtualFactTable = cubeVirtualFactFromFactTable(virtualFact,
+        getClient(sessionid).getCubeFact(virtualFact.getSourceFactName()));
 
-      getClient(sessionid).alterVirtualCubeFactTable(fact.getName(), cubeVirtualFactTable);
-      log.info("Updated virtual fact table " + fact.getName());
+      getClient(sessionid).alterVirtualCubeFactTable(cubeVirtualFactTable);
+      log.info("Updated virtual fact table " + virtualFact.getName());
     } catch (HiveException e) {
       throw new LensException(e);
     }
@@ -479,10 +479,10 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
 
 
   @Override
-  public void dropVirtualFactTable(LensSessionHandle sessionid, String fact) throws LensException {
+  public void dropVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)) {
-      getClient(sessionid).dropVirtualFact(fact);
-      log.info("Dropped virtual fact table " + fact);
+      getClient(sessionid).dropVirtualFact(virtualFact);
+      log.info("Dropped virtual fact table " + virtualFact);
     }
   }
 
@@ -494,9 +494,9 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
       if (cubeName != null && fact == null) {
         throw new LensException("Could not get table: " + cubeName + " as a cube");
       }
-      Collection<CubeVirtualFactTable> facts = client.getAllVirtualFacts(fact);
-      List<String> factNames = new ArrayList<>(facts.size());
-      for (CubeVirtualFactTable cft : facts) {
+      Collection<CubeVirtualFactTable> virtualFacts = client.getAllVirtualFacts(fact);
+      List<String> factNames = new ArrayList<>(virtualFacts.size());
+      for (CubeVirtualFactTable cft : virtualFacts) {
         factNames.add(cft.getName());
       }
       return factNames;

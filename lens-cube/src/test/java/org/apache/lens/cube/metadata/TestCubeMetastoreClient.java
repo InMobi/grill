@@ -1277,7 +1277,7 @@ public class TestCubeMetastoreClient {
     assertEquals(client.getAllVirtualFacts(client.getCube(DERIVED_CUBE_NAME)).get(0).getName(),
       virtualFactName.toLowerCase());
 
-    CubeVirtualFactTable cubeFact2 = new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
+    CubeVirtualFactTable cubeFact2 = client.getVirtualFactTable(virtualFactName);//new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
     assertTrue(cubeVirtualFact.equals(cubeFact2));
 
     //alter virtual fact
@@ -1285,7 +1285,7 @@ public class TestCubeMetastoreClient {
     Map<String, String> alterVirtualFactAllPropertiesMap = cubeVirtualFact.getProperties();
     alterVirtualFactAllPropertiesMap.putAll(alterVirtualFactPropertiesMap);
     cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName, alterVirtualFactPropertiesMap, cubeFact);
-    client.alterVirtualCubeFactTable(virtualFactName, cubeVirtualFact);
+    client.alterVirtualCubeFactTable(cubeVirtualFact);
     cubeFact2 = new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
     assertEquals(cubeFact2.getProperties().get("name1"), "newvalue2");
     assertEquals(cubeFact2.getProperties().get("name3"), "value3");
@@ -1481,15 +1481,15 @@ public class TestCubeMetastoreClient {
     client.dropStorageFromFact(factName, c2);
     storageTableName = getFactOrDimtableStorageTableName(factName, c2);
     assertFalse(client.tableExists(storageTableName));
-    List<CubeFactTable> cubeFacts = client.getAllFacts(client.getCube(CUBE_NAME));
+    List<FactTableInterface> cubeFacts = client.getAllFacts(client.getCube(CUBE_NAME));
     List<String> cubeFactNames = new ArrayList<>();
-    for (CubeFactTable cfact : cubeFacts) {
+    for (FactTableInterface cfact : cubeFacts) {
       cubeFactNames.add(cfact.getName());
     }
     assertTrue(cubeFactNames.contains(factName.toLowerCase()));
     cubeFacts = client.getAllFacts(client.getCube(DERIVED_CUBE_NAME));
     cubeFactNames = new ArrayList<>();
-    for (CubeFactTable cfact : cubeFacts) {
+    for (FactTableInterface cfact : cubeFacts) {
       cubeFactNames.add(cfact.getName());
     }
     assertTrue(cubeFactNames.contains(factName.toLowerCase()));
@@ -1499,7 +1499,7 @@ public class TestCubeMetastoreClient {
     assertFalse(client.tableExists(factName));
     cubeFacts = client.getAllFacts(cube);
     cubeFactNames = new ArrayList<>();
-    for (CubeFactTable cfact : cubeFacts) {
+    for (FactTableInterface cfact : cubeFacts) {
       cubeFactNames.add(cfact.getName());
     }
     assertFalse(cubeFactNames.contains(factName.toLowerCase()));

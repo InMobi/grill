@@ -182,6 +182,7 @@ public class Segmentation extends AbstractCubeTable {
   public Date getEndTime() {
     return Collections.min(Lists.newArrayList(getRelativeEndTime(), getAbsoluteEndTime()));
   }
+
   static String getCubeName(String segName, Map<String, String> props) {
     return props.get(MetastoreUtil.getSegmentationCubeNameKey(segName));
   }

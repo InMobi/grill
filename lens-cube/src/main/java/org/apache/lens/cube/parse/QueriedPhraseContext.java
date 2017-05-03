@@ -20,6 +20,7 @@ package org.apache.lens.cube.parse;
 
 import java.util.*;
 
+import org.apache.lens.cube.metadata.FactTableInterface;
 import org.apache.lens.cube.metadata.MetastoreConstants;
 import org.apache.lens.cube.metadata.TimeRange;
 import org.apache.lens.server.api.error.LensException;
@@ -151,33 +152,33 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
 
   public static boolean isFactColumnValidForRange(CubeQueryContext cubeql, StorageCandidate sc, String col) {
     for (TimeRange range : cubeql.getTimeRanges()) {
-      if (!isColumnAvailableInRange(range, getFactColumnStartTime(sc, col), getFactColumnEndTime(sc, col))) {
+      if (!isColumnAvailableInRange(range, getFactColumnStartTime(sc.getFact(), col), getFactColumnEndTime(sc.getFact(), col))) {
         return false;
       }
     }
     return true;
   }
 
-  public static Date getFactColumnStartTime(StorageCandidate sc, String factCol) {
+  public static Date getFactColumnStartTime(FactTableInterface ft, String factCol) {
     Date startTime = null;
-    for (String key : sc.getTable().getProperties().keySet()) {
+    for (String key : ft.getProperties().keySet()) {
       if (key.contains(MetastoreConstants.FACT_COL_START_TIME_PFX)) {
         String propCol = StringUtils.substringAfter(key, MetastoreConstants.FACT_COL_START_TIME_PFX);
         if (factCol.equals(propCol)) {
-          startTime = sc.getTable().getDateFromProperty(key, false, true);
+          startTime = ft.getDateFromProperty(key, false, true);
         }
       }
     }
     return startTime;
   }
 
-  public static Date getFactColumnEndTime(StorageCandidate sc, String factCol) {
+  public static Date getFactColumnEndTime(FactTableInterface ft, String factCol) {
     Date endTime = null;
-    for (String key : sc.getTable().getProperties().keySet()) {
+    for (String key : ft.getProperties().keySet()) {
       if (key.contains(MetastoreConstants.FACT_COL_END_TIME_PFX)) {
         String propCol = StringUtils.substringAfter(key, MetastoreConstants.FACT_COL_END_TIME_PFX);
         if (factCol.equals(propCol)) {
-          endTime = sc.getTable().getDateFromProperty(key, false, true);
+          endTime = ft.getDateFromProperty(key, false, true);
         }
       }
     }

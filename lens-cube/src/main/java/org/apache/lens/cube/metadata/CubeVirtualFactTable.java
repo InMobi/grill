@@ -20,41 +20,61 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
+import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Table;
 
 import lombok.Getter;
 
-public class CubeVirtualFactTable extends CubeFactTable {
+public class CubeVirtualFactTable extends AbstractCubeTable implements FactTableInterface{
 
   @Getter
   private CubeFactTable sourceCubeFactTable;
+  private String cubeName;
 
   public CubeVirtualFactTable(Table hiveTable, Table sourceHiveTable) {
     super(hiveTable);
+    this.cubeName = getFactCubeName(getName(), getProperties());
     this.sourceCubeFactTable = new CubeFactTable(sourceHiveTable);
   }
 
-  public CubeVirtualFactTable(String cubeName, String factName, double weight, Map<String, String> properties,
+  public CubeVirtualFactTable(String cubeName, String virtualFactName, double weight, Map<String, String> properties,
     CubeFactTable sourceFact) {
-    super(cubeName, factName, sourceFact.getColumns(), sourceFact.getUpdatePeriods(), weight, properties);
+    this(cubeName, virtualFactName, sourceFact.getColumns(), weight, properties);
     this.sourceCubeFactTable = sourceFact;
   }
 
-  public CubeVirtualFactTable(String cubeName, String factName, Map<String, String> properties,
+  public CubeVirtualFactTable(String cubeName, String virtualFactName, Map<String, String> properties,
     CubeFactTable sourceFact) {
-    super(cubeName, factName, sourceFact.getColumns(), sourceFact.getUpdatePeriods(), sourceFact.weight(), properties);
+    this(cubeName, virtualFactName, sourceFact.getColumns(), sourceFact.weight(), properties);
     this.sourceCubeFactTable = sourceFact;
   }
 
-  public CubeVirtualFactTable(String cubeName, String factName, CubeFactTable sourceFact) {
-    super(cubeName, factName, sourceFact.getColumns(), sourceFact.getUpdatePeriods(), sourceFact.weight(),
+  public CubeVirtualFactTable(String cubeName, String virtualFactName, CubeFactTable sourceFact) {
+    this(cubeName, virtualFactName, sourceFact.getColumns(), sourceFact.weight(),
       new HashMap<String, String>());
     this.sourceCubeFactTable = sourceFact;
   }
 
+  public CubeVirtualFactTable(String cubeName, String virtualFactName, List<FieldSchema> columns,
+    double weight, Map<String, String> properties) {
+    super(virtualFactName, columns, properties, weight);
+    this.cubeName = cubeName;
+    addProperties();
+  }
+
+  @Override
+  protected void addProperties() {
+    super.addProperties();
+    addCubeNames(getName(), getProperties(), cubeName);
+  }
   @Override
   public CubeTableType getTableType() {
     return CubeTableType.VIRTUAL_FACT;
+  }
+
+  @Override
+  public List<String> getValidColumns() {
+    return this.sourceCubeFactTable.getValidColumns();
   }
 
   @Override
@@ -68,8 +88,18 @@ public class CubeVirtualFactTable extends CubeFactTable {
   }
 
   @Override
+  public String getCubeName() {
+    return this.cubeName;
+  }
+
+  @Override
   public String getDataCompletenessTag() {
     return this.sourceCubeFactTable.getDataCompletenessTag();
+  }
+
+  @Override
+  public boolean isAggregated() {
+    return this.sourceCubeFactTable.isAggregated();
   }
 
 }

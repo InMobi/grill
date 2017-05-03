@@ -20,6 +20,7 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
+import org.apache.lens.cube.parse.StorageCandidate;
 import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang.StringUtils;
@@ -225,4 +226,12 @@ public abstract class AbstractCubeTable implements Named {
     return new Date();
   }
 
+
+  public static String getFactCubeName(String factName, Map<String, String> props) {
+    return props.get(MetastoreUtil.getFactCubeNameKey(factName));
+  }
+
+  protected static void addCubeNames(String factName, Map<String, String> props, String cubeName) {
+    props.put(MetastoreUtil.getFactCubeNameKey(factName), cubeName);
+  }
 }

@@ -1024,7 +1024,9 @@ public class CubeQueryContext extends TracksQueriedColumns implements QueryAST, 
         String where = getWhere(sc, autoJoinCtx,
           sc.getQueryAst().getWhereAST(), getAliasForTableName(sc.getBaseTable().getName()),
           shouldReplaceDimFilterWithFactFilter(), storageTable, dimsToQuery);
+
         sc.setWhereString(where);
+
       }
     }
 

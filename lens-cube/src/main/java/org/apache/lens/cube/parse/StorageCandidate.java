@@ -18,6 +18,7 @@
  */
 package org.apache.lens.cube.parse;
 
+import static org.apache.lens.cube.metadata.MetastoreConstants.VIRTUAL_FACT_FILTER;
 import static org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
 import static org.apache.lens.cube.parse.CandidateTablePruneCause.SkipUpdatePeriodCode;
 import static org.apache.lens.cube.parse.CandidateTablePruneCause.timeDimNotSupported;
@@ -30,16 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.lens.cube.metadata.AbstractCubeTable;
-import org.apache.lens.cube.metadata.CubeFactTable;
-import org.apache.lens.cube.metadata.CubeInterface;
-import org.apache.lens.cube.metadata.CubeMetastoreClient;
-import org.apache.lens.cube.metadata.DateUtil;
-import org.apache.lens.cube.metadata.Dimension;
-import org.apache.lens.cube.metadata.FactPartition;
-import org.apache.lens.cube.metadata.MetastoreUtil;
-import org.apache.lens.cube.metadata.TimeRange;
-import org.apache.lens.cube.metadata.UpdatePeriod;
+import org.apache.lens.cube.metadata.*;
 import org.apache.lens.server.api.error.LensException;
 import org.apache.lens.server.api.metastore.DataCompletenessChecker;
 
@@ -114,7 +106,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
    * Participating fact, storage and dimensions for this StorageCandidate
    */
   @Getter
-  private CubeFactTable fact;
+  private FactTableInterface fact;
   @Getter
   private String storageName;
   @Getter
@@ -182,7 +174,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     this.answerableMeasurePhraseIndices = sc.answerableMeasurePhraseIndices;
   }
 
-  public StorageCandidate(CubeInterface cube, CubeFactTable fact, String storageName, CubeQueryContext cubeql)
+  public StorageCandidate(CubeInterface cube, FactTableInterface fact, String storageName, CubeQueryContext cubeql)
     throws LensException {
     if ((cube == null) || (fact == null) || (storageName == null)) {
       throw new IllegalArgumentException("Cube,fact and storageName should be non null");
@@ -281,7 +273,9 @@ public class StorageCandidate implements Candidate, CandidateTable {
     setWhereString(joinWithAnd(
       genWhereClauseWithDimPartitions(whereString, queriedDims), cubeql.getConf().getBoolean(
         CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)
-        ? getPostSelectionWhereClause() : null));
+        ? getPostSelectionWhereClause() : null,
+        this.fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
+        ? this.fact.getProperties().get(VIRTUAL_FACT_FILTER) :null));
     if (cubeql.getHavingAST() != null) {
       queryAst.setHavingAST(MetastoreUtil.copyAST(cubeql.getHavingAST()));
     }
@@ -383,7 +377,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
 
   @Override
   public AbstractCubeTable getTable() {
-    return fact;
+    return (AbstractCubeTable) fact;
   }
 
   @Override

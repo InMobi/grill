@@ -919,21 +919,21 @@ public class MetastoreResource {
 
 
   /**
-   * Update fact table definition
+   * Update virtualFact table definition
    *
    * @param sessionid The sessionid in which user is working
-   * @param factName  name of the virtual fact table
-   * @param fact      The {@link XFactTable} representation of the updated virtual fact table definition
+   * @param factName  name of the virtual virtualFact table
+   * @param virtualFact      The {@link XFactTable} representation of the updated virtual virtualFact table definition
    * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if update was successful. {@link APIResult} with
    * state {@link Status#FAILED}, if update has failed
    */
   @PUT
   @Path("/virtualfacts/{virtualFactName}")
   public APIResult updateVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-    @PathParam("factName") String factName, XVirtualFactTable fact)
+    @PathParam("factName") String factName, XVirtualFactTable virtualFact)
     throws LensException {
     checkSessionId(sessionid);
-    getSvc().updateVirtualFactTable(sessionid, fact);
+    getSvc().updateVirtualFactTable(sessionid, virtualFact);
     return success();
   }
 
@@ -997,16 +997,16 @@ public class MetastoreResource {
    * Drop the virtual fact table, specified by name
    *
    * @param sessionid The sessionid in which user is working
-   * @param factName  The virtual fact table name
+   * @param virtualFactName  The virtual fact table name
    * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if drop was successful. {@link APIResult} with state
    * {@link Status#FAILED}, if drop has failed
    */
   @DELETE
   @Path("/virtualfacts/{virtualFactName}")
   public APIResult dropVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-                                 @PathParam("virtualFactName") String factName)
+                                 @PathParam("virtualFactName") String virtualFactName)
           throws LensException {
-    return Entity.VIRTUALFACT.delete(sessionid, factName);
+    return Entity.VIRTUALFACT.delete(sessionid, virtualFactName);
   }
 
   /**

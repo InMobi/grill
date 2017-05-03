@@ -33,7 +33,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CubeFactTable extends AbstractCubeTable {
+public class CubeFactTable extends AbstractCubeTable implements FactTableInterface{
   @Getter
   // Map<StorageName, Map<update_period, storage_table_prefix>>
   private final Map<String, Map<UpdatePeriod, String>> storagePrefixUpdatePeriodMap;
@@ -43,7 +43,7 @@ public class CubeFactTable extends AbstractCubeTable {
   public CubeFactTable(Table hiveTable) {
     super(hiveTable);
     this.storageUpdatePeriods = getUpdatePeriods(getName(), getProperties());
-    this.cubeName = getCubeName(getName(), getProperties());
+    this.cubeName = getFactCubeName(getName(), getProperties());
     this.storagePrefixUpdatePeriodMap = getUpdatePeriodMap(getName(), getProperties());
   }
 
@@ -105,10 +105,6 @@ public class CubeFactTable extends AbstractCubeTable {
     }
   }
 
-  private static void addCubeNames(String factName, Map<String, String> props, String cubeName) {
-    props.put(MetastoreUtil.getFactCubeNameKey(factName), cubeName);
-  }
-
   private Map<String, Map<UpdatePeriod, String>> getUpdatePeriodMap(String factName, Map<String, String> props) {
     Map<String, Map<UpdatePeriod, String>> ret = new HashMap<>();
     for (Map.Entry<String, Set<UpdatePeriod>> entry : storageUpdatePeriods.entrySet()) {
@@ -144,10 +140,6 @@ public class CubeFactTable extends AbstractCubeTable {
       }
     }
     return storageUpdatePeriods;
-  }
-
-  static String getCubeName(String factName, Map<String, String> props) {
-    return props.get(MetastoreUtil.getFactCubeNameKey(factName));
   }
 
   public Map<String, Set<UpdatePeriod>> getUpdatePeriods() {

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.apache.lens.cube.metadata.AbstractCubeTable;
+import org.apache.lens.cube.metadata.FactTableInterface;
 
 /**
  * Candidate table interface

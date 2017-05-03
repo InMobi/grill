@@ -58,6 +58,7 @@ public final class MetastoreConstants {
   public static final String FACT_COL_START_TIME_PFX = "cube.fact.col.start.time.";
   public static final String FACT_COL_END_TIME_PFX = "cube.fact.col.end.time.";
   public static final String FACT_DATA_COMPLETENESS_TAG = "cube.fact.datacompleteness.tag";
+  public static final String VIRTUAL_FACT_FILTER = " cube.fact.query.where.filter";
 
   // Segmentation constants
   public static final String SEGMENTATION_KEY_PFX = "cube.segmentation.internal.";

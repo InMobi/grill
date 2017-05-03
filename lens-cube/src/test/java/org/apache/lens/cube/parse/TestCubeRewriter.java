@@ -144,6 +144,21 @@ public class TestCubeRewriter extends TestQueryRewrite {
 //    assertNotNull(rewrittenQuery.getNonExistingParts());
   }
 
+
+//  @Test
+//  public void testCubeQuery2() throws Exception {
+//    CubeQueryContext rewrittenQuery =
+//      rewriteCtx("select SUM(msr2) from virtual_fact_cube where " + TWO_DAYS_RANGE, getConfWithStorages("C2"));
+//    String expected =
+//      getExpectedQuery(TEST_CUBE_NAME, "select sum(testcube.msr2) as `sum(msr2)` FROM ", null, null,
+//        getWhereForDailyAndHourly2days(TEST_CUBE_NAME, "C2_testfact"));
+//    String hql = rewrittenQuery.toHQL();
+//    compareQueries(hql, expected);
+//    System.out.println("Non existing parts:" + rewrittenQuery.getNonExistingParts());
+////    assertNotNull(rewrittenQuery.getNonExistingParts());
+//  }
+
+
   @Test
   public void testMaxCoveringFact() throws Exception {
     Configuration conf = getConf();
@@ -1589,6 +1604,19 @@ public class TestCubeRewriter extends TestQueryRewrite {
 
   @Test
   public void testAliasNameSameAsColumnName() throws Exception {
+    String query = "SELECT msr2 as msr2 from testCube WHERE " + TWO_DAYS_RANGE;
+    try {
+      String hql = rewrite(query, getConf());
+      assertNotNull(hql);
+      System.out.println("@@HQL " + hql);
+    } catch (NullPointerException npe) {
+      fail(npe.getMessage());
+      log.error("Not expecting null pointer exception", npe);
+    }
+  }
+
+  @Test
+  public void testVirtualFact() throws Exception {
     String query = "SELECT msr2 as msr2 from testCube WHERE " + TWO_DAYS_RANGE;
     try {
       String hql = rewrite(query, getConf());
