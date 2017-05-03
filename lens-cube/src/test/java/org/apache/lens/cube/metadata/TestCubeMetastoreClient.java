@@ -1277,7 +1277,7 @@ public class TestCubeMetastoreClient {
     assertEquals(client.getAllVirtualFacts(client.getCube(DERIVED_CUBE_NAME)).get(0).getName(),
       virtualFactName.toLowerCase());
 
-    CubeVirtualFactTable cubeFact2 = client.getVirtualFactTable(virtualFactName);//new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
+    CubeVirtualFactTable cubeFact2 = client.getVirtualFactTable(virtualFactName);
     assertTrue(cubeVirtualFact.equals(cubeFact2));
 
     //alter virtual fact

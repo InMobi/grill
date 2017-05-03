@@ -152,7 +152,8 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
 
   public static boolean isFactColumnValidForRange(CubeQueryContext cubeql, StorageCandidate sc, String col) {
     for (TimeRange range : cubeql.getTimeRanges()) {
-      if (!isColumnAvailableInRange(range, getFactColumnStartTime(sc.getFact(), col), getFactColumnEndTime(sc.getFact(), col))) {
+      if (!isColumnAvailableInRange(range, getFactColumnStartTime(sc.getFact(), col),
+        getFactColumnEndTime(sc.getFact(), col))) {
         return false;
       }
     }

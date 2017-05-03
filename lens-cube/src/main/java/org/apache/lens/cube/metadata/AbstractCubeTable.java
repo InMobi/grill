@@ -20,7 +20,6 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
-import org.apache.lens.cube.parse.StorageCandidate;
 import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang.StringUtils;

@@ -1826,7 +1826,8 @@ public class CubeMetastoreClient {
 
   public CubeVirtualFactTable getVirtualFactTable(String virtualTableName) throws LensException {
     return new CubeVirtualFactTable(getTableWithTypeFailFast(virtualTableName, CubeTableType.VIRTUAL_FACT),
-      getTableWithTypeFailFast(allVirtualFactSourceMappings.get(virtualTableName.trim().toLowerCase()), CubeTableType.FACT));
+      getTableWithTypeFailFast(allVirtualFactSourceMappings.get(virtualTableName.trim().toLowerCase()),
+        CubeTableType.FACT));
   }
 
   public Segmentation getSegmentationTable(String tableName) throws HiveException, LensException {
@@ -2040,8 +2041,8 @@ public class CubeMetastoreClient {
   public CubeVirtualFactTable getVirtualCubeFact(String virtualTableName, String sourceFactName) throws LensException {
     return getVirtualCubeFact(virtualTableName, sourceFactName, true);
   }
-  private CubeVirtualFactTable getVirtualCubeFact(String virtualTableName, String sourceFactName, boolean throwException)
-    throws LensException {
+  private CubeVirtualFactTable getVirtualCubeFact(String virtualTableName, String sourceFactName,
+    boolean throwException) throws LensException {
     virtualTableName = virtualTableName.trim().toLowerCase();
     CubeVirtualFactTable fact = allVirtualFactTables.get(virtualTableName);
     if (fact == null) {
@@ -2709,7 +2710,8 @@ public class CubeMetastoreClient {
   }
 
   public void alterVirtualCubeFactTable(XVirtualFactTable virtualFact) throws LensException, HiveException {
-    alterVirtualCubeFactTable(JAXBUtils.cubeVirtualFactFromFactTable(virtualFact , getCubeFact(virtualFact.getSourceFactName())));
+    alterVirtualCubeFactTable(JAXBUtils.cubeVirtualFactFromFactTable(virtualFact ,
+      getCubeFact(virtualFact.getSourceFactName())));
   }
   /**
    * Alter a cubefact with new definition and alter underlying storage tables as well.
