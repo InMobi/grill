@@ -2710,7 +2710,7 @@ public class CubeMetastoreClient {
   }
 
   public void alterVirtualCubeFactTable(XVirtualFactTable virtualFact) throws LensException, HiveException {
-    alterVirtualCubeFactTable(JAXBUtils.cubeVirtualFactFromFactTable(virtualFact ,
+    alterVirtualCubeFactTable(JAXBUtils.cubeVirtualFactFromFactTable(virtualFact,
       getCubeFact(virtualFact.getSourceFactName())));
   }
   /**
