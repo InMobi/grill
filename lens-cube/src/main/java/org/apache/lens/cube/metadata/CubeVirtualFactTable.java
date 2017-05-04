@@ -31,7 +31,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   private CubeFactTable sourceCubeFactTable;
   private String cubeName;
 
-  public CubeVirtualFactTable(Table hiveTable , Table sourceHiveTable) {
+  public CubeVirtualFactTable(Table hiveTable, Table sourceHiveTable) {
     super(hiveTable);
     this.cubeName = getFactCubeName(getName(), getProperties());
     this.sourceCubeFactTable = new CubeFactTable(sourceHiveTable);
