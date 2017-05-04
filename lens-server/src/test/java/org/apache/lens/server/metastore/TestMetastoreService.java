@@ -1869,7 +1869,7 @@ public class TestMetastoreService extends LensJerseyTest {
     f.setCubeName(cubeName);
     f.setSourceFactName(sourceFactName);
 
-    Map<String, String> properties = LensUtil.getHashMap("foo", "bar");
+    Map<String, String> properties = LensUtil.getHashMap("foo1", "bar1");
     f.getProperties().getProperty().addAll(JAXBUtils.xPropertiesFromMap(properties));
     return f;
   }
@@ -2242,20 +2242,20 @@ public class TestMetastoreService extends LensJerseyTest {
 
   @Test(dataProvider = "mediaTypeData")
   public void testCreateVirtualFactTable(MediaType mediaType) throws Exception {
-    final String table = "testCreateVirtualFactTable";
-    final String sourceTable = "testCreateVirtualFactSourceTable";
+    final String virtualFactTable = "testCreateVirtualFactTable";
+    final String sourceFactTable = "testCreateVirtualFactSourceTable";
     final String DB = dbPFX + "testCreateVirtualFactTable_DB" + mediaType.getSubtype();
     String prevDb = getCurrentDatabase(mediaType);
     createDatabase(DB, mediaType);
     setCurrentDatabase(DB, mediaType);
-    createStorage("S1", mediaType);
-    createStorage("S2", mediaType);
+    createStorage("VS1", mediaType);
+    createStorage("VS2", mediaType);
     try {
 
       //first create source fact table
-      XFactTable source = createFactTable(sourceTable);
-      source.getStorageTables().getStorageTable().add(createStorageTblElement("S1", table, "HOURLY"));
-      source.getStorageTables().getStorageTable().add(createStorageTblElement("S2", table, "DAILY"));
+      XFactTable source = createFactTable(sourceFactTable);
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("VS1", virtualFactTable, "HOURLY"));
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("VS2", virtualFactTable, "DAILY"));
 
       APIResult result = target()
         .path("metastore")
@@ -2268,7 +2268,7 @@ public class TestMetastoreService extends LensJerseyTest {
       assertSuccess(result);
 
       //now create virtual fact table
-      XVirtualFactTable f = createVirtualFactTable(table, sourceTable);
+      XVirtualFactTable f = createVirtualFactTable(virtualFactTable, sourceFactTable);
 
       result = target()
         .path("metastore")
@@ -2283,15 +2283,15 @@ public class TestMetastoreService extends LensJerseyTest {
       // Get all virtual fact names, this should contain the virtual fact table
       StringList virtualFactNames = target().path("metastore/virtualfacts")
         .queryParam("sessionid", lensSessionId).request(mediaType).get(StringList.class);
-      assertTrue(virtualFactNames.getElements().contains(table.toLowerCase()));
+      assertTrue(virtualFactNames.getElements().contains(virtualFactTable.toLowerCase()));
 
       // Get the created table
-      JAXBElement<XVirtualFactTable> gotFactElement = target().path("metastore/virtualfacts").path(table)
+      JAXBElement<XVirtualFactTable> gotFactElement = target().path("metastore/virtualfacts").path(virtualFactTable)
         .queryParam("sessionid", lensSessionId).request(mediaType)
         .get(new GenericType<JAXBElement<XVirtualFactTable>>() {
         });
       XVirtualFactTable gotFact = gotFactElement.getValue();
-      assertTrue(gotFact.getName().equalsIgnoreCase(table));
+      assertTrue(gotFact.getName().equalsIgnoreCase(virtualFactTable));
       assertEquals(gotFact.getWeight(), 10.0);
       CubeVirtualFactTable cvf = JAXBUtils.cubeVirtualFactFromFactTable(gotFact,
         JAXBUtils.cubeFactFromFactTable(source));
@@ -2305,27 +2305,22 @@ public class TestMetastoreService extends LensJerseyTest {
         }
       }
 
-      //Check for column with start time
-      Map<String, String> props = JAXBUtils.mapFromXProperties(gotFact.getProperties());
-      assertEquals(props.get(MetastoreConstants.FACT_COL_START_TIME_PFX.concat("c3")), "2016-01-01");
-      assertEquals(props.get(MetastoreConstants.FACT_COL_END_TIME_PFX.concat("c3")), "2017-01-01");
-
       assertTrue(foundC1);
-      assertEquals(cvf.getProperties().get("foo"), "bar");
-      assertTrue(cvf.getStorages().contains("S1"));
-      assertTrue(cvf.getStorages().contains("S2"));
-      assertTrue(cvf.getUpdatePeriods().get("S1").contains(HOURLY));
-      assertTrue(cvf.getUpdatePeriods().get("S2").contains(DAILY));
+      assertEquals(cvf.getProperties().get("foo1"), "bar1");
+      assertTrue(cvf.getStorages().contains("VS1"));
+      assertTrue(cvf.getStorages().contains("VS2"));
+      assertTrue(cvf.getUpdatePeriods().get("VS1").contains(HOURLY));
+      assertTrue(cvf.getUpdatePeriods().get("VS2").contains(DAILY));
 
       // drop the virtual fact table
-      result = target().path("metastore").path("virtualfacts").path(table)
+      result = target().path("metastore").path("virtualfacts").path(virtualFactTable)
         .queryParam("sessionid", lensSessionId).request(mediaType)
         .delete(APIResult.class);
 
       assertSuccess(result);
 
       // drop the source fact table
-      result = target().path("metastore").path("facts").path(sourceTable)
+      result = target().path("metastore").path("facts").path(sourceFactTable)
         .queryParam("cascade", "true")
         .queryParam("sessionid", lensSessionId).request(mediaType)
         .delete(APIResult.class);
@@ -2334,7 +2329,7 @@ public class TestMetastoreService extends LensJerseyTest {
 
       // Drop again, this time it should give a 404
       try {
-        target().path("metastore").path("virtualfacts").path(table)
+        target().path("metastore").path("virtualfacts").path(virtualFactTable)
           .queryParam("sessionid", lensSessionId).request(mediaType)
           .delete(APIResult.class);
         fail("Expected 404");
@@ -2355,15 +2350,15 @@ public class TestMetastoreService extends LensJerseyTest {
     String prevDb = getCurrentDatabase(mediaType);
     createDatabase(DB, mediaType);
     setCurrentDatabase(DB, mediaType);
-    createStorage("S1", mediaType);
-    createStorage("S2", mediaType);
-    createStorage("S3", mediaType);
+    createStorage("VS1", mediaType);
+    createStorage("VS2", mediaType);
+
     try {
 
       //first create source fact table
       XFactTable source = createFactTable(sourceTable);
-      source.getStorageTables().getStorageTable().add(createStorageTblElement("S1", table, "HOURLY"));
-      source.getStorageTables().getStorageTable().add(createStorageTblElement("S2", table, "DAILY"));
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("VS1", table, "HOURLY"));
+      source.getStorageTables().getStorageTable().add(createStorageTblElement("VS2", table, "DAILY"));
 
       APIResult result = target()
         .path("metastore")

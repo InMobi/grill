@@ -350,6 +350,10 @@ public class MetastoreUtil {
     return getFactKeyPrefix(name) + CUBE_NAME_SFX;
   }
 
+  public static String getSourceFactNameKey(String name) {
+    return getFactKeyPrefix(name) + SOURCE_NAME_SFX;
+  }
+
   public static String getValidColumnsKey(String name) {
     return getFactKeyPrefix(name) + VALID_COLUMNS_SFX;
   }

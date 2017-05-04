@@ -31,7 +31,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   private CubeFactTable sourceCubeFactTable;
   private String cubeName;
 
-  public CubeVirtualFactTable(Table hiveTable, Table sourceHiveTable) {
+  public CubeVirtualFactTable(Table hiveTable , Table sourceHiveTable) {
     super(hiveTable);
     this.cubeName = getFactCubeName(getName(), getProperties());
     this.sourceCubeFactTable = new CubeFactTable(sourceHiveTable);
@@ -66,7 +66,17 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   protected void addProperties() {
     super.addProperties();
     addCubeNames(getName(), getProperties(), cubeName);
+    addSourceFactName(getName(), getProperties(), cubeName);
   }
+
+  public static String getSourceFactName(String factName, Map<String, String> props) {
+    return props.get(MetastoreUtil.getSourceFactNameKey(factName));
+  }
+
+  protected static void addSourceFactName(String factName, Map<String, String> props, String sourceFactName) {
+    props.put(MetastoreUtil.getSourceFactNameKey(factName), sourceFactName);
+  }
+
   @Override
   public CubeTableType getTableType() {
     return CubeTableType.VIRTUAL_FACT;

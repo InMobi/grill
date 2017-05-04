@@ -1259,19 +1259,16 @@ public class TestCubeMetastoreClient {
 
     Map<String, String> virtualFactPropertiesMap = getHashMap("name1", "newvalue1");
 
-    Map<String, String> virtualFactAllPropertiesMap = cubeFact.getProperties();
-    virtualFactAllPropertiesMap.putAll(virtualFactPropertiesMap);
     CubeVirtualFactTable cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
-      virtualFactAllPropertiesMap, cubeFact);
+      virtualFactPropertiesMap, cubeFact);
 
     // create virtual cube fact
     client.createVirtualFactTable(CUBE_NAME, virtualFactName, sourceFactName, null, virtualFactPropertiesMap);
     assertTrue(client.tableExists(virtualFactName));
-    Table cubeTbl = client.getHiveTable(virtualFactName);
-    assertTrue(client.isVirtualFactTable(cubeTbl));
-    assertTrue(client.isVirtualFactTableForCube(cubeTbl, CUBE_NAME));
-    assertEquals(cubeVirtualFact.weight(), 10.0);
-
+    Table virtualTbl = client.getHiveTable(virtualFactName);
+    Table sourceTbl = client.getHiveTable(sourceFactName);
+    assertTrue(client.isVirtualFactTable(virtualTbl));
+    assertTrue(client.isVirtualFactTableForCube(virtualTbl, CUBE_NAME));
     //get virtual fact
     assertEquals(client.getAllVirtualFacts(client.getCube(CUBE_NAME)).get(0).getName(), virtualFactName.toLowerCase());
     assertEquals(client.getAllVirtualFacts(client.getCube(DERIVED_CUBE_NAME)).get(0).getName(),
@@ -1282,11 +1279,11 @@ public class TestCubeMetastoreClient {
 
     //alter virtual fact
     Map<String, String> alterVirtualFactPropertiesMap = getHashMap("name1", "newvalue2", "name3", "value3");
-    Map<String, String> alterVirtualFactAllPropertiesMap = cubeVirtualFact.getProperties();
-    alterVirtualFactAllPropertiesMap.putAll(alterVirtualFactPropertiesMap);
+    //Map<String, String> alterVirtualFactAllPropertiesMap = cubeVirtualFact.getProperties();
+   // alterVirtualFactAllPropertiesMap.putAll(alterVirtualFactPropertiesMap);
     cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName, alterVirtualFactPropertiesMap, cubeFact);
     client.alterVirtualCubeFactTable(cubeVirtualFact);
-    cubeFact2 = new CubeVirtualFactTable(cubeTbl, client.getHiveTable(sourceFactName));
+    cubeFact2 = new CubeVirtualFactTable(virtualTbl, client.getHiveTable(sourceFactName));
     assertEquals(cubeFact2.getProperties().get("name1"), "newvalue2");
     assertEquals(cubeFact2.getProperties().get("name3"), "value3");
 
