@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.*;
 
+import javax.ws.rs.NotFoundException;
+
 import org.apache.lens.cube.error.LensCubeErrorCode;
 import org.apache.lens.cube.metadata.ExprColumn.ExprSpec;
 import org.apache.lens.cube.metadata.ReferencedDimAttribute.ChainRefCol;
@@ -1225,7 +1227,6 @@ public class TestCubeMetastoreClient {
     assertFalse(client.latestPartitionExists(cubeFact.getName(), c1, getDatePartitionKey()));
   }
 
-
   @Test(priority = 2)
   public void testVirtualCubeFact() throws Exception {
 
@@ -1248,7 +1249,7 @@ public class TestCubeMetastoreClient {
     Map<String, StorageTableDesc> storageTables = getHashMap(c1, s1);
 
     Map<String, String> sourceFactPropertiesMap = getHashMap("name1", "value1", "name2", "value2");
-    CubeFactTable cubeFact = new CubeFactTable(CUBE_NAME, sourceFactName, factColumns, updatePeriods, 10.0,
+    CubeFactTable sourceFact = new CubeFactTable(CUBE_NAME, sourceFactName, factColumns, updatePeriods, 10.0,
       sourceFactPropertiesMap);
 
     // create cube fact
@@ -1260,36 +1261,53 @@ public class TestCubeMetastoreClient {
     Map<String, String> virtualFactPropertiesMap = getHashMap("name1", "newvalue1");
 
     CubeVirtualFactTable cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
-      virtualFactPropertiesMap, cubeFact);
+      com.google.common.base.Optional.fromNullable(null), virtualFactPropertiesMap, sourceFact);
 
     // create virtual cube fact
     client.createVirtualFactTable(CUBE_NAME, virtualFactName, sourceFactName, null, virtualFactPropertiesMap);
     assertTrue(client.tableExists(virtualFactName));
     Table virtualTbl = client.getHiveTable(virtualFactName);
-    Table sourceTbl = client.getHiveTable(sourceFactName);
     assertTrue(client.isVirtualFactTable(virtualTbl));
     assertTrue(client.isVirtualFactTableForCube(virtualTbl, CUBE_NAME));
+
     //get virtual fact
     assertEquals(client.getAllVirtualFacts(client.getCube(CUBE_NAME)).get(0).getName(), virtualFactName.toLowerCase());
     assertEquals(client.getAllVirtualFacts(client.getCube(DERIVED_CUBE_NAME)).get(0).getName(),
       virtualFactName.toLowerCase());
 
-    CubeVirtualFactTable cubeFact2 = client.getVirtualFactTable(virtualFactName);
-    assertTrue(cubeVirtualFact.equals(cubeFact2));
+    CubeVirtualFactTable actualcubeVirtualFact = client.getVirtualFactTable(virtualFactName);
+    assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
 
     //alter virtual fact
     Map<String, String> alterVirtualFactPropertiesMap = getHashMap("name1", "newvalue2", "name3", "value3");
-    //Map<String, String> alterVirtualFactAllPropertiesMap = cubeVirtualFact.getProperties();
-   // alterVirtualFactAllPropertiesMap.putAll(alterVirtualFactPropertiesMap);
-    cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName, alterVirtualFactPropertiesMap, cubeFact);
+    cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
+      com.google.common.base.Optional.fromNullable(null), alterVirtualFactPropertiesMap, sourceFact);
     client.alterVirtualCubeFactTable(cubeVirtualFact);
-    cubeFact2 = new CubeVirtualFactTable(virtualTbl, client.getHiveTable(sourceFactName));
-    assertEquals(cubeFact2.getProperties().get("name1"), "newvalue2");
-    assertEquals(cubeFact2.getProperties().get("name3"), "value3");
+    actualcubeVirtualFact = client.getVirtualFactTable(virtualFactName);
+    assertEquals(actualcubeVirtualFact.getProperties().get("name1"), "newvalue2");
+    assertEquals(actualcubeVirtualFact.getProperties().get("name3"), "value3");
+    assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
+
+    //alter source fact
+    FieldSchema newcol = new FieldSchema("newcol", "int", "new col for part");
+    sourceFact.alterColumn(newcol);
+    sourceFact.alterWeight(100);
+    client.alterCubeFactTable(sourceFact.getName(), sourceFact, storageTables, new HashMap<String, String>());
+    actualcubeVirtualFact = client.getVirtualFactTable(virtualFactName);
+    assertTrue(actualcubeVirtualFact.getColumns().contains(newcol));
+    assertEquals(actualcubeVirtualFact.weight(),100.0);
+    assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
+
+    //drop source fact
+    client.dropFact(sourceFactName, true);
 
     //drop virtual fact
-    client.dropVirtualFact(virtualFactName);
-    client.dropFact(sourceFactName, true);
+    try{
+      client.dropVirtualFact(virtualFactName);
+      fail("Expected 404");
+    } catch (LensException nfe) {
+      // PASS since virtual fact is already dropped when source fact was dropped
+    }
 
     assertFalse(client.tableExists(virtualFactName));
   }
@@ -1478,15 +1496,15 @@ public class TestCubeMetastoreClient {
     client.dropStorageFromFact(factName, c2);
     storageTableName = getFactOrDimtableStorageTableName(factName, c2);
     assertFalse(client.tableExists(storageTableName));
-    List<FactTableInterface> cubeFacts = client.getAllFacts(client.getCube(CUBE_NAME));
+    List<FactTable> cubeFacts = client.getAllFacts(client.getCube(CUBE_NAME));
     List<String> cubeFactNames = new ArrayList<>();
-    for (FactTableInterface cfact : cubeFacts) {
+    for (FactTable cfact : cubeFacts) {
       cubeFactNames.add(cfact.getName());
     }
     assertTrue(cubeFactNames.contains(factName.toLowerCase()));
     cubeFacts = client.getAllFacts(client.getCube(DERIVED_CUBE_NAME));
     cubeFactNames = new ArrayList<>();
-    for (FactTableInterface cfact : cubeFacts) {
+    for (FactTable cfact : cubeFacts) {
       cubeFactNames.add(cfact.getName());
     }
     assertTrue(cubeFactNames.contains(factName.toLowerCase()));
@@ -1496,7 +1514,7 @@ public class TestCubeMetastoreClient {
     assertFalse(client.tableExists(factName));
     cubeFacts = client.getAllFacts(cube);
     cubeFactNames = new ArrayList<>();
-    for (FactTableInterface cfact : cubeFacts) {
+    for (FactTable cfact : cubeFacts) {
       cubeFactNames.add(cfact.getName());
     }
     assertFalse(cubeFactNames.contains(factName.toLowerCase()));

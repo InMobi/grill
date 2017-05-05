@@ -106,7 +106,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
    * Participating fact, storage and dimensions for this StorageCandidate
    */
   @Getter
-  private FactTableInterface fact;
+  private FactTable fact;
   @Getter
   private String storageName;
   @Getter
@@ -174,7 +174,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     this.answerableMeasurePhraseIndices = sc.answerableMeasurePhraseIndices;
   }
 
-  public StorageCandidate(CubeInterface cube, FactTableInterface fact, String storageName, CubeQueryContext cubeql)
+  public StorageCandidate(CubeInterface cube, FactTable fact, String storageName, CubeQueryContext cubeql)
     throws LensException {
     if ((cube == null) || (fact == null) || (storageName == null)) {
       throw new IllegalArgumentException("Cube,fact and storageName should be non null");
@@ -275,6 +275,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
         CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)
         ? getPostSelectionWhereClause() : null,
         this.fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
+          && this.fact.getProperties().get(VIRTUAL_FACT_FILTER) != null
         ? this.fact.getProperties().get(VIRTUAL_FACT_FILTER) :null));
     if (cubeql.getHavingAST() != null) {
       queryAst.setHavingAST(MetastoreUtil.copyAST(cubeql.getHavingAST()));

@@ -28,7 +28,7 @@ import org.apache.hadoop.hive.metastore.api.FieldSchema;
 /**
  * Created by rajithar on 3/5/17.
  */
-public interface FactTableInterface extends Named{
+public interface FactTable extends Named {
 
   public Map<String, Set<UpdatePeriod>> getUpdatePeriods();
 

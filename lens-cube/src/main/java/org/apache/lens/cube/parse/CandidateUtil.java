@@ -213,7 +213,7 @@ public final class CandidateUtil {
     return new StorageCandidate(sc);
   }
 
-  public static boolean factHasColumn(FactTableInterface fact, String column) {
+  public static boolean factHasColumn(FactTable fact, String column) {
     for (FieldSchema factField : fact.getColumns()) {
       if (factField.getName().equals(column)) {
         return true;

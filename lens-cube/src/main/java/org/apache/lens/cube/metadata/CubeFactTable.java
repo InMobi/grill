@@ -33,7 +33,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CubeFactTable extends AbstractCubeTable implements FactTableInterface{
+public class CubeFactTable extends AbstractCubeTable implements FactTable {
   @Getter
   // Map<StorageName, Map<update_period, storage_table_prefix>>
   private final Map<String, Map<UpdatePeriod, String>> storagePrefixUpdatePeriodMap;

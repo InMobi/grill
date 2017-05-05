@@ -20,7 +20,7 @@ package org.apache.lens.cube.parse;
 
 import java.util.*;
 
-import org.apache.lens.cube.metadata.FactTableInterface;
+import org.apache.lens.cube.metadata.FactTable;
 import org.apache.lens.cube.metadata.MetastoreConstants;
 import org.apache.lens.cube.metadata.TimeRange;
 import org.apache.lens.server.api.error.LensException;
@@ -160,7 +160,7 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
     return true;
   }
 
-  public static Date getFactColumnStartTime(FactTableInterface ft, String factCol) {
+  public static Date getFactColumnStartTime(FactTable ft, String factCol) {
     Date startTime = null;
     for (String key : ft.getProperties().keySet()) {
       if (key.contains(MetastoreConstants.FACT_COL_START_TIME_PFX)) {
@@ -173,7 +173,7 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
     return startTime;
   }
 
-  public static Date getFactColumnEndTime(FactTableInterface ft, String factCol) {
+  public static Date getFactColumnEndTime(FactTable ft, String factCol) {
     Date endTime = null;
     for (String key : ft.getProperties().keySet()) {
       if (key.contains(MetastoreConstants.FACT_COL_END_TIME_PFX)) {

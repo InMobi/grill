@@ -84,13 +84,13 @@ class CandidateTableResolver implements ContextRewriter {
 
   private void populateCandidateTables(CubeQueryContext cubeql) throws LensException {
     if (cubeql.getCube() != null) {
-      List<FactTableInterface> factTables = cubeql.getMetastoreClient().getAllFacts(cubeql.getCube());
+      List<FactTable> factTables = cubeql.getMetastoreClient().getAllFacts(cubeql.getCube());
       factTables.addAll(cubeql.getMetastoreClient().getAllVirtualFacts(cubeql.getCube()));
       if (factTables.isEmpty()) {
         throw new LensException(LensCubeErrorCode.NO_CANDIDATE_FACT_AVAILABLE.getLensErrorInfo(),
             cubeql.getCube().getName() + " does not have any facts");
       }
-      for (FactTableInterface fact : factTables) {
+      for (FactTable fact : factTables) {
         if (fact.getUpdatePeriods().isEmpty()) {
           log.info("Not considering fact: {} as it has no update periods", fact.getName());
         } else {
@@ -100,17 +100,6 @@ class CandidateTableResolver implements ContextRewriter {
           }
         }
       }
-
-//      for (CubeVirtualFactTable vfact : vfactTables) {
-//        if (vfact.getUpdatePeriods().isEmpty()) {
-//          log.info("Not considering virtual fact: {} as it has no update periods", vfact.getName());
-//        } else {
-//          for (String s : vfact.getStorages()) {
-//            StorageCandidate sc = new StorageCandidate(cubeql.getCube(), vfact, s, cubeql);
-//            cubeql.getCandidates().add(sc);
-//          }
-//        }
-//      }
 
       log.info("Populated storage candidates: {}", cubeql.getCandidates());
     }

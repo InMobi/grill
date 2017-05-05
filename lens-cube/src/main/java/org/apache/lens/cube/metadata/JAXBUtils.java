@@ -723,8 +723,11 @@ public final class JAXBUtils {
     //Update properties from source fact
     Map<String, String> allProperties = sourceFactTable.getProperties();
     allProperties.putAll(mapFromXProperties(fact.getProperties()));
+
+    com.google.common.base.Optional<Double> optionalWeight = com.google.common.base.Optional.fromNullable(fact.getWeight());
+
     return new CubeVirtualFactTable(fact.getCubeName(), fact.getName(),
-      fact.getWeight() != null ? fact.getWeight() : sourceFactTable.weight(), allProperties, sourceFactTable);
+      optionalWeight, allProperties, sourceFactTable);
   }
 
   public static Segmentation segmentationFromXSegmentation(XSegmentation seg) throws LensException {
