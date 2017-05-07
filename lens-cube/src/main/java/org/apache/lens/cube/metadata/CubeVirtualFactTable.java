@@ -45,8 +45,13 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   public CubeVirtualFactTable(Table hiveTable, Table sourceHiveTable) {
     super(hiveTable);
     this.cubeName = getFactCubeName(getName(), getProperties());
-    this.virtualFactWeight = Optional.of(getWeight(getProperties(), getName()));
     this.sourceCubeFactTable = new CubeFactTable(sourceHiveTable);
+
+    this.virtualFactWeight = Optional.absent();
+    String wtStr = getProperties().get(MetastoreUtil.getCubeTableWeightKey(getName()));
+    if(wtStr != null ) {
+      this.virtualFactWeight = Optional.of(Double.parseDouble(wtStr));
+    }
   }
 
   public CubeVirtualFactTable(String cubeName, String virtualFactName, Optional<Double> weight,
@@ -71,7 +76,10 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
 
   @Override
   protected void addProperties() {
-    super.addProperties();
+    getProperties().put(MetastoreConstants.TABLE_TYPE_KEY, getTableType().name());
+    if(virtualFactWeight.isPresent()) {
+      getProperties().put(MetastoreUtil.getCubeTableWeightKey(this.getName()), String.valueOf(virtualFactWeight.get()));
+    }
     addCubeNames(getName(), getProperties(), cubeName);
   }
 
