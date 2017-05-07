@@ -19,10 +19,11 @@
 package org.apache.lens.cube.metadata;
 
 import java.util.*;
-import com.google.common.base.Optional;
 
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Table;
+
+import com.google.common.base.Optional;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,7 +45,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   public CubeVirtualFactTable(Table hiveTable, Table sourceHiveTable) {
     super(hiveTable);
     this.cubeName = getFactCubeName(getName(), getProperties());
-//    this.virtualFactWeight = hiveTable.we
+    this.virtualFactWeight = Optional.of(getWeight(getProperties(), getName()));
     this.sourceCubeFactTable = new CubeFactTable(sourceHiveTable);
   }
 
@@ -55,6 +56,17 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
     this.virtualFactWeight = weight;
     this.sourceCubeFactTable = sourceFact;
     addProperties();
+  }
+
+  /**
+   * Alters the weight of table
+   *
+   * @param weight Weight of the table.
+   */
+  @Override
+  public void alterWeight(double weight) {
+    this.virtualFactWeight = Optional.of(weight);
+    this.addProperties();
   }
 
   @Override

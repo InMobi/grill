@@ -31,8 +31,6 @@ import java.text.SimpleDateFormat;
 
 import java.util.*;
 
-import javax.ws.rs.NotFoundException;
-
 import org.apache.lens.cube.error.LensCubeErrorCode;
 import org.apache.lens.cube.metadata.ExprColumn.ExprSpec;
 import org.apache.lens.cube.metadata.ReferencedDimAttribute.ChainRefCol;
@@ -1281,7 +1279,8 @@ public class TestCubeMetastoreClient {
     //alter virtual fact
     Map<String, String> alterVirtualFactPropertiesMap = getHashMap("name1", "newvalue2", "name3", "value3");
     cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
-      com.google.common.base.Optional.fromNullable(null), alterVirtualFactPropertiesMap, sourceFact);
+      com.google.common.base.Optional.fromNullable(null), alterVirtualFactPropertiesMap,
+      sourceFact);
     client.alterVirtualCubeFactTable(cubeVirtualFact);
     actualcubeVirtualFact = client.getVirtualFactTable(virtualFactName);
     assertEquals(actualcubeVirtualFact.getProperties().get("name1"), "newvalue2");
@@ -1295,14 +1294,14 @@ public class TestCubeMetastoreClient {
     client.alterCubeFactTable(sourceFact.getName(), sourceFact, storageTables, new HashMap<String, String>());
     actualcubeVirtualFact = client.getVirtualFactTable(virtualFactName);
     assertTrue(actualcubeVirtualFact.getColumns().contains(newcol));
-    assertEquals(actualcubeVirtualFact.weight(),100.0);
+    assertEquals(actualcubeVirtualFact.weight(), 100.0);
     assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
 
     //drop source fact
     client.dropFact(sourceFactName, true);
 
     //drop virtual fact
-    try{
+    try {
       client.dropVirtualFact(virtualFactName);
       fail("Expected 404");
     } catch (LensException nfe) {

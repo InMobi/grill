@@ -328,12 +328,12 @@ class StorageTableResolver implements ContextRewriter {
             pruningCauseForThisTimeRange =
               new CandidateTablePruneCause(CandidateTablePruneCode.TIME_RANGE_NOT_ANSWERABLE);
           } else if (cubeql.shouldReplaceTimeDimWithPart()) {
-            if (!client.partColExists(sc.getFact().getName(), sc.getStorageName(), range.getPartitionColumn())) {
+            if (!client.partColExists(sc.getFact(), sc.getStorageName(), range.getPartitionColumn())) {
               pruningCauseForThisTimeRange = partitionColumnsMissing(range.getPartitionColumn());
               TimeRange fallBackRange = StorageUtil.getFallbackRange(range, sc.getFact().getName(), cubeql);
               while (fallBackRange != null) {
                 pruningCauseForThisTimeRange = null;
-                if (!client.partColExists(sc.getFact().getName(), sc.getStorageName(),
+                if (!client.partColExists(sc.getFact(), sc.getStorageName(),
                   fallBackRange.getPartitionColumn())) {
                   pruningCauseForThisTimeRange = partitionColumnsMissing(fallBackRange.getPartitionColumn());
                   fallBackRange = StorageUtil.getFallbackRange(fallBackRange, sc.getFact().getName(), cubeql);

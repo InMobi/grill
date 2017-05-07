@@ -67,7 +67,7 @@ public abstract class AbstractCubeTable implements Named {
 
   protected void addProperties() {
     properties.put(MetastoreConstants.TABLE_TYPE_KEY, getTableType().name());
-    properties.put(MetastoreUtil.getCubeTableWeightKey(name), String.valueOf(weight));
+    properties.put(MetastoreUtil.getCubeTableWeightKey(name), String.valueOf(weight()));
   }
 
   public String getName() {

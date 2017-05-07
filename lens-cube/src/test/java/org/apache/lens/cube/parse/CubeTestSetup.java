@@ -99,6 +99,7 @@ public class CubeTestSetup {
   public static final String TEST_CUBE_NAME = "testCube";
   public static final String DERIVED_CUBE_NAME = "derivedCube";
   public static final String BASE_CUBE_NAME = "baseCube";
+  public static final String VIRTUAL_CUBE_NAME = "virtualCube";
 
   private static String c0 = "C0";
   private static String c1 = "C1";

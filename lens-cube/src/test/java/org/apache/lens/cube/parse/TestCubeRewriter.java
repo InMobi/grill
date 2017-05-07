@@ -144,20 +144,17 @@ public class TestCubeRewriter extends TestQueryRewrite {
 //    assertNotNull(rewrittenQuery.getNonExistingParts());
   }
 
-//
-//  @Test
-//  public void testCubeQuery2() throws Exception {
-//    CubeQueryContext rewrittenQuery =
-//      rewriteCtx("select SUM(msr2) from virtual_fact_cube where " + TWO_DAYS_RANGE, getConfWithStorages("C2"));
-//    String expected =
-//      getExpectedQuery(TEST_CUBE_NAME, "select sum(testcube.msr2) as `sum(msr2)` FROM ", null, null,
-//        getWhereForDailyAndHourly2days(TEST_CUBE_NAME, "C2_testfact"));
-//    String hql = rewrittenQuery.toHQL();
-//    compareQueries(hql, expected);
-//    System.out.println("Non existing parts:" + rewrittenQuery.getNonExistingParts());
-////    assertNotNull(rewrittenQuery.getNonExistingParts());
-//  }
 
+  @Test
+  public void testVirtualFactCubeQuery() throws Exception {
+    CubeQueryContext rewrittenQuery =
+      rewriteCtx("select SUM(msr2) from virtualCube where " + TWO_DAYS_RANGE, getConfWithStorages("C1"));
+    String expected =
+      getExpectedQuery(VIRTUAL_CUBE_NAME, "select sum(virtualcube.msr2) as `sum(msr2)` FROM ", "( dim1 = 10 )", null,
+        getWhereForDailyAndHourly2days(VIRTUAL_CUBE_NAME, "C1_summary1"));
+    String hql = rewrittenQuery.toHQL();
+    compareQueries(hql, expected);
+  }
 
   @Test
   public void testMaxCoveringFact() throws Exception {

@@ -724,7 +724,7 @@ public final class JAXBUtils {
     Map<String, String> allProperties = sourceFactTable.getProperties();
     allProperties.putAll(mapFromXProperties(fact.getProperties()));
 
-    com.google.common.base.Optional<Double> optionalWeight = com.google.common.base.Optional.fromNullable(fact.getWeight());
+    Optional<Double> optionalWeight = Optional.fromNullable(fact.getWeight());
 
     return new CubeVirtualFactTable(fact.getCubeName(), fact.getName(),
       optionalWeight, allProperties, sourceFactTable);

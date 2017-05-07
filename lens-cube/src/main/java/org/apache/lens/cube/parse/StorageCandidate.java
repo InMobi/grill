@@ -183,7 +183,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     this.fact = fact;
     this.cubeql = cubeql;
     this.storageName = storageName;
-    this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(fact.getName(), storageName);
+    this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(getStorageFactName(fact), storageName);
     this.conf = cubeql.getConf();
     this.name = fact.getName();
     this.processTimePartCol = conf.get(CubeQueryConfUtil.PROCESS_TIME_PART_COL);
@@ -195,7 +195,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     completenessThreshold = conf
       .getFloat(CubeQueryConfUtil.COMPLETENESS_THRESHOLD, CubeQueryConfUtil.DEFAULT_COMPLETENESS_THRESHOLD);
     client = cubeql.getMetastoreClient();
-    Set<String> storageTblNames = client.getStorageTables(fact.getName(), storageName);
+    Set<String> storageTblNames = client.getStorageTables(fact, storageName);
     if (storageTblNames.size() > 1) {
       isStorageTblsAtUpdatePeriodLevel = true;
     } else {
@@ -203,6 +203,11 @@ public class StorageCandidate implements Candidate, CandidateTable {
       isStorageTblsAtUpdatePeriodLevel = !storageTblNames.iterator().next().equalsIgnoreCase(storageTable);
     }
     setStorageStartAndEndDate();
+  }
+
+  public static String getStorageFactName(FactTable fact) {
+    return fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
+      ? ((CubeVirtualFactTable) fact).getSourceCubeFactTable().getName() : fact.getName();
   }
 
   /**
@@ -247,8 +252,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
     List<Date> startDates = new ArrayList<>();
     List<Date> endDates = new ArrayList<>();
     for (String storageTablePrefix : getValidStorageTableNames()) {
-      startDates.add(client.getStorageTableStartDate(storageTablePrefix, fact.getName()));
-      endDates.add(client.getStorageTableEndDate(storageTablePrefix, fact.getName()));
+      startDates.add(client.getStorageTableStartDate(storageTablePrefix, getStorageFactName(fact)));
+      endDates.add(client.getStorageTableEndDate(storageTablePrefix, getStorageFactName(fact)));
     }
     this.startTime = Collections.min(startDates);
     this.endTime = Collections.max(endDates);
@@ -264,19 +269,19 @@ public class StorageCandidate implements Candidate, CandidateTable {
       return uniqueStorageTables;
     } else {
       //Get all storage tables.
-      return client.getStorageTables(fact.getName(), storageName);
+      return client.getStorageTables(fact, storageName);
     }
   }
 
   private void setMissingExpressions(Set<Dimension> queriedDims) throws LensException {
     setFromString(String.format("%s", getFromTable()));
-    setWhereString(joinWithAnd(
+    setWhereString(joinWithAnd(this.fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
+        && this.fact.getProperties().get(VIRTUAL_FACT_FILTER) != null
+        ? this.fact.getProperties().get(VIRTUAL_FACT_FILTER) :null,
       genWhereClauseWithDimPartitions(whereString, queriedDims), cubeql.getConf().getBoolean(
         CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)
-        ? getPostSelectionWhereClause() : null,
-        this.fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
-          && this.fact.getProperties().get(VIRTUAL_FACT_FILTER) != null
-        ? this.fact.getProperties().get(VIRTUAL_FACT_FILTER) :null));
+        ? getPostSelectionWhereClause() : null
+       ));
     if (cubeql.getHavingAST() != null) {
       queryAst.setHavingAST(MetastoreUtil.copyAST(cubeql.getHavingAST()));
     }
@@ -474,7 +479,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
       return true;
     }
 
-    if (!client.partColExists(this.getFact().getName(), storageName, partCol)) {
+    if (!client.partColExists(this.getFact(), storageName, partCol)) {
       log.info("{} does not exist in {}", partCol, storageTable);
       return false;
     }
