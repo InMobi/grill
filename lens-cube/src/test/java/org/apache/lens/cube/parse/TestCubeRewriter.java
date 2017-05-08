@@ -151,8 +151,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
     conf.set(DRIVER_SUPPORTED_STORAGES, "C1");
     CubeQueryContext rewrittenQuery =
       rewriteCtx("select SUM(msr2) from virtualCube where " + TWO_DAYS_RANGE, getConfWithStorages("C1"));
-    String expected =
-      getExpectedQuery(VIRTUAL_CUBE_NAME, "select sum(virtualcube.msr2) as `sum(msr2)` FROM ",
+    String expected = getExpectedQuery(VIRTUAL_CUBE_NAME, "select sum(virtualcube.msr2) as `sum(msr2)` FROM ",
         "( dim1 = 10 )", null, getWhereForDailyAndHourly2days(VIRTUAL_CUBE_NAME,
           "C1_summary1"));
     String hql = rewrittenQuery.toHQL();
