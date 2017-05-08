@@ -27,6 +27,7 @@
   <measures>
     <measure _type="FLOAT" default_aggr="SUM" unit="RS" name="msr2" display_string="Measure2"
              description="second measure"/>
+
   </measures>
   <dim_attributes>
     <dim_attribute _type="string" name="dim1" description="basedim">

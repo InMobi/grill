@@ -144,17 +144,20 @@ public class TestCubeRewriter extends TestQueryRewrite {
 //    assertNotNull(rewrittenQuery.getNonExistingParts());
   }
 
-
-  @Test
-  public void testVirtualFactCubeQuery() throws Exception {
-    CubeQueryContext rewrittenQuery =
-      rewriteCtx("select SUM(msr2) from virtualCube where " + TWO_DAYS_RANGE, getConfWithStorages("C1"));
-    String expected =
-      getExpectedQuery(VIRTUAL_CUBE_NAME, "select sum(virtualcube.msr2) as `sum(msr2)` FROM ", "( dim1 = 10 )", null,
-        getWhereForDailyAndHourly2days(VIRTUAL_CUBE_NAME, "C1_summary1"));
-    String hql = rewrittenQuery.toHQL();
-    compareQueries(hql, expected);
-  }
+//
+//  @Test
+//  public void testVirtualFactCubeQuery() throws Exception {
+//    Configuration conf = getConf();
+//    conf.set(DRIVER_SUPPORTED_STORAGES, "C1");
+//    CubeQueryContext rewrittenQuery =
+//      rewriteCtx("select SUM(msr2) from virtualCube where " + TWO_DAYS_RANGE, getConfWithStorages("C1"));
+//    String expected =
+//      getExpectedQuery(VIRTUAL_CUBE_NAME, "select sum(virtualcube.msr2) as `sum(msr2)` FROM ", "( dim1 = 10 )", null,
+//        getWhereForDailyAndHourly2days(VIRTUAL_CUBE_NAME, "C1_summary1"));
+//    String hql = rewrittenQuery.toHQL();
+//    compareQueries(hql, expected);
+//    System.out.println("Non existing parts:" + rewrittenQuery.getNonExistingParts());
+//  }
 
   @Test
   public void testMaxCoveringFact() throws Exception {
@@ -1601,19 +1604,6 @@ public class TestCubeRewriter extends TestQueryRewrite {
 
   @Test
   public void testAliasNameSameAsColumnName() throws Exception {
-    String query = "SELECT msr2 as msr2 from testCube WHERE " + TWO_DAYS_RANGE;
-    try {
-      String hql = rewrite(query, getConf());
-      assertNotNull(hql);
-      System.out.println("@@HQL " + hql);
-    } catch (NullPointerException npe) {
-      fail(npe.getMessage());
-      log.error("Not expecting null pointer exception", npe);
-    }
-  }
-
-  @Test
-  public void testVirtualFact() throws Exception {
     String query = "SELECT msr2 as msr2 from testCube WHERE " + TWO_DAYS_RANGE;
     try {
       String hql = rewrite(query, getConf());

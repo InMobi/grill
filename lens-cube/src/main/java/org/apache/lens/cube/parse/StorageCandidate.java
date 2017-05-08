@@ -280,8 +280,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
         ? this.fact.getProperties().get(VIRTUAL_FACT_FILTER) :null,
       genWhereClauseWithDimPartitions(whereString, queriedDims), cubeql.getConf().getBoolean(
         CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)
-        ? getPostSelectionWhereClause() : null
-       ));
+        ? getPostSelectionWhereClause() : null));
     if (cubeql.getHavingAST() != null) {
       queryAst.setHavingAST(MetastoreUtil.copyAST(cubeql.getHavingAST()));
     }
