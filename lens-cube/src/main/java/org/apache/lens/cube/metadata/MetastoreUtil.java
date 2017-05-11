@@ -391,7 +391,6 @@ public class MetastoreUtil {
   // /////////////////////////
 
   public static Date getDateFromProperty(String prop, boolean relative, boolean start) {
-  //  String prop = getProperties().get(propKey);
     try {
       if (StringUtils.isNotBlank(prop)) {
         if (relative) {
