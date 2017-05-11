@@ -458,15 +458,15 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    */
   void dropVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException;
 
-  /**
-   * Get all virtual fact names
-   *
-   * @param sessionid The sessionid
-   * @param cubeName optional filter filter facts by cube name.
-   * @return List of virtual fact table names
-   * @throws LensException
-   */
-  List<String> getAllVirtualFactNames(LensSessionHandle sessionid, String cubeName) throws LensException;
+//  /**
+//   * Get all virtual fact names
+//   *
+//   * @param sessionid The sessionid
+//   * @param cubeName optional filter filter facts by cube name.
+//   * @return List of virtual fact table names
+//   * @throws LensException
+//   */
+//  List<String> getAllVirtualFactNames(LensSessionHandle sessionid, String cubeName) throws LensException;
 
   /**
    * Get all storages of fact

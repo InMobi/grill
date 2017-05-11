@@ -25,6 +25,7 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 
 import com.google.common.base.Optional;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +33,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
 
   @Getter
   @Setter
-  private CubeFactTable sourceCubeFactTable;
+  private FactTable sourceCubeFactTable;
   private String cubeName;
   private static final List<FieldSchema> COLUMNS = new ArrayList<FieldSchema>();
   @Getter
@@ -42,10 +43,10 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
     COLUMNS.add(new FieldSchema("dummy", "string", "dummy column"));
   }
 
-  public CubeVirtualFactTable(Table hiveTable, Table sourceHiveTable) {
+  public CubeVirtualFactTable(Table hiveTable, CubeFactTable sourceCubeFactTable) {
     super(hiveTable);
     this.cubeName = getFactCubeName(getName(), getProperties());
-    this.sourceCubeFactTable = new CubeFactTable(sourceHiveTable);
+    this.sourceCubeFactTable = sourceCubeFactTable;
 
     this.virtualFactWeight = Optional.absent();
     String wtStr = getProperties().get(MetastoreUtil.getCubeTableWeightKey(getName()));
@@ -55,7 +56,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   }
 
   public CubeVirtualFactTable(String cubeName, String virtualFactName, Optional<Double> weight,
-    Map<String, String> properties, CubeFactTable sourceFact) {
+    Map<String, String> properties, FactTable sourceFact) {
     super(virtualFactName, COLUMNS, properties, weight.isPresent() ? weight.get() : sourceFact.weight());
     this.cubeName = cubeName;
     this.virtualFactWeight = weight;
@@ -85,7 +86,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
 
   @Override
   public CubeTableType getTableType() {
-    return CubeTableType.VIRTUAL_FACT;
+    return CubeTableType.FACT;
   }
 
   @Override
@@ -126,5 +127,44 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   @Override
   public double weight() {
     return virtualFactWeight.isPresent() ? virtualFactWeight.get() : sourceCubeFactTable.weight();
+  }
+
+  public Date getAbsoluteStartTime() {
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME),
+      false, true);
+  }
+
+  public Date getRelativeStartTime() {
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_RELATIVE_START_TIME),
+      true, true);
+  }
+
+  public Date getStartTime() {
+    return Collections.max(Lists.newArrayList(getRelativeStartTime(), getAbsoluteStartTime()));
+  }
+
+  public Date getAbsoluteEndTime() {
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_END_TIME),
+      false, false);
+  }
+
+  public Date getRelativeEndTime() {
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_RELATIVE_END_TIME),
+      true, false);
+  }
+
+  public Date getEndTime() {
+    return Collections.min(Lists.newArrayList(getRelativeEndTime(), getAbsoluteEndTime()));
+  }
+
+
+  @Override
+  public boolean isVirtualFact() {
+    return true;
+  }
+
+  @Override
+  public String getStorageFactName() {
+    return this.sourceCubeFactTable.getName();
   }
 }

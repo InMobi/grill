@@ -183,7 +183,7 @@ public class MetastoreResource {
     }, VIRTUALFACT {
       @Override
       public List<String> doGetAll(LensSessionHandle sessionid) throws LensException {
-        return getSvc().getAllVirtualFactNames(sessionid, null);
+        return getSvc().getAllFactNames(sessionid, null);
       }
 
       @Override
@@ -676,22 +676,6 @@ public class MetastoreResource {
     throws LensException {
     checkSessionId(sessionid);
     return new StringList(getSvc().getAllDimTableNames(sessionid, dimensionName));
-  }
-
-  /**
-   * Get all virtual facts that belong to a cube in the metastore
-   *
-   * @param sessionid The sessionid in which user is working
-   * @param cubeName  name of the base cube or derived cube
-   * @return StringList consisting of all the virtual fact names in the given cube
-   */
-  @GET
-  @Path("/cubes/{cubeName}/virtualfacts")
-  public StringList getAllVirtualFactsOfCube(
-    @QueryParam("sessionid") LensSessionHandle sessionid, @PathParam("cubeName") String cubeName)
-    throws LensException {
-    checkSessionId(sessionid);
-    return new StringList(getSvc().getAllVirtualFactNames(sessionid, cubeName));
   }
 
   /**

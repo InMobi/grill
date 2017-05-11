@@ -718,16 +718,13 @@ public final class JAXBUtils {
       mapFromXProperties(fact.getProperties()), storageTablePrefixMap);
   }
 
-  public static CubeVirtualFactTable cubeVirtualFactFromFactTable(XVirtualFactTable fact, CubeFactTable sourceFactTable)
+  public static CubeVirtualFactTable cubeVirtualFactFromFactTable(XVirtualFactTable fact, FactTable sourceFactTable)
     throws LensException {
-    //Update properties from source fact
-    Map<String, String> allProperties = sourceFactTable.getProperties();
-    allProperties.putAll(mapFromXProperties(fact.getProperties()));
 
     Optional<Double> optionalWeight = Optional.fromNullable(fact.getWeight());
 
     return new CubeVirtualFactTable(fact.getCubeName(), fact.getName(),
-      optionalWeight, allProperties, sourceFactTable);
+      optionalWeight, mapFromXProperties(fact.getProperties()), sourceFactTable);
   }
 
   public static Segmentation segmentationFromXSegmentation(XSegmentation seg) throws LensException {
@@ -748,7 +745,7 @@ public final class JAXBUtils {
   }
 
 
-  public static XFactTable factTableFromCubeFactTable(CubeFactTable cFact) {
+  public static XFactTable factTableFromCubeFactTable(FactTable cFact) {
     XFactTable fact = XCF.createXFactTable();
     fact.setName(cFact.getName());
     fact.setColumns(new XColumns());

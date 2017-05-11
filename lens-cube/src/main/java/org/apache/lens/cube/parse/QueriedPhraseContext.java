@@ -22,6 +22,7 @@ import java.util.*;
 
 import org.apache.lens.cube.metadata.FactTable;
 import org.apache.lens.cube.metadata.MetastoreConstants;
+import org.apache.lens.cube.metadata.MetastoreUtil;
 import org.apache.lens.cube.metadata.TimeRange;
 import org.apache.lens.server.api.error.LensException;
 
@@ -166,7 +167,7 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
       if (key.contains(MetastoreConstants.FACT_COL_START_TIME_PFX)) {
         String propCol = StringUtils.substringAfter(key, MetastoreConstants.FACT_COL_START_TIME_PFX);
         if (factCol.equals(propCol)) {
-          startTime = ft.getDateFromProperty(key, false, true);
+          startTime = MetastoreUtil.getDateFromProperty(ft.getProperties().get(key), false, true);
         }
       }
     }
@@ -179,7 +180,7 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
       if (key.contains(MetastoreConstants.FACT_COL_END_TIME_PFX)) {
         String propCol = StringUtils.substringAfter(key, MetastoreConstants.FACT_COL_END_TIME_PFX);
         if (factCol.equals(propCol)) {
-          endTime = ft.getDateFromProperty(key, false, true);
+          endTime = MetastoreUtil.getDateFromProperty(ft.getProperties().get(key), false, true);
         }
       }
     }

@@ -18,16 +18,12 @@
  */
 package org.apache.lens.cube.metadata;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 
-/**
- * Created by rajithar on 3/5/17.
- */
+import com.google.common.collect.Lists;
+
 public interface FactTable extends Named {
 
   public Map<String, Set<UpdatePeriod>> getUpdatePeriods();
@@ -52,5 +48,20 @@ public interface FactTable extends Named {
 
   public boolean isAggregated();
 
-  public Date getDateFromProperty(String propKey, boolean relative, boolean start);
+  public Date getAbsoluteStartTime();
+
+  public Date getRelativeStartTime();
+
+  public Date getStartTime();
+
+  public Date getAbsoluteEndTime();
+
+  public Date getRelativeEndTime();
+
+  public Date getEndTime();
+
+  public boolean isVirtualFact();
+
+  public String getStorageFactName();
+
 }

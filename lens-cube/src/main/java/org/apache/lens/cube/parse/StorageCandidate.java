@@ -206,7 +206,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   public static String getStorageFactName(FactTable fact) {
-    return fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
+    return fact.getProperties().get(MetastoreUtil.getSourceFactNameKey(fact.getName()))!= null
       ? ((CubeVirtualFactTable) fact).getSourceCubeFactTable().getName() : fact.getName();
   }
 
@@ -275,8 +275,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
 
   private void setMissingExpressions(Set<Dimension> queriedDims) throws LensException {
     setFromString(String.format("%s", getFromTable()));
-    setWhereString(joinWithAnd(this.fact.getTableType().equals(CubeTableType.VIRTUAL_FACT)
-        && this.fact.getProperties().get(VIRTUAL_FACT_FILTER) != null
+    setWhereString(joinWithAnd(this.fact.getProperties().get(VIRTUAL_FACT_FILTER) != null
         ? this.fact.getProperties().get(VIRTUAL_FACT_FILTER) :null,
       genWhereClauseWithDimPartitions(whereString, queriedDims), cubeql.getConf().getBoolean(
         CubeQueryConfUtil.REPLACE_TIMEDIM_WITH_PART_COL, CubeQueryConfUtil.DEFAULT_REPLACE_TIMEDIM_WITH_PART_COL)

@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Table;
 
+import com.google.common.collect.Lists;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -181,22 +182,22 @@ public abstract class AbstractCubeTable implements Named {
     }
     return true;
   }
-
-  public Date getDateFromProperty(String propKey, boolean relative, boolean start) {
-    String prop = getProperties().get(propKey);
-    try {
-      if (StringUtils.isNotBlank(prop)) {
-        if (relative) {
-          return DateUtil.resolveRelativeDate(prop, now());
-        } else {
-          return DateUtil.resolveAbsoluteDate(prop);
-        }
-      }
-    } catch (LensException e) {
-      log.error("unable to parse {} {} date: {}", relative ? "relative" : "absolute", start ? "start" : "end", prop);
-    }
-    return start ? DateUtil.MIN_DATE : DateUtil.MAX_DATE;
-  }
+//
+//  public Date getDateFromProperty(String propKey, boolean relative, boolean start) {
+//    String prop = getProperties().get(propKey);
+//    try {
+//      if (StringUtils.isNotBlank(prop)) {
+//        if (relative) {
+//          return DateUtil.resolveRelativeDate(prop, now());
+//        } else {
+//          return DateUtil.resolveAbsoluteDate(prop);
+//        }
+//      }
+//    } catch (LensException e) {
+//      log.error("unable to parse {} {} date: {}", relative ? "relative" : "absolute", start ? "start" : "end", prop);
+//    }
+//    return start ? DateUtil.MIN_DATE : DateUtil.MAX_DATE;
+//  }
 
 
   @Override
@@ -233,4 +234,5 @@ public abstract class AbstractCubeTable implements Named {
   protected static void addCubeNames(String factName, Map<String, String> props, String cubeName) {
     props.put(MetastoreUtil.getFactCubeNameKey(factName), cubeName);
   }
+
 }

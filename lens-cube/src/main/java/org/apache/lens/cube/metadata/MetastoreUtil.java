@@ -332,7 +332,7 @@ public class MetastoreUtil {
   }
 
   // //////////////////////////
-  // Fact propertes ///
+  // Fact properties ///
   // /////////////////////////
   public static String getFactStorageListKey(String name) {
     return getFactKeyPrefix(name) + STORAGE_LIST_SFX;
@@ -389,6 +389,24 @@ public class MetastoreUtil {
   // //////////////////////////
   // Utils ///
   // /////////////////////////
+
+  public static Date getDateFromProperty(String prop, boolean relative, boolean start) {
+  //  String prop = getProperties().get(propKey);
+    try {
+      if (StringUtils.isNotBlank(prop)) {
+        if (relative) {
+          return DateUtil.resolveRelativeDate(prop, new Date());
+        } else {
+          return DateUtil.resolveAbsoluteDate(prop);
+        }
+      }
+    } catch (LensException e) {
+     // log.error("unable to parse {} {} date: {}", relative ? "relative" : "absolute", start ? "start" : "end", prop);
+    }
+    return start ? DateUtil.MIN_DATE : DateUtil.MAX_DATE;
+  }
+
+
   public static <E extends Named> String getNamedStr(Collection<E> set) {
     if (set == null) {
       return "";

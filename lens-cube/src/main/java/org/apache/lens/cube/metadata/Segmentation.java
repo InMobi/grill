@@ -160,11 +160,13 @@ public class Segmentation extends AbstractCubeTable {
 
 
   public Date getAbsoluteStartTime() {
-    return getDateFromProperty(MetastoreConstants.SEGMENTATION_ABSOLUTE_START_TIME, false, true);
+    return MetastoreUtil.getDateFromProperty(this.getProperties()
+      .get(MetastoreConstants.SEGMENTATION_ABSOLUTE_START_TIME), false, true);
   }
 
   public Date getRelativeStartTime() {
-    return getDateFromProperty(MetastoreConstants.SEGMENTATION_RELATIVE_START_TIME, true, true);
+    return MetastoreUtil.getDateFromProperty(this.getProperties()
+      .get(MetastoreConstants.SEGMENTATION_RELATIVE_START_TIME), true, true);
   }
 
   public Date getStartTime() {
@@ -172,11 +174,13 @@ public class Segmentation extends AbstractCubeTable {
   }
 
   public Date getAbsoluteEndTime() {
-    return getDateFromProperty(MetastoreConstants.SEGMENTATION_ABSOLUTE_END_TIME, false, false);
+    return MetastoreUtil.getDateFromProperty(this.getProperties()
+      .get(MetastoreConstants.SEGMENTATION_ABSOLUTE_END_TIME), false, false);
   }
 
   public Date getRelativeEndTime() {
-    return getDateFromProperty(MetastoreConstants.SEGMENTATION_RELATIVE_END_TIME, true, false);
+    return MetastoreUtil.getDateFromProperty(this.getProperties()
+      .get(MetastoreConstants.SEGMENTATION_RELATIVE_END_TIME), true, false);
   }
 
   public Date getEndTime() {

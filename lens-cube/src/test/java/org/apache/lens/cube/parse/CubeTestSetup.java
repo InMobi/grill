@@ -534,7 +534,7 @@ public class CubeTestSetup {
 
     client.clearHiveTableCache();
 
-    CubeFactTable fact = client.getFactTable(factName);
+    CubeFactTable fact = (CubeFactTable) client.getCubeFact(factName);
     Table table = client.getTable(MetastoreUtil.getStorageTableName(fact.getName(), Storage.getPrefix(c1)));
     assertEquals(table.getParameters().get(MetastoreUtil.getPartitionTimelineCachePresenceKey()), "true");
     for (UpdatePeriod period : Lists.newArrayList(MINUTELY, HOURLY, DAILY, MONTHLY, YEARLY, QUARTERLY)) {
@@ -583,7 +583,7 @@ public class CubeTestSetup {
 
   private void createCubeCheapFactPartitions(CubeMetastoreClient client) throws HiveException, LensException {
     String factName = "cheapFact";
-    CubeFactTable fact = client.getFactTable(factName);
+    CubeFactTable fact = (CubeFactTable) client.getCubeFact(factName);
     // Add all hourly partitions for two days
     Calendar cal = Calendar.getInstance();
     cal.setTime(TWODAYS_BACK);
@@ -615,7 +615,7 @@ public class CubeTestSetup {
 
   private void createTestFact2Partitions(CubeMetastoreClient client) throws Exception {
     String factName = "testFact2";
-    CubeFactTable fact = client.getFactTable(factName);
+    CubeFactTable fact = (CubeFactTable) client.getCubeFact(factName);
     // Add all hourly partitions for two days
     Calendar cal = Calendar.getInstance();
     cal.setTime(TWODAYS_BACK);
@@ -703,7 +703,7 @@ public class CubeTestSetup {
 
   private void createTestFact2RawPartitions(CubeMetastoreClient client) throws HiveException, LensException {
     String factName = "testFact2_raw";
-    CubeFactTable fact2 = client.getFactTable(factName);
+    CubeFactTable fact2 = (CubeFactTable) client.getCubeFact(factName);
     // Add all hourly partitions for two days
     Calendar cal = Calendar.getInstance();
     cal.setTime(TWODAYS_BACK);
@@ -785,7 +785,8 @@ public class CubeTestSetup {
 //        bw.write(ToXMLString.toString(JAXBUtils.xCubeFromHiveCube(cubeInterface)));
 //      }
 //    }
-    for (CubeFactTable cubeFactTable : client.getAllFacts()) {
+    for (FactTable factTable : client.getAllFacts()) {
+      CubeFactTable cubeFactTable = (CubeFactTable) factTable;
       try(BufferedWriter bw = new BufferedWriter(new FileWriter(getClass()
           .getResource("/schema/facts").getPath()+"/"+cubeFactTable.getName()+".xml"))) {
         bw.write(ToXMLString.toString(client.getXFactTable(cubeFactTable)));
@@ -818,25 +819,25 @@ public class CubeTestSetup {
 
   private void createSummaryPartitions(CubeMetastoreClient client) throws Exception {
     String factName = "summary1";
-    CubeFactTable fact1 = client.getFactTable(factName);
+    CubeFactTable fact1 = (CubeFactTable) client.getCubeFact(factName);
     createPIEParts(client, fact1, c2);
 
     factName = "summary2";
-    CubeFactTable fact2 = client.getFactTable(factName);
+    CubeFactTable fact2 = (CubeFactTable) client.getCubeFact(factName);
     createPIEParts(client, fact2, c2);
 
     factName = "summary3";
-    CubeFactTable fact3 = client.getFactTable(factName);
+    CubeFactTable fact3 = (CubeFactTable) client.getCubeFact(factName);
     createPIEParts(client, fact3, c2);
 
 
     factName = "summary4";
-    CubeFactTable fact4 = client.getFactTable(factName);
+    CubeFactTable fact4 = (CubeFactTable) client.getCubeFact(factName);
     createPIEParts(client, fact4, c2);
   }
   private void createBaseCubeFactPartitions(CubeMetastoreClient client) throws HiveException, LensException {
     String factName = "testFact5_RAW_BASE";
-    CubeFactTable fact = client.getFactTable(factName);
+    CubeFactTable fact = (CubeFactTable) client.getCubeFact(factName);
     // Add all hourly partitions for two days
     Calendar cal = Calendar.getInstance();
     cal.setTime(TWODAYS_BACK);

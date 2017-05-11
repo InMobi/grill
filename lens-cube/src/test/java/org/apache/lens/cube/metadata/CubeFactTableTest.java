@@ -69,7 +69,7 @@ public class CubeFactTableTest {
 
     when(cubeFactTable.getProperties()).thenReturn(properties);
 
-    when(cubeFactTable.getDateFromProperty(anyString(), anyBoolean(), anyBoolean())).thenCallRealMethod();
+    when(MetastoreUtil.getDateFromProperty(properties.get(anyString()), anyBoolean(), anyBoolean())).thenCallRealMethod();
 
     when(cubeFactTable.getRelativeStartTime()).thenCallRealMethod();
     when(cubeFactTable.getAbsoluteStartTime()).thenCallRealMethod();

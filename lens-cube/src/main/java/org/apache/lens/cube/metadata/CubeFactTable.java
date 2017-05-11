@@ -372,12 +372,28 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
     getProperties().put(MetastoreConstants.FACT_AGGREGATED_PROPERTY, Boolean.toString(isAggregated));
   }
 
+  @Override
+  public boolean isVirtualFact() {
+    return false;
+  }
+
+  @Override
+  public String getStorageFactName() {
+    return this.getName();
+  }
+
+  public String getTablePrefix(String storage, UpdatePeriod updatePeriod) {
+    return storagePrefixUpdatePeriodMap.get(storage).get(updatePeriod);
+  }
+
   public Date getAbsoluteStartTime() {
-    return getDateFromProperty(MetastoreConstants.FACT_ABSOLUTE_START_TIME, false, true);
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME),
+      false, true);
   }
 
   public Date getRelativeStartTime() {
-    return getDateFromProperty(MetastoreConstants.FACT_RELATIVE_START_TIME, true, true);
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_RELATIVE_START_TIME),
+      true, true);
   }
 
   public Date getStartTime() {
@@ -385,18 +401,17 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
   }
 
   public Date getAbsoluteEndTime() {
-    return getDateFromProperty(MetastoreConstants.FACT_ABSOLUTE_END_TIME, false, false);
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_END_TIME),
+      false, false);
   }
 
   public Date getRelativeEndTime() {
-    return getDateFromProperty(MetastoreConstants.FACT_RELATIVE_END_TIME, true, false);
+    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_RELATIVE_END_TIME),
+      true, false);
   }
 
   public Date getEndTime() {
     return Collections.min(Lists.newArrayList(getRelativeEndTime(), getAbsoluteEndTime()));
   }
 
-  public String getTablePrefix(String storage, UpdatePeriod updatePeriod) {
-    return storagePrefixUpdatePeriodMap.get(storage).get(updatePeriod);
-  }
 }
