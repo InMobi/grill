@@ -139,7 +139,7 @@ public class StorageCandidateHQLContext extends DimHQLContext {
       whereStringBuilder = new StringBuilder();
     }
 
-    if(this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER) != null) {
+    if (this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER) != null) {
       appendWhereClause(whereStringBuilder,
         this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER), whereString != null);
     }

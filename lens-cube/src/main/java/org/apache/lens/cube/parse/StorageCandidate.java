@@ -18,7 +18,6 @@
  */
 package org.apache.lens.cube.parse;
 
-import static org.apache.lens.cube.metadata.MetastoreConstants.VIRTUAL_FACT_FILTER;
 import static java.util.Comparator.naturalOrder;
 
 import static org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
