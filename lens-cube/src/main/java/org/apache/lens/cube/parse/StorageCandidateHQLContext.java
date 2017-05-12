@@ -131,8 +131,25 @@ public class StorageCandidateHQLContext extends DimHQLContext {
   protected void setMissingExpressions() throws LensException {
     setFrom(getFromTable());
     String whereString = genWhereClauseWithDimPartitions(getWhere());
-    setWhere(StorageUtil.joinWithAnd(this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER) != null
-      ? this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER) :null, whereString));
+    StringBuilder whereStringBuilder;
+
+    if (whereString != null) {
+      whereStringBuilder = new StringBuilder(whereString);
+    } else {
+      whereStringBuilder = new StringBuilder();
+    }
+
+    if(this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER) != null) {
+      appendWhereClause(whereStringBuilder,
+        this.storageCandidate.getFact().getProperties().get(VIRTUAL_FACT_FILTER), whereString != null);
+    }
+
+    if (whereStringBuilder.length() == 0) {
+      setWhere(null);
+    }else {
+      setWhere(whereStringBuilder.toString());
+    }
+
     if (isRoot()) {
       if (Objects.equals(getStorageCandidate(), getCubeQueryContext().getPickedCandidate())) {
         updateAnswerableSelectColumns();

@@ -83,18 +83,6 @@ public final class StorageUtil {
     return sb.toString();
   }
 
-  public static String joinWithAnd(String... clauses) {
-    StringBuilder sb = new StringBuilder();
-    String sep = "((";
-    for (String clause : clauses) {
-      if (clause != null && !clause.isEmpty()) {
-        sb.append(sep).append(clause);
-        sep = ") AND (";
-      }
-    }
-    return sb.append(sep.equals("((") ? "" : "))").toString();
-  }
-
   /**
    * Get minimal set of storages which cover the queried partitions
    *
