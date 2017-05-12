@@ -18,11 +18,12 @@
  */
 package org.apache.lens.cube.metadata;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
-
-import com.google.common.collect.Lists;
 
 public interface FactTable extends Named {
 

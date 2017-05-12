@@ -20,13 +20,9 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
-import org.apache.lens.server.api.error.LensException;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Table;
 
-import com.google.common.collect.Lists;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 

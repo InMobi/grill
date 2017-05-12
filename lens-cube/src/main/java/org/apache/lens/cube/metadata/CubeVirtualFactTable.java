@@ -78,6 +78,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   @Override
   protected void addProperties() {
     getProperties().put(MetastoreConstants.TABLE_TYPE_KEY, getTableType().name());
+    getProperties().put(MetastoreUtil.getSourceFactNameKey(this.getName()), this.sourceCubeFactTable.getName());
     if (virtualFactWeight.isPresent()) {
       getProperties().put(MetastoreUtil.getCubeTableWeightKey(this.getName()), String.valueOf(virtualFactWeight.get()));
     }
