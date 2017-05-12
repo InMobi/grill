@@ -103,35 +103,34 @@ class QueriedPhraseContext extends TracksQueriedColumns implements TrackQueriedC
   }
 
   /**
-   * @param cubeQl
-   * @param sc
+   * @param candidate
    * @return
    * @throws LensException
    */
-  public boolean isEvaluable(CubeQueryContext cubeQl, StorageCandidate sc) throws LensException {
+  public boolean isEvaluable(StorageCandidate candidate) throws LensException {
     // all measures of the queried phrase should be present
     for (String msr : queriedMsrs) {
-      if (!checkForColumnExistsAndValidForRange(sc, msr, cubeQl)) {
+      if (!candidate.isColumnPresentAndValidForRange(msr)) {
         return false;
       }
     }
     // all expression columns should be evaluable
     for (String exprCol : queriedExprColumns) {
-      if (!cubeQl.getExprCtx().isEvaluable(exprCol, sc)) {
-        log.info("expression {} is not evaluable in fact table:{}", expr, sc);
+      if (!candidate.isExpressionEvaluable(exprCol)) {
+        log.info("expression {} is not evaluable in fact table:{}", expr, candidate);
         return false;
       }
     }
     // all dim-attributes should be present.
     for (String col : queriedDimAttrs) {
-      if (!sc.getColumns().contains(col.toLowerCase())) {
+      if (!candidate.getColumns().contains(col.toLowerCase())) {
         // check if it available as reference
-        if (!cubeQl.getDeNormCtx().addRefUsage(cubeQl, sc, col, cubeQl.getCube().getName())) {
-          log.info("column {} is not available in fact table:{} ", col, sc);
+        if (!candidate.isDimAttributeEvaluable(col)) {
+          log.info("column {} is not available in fact table:{} ", col, candidate);
           return false;
         }
-      } else if (!isFactColumnValidForRange(cubeQl, sc, col)) {
-        log.info("column {} is not available in range queried in fact {}", col, sc);
+      } else if (!candidate.isColumnValidForRange(col)) {
+        log.info("column {} is not available in range queried in fact {}", col, candidate);
         return false;
       }
     }

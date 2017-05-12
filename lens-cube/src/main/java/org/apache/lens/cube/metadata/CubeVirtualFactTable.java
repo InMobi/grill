@@ -158,7 +158,6 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
     return Collections.min(Lists.newArrayList(getRelativeEndTime(), getAbsoluteEndTime()));
   }
 
-
   @Override
   public boolean isVirtualFact() {
     return true;

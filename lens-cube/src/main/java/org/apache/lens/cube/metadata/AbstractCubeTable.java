@@ -178,23 +178,6 @@ public abstract class AbstractCubeTable implements Named {
     }
     return true;
   }
-//
-//  public Date getDateFromProperty(String propKey, boolean relative, boolean start) {
-//    String prop = getProperties().get(propKey);
-//    try {
-//      if (StringUtils.isNotBlank(prop)) {
-//        if (relative) {
-//          return DateUtil.resolveRelativeDate(prop, now());
-//        } else {
-//          return DateUtil.resolveAbsoluteDate(prop);
-//        }
-//      }
-//    } catch (LensException e) {
-//      log.error("unable to parse {} {} date: {}", relative ? "relative" : "absolute", start ? "start" : "end", prop);
-//    }
-//    return start ? DateUtil.MIN_DATE : DateUtil.MAX_DATE;
-//  }
-
 
   @Override
   public String toString() {
