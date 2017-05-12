@@ -19,6 +19,8 @@
 package org.apache.lens.cube.parse;
 
 import static org.apache.lens.cube.metadata.DateUtil.WSPACE;
+import static org.apache.lens.cube.metadata.DateUtil.relativeToAbsolute;
+import static org.apache.lens.cube.metadata.MetastoreConstants.VIRTUAL_FACT_FILTER;
 
 import java.util.*;
 import java.util.regex.Matcher;
