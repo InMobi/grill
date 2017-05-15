@@ -53,6 +53,8 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.thrift.TException;
 
+import com.google.common.base.Optional;
+
 import org.jvnet.jaxb2_commons.lang.Equals;
 import org.jvnet.jaxb2_commons.lang.HashCode;
 import org.jvnet.jaxb2_commons.lang.ToString;
@@ -379,7 +381,7 @@ public class CubeMetastoreClient {
     Map<String, String> properties) throws LensException {
     FactTable sourceFact = getCubeFact(sourceFactName);
 
-    com.google.common.base.Optional<Double> optionalWeight = com.google.common.base.Optional.fromNullable(weight);
+    Optional<Double> optionalWeight = Optional.fromNullable(weight);
 
     CubeVirtualFactTable factTable = new CubeVirtualFactTable(cubeName, virtualFactName,
       optionalWeight, properties, sourceFact);
@@ -2206,11 +2208,11 @@ public class CubeMetastoreClient {
         for (String table : getAllHiveTableNames()) {
           FactTable fact = getCubeFact(table, false);
           if (fact != null) {
-            if(fact.getProperties().get(getSourceFactNameKey(fact.getName())) != null){ //is virtual fact
-              if(includeVirtualFacts) {
+            if (fact.getProperties().get(getSourceFactNameKey(fact.getName())) != null) { //is virtual fact
+              if (includeVirtualFacts) {
                 facts.add(fact);
               }
-            }else {
+            } else {
               facts.add(fact);
             }
           }

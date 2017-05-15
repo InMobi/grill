@@ -835,7 +835,7 @@ public class CubeTestSetup {
 //        bw.write(ToXMLString.toString(JAXBUtils.xCubeFromHiveCube(cubeInterface)));
 //      }
 //    }
-    for (FactTable factTable : client.getAllFacts(false)) {
+    for (FactTable factTable : client.getAllFacts()) {
       CubeFactTable cubeFactTable = (CubeFactTable) factTable;
       try(BufferedWriter bw = new BufferedWriter(new FileWriter(getClass()
           .getResource("/schema/facts").getPath()+"/"+cubeFactTable.getName()+".xml"))) {
