@@ -205,13 +205,4 @@ public abstract class AbstractCubeTable implements Named {
     return new Date();
   }
 
-
-  public static String getFactCubeName(String factName, Map<String, String> props) {
-    return props.get(MetastoreUtil.getFactCubeNameKey(factName));
-  }
-
-  protected static void addCubeNames(String factName, Map<String, String> props, String cubeName) {
-    props.put(MetastoreUtil.getFactCubeNameKey(factName), cubeName);
-  }
-
 }

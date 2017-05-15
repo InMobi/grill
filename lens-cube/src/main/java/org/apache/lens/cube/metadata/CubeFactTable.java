@@ -44,7 +44,7 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
   public CubeFactTable(Table hiveTable) {
     super(hiveTable);
     this.storageUpdatePeriods = getUpdatePeriods(getName(), getProperties());
-    this.cubeName = getFactCubeName(getName(), getProperties());
+    this.cubeName = this.getProperties().get(MetastoreUtil.getFactCubeNameKey(getName()));
     this.storagePrefixUpdatePeriodMap = getUpdatePeriodMap(getName(), getProperties());
   }
 
@@ -88,7 +88,7 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
   @Override
   protected void addProperties() {
     super.addProperties();
-    addCubeNames(getName(), getProperties(), cubeName);
+    this.getProperties().put(MetastoreUtil.getFactCubeNameKey(getName()), cubeName);
     addUpdatePeriodProperies(getName(), getProperties(), storageUpdatePeriods);
     addStorageTableProperties(getName(), getProperties(), storagePrefixUpdatePeriodMap);
   }
@@ -366,7 +366,7 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
    */
   public void alterCubeName(String cubeName) {
     this.cubeName = cubeName;
-    addCubeNames(getName(), getProperties(), cubeName);
+    this.getProperties().put(MetastoreUtil.getFactCubeNameKey(getName()), cubeName);
   }
 
   public String getDataCompletenessTag() {
