@@ -19,19 +19,12 @@
 package org.apache.lens.cube.parse;
 
 import java.util.*;
-
-import org.apache.lens.cube.metadata.FactTable;
-import org.apache.lens.cube.metadata.MetastoreConstants;
-import org.apache.lens.cube.metadata.MetastoreUtil;
-import org.apache.lens.cube.metadata.TimeRange;
 import org.apache.lens.server.api.error.LensException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.ql.parse.ASTNode;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Data

@@ -53,15 +53,15 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.thrift.TException;
 
-import com.google.common.base.Optional;
-
 import org.jvnet.jaxb2_commons.lang.Equals;
 import org.jvnet.jaxb2_commons.lang.HashCode;
 import org.jvnet.jaxb2_commons.lang.ToString;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
