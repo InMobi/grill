@@ -271,8 +271,8 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
   public Set<String> getValidColumns() {
     String validColsStr =
       MetastoreUtil.getNamedStringValue(getProperties(), MetastoreUtil.getValidColumnsKey(getName()));
-    return validColsStr == null ? null :
-      new HashSet<>(Arrays.asList(StringUtils.split(validColsStr.toLowerCase(), ',')));
+    return validColsStr == null ?
+      null : new HashSet<>(Arrays.asList(StringUtils.split(validColsStr.toLowerCase(), ',')));
   }
 
   /**

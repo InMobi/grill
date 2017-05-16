@@ -27,7 +27,6 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import com.google.common.base.Optional;
 
 import com.google.common.collect.Lists;
-import io.netty.util.internal.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 
