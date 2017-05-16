@@ -161,6 +161,6 @@ public interface FactTable extends Named {
    *
    * @return Storage name of the fact
    */
-  public String getStorageFactName();
+  public String getSourceFactName();
 
 }

@@ -180,7 +180,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
       throw new IllegalArgumentException("Cube,fact and storageName should be non null");
     }
     this.storageName = storageName;
-    this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(getStorageFactName(fact), storageName);
+    this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(fact.getSourceFactName(), storageName);
     this.name = fact.getName();
     this.processTimePartCol = getConf().get(CubeQueryConfUtil.PROCESS_TIME_PART_COL);
     String formatStr = getConf().get(CubeQueryConfUtil.PART_WHERE_CLAUSE_DATE_FORMAT);
@@ -195,11 +195,6 @@ public class StorageCandidate implements Candidate, CandidateTable {
     isStorageTblsAtUpdatePeriodLevel = storageTblNames.size() > 1
       || !storageTblNames.iterator().next().equalsIgnoreCase(storageTable);
     setStorageStartAndEndDate();
-  }
-
-  public static String getStorageFactName(FactTable fact) {
-    return fact.getProperties().get(MetastoreUtil.getSourceFactNameKey(fact.getName()))!= null
-      ? ((CubeVirtualFactTable) fact).getSourceCubeFactTable().getName() : fact.getName();
   }
 
   String getTimeRangeWhereClasue(TimeRangeWriter rangeWriter, TimeRange range)
@@ -256,8 +251,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
     List<Date> startDates = new ArrayList<>();
     List<Date> endDates = new ArrayList<>();
     for (String storageTablePrefix : getValidStorageTableNames()) {
-      startDates.add(getCubeMetastoreClient().getStorageTableStartDate(storageTablePrefix, getStorageFactName(fact)));
-      endDates.add(getCubeMetastoreClient().getStorageTableEndDate(storageTablePrefix, getStorageFactName(fact)));
+      startDates.add(getCubeMetastoreClient().getStorageTableStartDate(storageTablePrefix, fact.getSourceFactName()));
+      endDates.add(getCubeMetastoreClient().getStorageTableEndDate(storageTablePrefix, fact.getSourceFactName()));
     }
     this.startTime = Collections.min(startDates);
     this.endTime = Collections.max(endDates);

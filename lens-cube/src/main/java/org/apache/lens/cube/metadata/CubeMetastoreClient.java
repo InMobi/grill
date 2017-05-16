@@ -128,7 +128,7 @@ public class CubeMetastoreClient {
 
   /** extract storage name from fact and storage table name. String operation */
   private String extractStorageName(FactTable fact, String storageTableName) throws LensException {
-    int ind = storageTableName.lastIndexOf(fact.getStorageFactName());
+    int ind = storageTableName.lastIndexOf(fact.getSourceFactName());
     if (ind <= 0) {
       throw new LensException("storageTable: " + storageTableName + ", does not belong to fact: " + fact.getName());
     }
@@ -1427,7 +1427,7 @@ public class CubeMetastoreClient {
   public boolean factPartitionExists(FactTable fact, FactPartition part, String storageTableName)
     throws HiveException, LensException {
     String storage = extractStorageName(fact, storageTableName);
-    return partitionTimelineCache.partitionTimeExists(fact.getStorageFactName(), storage,
+    return partitionTimelineCache.partitionTimeExists(fact.getSourceFactName(), storage,
       part.getPeriod(), part.getPartCol(), part.getPartSpec());
   }
 
@@ -2394,7 +2394,7 @@ public class CubeMetastoreClient {
     Set<String> uniqueStorageTables = new HashSet<>();
 
     for (UpdatePeriod updatePeriod : factTable.getUpdatePeriods().get(storage)) {
-      String factName = factTable.getStorageFactName();
+      String factName = factTable.getSourceFactName();
       uniqueStorageTables.add(getStorageTableName(factName, storage, updatePeriod));
     }
     return uniqueStorageTables;

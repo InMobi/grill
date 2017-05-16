@@ -20,12 +20,14 @@ package org.apache.lens.cube.metadata;
 
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Table;
 
 import com.google.common.base.Optional;
 
 import com.google.common.collect.Lists;
+import io.netty.util.internal.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,12 +45,11 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
     COLUMNS.add(new FieldSchema("dummy", "string", "dummy column"));
   }
 
-  public CubeVirtualFactTable(Table hiveTable, CubeFactTable sourceCubeFactTable) {
+  public CubeVirtualFactTable(Table hiveTable, FactTable sourceCubeFactTable) {
     super(hiveTable);
     this.cubeName = this.getProperties().get(MetastoreUtil.getFactCubeNameKey(getName()));
     this.sourceCubeFactTable = sourceCubeFactTable;
 
-    this.virtualFactWeight = Optional.absent();
     String wtStr = getProperties().get(MetastoreUtil.getCubeTableWeightKey(getName()));
     if (wtStr != null) {
       this.virtualFactWeight = Optional.of(Double.parseDouble(wtStr));
@@ -131,13 +132,21 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   }
 
   public Date getAbsoluteStartTime() {
-    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME),
-      false, true);
+    String absoluteStartTime = this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME);
+    Date absoluteDate = null;
+    if(StringUtils.isNotBlank(absoluteStartTime)) {
+      absoluteDate = MetastoreUtil.getDateFromProperty(absoluteStartTime, false, true);
+    }
+    return absoluteDate == null ? this.sourceCubeFactTable.getAbsoluteStartTime() : absoluteDate;
   }
 
   public Date getRelativeStartTime() {
-    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_RELATIVE_START_TIME),
-      true, true);
+    String relativeStartTime = this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME);
+    Date relativeDate = null;
+    if(StringUtils.isNotBlank(relativeStartTime)) {
+      relativeDate = MetastoreUtil.getDateFromProperty(relativeStartTime, true, true);
+    }
+    return relativeDate == null ? this.sourceCubeFactTable.getRelativeStartTime() : relativeDate;
   }
 
   public Date getStartTime() {
@@ -145,13 +154,21 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   }
 
   public Date getAbsoluteEndTime() {
-    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_END_TIME),
-      false, false);
+    String absoluteEndTime = this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_END_TIME);
+    Date absoluteDate = null;
+    if(StringUtils.isNotBlank(absoluteEndTime)) {
+      absoluteDate = MetastoreUtil.getDateFromProperty(absoluteEndTime, false, false);
+    }
+    return absoluteDate == null ? this.sourceCubeFactTable.getAbsoluteEndTime() : absoluteDate;
   }
 
   public Date getRelativeEndTime() {
-    return MetastoreUtil.getDateFromProperty(this.getProperties().get(MetastoreConstants.FACT_RELATIVE_END_TIME),
-      true, false);
+    String relativeEndTime = this.getProperties().get(MetastoreConstants.FACT_RELATIVE_END_TIME);
+    Date relativeDate = null;
+    if(StringUtils.isNotBlank(relativeEndTime)) {
+      relativeDate = MetastoreUtil.getDateFromProperty(relativeEndTime, true, false);
+    }
+    return relativeDate == null ? this.sourceCubeFactTable.getRelativeEndTime() : relativeDate;
   }
 
   public Date getEndTime() {
@@ -164,7 +181,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   }
 
   @Override
-  public String getStorageFactName() {
+  public String getSourceFactName() {
     return this.sourceCubeFactTable.getName();
   }
 }

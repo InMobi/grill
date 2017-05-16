@@ -388,7 +388,7 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
   }
 
   @Override
-  public String getStorageFactName() {
+  public String getSourceFactName() {
     return this.getName();
   }
 
