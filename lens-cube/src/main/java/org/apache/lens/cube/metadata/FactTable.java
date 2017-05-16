@@ -70,7 +70,7 @@ public interface FactTable extends Named {
    *
    * @return list of column names
    */
-  public List<String> getValidColumns();
+  public Set<String> getValidColumns();
 
   /**
    * Weight of the fact

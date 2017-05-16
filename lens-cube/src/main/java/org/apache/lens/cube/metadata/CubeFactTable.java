@@ -77,7 +77,7 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
   }
 
   public boolean hasColumn(String column) {
-    List<String> validColumns = getValidColumns();
+    Set<String> validColumns = getValidColumns();
     if (validColumns != null) {
       return validColumns.contains(column);
     } else {
@@ -268,10 +268,10 @@ public class CubeFactTable extends AbstractCubeTable implements FactTable {
    *
    * @return
    */
-  public List<String> getValidColumns() {
+  public Set<String> getValidColumns() {
     String validColsStr =
       MetastoreUtil.getNamedStringValue(getProperties(), MetastoreUtil.getValidColumnsKey(getName()));
-    return validColsStr == null ? null : Arrays.asList(StringUtils.split(validColsStr.toLowerCase(), ','));
+    return validColsStr == null ? null : new HashSet<>(Arrays.asList(StringUtils.split(validColsStr.toLowerCase(), ',')));
   }
 
   /**
