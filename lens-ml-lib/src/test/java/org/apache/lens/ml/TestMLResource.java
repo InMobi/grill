@@ -37,7 +37,7 @@ import org.apache.lens.ml.impl.MLTask;
 import org.apache.lens.ml.impl.MLUtils;
 import org.apache.lens.ml.server.MLApp;
 import org.apache.lens.ml.server.MLServiceResource;
-import org.apache.lens.server.LensJerseyTest;
+//import org.apache.lens.server.LensJerseyTest;
 import org.apache.lens.server.api.LensConfConstants;
 import org.apache.lens.server.query.QueryServiceResource;
 import org.apache.lens.server.session.SessionResource;
@@ -52,40 +52,44 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+//import org.testng.annotations.AfterTest;
+//import org.testng.annotations.BeforeMethod;
+//import org.testng.annotations.BeforeTest;
+//import org.testng.annotations.Test;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Test
-public class TestMLResource extends LensJerseyTest {
+//@Test
+public class TestMLResource { //extends LensJerseyTest {
 
   private static final String TEST_DB = "default";
 
   private WebTarget mlTarget;
   private LensMLClient mlClient;
 
-  @Override
+  protected int getTestPort() {
+    return 10058;
+  }
+
+  //@Override
   protected Application configure() {
     return new MLApp(SessionResource.class, QueryServiceResource.class);
   }
 
-  @Override
+  //@Override
   protected void configureClient(ClientConfig config) {
     config.register(MultiPartFeature.class);
   }
 
-  @Override
+  //@Override
   protected URI getBaseUri() {
     return UriBuilder.fromUri("http://localhost/").port(getTestPort()).path("/lensapi").build();
   }
 
-  @BeforeTest
+  //@BeforeTest
   public void setUp() throws Exception {
-    super.setUp();
+    //super.setUp();
     Hive hive = Hive.get(new HiveConf());
     Database db = new Database();
     db.setName(TEST_DB);
@@ -98,9 +102,9 @@ public class TestMLResource extends LensJerseyTest {
     mlClient = new LensMLClient(client);
   }
 
-  @AfterTest
+  //@AfterTest
   public void tearDown() throws Exception {
-    super.tearDown();
+    //super.tearDown();
     Hive hive = Hive.get(new HiveConf());
 
     try {
@@ -112,18 +116,18 @@ public class TestMLResource extends LensJerseyTest {
     mlClient.close();
   }
 
-  @BeforeMethod
+  //@BeforeMethod
   public void setMLTarget() {
-    mlTarget = target().path("ml");
+    //mlTarget = target().path("ml");
   }
 
-  @Test
+  //@Test
   public void testMLResourceUp() throws Exception {
     String mlUpMsg = mlTarget.request().get(String.class);
     Assert.assertEquals(mlUpMsg, MLServiceResource.ML_UP_MESSAGE);
   }
 
-  @Test
+  //@Test
   public void testGetAlgos() throws Exception {
     List<String> algoNames = mlClient.getAlgorithms();
     Assert.assertNotNull(algoNames);
@@ -144,7 +148,7 @@ public class TestMLResource extends LensJerseyTest {
         MLUtils.getAlgoName(DecisionTreeAlgo.class));
   }
 
-  @Test
+  //@Test
   public void testGetAlgoParams() throws Exception {
     Map<String, String> params = mlClient.getAlgoParamDescription(MLUtils
         .getAlgoName(DecisionTreeAlgo.class));
@@ -156,7 +160,7 @@ public class TestMLResource extends LensJerseyTest {
     }
   }
 
-  @Test
+  //@Test
   public void trainAndEval() throws Exception {
     log.info("Starting train & eval");
     final String algoName = MLUtils.getAlgoName(NaiveBayesAlgo.class);

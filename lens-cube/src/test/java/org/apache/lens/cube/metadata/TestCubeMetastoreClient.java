@@ -1785,6 +1785,7 @@ public class TestCubeMetastoreClient {
     assertTimeline(endsAndHolesPartitionTimeline, storeAllPartitionTimeline, updatePeriod,
       getDateWithOffset(HOURLY, firstOffset), getDateWithOffset(HOURLY, latestOffset), holeDates);
   }
+
   private void assertTimeline(EndsAndHolesPartitionTimeline endsAndHolesPartitionTimeline,
     StoreAllPartitionTimeline storeAllPartitionTimeline, UpdatePeriod updatePeriod,
     Date first, Date latest, Date... holes) throws LensException {

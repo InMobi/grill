@@ -1168,7 +1168,8 @@ public class ColumnarSQLRewriter implements QueryRewriter {
     } else {
       finalJoinClause = factNameAndAlias;
     }
-    rewrittenQuery.append("select ").append(selecttree).append(" from ");
+    //Replace backquotes with double quotes
+    rewrittenQuery.append("select ").append(selecttree.replaceAll("`", "\"")).append(" from ");
     if (factInLineQuery.length() != 0) {
       finalJoinClause = finalJoinClause.substring(finalJoinClause.indexOf(" "));
       rewrittenQuery.append(factInLineQuery);
