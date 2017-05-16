@@ -134,7 +134,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   public Date getAbsoluteStartTime() {
     String absoluteStartTime = this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME);
     Date absoluteDate = null;
-    if(StringUtils.isNotBlank(absoluteStartTime)) {
+    if (StringUtils.isNotBlank(absoluteStartTime)) {
       absoluteDate = MetastoreUtil.getDateFromProperty(absoluteStartTime, false, true);
     }
     return absoluteDate == null ? this.sourceCubeFactTable.getAbsoluteStartTime() : absoluteDate;
@@ -143,7 +143,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   public Date getRelativeStartTime() {
     String relativeStartTime = this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_START_TIME);
     Date relativeDate = null;
-    if(StringUtils.isNotBlank(relativeStartTime)) {
+    if (StringUtils.isNotBlank(relativeStartTime)) {
       relativeDate = MetastoreUtil.getDateFromProperty(relativeStartTime, true, true);
     }
     return relativeDate == null ? this.sourceCubeFactTable.getRelativeStartTime() : relativeDate;
@@ -156,7 +156,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   public Date getAbsoluteEndTime() {
     String absoluteEndTime = this.getProperties().get(MetastoreConstants.FACT_ABSOLUTE_END_TIME);
     Date absoluteDate = null;
-    if(StringUtils.isNotBlank(absoluteEndTime)) {
+    if (StringUtils.isNotBlank(absoluteEndTime)) {
       absoluteDate = MetastoreUtil.getDateFromProperty(absoluteEndTime, false, false);
     }
     return absoluteDate == null ? this.sourceCubeFactTable.getAbsoluteEndTime() : absoluteDate;
@@ -165,7 +165,7 @@ public class CubeVirtualFactTable extends AbstractCubeTable implements FactTable
   public Date getRelativeEndTime() {
     String relativeEndTime = this.getProperties().get(MetastoreConstants.FACT_RELATIVE_END_TIME);
     Date relativeDate = null;
-    if(StringUtils.isNotBlank(relativeEndTime)) {
+    if (StringUtils.isNotBlank(relativeEndTime)) {
       relativeDate = MetastoreUtil.getDateFromProperty(relativeEndTime, true, false);
     }
     return relativeDate == null ? this.sourceCubeFactTable.getRelativeEndTime() : relativeDate;
