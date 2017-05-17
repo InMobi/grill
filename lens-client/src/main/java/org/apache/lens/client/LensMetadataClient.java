@@ -565,6 +565,14 @@ public class LensMetadataClient {
       .delete());
   }
 
+  public APIResult dropAllVirtualFactTables() {
+    WebTarget target = getMetastoreWebTarget();
+    return translate(target.path("virtualfacts")
+      .queryParam("sessionid", this.connection.getSessionHandle())
+      .request(MediaType.APPLICATION_XML)
+      .delete());
+  }
+
   public APIResult dropSegmentation(String segName) {
     WebTarget target = getMetastoreWebTarget();
     return translate(target.path("segmentations").path(segName)

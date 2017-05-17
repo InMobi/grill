@@ -486,8 +486,12 @@ public class LensClient implements AutoCloseable {
     return mc.dropFactTable(fact, cascade);
   }
 
-  public APIResult dropVirtualFactTable(String fact, boolean cascade) {
+  public APIResult dropVirtualFactTable(String fact) {
     return mc.dropVirtualFactTable(fact);
+  }
+
+  public APIResult dropAllVirtualFacts() {
+    return mc.dropAllVirtualFactTables();
   }
 
   public APIResult dropCube(String cube) {

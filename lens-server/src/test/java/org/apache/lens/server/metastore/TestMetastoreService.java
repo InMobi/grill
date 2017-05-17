@@ -2384,7 +2384,7 @@ public class TestMetastoreService extends LensJerseyTest {
       assertSuccess(result);
 
       // Get all virtual fact names, this should contain the virtual fact table
-      StringList virtualFactNames = target().path("metastore/virtualfacts")
+      StringList virtualFactNames = target().path("metastore/facts")
         .queryParam("sessionid", lensSessionId).request(mediaType).get(StringList.class);
       assertTrue(virtualFactNames.getElements().contains(table.toLowerCase()));
 

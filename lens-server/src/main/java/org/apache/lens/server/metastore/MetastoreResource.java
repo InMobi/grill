@@ -759,16 +759,13 @@ public class MetastoreResource {
    * Delete all virtual fact tables
    *
    * @param sessionid The sessionid in which user is working
-   * @param cascade   if set to true, all the underlying tables will be dropped, if set to false, only the virtual fact
-   *                  table will be dropped
    * @return APIResult with state {@link Status#SUCCEEDED} in case of successful delete. APIResult with state {@link
    * Status#FAILED} in case of delete failure. APIResult with state {@link Status#PARTIAL} in case of partial delete.
    */
   @DELETE
   @Path("virtualfacts")
-  public APIResult deleteAllVirtualFacts(@QueryParam("sessionid") LensSessionHandle sessionid,
-                                  @DefaultValue("false") @QueryParam("cascade") boolean cascade) throws LensException {
-    return Entity.VIRTUALFACT.deleteAll(sessionid, cascade);
+  public APIResult deleteAllVirtualFacts(@QueryParam("sessionid") LensSessionHandle sessionid) throws LensException {
+    return Entity.VIRTUALFACT.deleteAll(sessionid, false);
   }
 
   /**
