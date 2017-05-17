@@ -461,6 +461,22 @@ public class LensMetadataClient {
     }
   }
 
+  public APIResult createVirtualFactTable(XVirtualFactTable f) {
+    WebTarget target = getMetastoreWebTarget();
+    return translate(target.path("virtualfacts")
+      .queryParam("sessionid", this.connection.getSessionHandle())
+      .request(MediaType.APPLICATION_XML)
+      .post(Entity.xml(new GenericEntity<JAXBElement<XVirtualFactTable>>(objFact.createXVirtualFactTable(f)){})));
+  }
+
+  public APIResult createVirtualFactTable(String vfactSpec) {
+    try {
+      return createVirtualFactTable(this.<XVirtualFactTable>readFromXML(vfactSpec));
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
+    }
+  }
+
   public APIResult createSegmentation(XSegmentation seg) {
     WebTarget target = getMetastoreWebTarget();
     return translate(target.path("segmentations")
@@ -489,6 +505,22 @@ public class LensMetadataClient {
   public APIResult updateFactTable(String factName, String table) {
     try {
       return updateFactTable(factName, this.<XFactTable>readFromXML(table));
+    } catch (JAXBException | IOException e) {
+      return failureAPIResult(e);
+    }
+  }
+
+  public APIResult updateVirtualFactTable(String factName, XVirtualFactTable table) {
+    WebTarget target = getMetastoreWebTarget();
+    return translate(target.path("virtualfacts").path(factName)
+      .queryParam("sessionid", this.connection.getSessionHandle())
+      .request(MediaType.APPLICATION_XML_TYPE)
+      .put(Entity.xml(new GenericEntity<JAXBElement<XVirtualFactTable>>(objFact.createXVirtualFactTable(table)){})));
+  }
+
+  public APIResult updateVirtualFactTable(String factName, String table) {
+    try {
+      return updateVirtualFactTable(factName, this.<XVirtualFactTable>readFromXML(table));
     } catch (JAXBException | IOException e) {
       return failureAPIResult(e);
     }
@@ -523,6 +555,14 @@ public class LensMetadataClient {
 
   public APIResult dropFactTable(String factName) {
     return dropFactTable(factName, false);
+  }
+
+  public APIResult dropVirtualFactTable(String factName) {
+    WebTarget target = getMetastoreWebTarget();
+    return translate(target.path("virtualfacts").path(factName)
+      .queryParam("sessionid", this.connection.getSessionHandle())
+      .request(MediaType.APPLICATION_XML)
+      .delete());
   }
 
   public APIResult dropSegmentation(String segName) {
