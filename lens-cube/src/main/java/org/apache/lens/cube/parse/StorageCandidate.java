@@ -593,7 +593,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     String sep = "";
     while (rangeParts.isEmpty()) {
       String timeDim = cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(partCol);
-      if(getFact() instanceof CubeFactTable) {
+      if (getFact() instanceof CubeFactTable) {
         if (partColNotSupported && !((CubeFactTable) getFact()).hasColumn(timeDim)) {
           unsupportedTimeDims.add(
             cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(timeRange.getPartitionColumn())

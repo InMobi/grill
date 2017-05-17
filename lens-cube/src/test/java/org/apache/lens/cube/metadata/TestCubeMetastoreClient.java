@@ -1264,14 +1264,16 @@ public class TestCubeMetastoreClient {
       com.google.common.base.Optional.fromNullable(null), virtualFactPropertiesMap, sourceFact);
 
     // create virtual cube fact
-    client.createVirtualFactTable(VIRTUAL_CUBE_NAME, virtualFactName, sourceFactName, null, virtualFactPropertiesMap);
+    client.createVirtualFactTable(VIRTUAL_CUBE_NAME, virtualFactName, sourceFactName, null,
+      virtualFactPropertiesMap);
     assertTrue(client.tableExists(virtualFactName));
     Table virtualTbl = client.getHiveTable(virtualFactName);
     assertTrue(client.isVirtualFactTable(virtualTbl));
     assertTrue(client.isVirtualFactTableForCube(virtualTbl, VIRTUAL_CUBE_NAME));
 
     //get virtual fact
-    assertTrue(client.getAllFacts(client.getCube(VIRTUAL_CUBE_NAME)).get(0).getName().equals(virtualFactName.trim().toLowerCase()));
+    assertTrue(client.getAllFacts(client.getCube(VIRTUAL_CUBE_NAME)).get(0).getName().equals(virtualFactName.trim()
+      .toLowerCase()));
 
     CubeVirtualFactTable actualcubeVirtualFact = (CubeVirtualFactTable) (client.getCubeFact(virtualFactName));
     assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));

@@ -35,7 +35,6 @@ import org.apache.lens.cube.metadata.Storage.LatestPartColumnInfo;
 import org.apache.lens.cube.metadata.timeline.PartitionTimeline;
 import org.apache.lens.cube.metadata.timeline.PartitionTimelineFactory;
 import org.apache.lens.server.api.LensConfConstants;
-import org.apache.lens.server.api.LensErrorInfo;
 import org.apache.lens.server.api.error.LensException;
 import org.apache.lens.server.api.metastore.DataCompletenessChecker;
 import org.apache.lens.server.api.util.LensUtil;
@@ -2757,9 +2756,9 @@ public class CubeMetastoreClient {
 
   public CubeFactTable getCubeFactTable(String factName) throws LensException {
     FactTable factTable = getCubeFact(factName);
-    if(factTable instanceof CubeFactTable) {
+    if (factTable instanceof CubeFactTable) {
       return (CubeFactTable) factTable;
-    }else {
+    } else {
       throw new LensException(new LensException(LensCubeErrorCode.ENTITY_TYPE_NOT_AS_EXPECTED.getLensErrorInfo(),
         factName, "CubeFactTable"));
     }
@@ -2767,9 +2766,9 @@ public class CubeMetastoreClient {
 
   public CubeVirtualFactTable getCubeVirtualFactTable(String factName) throws LensException {
     FactTable factTable = getCubeFact(factName);
-    if(factTable instanceof CubeVirtualFactTable) {
+    if (factTable instanceof CubeVirtualFactTable) {
       return (CubeVirtualFactTable) factTable;
-    }else {
+    } else {
       throw new LensException(new LensException(LensCubeErrorCode.ENTITY_TYPE_NOT_AS_EXPECTED.getLensErrorInfo(),
         factName, "CubeVirtualFactTable"));
     }
