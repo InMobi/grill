@@ -183,7 +183,7 @@ public class MetastoreResource {
     }, VIRTUALFACT {
       @Override
       public List<String> doGetAll(LensSessionHandle sessionid) throws LensException {
-        return getSvc().getAllFactNames(sessionid, null);
+        throw new NotImplementedException();
       }
 
       @Override
@@ -723,20 +723,6 @@ public class MetastoreResource {
     checkSessionId(sessionid);
     return Entity.FACT.getAll(sessionid);
   }
-
-  /**
-   * Get all virtual fact tables in the metastore in the current database
-   *
-   * @param sessionid The sessionid in which user is working
-   * @return StringList consisting of all virtual fact table names
-   */
-  @GET
-  @Path("/virtualfacts")
-  public StringList getAllVirtualFacts(@QueryParam("sessionid") LensSessionHandle sessionid) throws LensException {
-    checkSessionId(sessionid);
-    return Entity.VIRTUALFACT.getAll(sessionid);
-  }
-
 
   /**
    * Get all segmentations in the current database

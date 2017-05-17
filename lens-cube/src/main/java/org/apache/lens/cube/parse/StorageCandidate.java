@@ -577,7 +577,6 @@ public class StorageCandidate implements Candidate, CandidateTable {
     Set<FactPartition> rangeParts = getPartitions(timeRange, validUpdatePeriods, true, failOnPartialData, missingParts);
     String partCol = timeRange.getPartitionColumn();
     boolean partColNotSupported = rangeParts.isEmpty();
-    String storageTableName = getStorageTable();
 
     if (storagePruningMsgs.containsKey(this)) {
       List<CandidateTablePruneCause> causes = storagePruningMsgs.get(this);
@@ -594,11 +593,13 @@ public class StorageCandidate implements Candidate, CandidateTable {
     String sep = "";
     while (rangeParts.isEmpty()) {
       String timeDim = cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(partCol);
-      if (partColNotSupported && !((CubeFactTable)getFact()).hasColumn(timeDim)) {
-        unsupportedTimeDims.add(
-          cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(timeRange.getPartitionColumn())
-        );
-        break;
+      if(getFact() instanceof CubeFactTable) {
+        if (partColNotSupported && !((CubeFactTable) getFact()).hasColumn(timeDim)) {
+          unsupportedTimeDims.add(
+            cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(timeRange.getPartitionColumn())
+          );
+          break;
+        }
       }
       TimeRange fallBackRange = getFallbackRange(prevRange, this.getFact().getName(), cubeQueryContext);
       log.info("No partitions for range:{}. fallback range: {}", timeRange, fallBackRange);

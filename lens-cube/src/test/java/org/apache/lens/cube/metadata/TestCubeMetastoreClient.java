@@ -82,6 +82,7 @@ public class TestCubeMetastoreClient {
   private static Set<CubeDimAttribute> moreCubeDimensions = Sets.newHashSet();
   private static Set<UpdatePeriod> hourlyAndDaily = Sets.newHashSet(HOURLY, DAILY);
   private static final String CUBE_NAME = "testMetastoreCube";
+  private static final String VIRTUAL_CUBE_NAME = "testMetastoreVirtualCube";
   private static final String CUBE_NAME_WITH_PROPS = "testMetastoreCubeWithProps";
   private static final String DERIVED_CUBE_NAME = "derivedTestMetastoreCube";
   private static final String DERIVED_CUBE_NAME_WITH_PROPS = "derivedTestMetastoreCubeWithProps";
@@ -1257,26 +1258,25 @@ public class TestCubeMetastoreClient {
 
     Map<String, String> virtualFactPropertiesMap = getHashMap("name1", "newvalue1");
 
-    CubeVirtualFactTable cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
+    CubeVirtualFactTable cubeVirtualFact = new CubeVirtualFactTable(VIRTUAL_CUBE_NAME, virtualFactName,
       com.google.common.base.Optional.fromNullable(null), virtualFactPropertiesMap, sourceFact);
 
     // create virtual cube fact
-    client.createVirtualFactTable(CUBE_NAME, virtualFactName, sourceFactName, null, virtualFactPropertiesMap);
+    client.createVirtualFactTable(VIRTUAL_CUBE_NAME, virtualFactName, sourceFactName, null, virtualFactPropertiesMap);
     assertTrue(client.tableExists(virtualFactName));
     Table virtualTbl = client.getHiveTable(virtualFactName);
     assertTrue(client.isVirtualFactTable(virtualTbl));
     assertTrue(client.isVirtualFactTableForCube(virtualTbl, CUBE_NAME));
-//
-//    //get virtual fact
-//    assertTrue(client.getAllFacts(client.getCube(CUBE_NAME)).contains(virtualFactName.toLowerCase()));
-//    assertTrue(client.getAllFacts(client.getCube(DERIVED_CUBE_NAME)).contains(virtualFactName.toLowerCase();
+
+    //get virtual fact
+    assertTrue(client.getAllFacts(client.getCube(VIRTUAL_CUBE_NAME)).get(0).getName().equals(virtualFactName.trim().toLowerCase()));
 
     CubeVirtualFactTable actualcubeVirtualFact = (CubeVirtualFactTable) (client.getCubeFact(virtualFactName));
     assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
 
     //alter virtual fact
     Map<String, String> alterVirtualFactPropertiesMap = getHashMap("name1", "newvalue2", "name3", "value3");
-    cubeVirtualFact = new CubeVirtualFactTable(CUBE_NAME, virtualFactName,
+    cubeVirtualFact = new CubeVirtualFactTable(VIRTUAL_CUBE_NAME, virtualFactName,
       com.google.common.base.Optional.fromNullable(null), alterVirtualFactPropertiesMap,
       sourceFact);
     client.alterVirtualCubeFactTable(cubeVirtualFact);

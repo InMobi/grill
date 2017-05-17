@@ -49,6 +49,9 @@ import org.antlr.runtime.CommonToken;
 
 import com.google.common.collect.Sets;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MetastoreUtil {
   private MetastoreUtil() {
 
@@ -413,7 +416,7 @@ public class MetastoreUtil {
         }
       }
     } catch (LensException e) {
-     // log.error("unable to parse {} {} date: {}", relative ? "relative" : "absolute", start ? "start" : "end", prop);
+      log.error("unable to parse {} {} date: {}", relative ? "relative" : "absolute", start ? "start" : "end", prop);
     }
     return start ? DateUtil.MIN_DATE : DateUtil.MAX_DATE;
   }

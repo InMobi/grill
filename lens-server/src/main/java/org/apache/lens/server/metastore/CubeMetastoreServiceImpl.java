@@ -485,23 +485,6 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
       log.info("Dropped virtual fact table " + virtualFact);
     }
   }
-//
-//  @Override
-//  public List<String> getAllVirtualFactNames(LensSessionHandle sessionid, String cubeName) throws LensException {
-//    try (SessionContext ignored = new SessionContext(sessionid)){
-//      CubeMetastoreClient client = getClient(sessionid);
-//      CubeInterface fact = client.getCube(cubeName);
-//      if (cubeName != null && fact == null) {
-//        throw new LensException("Could not get table: " + cubeName + " as a cube");
-//      }
-//      Collection<FactTable> virtualFacts = client.getAllFacts(fact);
-//      List<String> factNames = new ArrayList<>(virtualFacts.size());
-//      for (FactTable cft : virtualFacts) {
-//        factNames.add(cft.getName());
-//      }
-//      return factNames;
-//    }
-//  }
 
   @Override
   public List<String> getAllSegmentations(LensSessionHandle sessionid, String cubeName) throws LensException {
