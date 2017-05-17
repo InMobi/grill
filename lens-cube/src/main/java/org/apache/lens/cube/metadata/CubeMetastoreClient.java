@@ -2597,7 +2597,7 @@ public class CubeMetastoreClient {
    * @throws LensException
    */
   public void dropStorageFromFact(String factName, String storage) throws LensException {
-    CubeFactTable cft = (CubeFactTable) getCubeFact(factName);
+    CubeFactTable cft = getCubeFactTable(factName);
     dropHiveTablesForStorage(factName, storage);
     cft.dropStorage(storage);
     alterCubeTable(factName, getTableWithTypeFailFast(factName, CubeTableType.FACT), cft);
@@ -2605,7 +2605,7 @@ public class CubeMetastoreClient {
   }
 
   private void dropHiveTablesForStorage(String factName, String storage) throws LensException{
-    CubeFactTable cft = (CubeFactTable) getCubeFactTable(factName);
+    CubeFactTable cft = getCubeFactTable(factName);
     Set<String> droppedTables = new HashSet<>();
     for (Map.Entry updatePeriodEntry : cft.getStoragePrefixUpdatePeriodMap().get(storage).entrySet()) {
       UpdatePeriod updatePeriod = (UpdatePeriod) updatePeriodEntry.getKey();
@@ -2755,7 +2755,7 @@ public class CubeMetastoreClient {
     }
   }
 
-  private CubeFactTable getCubeFactTable(String factName) throws LensException {
+  public CubeFactTable getCubeFactTable(String factName) throws LensException {
     FactTable factTable = getCubeFact(factName);
     if(factTable instanceof CubeFactTable) {
       return (CubeFactTable) factTable;
@@ -2765,7 +2765,7 @@ public class CubeMetastoreClient {
     }
   }
 
-  private CubeVirtualFactTable getCubeVirtualFactTable(String factName) throws LensException {
+  public CubeVirtualFactTable getCubeVirtualFactTable(String factName) throws LensException {
     FactTable factTable = getCubeFact(factName);
     if(factTable instanceof CubeVirtualFactTable) {
       return (CubeVirtualFactTable) factTable;
@@ -2898,7 +2898,7 @@ public class CubeMetastoreClient {
       return storage;
     }
     if (isFactTable(factOrDimTableName)) {
-      return ((CubeFactTable)getCubeFact(factOrDimTableName)).getTablePrefix(storage, updatePeriod);
+      return (getCubeFactTable(factOrDimTableName)).getTablePrefix(storage, updatePeriod);
     } else {
       return storage;
     }
