@@ -2760,7 +2760,7 @@ public class CubeMetastoreClient {
       return (CubeFactTable) factTable;
     } else {
       throw new LensException(new LensException(LensCubeErrorCode.ENTITY_TYPE_NOT_AS_EXPECTED.getLensErrorInfo(),
-        factName, "CubeFactTable"));
+        factName, "Fact"));
     }
   }
 
@@ -2770,7 +2770,7 @@ public class CubeMetastoreClient {
       return (CubeVirtualFactTable) factTable;
     } else {
       throw new LensException(new LensException(LensCubeErrorCode.ENTITY_TYPE_NOT_AS_EXPECTED.getLensErrorInfo(),
-        factName, "CubeVirtualFactTable"));
+        factName, "VirtualFact"));
     }
   }
 
