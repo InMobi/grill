@@ -2383,10 +2383,10 @@ public class TestMetastoreService extends LensJerseyTest {
           APIResult.class);
       assertSuccess(result);
 
-      // Get all virtual fact names, this should contain the virtual fact table
-      StringList virtualFactNames = target().path("metastore/facts")
+      // Get all fact names, this should contain the virtual fact table
+      StringList factNames = target().path("metastore/facts")
         .queryParam("sessionid", lensSessionId).request(mediaType).get(StringList.class);
-      assertTrue(virtualFactNames.getElements().contains(table.toLowerCase()));
+      assertTrue(factNames.getElements().contains(table.toLowerCase()));
 
       // Get the created table
       JAXBElement<XVirtualFactTable> gotFactElement = target().path("metastore/virtualfacts").path(table)
