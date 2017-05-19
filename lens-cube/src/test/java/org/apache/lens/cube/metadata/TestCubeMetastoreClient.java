@@ -1275,7 +1275,7 @@ public class TestCubeMetastoreClient {
     assertTrue(client.getAllFacts(client.getCube(VIRTUAL_CUBE_NAME)).get(0).getName().equals(virtualFactName.trim()
       .toLowerCase()));
 
-    CubeVirtualFactTable actualcubeVirtualFact = (CubeVirtualFactTable) (client.getCubeFact(virtualFactName));
+    CubeVirtualFactTable actualcubeVirtualFact = (CubeVirtualFactTable) (client.getFactTable(virtualFactName));
     assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
 
     //alter virtual fact
@@ -1284,7 +1284,7 @@ public class TestCubeMetastoreClient {
       com.google.common.base.Optional.fromNullable(null), alterVirtualFactPropertiesMap,
       sourceFact);
     client.alterVirtualCubeFactTable(cubeVirtualFact);
-    actualcubeVirtualFact = (CubeVirtualFactTable) client.getCubeFact(virtualFactName);
+    actualcubeVirtualFact = (CubeVirtualFactTable) client.getFactTable(virtualFactName);
     assertEquals(actualcubeVirtualFact.getProperties().get("name1"), "newvalue2");
     assertEquals(actualcubeVirtualFact.getProperties().get("name3"), "value3");
     assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));
@@ -1294,7 +1294,7 @@ public class TestCubeMetastoreClient {
     sourceFact.alterColumn(newcol);
     sourceFact.alterWeight(100);
     client.alterCubeFactTable(sourceFact.getName(), sourceFact, storageTables, new HashMap<String, String>());
-    actualcubeVirtualFact = (CubeVirtualFactTable) client.getCubeFact(virtualFactName);
+    actualcubeVirtualFact = (CubeVirtualFactTable) client.getFactTable(virtualFactName);
     assertTrue(actualcubeVirtualFact.getColumns().contains(newcol));
     assertEquals(actualcubeVirtualFact.weight(), 100.0);
     assertTrue(cubeVirtualFact.equals(actualcubeVirtualFact));

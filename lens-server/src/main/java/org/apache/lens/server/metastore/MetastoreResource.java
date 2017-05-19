@@ -180,20 +180,6 @@ public class MetastoreResource {
           getSvc().dropDimensionTable(sessionid, entityName, cascade);
         }
       }
-    }, VIRTUALFACT {
-      @Override
-      public List<String> doGetAll(LensSessionHandle sessionid) throws LensException {
-        throw new NotImplementedException();
-      }
-
-      @Override
-      public void doDelete(LensSessionHandle sessionid, String entityName, Boolean cascade) throws LensException {
-        if (cascade == null) {
-          getSvc().dropVirtualFactTable(sessionid, entityName);
-        } else {
-          throw new NotImplementedException();
-        }
-      }
     };
 
     public abstract List<String> doGetAll(LensSessionHandle sessionid) throws LensException;
@@ -756,19 +742,6 @@ public class MetastoreResource {
   }
 
   /**
-   * Delete all virtual fact tables
-   *
-   * @param sessionid The sessionid in which user is working
-   * @return APIResult with state {@link Status#SUCCEEDED} in case of successful delete. APIResult with state {@link
-   * Status#FAILED} in case of delete failure. APIResult with state {@link Status#PARTIAL} in case of partial delete.
-   */
-  @DELETE
-  @Path("virtualfacts")
-  public APIResult deleteAllVirtualFacts(@QueryParam("sessionid") LensSessionHandle sessionid) throws LensException {
-    return Entity.VIRTUALFACT.deleteAll(sessionid, false);
-  }
-
-  /**
    * Delete all segmentations
    *
    * @param sessionid The sessionid in which user is working
@@ -786,31 +759,15 @@ public class MetastoreResource {
    *
    * @param sessionid The sessionid in which user is working
    * @param factName  The fact table name
-   * @return JAXB representation of {@link XFactTable}
+   * @return JAXB representation of {@link XFact}
    */
   @GET
   @Path("/facts/{factName}")
-  public JAXBElement<XFactTable> getFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
+  public JAXBElement<XFact> getFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
     @PathParam("factName") String factName)
     throws LensException {
     checkSessionId(sessionid);
-    return X_CUBE_OBJECT_FACTORY.createXFactTable(getSvc().getFactTable(sessionid, factName));
-  }
-
-  /**
-   * Get the virtual fact table specified by name
-   *
-   * @param sessionid The sessionid in which user is working
-   * @param factName  The virtual fact table name
-   * @return JAXB representation of {@link XFactTable}
-   */
-  @GET
-  @Path("/virtualfacts/{virtualFactName}")
-  public JAXBElement<XVirtualFactTable> getVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-                                              @PathParam("virtualFactName") String factName)
-          throws LensException {
-    checkSessionId(sessionid);
-    return X_CUBE_OBJECT_FACTORY.createXVirtualFactTable(getSvc().getVirtualFactTable(sessionid, factName));
+    return X_CUBE_OBJECT_FACTORY.createXFact(getSvc().getFactTable(sessionid, factName));
   }
 
   /**
@@ -833,36 +790,17 @@ public class MetastoreResource {
    * Create a new fact tabble
    *
    * @param sessionid The sessionid in which user is working
-   * @param fact      The {@link XFactTable} representation of the fact table definition
+   * @param fact      The {@link XFact} representation of the fact table definition
    * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if create was successful. {@link APIResult} with
    * state {@link Status#FAILED}, if create has failed
    */
   @POST
   @Path("/facts")
-  public APIResult createFactTable(@QueryParam("sessionid") LensSessionHandle sessionid, XFactTable fact)
+  public APIResult createFactTable(@QueryParam("sessionid") LensSessionHandle sessionid, XFact fact)
     throws LensException {
     checkSessionId(sessionid);
     log.info("Create fact table");
     getSvc().createFactTable(sessionid, fact);
-    return success();
-  }
-
-
-  /**
-   * Create a new virtual fact tabble
-   *
-   * @param sessionid The sessionid in which user is working
-   * @param fact      The {@link XFactTable} representation of the fact table definition
-   * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if create was successful. {@link APIResult} with
-   * state {@link Status#FAILED}, if create has failed
-   */
-  @POST
-  @Path("/virtualfacts")
-  public APIResult createVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid, XVirtualFactTable fact)
-          throws LensException {
-    checkSessionId(sessionid);
-    log.info("Create virtual fact table");
-    getSvc().createVirtualFactTable(sessionid, fact);
     return success();
   }
 
@@ -884,39 +822,19 @@ public class MetastoreResource {
     return success();
   }
 
-
-  /**
-   * Update virtualFact table definition
-   *
-   * @param sessionid The sessionid in which user is working
-   * @param factName  name of the virtual virtualFact table
-   * @param virtualFact      The {@link XFactTable} representation of the updated virtual virtualFact table definition
-   * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if update was successful. {@link APIResult} with
-   * state {@link Status#FAILED}, if update has failed
-   */
-  @PUT
-  @Path("/virtualfacts/{virtualFactName}")
-  public APIResult updateVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-    @PathParam("factName") String factName, XVirtualFactTable virtualFact)
-    throws LensException {
-    checkSessionId(sessionid);
-    getSvc().updateVirtualFactTable(sessionid, virtualFact);
-    return success();
-  }
-
   /**
    * Update fact table definition
    *
    * @param sessionid The sessionid in which user is working
    * @param factName  name of the fact table
-   * @param fact      The {@link XFactTable} representation of the updated fact table definition
+   * @param fact      The {@link XFact} representation of the updated fact table definition
    * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if update was successful. {@link APIResult} with
    * state {@link Status#FAILED}, if update has failed
    */
   @PUT
   @Path("/facts/{factName}")
   public APIResult updateFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-    @PathParam("factName") String factName, XFactTable fact)
+    @PathParam("factName") String factName, XFact fact)
     throws LensException {
     checkSessionId(sessionid);
     getSvc().updateFactTable(sessionid, fact);
@@ -958,22 +876,6 @@ public class MetastoreResource {
     @DefaultValue("false") @QueryParam("cascade") boolean cascade)
     throws LensException {
     return Entity.FACT.delete(sessionid, factName, cascade);
-  }
-
-  /**
-   * Drop the virtual fact table, specified by name
-   *
-   * @param sessionid The sessionid in which user is working
-   * @param virtualFactName  The virtual fact table name
-   * @return {@link APIResult} with state {@link Status#SUCCEEDED}, if drop was successful. {@link APIResult} with state
-   * {@link Status#FAILED}, if drop has failed
-   */
-  @DELETE
-  @Path("/virtualfacts/{virtualFactName}")
-  public APIResult dropVirtualFactTable(@QueryParam("sessionid") LensSessionHandle sessionid,
-                                 @PathParam("virtualFactName") String virtualFactName)
-          throws LensException {
-    return Entity.VIRTUALFACT.delete(sessionid, virtualFactName);
   }
 
   /**

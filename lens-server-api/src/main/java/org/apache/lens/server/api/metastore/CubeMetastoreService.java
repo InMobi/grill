@@ -378,10 +378,10 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    *
    * @param sessionid The sessionid
    * @param fact      The fact table name
-   * @return {@link XFactTable}
+   * @return {@link XFact}
    * @throws LensException
    */
-  XFactTable getFactTable(LensSessionHandle sessionid, String fact) throws LensException;
+  XFact getFactTable(LensSessionHandle sessionid, String fact) throws LensException;
 
   /**
    * Create fact table
@@ -390,7 +390,7 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    * @param fact      The fact table definition
    * @throws LensException
    */
-  void createFactTable(LensSessionHandle sessionid, XFactTable fact) throws LensException;
+  void createFactTable(LensSessionHandle sessionid, XFact fact) throws LensException;
 
   /**
    * Update/Alter fact table
@@ -399,7 +399,7 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    * @param fact      The fact table's new definition
    * @throws LensException
    */
-  void updateFactTable(LensSessionHandle sessionid, XFactTable fact) throws LensException;
+  void updateFactTable(LensSessionHandle sessionid, XFact fact) throws LensException;
 
   /**
    * Drop fact table.
@@ -420,53 +420,6 @@ public interface CubeMetastoreService extends LensService, SessionValidator {
    * @throws LensException
    */
   List<String> getAllFactNames(LensSessionHandle sessionid, String cubeName) throws LensException;
-
-  /**
-   * Get virtual fact table given by name
-   *
-   * @param sessionid The sessionid
-   * @param virtualFact      The virtual fact table name
-   * @return {@link XFactTable}
-   * @throws LensException
-   */
-  XVirtualFactTable getVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException;
-
-  /**
-   * Create virtual fact table
-   *
-   * @param sessionid The sessionid
-   * @param fact      The virtual fact table definition
-   * @throws LensException
-   */
-  void createVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable fact) throws LensException;
-
-  /**
-   * Update/Alter virtual fact table
-   *
-   * @param sessionid The sessionid
-   * @param virtualFact      The virtual fact table's new definition
-   * @throws LensException
-   */
-  void updateVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable virtualFact) throws LensException;
-
-  /**
-   * Drop virtual fact table.
-   *
-   * @param sessionid The sessionid
-   * @param virtualFact      The virtual fact table name
-   * @throws LensException
-   */
-  void dropVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException;
-
-//  /**
-//   * Get all virtual fact names
-//   *
-//   * @param sessionid The sessionid
-//   * @param cubeName optional filter filter facts by cube name.
-//   * @return List of virtual fact table names
-//   * @throws LensException
-//   */
-//  List<String> getAllVirtualFactNames(LensSessionHandle sessionid, String cubeName) throws LensException;
 
   /**
    * Get all storages of fact

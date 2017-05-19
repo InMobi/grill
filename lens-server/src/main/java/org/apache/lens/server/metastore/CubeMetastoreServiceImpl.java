@@ -354,7 +354,7 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
   }
 
   @Override
-  public XFactTable getFactTable(LensSessionHandle sessionid, String fact) throws LensException {
+  public XFact getFactTable(LensSessionHandle sessionid, String fact) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)){
       return getClient(sessionid).getXFactTable(fact);
     }
@@ -371,15 +371,15 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
 
 
   @Override
-  public void createFactTable(LensSessionHandle sessionid, XFactTable fact) throws LensException {
+  public void createFactTable(LensSessionHandle sessionid, XFact fact) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)){
-      getClient(sessionid).createCubeFactTable(fact);
+      getClient(sessionid).createFactTable(fact);
       log.info("Created fact table " + fact.getName());
     }
   }
 
   @Override
-  public void updateFactTable(LensSessionHandle sessionid, XFactTable fact) throws LensException {
+  public void updateFactTable(LensSessionHandle sessionid, XFact fact) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)){
       getClient(sessionid).alterCubeFactTable(fact);
       log.info("Updated fact table " + fact.getName());
@@ -442,51 +442,6 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
   }
 
   @Override
-  public XVirtualFactTable getVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException {
-    try (SessionContext ignored = new SessionContext(sessionid)) {
-      CubeMetastoreClient msClient = getClient(sessionid);
-      CubeVirtualFactTable cft = (CubeVirtualFactTable) msClient.getCubeFact(virtualFact);
-      XVirtualFactTable factTable = JAXBUtils.virtualFactTableFromVirtualCubeFactTable(cft);
-      factTable.setSourceFactName(cft.getSourceCubeFactTable().getName());
-      return factTable;
-    }
-  }
-
-  @Override
-  public void createVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable fact) throws LensException {
-    try (SessionContext ignored = new SessionContext(sessionid)) {
-      getClient(sessionid).createVirtualFactTable(fact.getCubeName(),
-        fact.getName(),
-        fact.getSourceFactName(),
-        fact.getWeight(),
-        JAXBUtils.mapFromXProperties(fact.getProperties()));
-      log.info("Created virtual fact table " + fact.getName());
-    }
-  }
-
-  @Override
-  public void updateVirtualFactTable(LensSessionHandle sessionid, XVirtualFactTable virtualFact) throws LensException {
-    try (SessionContext ignored = new SessionContext(sessionid)) {
-      CubeVirtualFactTable cubeVirtualFactTable = cubeVirtualFactFromFactTable(virtualFact,
-        getClient(sessionid).getCubeFact(virtualFact.getSourceFactName()));
-
-      getClient(sessionid).alterVirtualCubeFactTable(cubeVirtualFactTable);
-      log.info("Updated virtual fact table " + virtualFact.getName());
-    } catch (HiveException e) {
-      throw new LensException(e);
-    }
-  }
-
-
-  @Override
-  public void dropVirtualFactTable(LensSessionHandle sessionid, String virtualFact) throws LensException {
-    try (SessionContext ignored = new SessionContext(sessionid)) {
-      getClient(sessionid).dropVirtualFact(virtualFact);
-      log.info("Dropped virtual fact table " + virtualFact);
-    }
-  }
-
-  @Override
   public List<String> getAllSegmentations(LensSessionHandle sessionid, String cubeName) throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)){
       CubeMetastoreClient client = getClient(sessionid);
@@ -526,7 +481,7 @@ public class CubeMetastoreServiceImpl extends BaseLensService implements CubeMet
     throws LensException {
     try (SessionContext ignored = new SessionContext(sessionid)) {
       CubeMetastoreClient msClient = getClient(sessionid);
-      FactTable factTable = msClient.getCubeFact(fact);
+      FactTable factTable = msClient.getFactTable(fact);
       Set<UpdatePeriod> updatePeriods = factTable.getUpdatePeriods().get(storageName);
       XStorageTableElement tblElement = JAXBUtils.getXStorageTableFromHiveTable(
         msClient.getHiveTable(MetastoreUtil.getFactOrDimtableStorageTableName(fact, storageName)));
