@@ -36,10 +36,7 @@ import javax.xml.bind.JAXBElement;
 import org.apache.lens.api.APIResult;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
-import org.apache.lens.api.metastore.ObjectFactory;
-import org.apache.lens.api.metastore.XCube;
-import org.apache.lens.api.metastore.XFactTable;
-import org.apache.lens.api.metastore.XStorage;
+import org.apache.lens.api.metastore.*;
 import org.apache.lens.api.query.*;
 import org.apache.lens.api.result.LensAPIResult;
 
@@ -157,11 +154,11 @@ public class RestAPITestUtil {
   }
 
   public static void createFactFailFast(final WebTarget target, final LensSessionHandle sessionId,
-    final XFactTable factTable, MediaType mt) {
+    final XFactTable fact, MediaType mt) {
 
     APIResult result = target.path("metastore").path("facts").queryParam("sessionid", sessionId)
       .request(mt).post(Entity.entity(
-          new GenericEntity<JAXBElement<XFactTable>>(cubeObjectFactory.createXFactTable(factTable)) {
+          new GenericEntity<JAXBElement<XFact>>(cubeObjectFactory.createXFact(fact)) {
           }, mt),
         APIResult.class);
     checkResponse(result);
