@@ -1768,12 +1768,12 @@ public class CubeMetastoreClient {
   public XFact getXFactTable(FactTable ft) throws LensException {
 
     XFact fact;
-    if(ft.isVirtualFact()){
+    if (ft.isVirtualFact()) {
       CubeVirtualFactTable cvft = (CubeVirtualFactTable) ft;
       XVirtualFactTable factTable = JAXBUtils.virtualFactTableFromVirtualCubeFactTable(cvft);
       factTable.setSourceFactName(cvft.getSourceCubeFactTable().getName());
       fact = factTable;
-    }else {
+    } else {
       CubeFactTable cft = (CubeFactTable) ft;
       XFactTable factTable = JAXBUtils.factTableFromCubeFactTable(cft);
       Map<String, Map<UpdatePeriod, String>> storageMap = cft.getStoragePrefixUpdatePeriodMap();
@@ -2556,13 +2556,13 @@ public class CubeMetastoreClient {
     }
     dropHiveTable(factName);
     allFactTables.remove(factName.trim().toLowerCase());
-    if(fact.isVirtualFact()) {
+    if (fact.isVirtualFact()) {
       String sourceFactTable = fact.getProperties().get(getSourceFactNameKey(fact.getName()));
       if (factToVirtualFactMapping.get(sourceFactTable) != null
         && factToVirtualFactMapping.get(sourceFactTable).contains(fact.getName())) {
         factToVirtualFactMapping.get(sourceFactTable).remove(fact.getName());
       }
-    }else {
+    } else {
       dropAllVirtualFactTables(factName);
     }
   }
