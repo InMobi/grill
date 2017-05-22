@@ -454,10 +454,6 @@ public class LensClient implements AutoCloseable {
     return mc.createFactTable(factSpec);
   }
 
-  public APIResult createVirtualFactTable(String vfactSpec) {
-    return mc.createVirtualFactTable(vfactSpec);
-  }
-
   public APIResult createCube(String cubeSpec) {
     return mc.createCube(cubeSpec);
   }
@@ -486,14 +482,6 @@ public class LensClient implements AutoCloseable {
     return mc.dropFactTable(fact, cascade);
   }
 
-  public APIResult dropVirtualFactTable(String fact) {
-    return mc.dropVirtualFactTable(fact);
-  }
-
-  public APIResult dropAllVirtualFacts() {
-    return mc.dropAllVirtualFactTables();
-  }
-
   public APIResult dropCube(String cube) {
     return mc.dropCube(cube);
   }
@@ -507,10 +495,6 @@ public class LensClient implements AutoCloseable {
   }
 
   public APIResult updateFactTable(String factName, String factSpec) {
-    return mc.updateFactTable(factName, factSpec);
-  }
-
-  public APIResult updateVirtualFactTable(String factName, String factSpec) {
     return mc.updateFactTable(factName, factSpec);
   }
 
@@ -530,7 +514,7 @@ public class LensClient implements AutoCloseable {
     return mc.updateDimension(dimName, dimSpec);
   }
 
-  public XFactTable getFactTable(String factName) {
+  public XFact getFactTable(String factName) {
     return mc.getFactTable(factName);
   }
 
