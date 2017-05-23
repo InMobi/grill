@@ -19,6 +19,7 @@
 package org.apache.lens.cube.metadata;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import org.apache.lens.cube.error.LensCubeErrorCode;
 import org.apache.lens.cube.metadata.UpdatePeriod.UpdatePeriodComparator;
@@ -75,6 +76,15 @@ public class CubeFactTable extends AbstractCubeTable {
     addProperties();
   }
 
+  public boolean hasColumn(String column) {
+    List<String> validColumns = getValidColumns();
+    if (validColumns != null) {
+      return validColumns.contains(column);
+    } else {
+      return getColumns().stream().map(FieldSchema::getName).anyMatch(Predicate.isEqual(column));
+    }
+  }
+
   @Override
   protected void addProperties() {
     super.addProperties();
@@ -111,21 +121,16 @@ public class CubeFactTable extends AbstractCubeTable {
 
   private Map<String, Map<UpdatePeriod, String>> getUpdatePeriodMap(String factName, Map<String, String> props) {
     Map<String, Map<UpdatePeriod, String>> ret = new HashMap<>();
-    for (Map.Entry entry : storageUpdatePeriods.entrySet()) {
-      String storage = (String) entry.getKey();
-      for (UpdatePeriod period : (Set<UpdatePeriod>) entry.getValue()) {
+    for (Map.Entry<String, Set<UpdatePeriod>> entry : storageUpdatePeriods.entrySet()) {
+      String storage = entry.getKey();
+      for (UpdatePeriod period : entry.getValue()) {
         String storagePrefixKey = MetastoreUtil
           .getUpdatePeriodStoragePrefixKey(factName.trim(), storage, period.getName());
         String storageTableNamePrefix = props.get(storagePrefixKey);
         if (storageTableNamePrefix == null) {
           storageTableNamePrefix = storage;
         }
-        Map<UpdatePeriod, String> mapOfUpdatePeriods = ret.get(storage);
-        if (mapOfUpdatePeriods == null) {
-          mapOfUpdatePeriods = new HashMap<>();
-          ret.put(storage, mapOfUpdatePeriods);
-        }
-        mapOfUpdatePeriods.put(period, storageTableNamePrefix);
+        ret.computeIfAbsent(storage, k -> new HashMap<>()).put(period, storageTableNamePrefix);
       }
     }
     return ret;

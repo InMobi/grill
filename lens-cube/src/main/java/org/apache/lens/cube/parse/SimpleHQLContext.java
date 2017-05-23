@@ -18,15 +18,16 @@
  */
 package org.apache.lens.cube.parse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,101 +37,65 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Data
-public abstract class SimpleHQLContext implements HQLContextInterface {
-
-  private String select;
+public abstract class SimpleHQLContext implements QueryWriter {
+  private String prefix;
   private String from;
   private String where;
-  private String groupby;
-  private String orderby;
-  private String having;
-  private Integer limit;
-
-  SimpleHQLContext() {
-  }
-
-  SimpleHQLContext(String select, String from, String where, String groupby, String orderby, String having,
-    Integer limit) {
-    this.select = select;
-    this.from = from;
-    this.where = where;
-    this.groupby = groupby;
-    this.orderby = orderby;
-    this.having = having;
-    this.limit = limit;
-  }
-
-  SimpleHQLContext(String select, String groupby, String orderby, String having, Integer limit) {
-    this.select = select;
-    this.groupby = groupby;
-    this.orderby = orderby;
-    this.having = having;
-    this.limit = limit;
-  }
+  @Getter(AccessLevel.PUBLIC)
+  protected final QueryAST queryAst;
 
   /**
    * Set all missing expressions of HQL context.
    * <p></p>
    * Leaving this empty implementation for the case of all expressions being passed in constructor. If other
    * constructors are used the missing expressions should be set here
+   *
    * @throws LensException
    */
-  protected void setMissingExpressions() throws LensException {
-  }
+  protected abstract void setMissingExpressions() throws LensException;
 
   public String toHQL() throws LensException {
     setMissingExpressions();
-    String qfmt = getQueryFormat();
-    Object[] queryTreeStrings = getQueryTreeStrings();
-    if (log.isDebugEnabled()) {
-      log.debug("qfmt: {} Query strings: {}", qfmt, Arrays.toString(queryTreeStrings));
-    }
-    String baseQuery = String.format(qfmt, queryTreeStrings);
-    return baseQuery;
+    return buildHQLString();
   }
 
-  private String[] getQueryTreeStrings() throws LensException {
-    List<String> qstrs = new ArrayList<String>();
+  private static final String BASE_QUERY_FORMAT = "SELECT %s FROM %s";
+
+  private String buildHQLString() {
+    return buildHQLString(prefix, getQueryAst().getSelectString(), from, where, getQueryAst().getGroupByString(),
+      getQueryAst().getOrderByString(), getQueryAst().getHavingString(), getQueryAst().getLimitValue());
+  }
+  private static String buildHQLString(String prefix, String select, String from, String where,
+    String groupby, String orderby, String having, Integer limit) {
+    StringBuilder queryFormat = new StringBuilder();
+    List<String> qstrs = Lists.newArrayList();
+    if (StringUtils.isNotBlank(prefix)) {
+      queryFormat.append("%s");
+      qstrs.add(prefix);
+    }
+    queryFormat.append(BASE_QUERY_FORMAT);
     qstrs.add(select);
     qstrs.add(from);
-    if (!StringUtils.isBlank(where)) {
+    if (StringUtils.isNotBlank(where)) {
+      queryFormat.append(" WHERE %s");
       qstrs.add(where);
     }
-    if (!StringUtils.isBlank(groupby)) {
+    if (StringUtils.isNotBlank(groupby)) {
+      queryFormat.append(" GROUP BY %s");
       qstrs.add(groupby);
     }
-    if (!StringUtils.isBlank(having)) {
+    if (StringUtils.isNotBlank(having)) {
+      queryFormat.append(" HAVING %s");
       qstrs.add(having);
     }
-    if (!StringUtils.isBlank(orderby)) {
+    if (StringUtils.isNotBlank(orderby)) {
+      queryFormat.append(" ORDER BY %s");
       qstrs.add(orderby);
     }
     if (limit != null) {
+      queryFormat.append(" LIMIT %s");
       qstrs.add(String.valueOf(limit));
     }
-    return qstrs.toArray(new String[0]);
-  }
-
-  private final String baseQueryFormat = "SELECT %s FROM %s";
-
-  private String getQueryFormat() {
-    StringBuilder queryFormat = new StringBuilder();
-    queryFormat.append(baseQueryFormat);
-    if (!StringUtils.isBlank(where)) {
-      queryFormat.append(" WHERE %s");
-    }
-    if (!StringUtils.isBlank(groupby)) {
-      queryFormat.append(" GROUP BY %s");
-    }
-    if (!StringUtils.isBlank(having)) {
-      queryFormat.append(" HAVING %s");
-    }
-    if (!StringUtils.isBlank(orderby)) {
-      queryFormat.append(" ORDER BY %s");
-    }
-    if (limit != null) {
-      queryFormat.append(" LIMIT %s");
-    }
-    return queryFormat.toString();
+    return String.format(queryFormat.toString(), qstrs.toArray(new Object[qstrs.size()]));
   }
 }

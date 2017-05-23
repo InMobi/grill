@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,11 +18,20 @@
  */
 package org.apache.lens.cli.commands;
 
-import java.io.*;
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.lens.api.metastore.SchemaTraverser;
+import org.apache.lens.api.metastore.XBaseCube;
+import org.apache.lens.api.metastore.XDerivedCube;
+import org.apache.lens.api.metastore.XDimension;
+import org.apache.lens.api.metastore.XDimensionTable;
+import org.apache.lens.api.metastore.XFactTable;
+import org.apache.lens.api.metastore.XSegmentation;
+import org.apache.lens.api.metastore.XStorage;
 import org.apache.lens.cli.commands.annotations.UserDocumentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +41,15 @@ import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.shell.support.logging.HandlerUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Component
 @UserDocumentation(title = "Creating schema with one command",
   description = "")
 public class LensSchemaCommands implements CommandMarker {
-  public static final String STRUCTURE = "\n"
+  private static final String STRUCTURE = "\n"
     + ".\n"
     + "|-- storages\n"
     + "|  |-- storage1.xml\n"
@@ -78,29 +87,53 @@ public class LensSchemaCommands implements CommandMarker {
     + "directory itself.\nFor dimtables, you can keep your schema files in a directory named either dimtables or "
     + "dimensiontables.\nEach of these directories is optional and the order of processing is top to bottom.\nCLI will "
     + "let you know in case of any errors and proceed further without failing in between.";
-  protected final Logger logger = HandlerUtils.getLogger(getClass());
+  private final Logger logger = HandlerUtils.getLogger(getClass());
 
   {
     logger.setLevel(Level.FINE);
   }
 
-  private static final FilenameFilter XML_FILTER = new FilenameFilter() {
-    @Override
-    public boolean accept(File dir, String name) {
-      return name.endsWith(".xml");
-    }
-  };
+  private static final Map<Class<?>, String> CREATE_COMMAND_MAP = Maps.newHashMap();
+  private static final Map<Class<?>, String> UPDATE_COMMAND_MAP = Maps.newHashMap();
+
   @Autowired
   private JLineShellComponent shell;
 
+  static {
+    CREATE_COMMAND_MAP.put(XStorage.class, "create storage --path %s");
+    UPDATE_COMMAND_MAP.put(XStorage.class, "update storage --name %s --path %s");
+    CREATE_COMMAND_MAP.put(XDimension.class, "create dimension --path %s");
+    UPDATE_COMMAND_MAP.put(XDimension.class, "update dimension --name %s --path %s");
+    CREATE_COMMAND_MAP.put(XBaseCube.class, "create cube --path %s");
+    UPDATE_COMMAND_MAP.put(XBaseCube.class, "update cube --name %s --path %s");
+    CREATE_COMMAND_MAP.put(XDerivedCube.class, "create cube --path %s");
+    UPDATE_COMMAND_MAP.put(XDerivedCube.class, "update cube --name %s --path %s");
+    CREATE_COMMAND_MAP.put(XDimensionTable.class, "create dimtable --path %s");
+    UPDATE_COMMAND_MAP.put(XDimensionTable.class, "update dimtable --dimtable_name %s --path %s");
+    CREATE_COMMAND_MAP.put(XDimensionTable.class, "create dimtable --path %s");
+    UPDATE_COMMAND_MAP.put(XDimensionTable.class, "update dimtable --dimtable_name %s --path %s");
+    CREATE_COMMAND_MAP.put(XFactTable.class, "create fact --path %s");
+    UPDATE_COMMAND_MAP.put(XFactTable.class, "update fact --fact_name %s --path %s");
+    CREATE_COMMAND_MAP.put(XSegmentation.class, "create segmentation --path %s");
+    UPDATE_COMMAND_MAP.put(XSegmentation.class, "update segmentation --name %s --path %s");
+  }
+
+  private final SchemaCreateUpdateCommandRunner processor = new SchemaCreateUpdateCommandRunner();
+
   @CliCommand(value = {"schema", "create schema"},
     help = "Parses the specified resource file and executes commands for "
-      + "creation/updation of schema\nExpected structure is " + STRUCTURE)
+      + "creation/updation of schema. If <schema-type-filter> is provided, only schema types matching that will "
+      + "be worked upon. If <file-name-filter> is provided, then only those files that contain the filter value "
+      + "will be worked upon. \nExpected directory structure is " + STRUCTURE)
   public void script(
     @CliOption(key = {"", "db"},
       help = "<database-to-create-schema-in>", mandatory = true) final String database,
     @CliOption(key = {"", "file", "path"},
-      help = "<schema-directory>", mandatory = true) final File schemaDirectory) {
+      help = "<schema-directory>", mandatory = true) final File schemaDirectory,
+    @CliOption(key = {"", "type"},
+      help = "<schema-type-filter>") final String type,
+    @CliOption(key = {"", "name"},
+      help = "<file-name-filter>") final String name) {
     if (!schemaDirectory.isDirectory()) {
       throw new IllegalStateException("Schema directory should be a directory");
     }
@@ -108,55 +141,38 @@ public class LensSchemaCommands implements CommandMarker {
     // ignore result. it can fail if database already exists
     shell.executeCommand("create database " + database);
     if (shell.executeScriptLine("use " + database)) {
-      createOrUpdate(new File(schemaDirectory, "storages"), "storage",
-        "create storage --path %s", "update storage --name %s --path %s");
-      createOrUpdate(new File(schemaDirectory, "dimensions"), "dimension",
-        "create dimension --path %s", "update dimension --name %s --path %s");
-      createOrUpdate(new File(new File(schemaDirectory, "cubes"), "base"), "base cube",
-        "create cube --path %s", "update cube --name %s --path %s");
-      createOrUpdate(new File(new File(schemaDirectory, "cubes"), "derived"), "derived cube",
-        "create cube --path %s", "update cube --name %s --path %s");
-      createOrUpdate(new File(schemaDirectory, "dimensiontables"), "dimension table",
-        "create dimtable --path %s", "update dimtable --dimtable_name %s --path %s");
-      createOrUpdate(new File(schemaDirectory, "dimtables"), "dimension table",
-        "create dimtable --path %s", "update dimtable --dimtable_name %s --path %s");
-      createOrUpdate(new File(schemaDirectory, "facts"), "fact",
-        "create fact --path %s", "update fact --fact_name %s --path %s");
-      createOrUpdate(new File(schemaDirectory, "segmentations"), "fact",
-        "create segmentation --path %s", "update segmentation --name %s --path %s");
+      SchemaTraverser schemaTraverser = new SchemaTraverser(schemaDirectory, processor, type, name);
+      schemaTraverser.run();
+      logger.info("Finished all create/update commands");
+      logger.severe("All failures: " + processor.failedFor);
     } else {
       throw new IllegalStateException("Switching to database " + database + " failed");
     }
   }
 
-  public List<File> createOrUpdate(File parent, String entityType, String createSyntax, String updateSyntax) {
-    List<File> failedFiles = Lists.newArrayList();
-    // Create/update entities
-    if (parent.exists()) {
-      Assert.isTrue(parent.isDirectory(), parent.toString() + " must be a directory");
-      for (File entityFile : parent.listFiles(XML_FILTER)) {
-        String entityName = entityFile.getName().substring(0, entityFile.getName().length() - 4);
-        String entityPath = entityFile.getAbsolutePath();
-        String createCommand = String.format(createSyntax, entityPath);
-        logger.fine(createCommand);
-        if (shell.executeScriptLine(createCommand)) {
-          logger.info("Created " + entityType + " " + entityName);
+  private class SchemaCreateUpdateCommandRunner implements SchemaTraverser.SchemaEntityProcessor {
+    List<String> failedFor = Lists.newArrayList();
+
+    @Override
+    public void accept(File entityFile, Class<?> type) {
+      String entityName = entityFile.getName().substring(0, entityFile.getName().length() - 4);
+      String entityPath = entityFile.getAbsolutePath();
+      String createCommand = String.format(CREATE_COMMAND_MAP.get(type), entityPath);
+      String entityType = createCommand.substring(7, createCommand.indexOf(" ", 9));
+      logger.fine(createCommand);
+      if (shell.executeScriptLine(createCommand)) {
+        logger.info("Created " + entityType + " " + entityName);
+      } else {
+        logger.warning("Create failed, trying update");
+        String updateCommand = String.format(UPDATE_COMMAND_MAP.get(type), entityName, entityPath);
+        logger.fine(updateCommand);
+        if (shell.executeScriptLine(updateCommand)) {
+          logger.info("Updated " + entityType + " " + entityName);
         } else {
-          logger.warning("Create failed, trying update");
-          String updateCommand = String.format(updateSyntax, entityName, entityPath);
-          logger.fine(updateCommand);
-          if (shell.executeScriptLine(updateCommand)) {
-            logger.info("Updated " + entityType + " " + entityName);
-          } else {
-            logger.severe("Couldn't create or update " + entityType + " " + entityName);
-            failedFiles.add(entityFile);
-          }
+          logger.severe("Couldn't create or update " + entityType + " " + entityName);
+          failedFor.add(entityName);
         }
       }
     }
-    if (!failedFiles.isEmpty()) {
-      logger.severe("Failed for " + entityType + ": " + failedFiles);
-    }
-    return failedFiles;
   }
 }

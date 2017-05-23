@@ -21,15 +21,14 @@ package org.apache.lens.cube.metadata;
 import static java.util.Calendar.MONTH;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.lens.cube.error.LensCubeErrorCode;
 import org.apache.lens.server.api.error.LensException;
@@ -148,10 +147,14 @@ public final class DateUtil {
 
   public static String relativeToAbsolute(String relative, Date now) throws LensException {
     if (RELDATE_VALIDATOR.matcher(relative).matches()) {
-      return ABSDATE_PARSER.get().format(resolveRelativeDate(relative, now));
+      return formatAbsDate(resolveRelativeDate(relative, now));
     } else {
       return relative;
     }
+  }
+
+  public static String formatAbsDate(Date date) {
+    return ABSDATE_PARSER.get().format(date).replaceAll("([-:,]0+)+$", "");
   }
 
   static Cache<String, Date> stringToDateCache = CacheBuilder.newBuilder()
@@ -159,12 +162,7 @@ public final class DateUtil {
 
   public static Date resolveAbsoluteDate(final String str) throws LensException {
     try {
-      return stringToDateCache.get(str, new Callable<Date>() {
-        @Override
-        public Date call() throws ParseException {
-          return ABSDATE_PARSER.get().parse(getAbsDateFormatString(str));
-        }
-      });
+      return stringToDateCache.get(str, () -> ABSDATE_PARSER.get().parse(getAbsDateFormatString(str)));
     } catch (Exception e) {
       log.error("Invalid date format. expected only {} date provided:{}", ABSDATE_FMT, str, e);
       throw new LensException(LensCubeErrorCode.WRONG_TIME_RANGE_FORMAT.getLensErrorInfo(), ABSDATE_FMT, str);
@@ -305,11 +303,11 @@ public final class DateUtil {
     switch (interval) {
     case SECONDLY:
     case CONTINUOUS:
-      return getMilliSecondCoveringInfo(from, to, 1000);
+      return getMilliSecondCoveringInfo(from, to, 1000, interval);
     case MINUTELY:
     case HOURLY:
     case DAILY:
-      return getMilliSecondCoveringInfo(from, to, interval.weight());
+      return getMilliSecondCoveringInfo(from, to, interval.weight(), interval);
     case WEEKLY:
       return getWeeklyCoveringInfo(from, to);
     case MONTHLY:
@@ -323,18 +321,26 @@ public final class DateUtil {
     }
   }
 
-  private static CoveringInfo getMilliSecondCoveringInfo(Date from, Date to, long millisInInterval) {
+  private static CoveringInfo getMilliSecondCoveringInfo(Date from, Date to, long millisInInterval,
+      UpdatePeriod interval) {
     long diff = to.getTime() - from.getTime();
-    return new CoveringInfo((int) (diff / millisInInterval), diff % millisInInterval == 0);
+    return new CoveringInfo((int) (diff / millisInInterval),
+      Stream.of(from, to).allMatch(a->interval.truncate(a).equals(a)));
+    // start date and end date should lie on boundaries.
   }
 
+  /**
+   * Whether the range [from,to) is coverable by intervals
+   * @param from        from time
+   * @param to          to time
+   * @param intervals   intervals to check
+   * @return            true if any of the intervals can completely cover the range
+   */
   static boolean isCoverableBy(Date from, Date to, Set<UpdatePeriod> intervals) {
-    for (UpdatePeriod period : intervals) {
-      if (getCoveringInfo(from, to, period).isCoverable()) {
-        return true;
-      }
-    }
-    return false;
+    return intervals.stream().anyMatch(period->isCoverableBy(from, to, period));
+  }
+  private static boolean isCoverableBy(Date from, Date to, UpdatePeriod period) {
+    return getCoveringInfo(from, to, period).isCoverable();
   }
 
   public static int getTimeDiff(Date fromDate, Date toDate, UpdatePeriod updatePeriod) {

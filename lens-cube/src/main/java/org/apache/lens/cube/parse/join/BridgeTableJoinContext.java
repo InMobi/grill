@@ -41,8 +41,7 @@ public class BridgeTableJoinContext {
   private final String bridgeTableFieldAggr;
   private final String arrayFilter;
   private final CubeQueryContext cubeql;
-  private final CandidateFact fact;
-  private final QueryAST queryAST;
+  private final DimHQLContext sc;
   private final boolean doFlatteningEarly;
   private boolean initedBridgeClauses = false;
   private final StringBuilder bridgeSelectClause = new StringBuilder();
@@ -51,11 +50,10 @@ public class BridgeTableJoinContext {
   private final StringBuilder bridgeJoinClause = new StringBuilder();
   private final StringBuilder bridgeGroupbyClause = new StringBuilder();
 
-  public BridgeTableJoinContext(CubeQueryContext cubeql, CandidateFact fact, QueryAST queryAST,
+  public BridgeTableJoinContext(CubeQueryContext cubeql, DimHQLContext sc,
     String bridgeTableFieldAggr, String arrayFilter, boolean doFlatteningEarly) {
     this.cubeql = cubeql;
-    this.queryAST = queryAST;
-    this.fact = fact;
+    this.sc = sc;
     this.bridgeTableFieldAggr = bridgeTableFieldAggr;
     this.arrayFilter = arrayFilter;
     this.doFlatteningEarly = doFlatteningEarly;
@@ -139,10 +137,10 @@ public class BridgeTableJoinContext {
     // iterate over all select expressions and add them for select clause if do_flattening_early is disabled
     if (!doFlatteningEarly) {
       BridgeTableSelectCtx selectCtx = new BridgeTableSelectCtx(bridgeTableFieldAggr, arrayFilter, toAlias);
-      selectCtx.processSelectAST(queryAST.getSelectAST());
-      selectCtx.processWhereClauses(fact);
-      selectCtx.processGroupbyAST(queryAST.getGroupByAST());
-      selectCtx.processOrderbyAST(queryAST.getOrderByAST());
+      selectCtx.processSelectAST(sc.getQueryAst().getSelectAST());
+      selectCtx.processWhereClauses(sc);
+      selectCtx.processGroupbyAST(sc.getQueryAst().getGroupByAST());
+      selectCtx.processOrderbyAST(sc.getQueryAst().getOrderByAST());
       clause.append(",").append(StringUtils.join(selectCtx.getSelectedBridgeExprs(), ","));
     } else {
       for (String col : cubeql.getTblAliasToColumns().get(toAlias)) {
@@ -236,12 +234,8 @@ public class BridgeTableJoinContext {
       }
     }
 
-    void processWhereClauses(CandidateFact fact) throws LensException {
-
-      for (Map.Entry<String, ASTNode> whereEntry : fact.getStorgeWhereClauseMap().entrySet()) {
-        ASTNode whereAST = whereEntry.getValue();
-        processWhereAST(whereAST, null, 0);
-      }
+    void processWhereClauses(DimHQLContext sc) throws LensException {
+      processWhereAST(sc.getQueryAst().getWhereAST(), null, 0);
     }
 
     void processWhereAST(ASTNode ast, ASTNode parent, int childPos)

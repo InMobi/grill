@@ -18,17 +18,25 @@
  */
 package org.apache.lens.cube.parse;
 
+import static java.util.stream.Collectors.toMap;
+
+import static com.google.common.collect.Sets.newHashSet;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.lens.cube.metadata.AbstractCubeTable;
 import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
+import org.apache.lens.server.api.error.LensException;
 
 import org.apache.commons.lang.StringUtils;
 
 import org.codehaus.jackson.annotate.JsonWriteNullProperties;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
@@ -36,22 +44,19 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class PruneCauses<T extends AbstractCubeTable> extends HashMap<T, List<CandidateTablePruneCause>> {
+public class PruneCauses<T> extends HashMap<T, List<CandidateTablePruneCause>> {
   @Getter(lazy = true)
   private final HashMap<CandidateTablePruneCause, List<T>> reversed = reverse();
   @Getter(lazy = true)
   private final HashMap<String, List<CandidateTablePruneCause>> compact = computeCompact();
   @Getter(lazy = true)
-  private final CandidateTablePruneCode maxCause  = computeMaxCause();
+  private final CandidateTablePruneCode maxCause = computeMaxCause();
 
   private HashMap<String, List<CandidateTablePruneCause>> computeCompact() {
     HashMap<String, List<CandidateTablePruneCause>> detailedMessage = Maps.newHashMap();
     for (Map.Entry<CandidateTablePruneCause, List<T>> entry : getReversed().entrySet()) {
       String key = StringUtils.join(entry.getValue(), ",");
-      if (detailedMessage.get(key) == null) {
-        detailedMessage.put(key, new ArrayList<CandidateTablePruneCause>());
-      }
-      detailedMessage.get(key).add(entry.getKey());
+      detailedMessage.computeIfAbsent(key, k -> new ArrayList<>()).add(entry.getKey());
     }
     return detailedMessage;
   }
@@ -59,21 +64,16 @@ public class PruneCauses<T extends AbstractCubeTable> extends HashMap<T, List<Ca
   @Getter(lazy = true)
   private final BriefAndDetailedError jsonObject = toJsonObject();
 
+
   public void addPruningMsg(T table, CandidateTablePruneCause msg) {
-    if (get(table) == null) {
-      put(table, new ArrayList<CandidateTablePruneCause>());
-    }
-    get(table).add(msg);
+    computeIfAbsent(table, x -> new ArrayList()).add(msg);
   }
 
-  public HashMap<CandidateTablePruneCause, List<T>> reverse() {
+  private HashMap<CandidateTablePruneCause, List<T>> reverse() {
     HashMap<CandidateTablePruneCause, List<T>> result = new HashMap<CandidateTablePruneCause, List<T>>();
     for (T key : keySet()) {
       for (CandidateTablePruneCause value : get(key)) {
-        if (result.get(value) == null) {
-          result.put(value, new ArrayList<T>());
-        }
-        result.get(value).add(key);
+        result.computeIfAbsent(value, k -> new ArrayList<>()).add(key);
       }
     }
     return result;
@@ -94,14 +94,10 @@ public class PruneCauses<T extends AbstractCubeTable> extends HashMap<T, List<Ca
   }
 
   public String getBriefCause() {
-    CandidateTablePruneCode maxCause = CandidateTablePruneCode.values()[0];
-    for (CandidateTablePruneCause cause : getReversed().keySet()) {
-      if (cause.getCause().compareTo(maxCause) > 0) {
-        maxCause = cause.getCause();
-      }
-    }
+    CandidateTablePruneCode maxCause = getReversed().keySet().stream()
+      .map(CandidateTablePruneCause::getCause).max(Comparator.naturalOrder()).get();
     Map<CandidateTablePruneCause, String> maxCauseMap = Maps.newHashMap();
-    for (Map.Entry<CandidateTablePruneCause, List<T>> entry: getReversed().entrySet()) {
+    for (Map.Entry<CandidateTablePruneCause, List<T>> entry : getReversed().entrySet()) {
       if (entry.getKey().getCause().equals(maxCause)) {
         maxCauseMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
       }
@@ -113,6 +109,11 @@ public class PruneCauses<T extends AbstractCubeTable> extends HashMap<T, List<Ca
     new BriefAndDetailedError();
   }
 
+  String toJsonString() throws LensException {
+    return getJsonObject().toJsonString();
+  }
+
+
   @JsonWriteNullProperties(false)
   @Data
   @AllArgsConstructor
@@ -120,5 +121,20 @@ public class PruneCauses<T extends AbstractCubeTable> extends HashMap<T, List<Ca
   public static final class BriefAndDetailedError {
     private String brief;
     private HashMap<String, List<CandidateTablePruneCause>> details;
+
+    Map<HashSet<String>, List<CandidateTablePruneCause>> enhanced() {
+      return getDetails().entrySet().stream().collect(toMap(
+        o -> newHashSet(o.getKey().split(",")),
+        Map.Entry::getValue));
+    }
+    String toJsonString() throws LensException {
+      try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(out, this);
+        return out.toString("UTF-8");
+      } catch (Exception e) {
+        throw new LensException("Error writing fact pruning messages", e);
+      }
+    }
   }
 }

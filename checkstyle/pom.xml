@@ -30,7 +30,6 @@
   <artifactId>checkstyle</artifactId>
   <name>Lens Checkstyle Rules</name>
   <version>2.7.6-inm-SNAPSHOT</version>
-
   <build>
     <plugins>
       <plugin>

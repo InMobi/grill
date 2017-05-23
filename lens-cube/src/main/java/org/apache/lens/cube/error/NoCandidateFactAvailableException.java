@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,18 +18,28 @@
  */
 package org.apache.lens.cube.error;
 
-import org.apache.lens.cube.metadata.CubeFactTable;
+
+import org.apache.lens.cube.parse.Candidate;
+import org.apache.lens.cube.parse.CubeQueryContext;
 import org.apache.lens.cube.parse.PruneCauses;
 import org.apache.lens.server.api.error.LensException;
 
+import lombok.Getter;
 
+
+/**
+ * Note: This class is mainly meant for test cases to assert the detailed reasons (stored in
+ * {@link #briefAndDetailedError}  leading to "No Candidate was found"
+ */
 public class NoCandidateFactAvailableException extends LensException {
 
-  private final PruneCauses<CubeFactTable> briefAndDetailedError;
+  @Getter
 
-  public NoCandidateFactAvailableException(PruneCauses<CubeFactTable> briefAndDetailedError) {
-    super(LensCubeErrorCode.NO_CANDIDATE_FACT_AVAILABLE.getLensErrorInfo(), briefAndDetailedError.getBriefCause());
-    this.briefAndDetailedError = briefAndDetailedError;
+  private final PruneCauses<Candidate> briefAndDetailedError;
+  public NoCandidateFactAvailableException(CubeQueryContext cubeql) {
+    super(LensCubeErrorCode.NO_CANDIDATE_FACT_AVAILABLE.getLensErrorInfo(),
+        cubeql.getStoragePruningMsgs().getBriefCause());
+    this.briefAndDetailedError = cubeql.getStoragePruningMsgs();
   }
 
   public PruneCauses.BriefAndDetailedError getJsonMessage() {

@@ -27,7 +27,6 @@ import java.util.Iterator;
 import org.apache.lens.cube.error.LensCubeErrorCode;
 import org.apache.lens.cube.metadata.CubeMeasure;
 import org.apache.lens.cube.metadata.ExprColumn;
-import org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode;
 import org.apache.lens.cube.parse.ExpressionResolver.ExprSpecContext;
 import org.apache.lens.server.api.error.LensException;
 
@@ -71,20 +70,20 @@ class AggregateResolver implements ContextRewriter {
       || hasMeasuresNotInDefaultAggregates(cubeql, cubeql.getHavingAST(), null, aggregateResolverDisabled)
       || hasMeasures(cubeql, cubeql.getWhereAST()) || hasMeasures(cubeql, cubeql.getGroupByAST())
       || hasMeasures(cubeql, cubeql.getOrderByAST())) {
-      Iterator<CandidateFact> factItr = cubeql.getCandidateFacts().iterator();
-      while (factItr.hasNext()) {
-        CandidateFact candidate = factItr.next();
-        if (candidate.fact.isAggregated()) {
-          cubeql.addFactPruningMsgs(candidate.fact,
-            CandidateTablePruneCause.missingDefaultAggregate());
-          factItr.remove();
+      Iterator<Candidate> candItr = cubeql.getCandidates().iterator();
+      while (candItr.hasNext()) {
+        Candidate candidate = candItr.next();
+        if (candidate instanceof StorageCandidate) { // only work on storage candidates
+          StorageCandidate sc = (StorageCandidate) candidate;
+          if (sc.getFact().isAggregated()) {
+            cubeql.addStoragePruningMsg(sc, CandidateTablePruneCause.missingDefaultAggregate());
+            candItr.remove();
+          }
         }
       }
       nonDefaultAggregates = true;
       log.info("Query has non default aggregates, no aggregate resolution will be done");
     }
-
-    cubeql.pruneCandidateFactSet(CandidateTablePruneCode.MISSING_DEFAULT_AGGREGATE);
 
     if (nonDefaultAggregates || aggregateResolverDisabled) {
       return;
@@ -115,11 +114,10 @@ class AggregateResolver implements ContextRewriter {
       ASTNode child = (ASTNode) selectAST.getChild(i);
       String expr = HQLParser.getString((ASTNode) child.getChild(0).getChild(1));
       if (cubeql.getQueriedExprs().contains(expr)) {
-        for (Iterator<ExpressionResolver.ExpressionContext> itrContext =
-             cubeql.getExprCtx().getAllExprsQueried().get(expr).iterator(); itrContext.hasNext();) {
-          for (Iterator<ExprColumn.ExprSpec> itrCol =
-               itrContext.next().getExprCol().getExpressionSpecs().iterator(); itrCol.hasNext();) {
-            ASTNode exprAST = HQLParser.parseExpr(itrCol.next().getExpr(), cubeql.getConf());
+        for (ExpressionResolver.ExpressionContext expressionContext
+          : cubeql.getExprCtx().getAllExprsQueried().get(expr)) {
+          for (ExprColumn.ExprSpec exprSpec : expressionContext.getExprCol().getExpressionSpecs()) {
+            ASTNode exprAST = HQLParser.parseExpr(exprSpec.getExpr(), cubeql.getConf());
             if (HQLParser.isAggregateAST(exprAST)) {
               return true;
             }
