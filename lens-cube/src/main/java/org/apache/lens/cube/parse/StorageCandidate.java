@@ -965,4 +965,10 @@ public class StorageCandidate implements Candidate, CandidateTable {
     ast.copyFrom(getCubeQueryContext());
     return new StorageCandidateHQLContext(this, Maps.newHashMap(dimsToQuery), ast, rootCubeQueryContext);
   }
+
+  @Override
+  public Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) {
+    answerableMeasurePhraseIndices.retainAll(measureIndices);
+    return answerableMeasurePhraseIndices;
+  }
 }

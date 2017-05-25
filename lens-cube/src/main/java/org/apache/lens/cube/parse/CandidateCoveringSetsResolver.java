@@ -221,7 +221,6 @@ public class CandidateCoveringSetsResolver implements ContextRewriter {
         List<Candidate> one = new ArrayList<>();
         one.add(uc);
         msrCoveringSets.add(one);
-        uc.retain(msrs);
         i.remove();
       }
     }
@@ -234,7 +233,6 @@ public class CandidateCoveringSetsResolver implements ContextRewriter {
       if (i.hasNext()) {
         Set<QueriedPhraseContext> remainingMsrs = new HashSet<>(msrs);
         Set<QueriedPhraseContext> coveredMsrs = candidate.coveredPhrases(msrs);
-        candidate.retain(coveredMsrs);
         remainingMsrs.removeAll(coveredMsrs);
 
         List<List<Candidate>> coveringSets = resolveJoinCandidates(ucSet, remainingMsrs);

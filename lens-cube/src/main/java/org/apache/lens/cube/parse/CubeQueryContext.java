@@ -835,6 +835,8 @@ public class CubeQueryContext extends TracksQueriedColumns implements QueryAST, 
         throwNoCandidateFactException();
       }
     }
+    pickedCandidate.decideMeasuresToAnswer(getQueriedPhrases().stream().filter(x->x.hasMeasures(this))
+      .map(QueriedPhraseContext::getPosition).collect(toSet()));
     return pickedCandidate;
   }
   void throwNoCandidateFactException() throws LensException {
