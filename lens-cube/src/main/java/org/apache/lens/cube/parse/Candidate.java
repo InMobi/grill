@@ -358,9 +358,11 @@ public interface Candidate {
   }
 
   default Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+    HashSet<Integer> allCovered = Sets.newHashSet();
     for (Candidate candidate : getChildren()) {
-      candidate.decideMeasuresToAnswer(measureIndices);
+      Set<Integer> covered = candidate.decideMeasuresToAnswer(measureIndices);
+      allCovered.addAll(covered);
     }
-    return measureIndices;
+    return allCovered;
   }
 }
