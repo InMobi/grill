@@ -832,7 +832,7 @@ public class CubeQueryContext extends TracksQueriedColumns implements QueryAST, 
         pickedCandidate = cand;
         Set<Integer> measureIndices = getQueriedPhrases().stream().filter(x -> x.hasMeasures(this))
           .map(QueriedPhraseContext::getPosition).collect(toSet());
-        Set<Integer> covered = pickedCandidate.decideMeasuresToAnswer(measureIndices);
+        pickedCandidate.decideMeasuresToAnswer(measureIndices);
       }
       if (pickedCandidate == null) {
         throwNoCandidateFactException();
