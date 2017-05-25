@@ -93,6 +93,9 @@ public class UnionQueryWriter extends SimpleHQLContext {
     for (StorageCandidateHQLContext sc : storageCandidates) {
       storageCandidateToSelectAstMap.put(sc.getStorageCandidate().toString(),
           new ASTNode(new CommonToken(TOK_SELECT, "TOK_SELECT")));
+      if (sc.getQueryAst().getHavingAST() != null) {
+        cubeql.setHavingAST(sc.getQueryAst().getHavingAST());
+      }
       sc.getQueryAst().setHavingAST(null);
       sc.getQueryAst().setOrderByAST(null);
       sc.getQueryAst().setLimitValue(null);
@@ -196,7 +199,11 @@ public class UnionQueryWriter extends SimpleHQLContext {
       ASTNode outerOrderby = new ASTNode(child);
       ASTNode tokNullsChild = (ASTNode) child.getChild(0);
       ASTNode outerTokNullsChild = new ASTNode(tokNullsChild);
-      outerTokNullsChild.addChild(innerToOuterSelectASTs.get(new HQLParser.HashableASTNode((ASTNode) tokNullsChild)));
+      if (((ASTNode) tokNullsChild.getChild(0)).getToken().getType() == HiveParser.DOT) {
+        outerTokNullsChild.addChild(innerToOuterSelectASTs.get(new HQLParser.HashableASTNode((ASTNode) tokNullsChild)));
+      } else {
+        outerTokNullsChild.addChild(tokNullsChild);
+      }
       outerOrderby.addChild(outerTokNullsChild);
       outerExpression.addChild(outerOrderby);
     }
@@ -271,8 +278,7 @@ public class UnionQueryWriter extends SimpleHQLContext {
    * @throws LensException
    */
   private ASTNode setDefaultValueInExprForAggregateNodes(ASTNode node, StorageCandidate sc) throws LensException {
-    if (HQLParser.isAggregateAST(node)
-        && isNodeNotAnswerableForStorageCandidate(sc, node)) {
+    if (HQLParser.isAggregateAST(node)) {
       node.setChild(1, getSelectExpr(null, null, true));
     }
     for (int i = 0; i < node.getChildCount(); i++) {
@@ -423,8 +429,7 @@ public class UnionQueryWriter extends SimpleHQLContext {
         // Select phrase is expression
       } else {
         for (StorageCandidateHQLContext sc : storageCandidates) {
-          if (phrase.isEvaluable(sc.getStorageCandidate())
-              || sc.getStorageCandidate().getAnswerableMeasurePhraseIndices().contains(phrase.getPosition())) {
+          if (sc.getStorageCandidate().getAnswerableMeasurePhraseIndices().contains(phrase.getPosition())) {
             ASTNode exprWithOutAlias = (ASTNode) sc.getQueryAst().getSelectAST().getChild(i).getChild(0);
             storageCandidateToSelectAstMap.get(sc.getStorageCandidate().toString()).
                 addChild(getSelectExpr(exprWithOutAlias, aliasNode, false));
@@ -571,8 +576,12 @@ public class UnionQueryWriter extends SimpleHQLContext {
           return outerAST;
         } else {
           ASTNode outerAST = getDotAST(cubeql.getCube().getName(), alias);
-          (isSelectAst ? innerToOuterSelectASTs : innerToOuterHavingASTs)
-            .put(new HashableASTNode(innerSelectASTWithoutAlias), outerAST);
+          HashableASTNode innerAST = new HashableASTNode(innerSelectASTWithoutAlias);
+          if (isSelectAst && !innerToOuterSelectASTs.containsKey(innerAST)) {
+            innerToOuterSelectASTs.put(innerAST, outerAST);
+          } else if (!isSelectAst && !innerToOuterHavingASTs.containsKey(innerAST)) {
+            innerToOuterHavingASTs.put(innerAST, outerAST);
+          }
           return outerAST;
         }
       }
@@ -593,8 +602,12 @@ public class UnionQueryWriter extends SimpleHQLContext {
     //TODO: take care or non-transitive aggregate functions
     outerAST.addChild(new ASTNode(new CommonToken(Identifier, astNode.getChild(0).getText())));
     outerAST.addChild(dotAST);
-    (isSelectAst ? innerToOuterSelectASTs : innerToOuterHavingASTs)
-      .put(new HashableASTNode(innerSelectASTWithoutAlias), outerAST);
+    HashableASTNode innerAST = new HashableASTNode(innerSelectASTWithoutAlias);
+    if (isSelectAst && !innerToOuterSelectASTs.containsKey(innerAST)) {
+      innerToOuterSelectASTs.put(innerAST, outerAST);
+    } else if (!isSelectAst && !innerToOuterHavingASTs.containsKey(innerAST)) {
+      innerToOuterHavingASTs.put(innerAST, outerAST);
+    }
     return outerAST;
   }
 
