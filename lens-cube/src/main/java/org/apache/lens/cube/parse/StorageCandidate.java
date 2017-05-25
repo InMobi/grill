@@ -738,6 +738,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
 
   @Override
   public boolean isDimAttributeEvaluable(String dim) throws LensException {
+
     return getCubeQueryContext().getDeNormCtx()
       .addRefUsage(getCubeQueryContext(), this, dim, getCubeQueryContext().getCube().getName());
   }
