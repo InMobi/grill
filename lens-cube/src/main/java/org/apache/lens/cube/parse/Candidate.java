@@ -359,10 +359,7 @@ public interface Candidate {
 
   default Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
     for (Candidate candidate : getChildren()) {
-      Set<Integer> covered = candidate.decideMeasuresToAnswer(measureIndices);
-      if (!covered.containsAll(measureIndices)) {
-        throw new LensException("Union Child candidate unable to cover all measures");
-      }
+      candidate.decideMeasuresToAnswer(measureIndices);
     }
     return measureIndices;
   }
