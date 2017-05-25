@@ -19,7 +19,6 @@
 package org.apache.lens.cube.parse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.lens.cube.metadata.CubeInterface;
 import org.apache.lens.cube.metadata.CubeMetastoreClient;
