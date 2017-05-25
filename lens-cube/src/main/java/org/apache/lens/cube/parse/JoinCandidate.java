@@ -187,9 +187,6 @@ public class JoinCandidate implements Candidate {
       allCovered.addAll(covered);
       remaining = Sets.difference(remaining, covered);
     }
-    if (!allCovered.containsAll(measureIndices)) {
-      throw new LensException("Join candidate children unable to cover all measures");
-    }
     return allCovered;
   }
 
