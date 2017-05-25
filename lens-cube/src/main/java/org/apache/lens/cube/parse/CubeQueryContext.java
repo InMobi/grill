@@ -833,9 +833,6 @@ public class CubeQueryContext extends TracksQueriedColumns implements QueryAST, 
         Set<Integer> measureIndices = getQueriedPhrases().stream().filter(x -> x.hasMeasures(this))
           .map(QueriedPhraseContext::getPosition).collect(toSet());
         Set<Integer> covered = pickedCandidate.decideMeasuresToAnswer(measureIndices);
-        if (!covered.containsAll(measureIndices)) {
-          throw new LensException("Join candidate children unable to cover all measures");
-        }
       }
       if (pickedCandidate == null) {
         throwNoCandidateFactException();
