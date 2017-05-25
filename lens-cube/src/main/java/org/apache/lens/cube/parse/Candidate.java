@@ -357,8 +357,13 @@ public interface Candidate {
     throw new IllegalArgumentException("Candidate doesn't have children and no suitable implementation found");
   }
 
-  default void retain(Set<QueriedPhraseContext> coveredMsrs) {
-    Set<Integer> indices = coveredMsrs.stream().map(QueriedPhraseContext::getPosition).collect(Collectors.toSet());
-    getAnswerableMeasurePhraseIndices().retainAll(indices);
+  default Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+    for (Candidate candidate : getChildren()) {
+      Set<Integer> covered = candidate.decideMeasuresToAnswer(measureIndices);
+      if (!covered.containsAll(measureIndices)) {
+        throw new LensException("Union Child candidate unable to cover all measures");
+      }
+    }
+    return measureIndices;
   }
 }
