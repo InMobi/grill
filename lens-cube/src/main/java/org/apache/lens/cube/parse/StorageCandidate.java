@@ -377,7 +377,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
   private void updatePartitionStorage(FactPartition part) throws LensException {
     try {
       if (getCubeMetastoreClient().factPartitionExists(fact, part, storageTable)) {
-        part.getStorageTables().add(name);
+        part.getStorageTables().add(storageTable);
         part.setFound(true);
       }
     } catch (HiveException e) {
@@ -427,10 +427,10 @@ public class StorageCandidate implements Candidate, CandidateTable {
       && cubeQueryContext.getRangeWriter().getClass().equals(BetweenTimeRangeWriter.class)) {
       FactPartition part = new FactPartition(partCol, fromDate, maxInterval, null, partWhereClauseFormat);
       partitions.add(part);
-      part.getStorageTables().add(storageName);
+      part.getStorageTables().add(storageTable);
       part = new FactPartition(partCol, toDate, maxInterval, null, partWhereClauseFormat);
       partitions.add(part);
-      part.getStorageTables().add(storageName);
+      part.getStorageTables().add(storageTable);
       this.participatingUpdatePeriods.add(maxInterval);
       log.info("Added continuous fact partition for storage table {}", storageName);
       return true;
@@ -544,7 +544,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
             missingPartitions.add(part);
             if (!failOnPartialData) {
               partitions.add(part);
-              part.getStorageTables().add(storageName);
+              part.getStorageTables().add(storageTable);
             }
           } else {
             log.info("No finer granualar partitions exist for {}", part);
@@ -932,9 +932,9 @@ public class StorageCandidate implements Candidate, CandidateTable {
       StorageCandidate updatePeriodSpecificSc;
       for (UpdatePeriod period : participatingUpdatePeriods) {
         updatePeriodSpecificSc = copy();
-        updatePeriodSpecificSc.truncatePartitions(period);
         updatePeriodSpecificSc.setResolvedName(getCubeMetastoreClient().getStorageTableName(fact.getName(),
           storageName, period));
+        updatePeriodSpecificSc.truncatePartitions(period);
         periodSpecificScList.add(updatePeriodSpecificSc);
       }
       periodSpecificStorageCandidates = periodSpecificScList;
@@ -952,6 +952,10 @@ public class StorageCandidate implements Candidate, CandidateTable {
     while (rangeItr.hasNext()) {
       Map.Entry<TimeRange, Set<FactPartition>> rangeEntry = rangeItr.next();
       rangeEntry.getValue().removeIf(factPartition -> !factPartition.getPeriod().equals(updatePeriod));
+      rangeEntry.getValue().forEach(factPartition -> {
+        factPartition.getStorageTables().remove(storageTable);
+        factPartition.getStorageTables().add(resolvedName);
+      });
       if (rangeEntry.getValue().isEmpty()) {
         rangeItr.remove();
       }
