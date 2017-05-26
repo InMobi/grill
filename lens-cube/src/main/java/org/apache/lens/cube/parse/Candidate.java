@@ -19,7 +19,6 @@
 package org.apache.lens.cube.parse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.lens.cube.metadata.CubeInterface;
 import org.apache.lens.cube.metadata.CubeMetastoreClient;
@@ -358,12 +357,11 @@ public interface Candidate {
   }
 
   default Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+    HashSet<Integer> allCovered = Sets.newHashSet();
     for (Candidate candidate : getChildren()) {
       Set<Integer> covered = candidate.decideMeasuresToAnswer(measureIndices);
-      if (!covered.containsAll(measureIndices)) {
-        throw new LensException("Union Child candidate unable to cover all measures");
-      }
+      allCovered.addAll(covered);
     }
-    return measureIndices;
+    return allCovered;
   }
 }
