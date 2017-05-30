@@ -1222,25 +1222,13 @@
   <xs:complexType name="x_fact" abstract="true">
     <xs:annotation>
       <xs:documentation>
-        XCube can either be a Base cube for which the user would give the full specification of the
+        XFact can either be a Cube Fact for which the user would give the full specification of the
         measures and dimensions
-        or can be a Derived cube, for which the user would specify only the measure names,
-        dimension names and parent.
-        Derived cube can have subset of measure names and dimension names associated with its
-        parent. It can have
-        different properties associated with it than the parent.
+        or can be a Virtual fact, for which the user would specify only the Source fact and filters if any.
+        Virtual fact derives its columns and storage specific details all from the source Fact. It can however have
+        different properties associated with it than the source.
       </xs:documentation>
     </xs:annotation>
-    <!--<xs:sequence>-->
-      <!--<xs:element type="x_properties" name="properties" minOccurs="0">-->
-        <!--<xs:annotation>-->
-          <!--<xs:documentation>-->
-            <!--The properties for the cube. The properties that should to be set are-->
-
-          <!--</xs:documentation>-->
-        <!--</xs:annotation>-->
-      <!--</xs:element>-->
-    <!--</xs:sequence>-->
     <xs:attribute type="xs:string" name="name" use="required"/>
     <xs:attribute type="xs:string" name="description"/>
     <xs:attribute type="xs:string" name="cube_name" use="required">
