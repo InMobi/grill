@@ -18,13 +18,7 @@
  */
 package org.apache.lens.cube.parse;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.lens.cube.metadata.CubeInterface;
 import org.apache.lens.cube.metadata.CubeMetastoreClient;
@@ -360,5 +354,14 @@ public interface Candidate {
       return new MultiCandidateQueryWriterContext(writerContexts, rootCubeQueryContext);
     }
     throw new IllegalArgumentException("Candidate doesn't have children and no suitable implementation found");
+  }
+
+  default Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+    HashSet<Integer> allCovered = Sets.newHashSet();
+    for (Candidate candidate : getChildren()) {
+      Set<Integer> covered = candidate.decideMeasuresToAnswer(measureIndices);
+      allCovered.addAll(covered);
+    }
+    return allCovered;
   }
 }

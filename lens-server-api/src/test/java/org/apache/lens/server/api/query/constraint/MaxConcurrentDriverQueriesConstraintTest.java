@@ -159,11 +159,15 @@ public class MaxConcurrentDriverQueriesConstraintTest {
   public void testAllowsLaunchOfQuery(final int currentDriverLaunchedQueries, final boolean expectedCanLaunch) {
 
     QueryContext mockCandidateQuery = mock(QueryContext.class);
+    QueryContext mockCandidateQuery2 = mock(QueryContext.class);
     EstimatedImmutableQueryCollection mockLaunchedQueries = mock(EstimatedImmutableQueryCollection.class);
     LensDriver mockDriver = mock(LensDriver.class);
+    LensDriver mockDriver2 = mock(LensDriver.class);
 
     when(mockCandidateQuery.getSelectedDriver()).thenReturn(mockDriver);
+    when(mockCandidateQuery2.getSelectedDriver()).thenReturn(mockDriver2);
     when(mockLaunchedQueries.getQueriesCount(mockDriver)).thenReturn(currentDriverLaunchedQueries);
+    when(mockLaunchedQueries.getQueriesCount(mockDriver2)).thenReturn(1);
 
     String actualCanLaunch = constraint.allowsLaunchOf(mockCandidateQuery, mockLaunchedQueries);
 
