@@ -20,4 +20,11 @@
 
 -->
 <x_base_cube name="virtualcube" xmlns="uri:lens:cube:0.1">
+  <properties>
+    <property name="sample_cube.prop" value="sample" />
+    <property name="cube.sample_cube.timed.dimensions.list" value="dt" />
+  </properties>
+  <measures>
+  <measure name="measure1" _type="BIGINT" />
+  </measures>
 </x_base_cube>

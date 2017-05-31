@@ -59,22 +59,21 @@ public class TestLensFactCommands extends LensCliApplicationTest {
   @Test
   public void testFactCommands() throws IOException, URISyntaxException {
     createSampleCube();
-  //  createVirtualCube();
+    createVirtualCube();
 
+    //test base fact
     addFact1Table();
     updateFact1Table();
     testFactStorageActions();
     testFactPartitionActions();
 
-//    addVirtualFactTable();
-//    updateVirtualFactTable();
-//    dropVirtualFactTable();
+    //test virtual fact
+    addVirtualFactTable();
+    updateVirtualFactTable();
+    dropVirtualFactTable();
 
     dropFact1Table();
-
-    //test virtual fact
-
-   // dropVirtualCube();
+    dropVirtualCube();
     dropSampleCube();
   }
 
@@ -141,9 +140,9 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    */
   public static void addFact1Table() throws IOException {
     LensFactCommands command = getCommand();
-    String factList = command.showFacts(null);
+    String factList = command.showFacts("sample_cube");
     assertEquals(command.showFacts("sample_cube"), "No fact found for sample_cube");
-    assertEquals(factList, "No fact found", "Fact tables should not be found");
+    assertEquals(factList, "No fact found for sample_cube", "Fact tables should not be found");
     // add local storage before adding fact table
     TestLensStorageCommands.addLocalStorage(FACT_LOCAL);
     URL factSpec = TestLensFactCommands.class.getClassLoader().getResource("schema/facts/fact1.xml");
@@ -152,7 +151,7 @@ public class TestLensFactCommands extends LensCliApplicationTest {
     } catch (Exception e) {
       fail("Unable to create fact table" + e.getMessage());
     }
-    factList = command.showFacts(null);
+    factList = command.showFacts("sample_cube");
     assertEquals(command.showFacts("sample_cube"), factList);
     try {
       assertEquals(command.showFacts("blah"), factList);
@@ -176,19 +175,18 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    */
   public static void addVirtualFactTable() throws IOException {
     LensFactCommands command = getCommand();
-    String factList = command.showFacts(null);
-    assertEquals(command.showFacts("sample_cube"), "No fact found for sample_cube");
-    assertEquals(factList, "No fact found", "Fact tables should not be found");
+    String factList = command.showFacts("virtualcube");
+    assertEquals(command.showFacts("virtualcube"), "No fact found for virtualcube");
+    assertEquals(factList, "No fact found for virtualcube", "Fact tables should not be found");
     // add local storage before adding fact table
-    TestLensStorageCommands.addLocalStorage(FACT_LOCAL);
     URL factSpec = TestLensFactCommands.class.getClassLoader().getResource("schema/facts/virtual_fact.xml");
     try {
       command.createFact(new File(factSpec.toURI()));
     } catch (Exception e) {
       fail("Unable to create virtual fact table" + e.getMessage());
     }
-    factList = command.showFacts(null);
-    assertEquals(command.showFacts("sample_cube"), factList);
+    factList = command.showFacts("virtualcube");
+    assertEquals(command.showFacts("virtualcube"), factList);
     try {
       assertEquals(command.showFacts("blah"), factList);
       fail();
@@ -276,37 +274,30 @@ public class TestLensFactCommands extends LensCliApplicationTest {
 
       String xmlContent = sb.toString();
 
-      xmlContent = xmlContent.replace("<property name=\"fact1.prop\" value=\"f1\"/>\n",
-        "<property name=\"fact1.prop\" value=\"f1\"/>" + "\n<property name=\"fact1.prop1\" value=\"f2\"/>\n");
-
-      xmlContent = xmlContent.replace("<column comment=\"\" name=\"measure3\" _type=\"FLOAT\"/>",
-        "<column comment=\"\" name=\"measure3\" _type=\"FLOAT\"/>"
-          + "\n<column comment=\"\" name=\"measure4\" _type=\"FLOAT\" start_time=\"2015-01-01\"/>\n");
+      xmlContent = xmlContent.replace("<property name=\"virtualfact.prop\" value=\"f1\"/>\n",
+        "<property name=\"virtualfact.prop\" value=\"f1\"/>" + "\n<property name=\"virtualfact.prop1\" value=\"f2\"/>\n");
 
       File newFile = new File("target/local-virtualfact.xml");
       Writer writer = new OutputStreamWriter(new FileOutputStream(newFile));
       writer.write(xmlContent);
       writer.close();
 
-      String desc = command.describeFactTable("fact1");
+      String desc = command.describeFactTable("virtualfact");
       log.debug(desc);
-      String propString = "fact1.prop: f1";
-      String propString1 = "fact1.prop1: f2";
-      String propStringColStartTime = "cube.fact.col.start.time.measure4: 2015-01-01";
-      assertTrue(desc.contains(propString));
+      String propString = "virtualfact.prop: f1";
+      String propString1 = "virtualfact.prop1: f2";
 
-      command.updateFactTable("fact1", new File("target/local-fact1.xml"));
-      desc = command.describeFactTable("fact1");
+      command.updateFactTable("virtualfact", new File("target/local-virtualfact.xml"));
+      desc = command.describeFactTable("virtualfact");
       log.debug(desc);
       assertTrue(desc.contains(propString), "The sample property value is not set");
       assertTrue(desc.contains(propString1), "The sample property value is not set");
-      assertTrue(desc.contains(propStringColStartTime), "The sample property value is not set");
 
       newFile.delete();
 
     } catch (Throwable t) {
-      log.error("Updating of the fact1 table failed with ", t);
-      fail("Updating of the fact1 table failed with " + t.getMessage());
+      log.error("Updating of the virtualfact table failed with ", t);
+      fail("Updating of the virtualfact table failed with " + t.getMessage());
     }
 
   }
@@ -451,11 +442,11 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    */
   public static void dropFact1Table() {
     LensFactCommands command = getCommand();
-    String factList = command.showFacts(null);
+    String factList = command.showFacts("sample_cube");
     assertEquals("fact1", factList, "Fact1 table should be found");
     command.dropFact("fact1", false);
-    factList = command.showFacts(null);
-    assertEquals(factList, "No fact found", "Fact tables should not be found");
+    factList = command.showFacts("sample_cube");
+    assertEquals(factList, "No fact found for sample_cube", "Fact tables should not be found");
     TestLensStorageCommands.dropStorage(FACT_LOCAL);
   }
 
@@ -465,11 +456,10 @@ public class TestLensFactCommands extends LensCliApplicationTest {
    */
   public static void dropVirtualFactTable() {
     LensFactCommands command = getCommand();
-    String factList = command.showFacts(null);
+    String factList = command.showFacts("virtualcube");
     assertEquals("virtualfact", factList, "Virtualfact table should be found");
     command.dropFact("virtualfact", false);
-    factList = command.showFacts(null);
-    assertEquals(factList, "No fact found", "Fact tables should not be found");
-    TestLensStorageCommands.dropStorage(FACT_LOCAL);
+    factList = command.showFacts("virtualcube");
+    assertEquals(factList, "No fact found for virtualcube", "Virtual Fact tables should not be found");
   }
 }
