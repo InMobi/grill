@@ -126,13 +126,13 @@ public class TestCubeSegmentationRewriter extends TestQueryRewrite {
    */
   @Test
   public void testFactUnionSegmentWithInnerUnion() throws Exception {
-    CubeQueryContext ctx = rewriteCtx("select cityid, segmsr1 from testcube where " + TWO_MONTHS_RANGE_UPTO_DAYS,
-      getConf());
+    CubeQueryContext ctx = rewriteCtx("select cityid, segmsr1 from testcube where "
+        + "time_range_in(d_time, 'now.day-40day', 'now.day')", getConf());
     String query1, query2, query3, query4;
     query1 = getExpectedQuery("testcube", "select testcube.cityid as alias0, sum(testcube.segmsr1) as alias1 from ",
       null, "group by testcube.cityid",
       getWhereForUpdatePeriods("testcube", "c0_b1fact1",
-        addDays(getDateWithOffset(UpdatePeriod.MONTHLY, -1), -1), getDateWithOffset(UpdatePeriod.DAILY, -10),
+        getDateWithOffset(UpdatePeriod.DAILY, -31), getDateWithOffset(UpdatePeriod.DAILY, -10),
         Sets.newHashSet(UpdatePeriod.MONTHLY, UpdatePeriod.DAILY)));
     query2 = getExpectedQuery("testcube", "select testcube.cityid as alias0, sum(testcube.segmsr1) as alias1 from ",
       null, "group by testcube.cityid",
@@ -142,13 +142,13 @@ public class TestCubeSegmentationRewriter extends TestQueryRewrite {
     query3 = getExpectedQuery("testcube", "select testcube.cityid as alias0, sum(testcube.segmsr1) as alias1 from ",
       null, "group by testcube.cityid",
       getWhereForUpdatePeriods("testcube", "c0_b2fact1",
-        addDays(getDateWithOffset(UpdatePeriod.MONTHLY, -1), -1), NOW,
+        getDateWithOffset(UpdatePeriod.DAILY, -31), NOW,
         Sets.newHashSet(UpdatePeriod.MONTHLY, UpdatePeriod.DAILY)));
     query4 = getExpectedQuery("testcube", "select testcube.cityid as alias0, sum(testcube.segmsr1) as alias1 from ",
       null, "group by testcube.cityid",
       getWhereForUpdatePeriods("testcube", "c0_b1b2fact1",
-        addDays(getDateWithOffset(UpdatePeriod.MONTHLY, -2), -1),
-        addDays(getDateWithOffset(UpdatePeriod.MONTHLY, -1), 0),
+        getDateWithOffset(UpdatePeriod.DAILY, -41),
+        getDateWithOffset(UpdatePeriod.DAILY, -30),
         Sets.newHashSet(UpdatePeriod.MONTHLY, UpdatePeriod.DAILY)));
     compareUnionQuery(ctx, "select testcube.alias0 as cityid, sum(testcube.alias1) as segmsr1 from (",
       ") AS testcube GROUP BY (testcube.alias0)", newArrayList(query1, query2, query3, query4));
