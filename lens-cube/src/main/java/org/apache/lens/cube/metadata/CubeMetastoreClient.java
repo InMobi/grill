@@ -1652,8 +1652,7 @@ public class CubeMetastoreClient {
   }
 
   boolean isFactTable(Table tbl) {
-    String tableType = tbl.getParameters().get(MetastoreConstants.TABLE_TYPE_KEY);
-    return CubeTableType.FACT.name().equals(tableType);
+    return tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName())) == null;
   }
 
 
@@ -1675,10 +1674,8 @@ public class CubeMetastoreClient {
   }
 
   boolean isVirtualFactTable(Table tbl) {
-    String sourceFactName = tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName()));
-    return sourceFactName != null;
+    return tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName())) != null;
   }
-
 
   boolean isVirtualFactTableForCube(Table tbl, String cube) {
     return isVirtualFactTable(tbl) && tbl.getParameters().get(MetastoreUtil.getFactCubeNameKey(tbl.getTableName()))
@@ -2917,8 +2914,11 @@ public class CubeMetastoreClient {
     if (updatePeriod == null) {
       return storage;
     }
-    if (isFactTable(factOrDimTableName)) {
-      return (getCubeFactTable(factOrDimTableName)).getTablePrefix(storage, updatePeriod);
+    if (isVirtualFactTable(factOrDimTableName)) {
+      CubeFactTable sourceFact = (CubeFactTable)getCubeVirtualFactTable(factOrDimTableName).getSourceCubeFactTable();
+      return sourceFact.getTablePrefix(storage, updatePeriod);
+    } else if(isFactTable(factOrDimTableName)) {
+      return getCubeFactTable(factOrDimTableName).getTablePrefix(storage,updatePeriod);
     } else {
       return storage;
     }
