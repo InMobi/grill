@@ -20,12 +20,12 @@
 
 -->
 <x_base_cube name="virtualcube" xmlns="uri:lens:cube:0.1">
-  <!--<properties>-->
-    <!--<property name="cube.timedim.partition.d_time" value="dt"/>-->
-    <!--<property name="cube.virtualcube.timed.dimensions.list" value="d_time"/>-->
-  <!--</properties>-->
+  <properties>
+    <property name="cube.timedim.partition.d_time" value="dt"/>
+    <property name="cube.virtualcube.timed.dimensions.list" value="d_time"/>
+  </properties>
   <measures>
-    <measure _type="FLOAT" default_aggr="SUM" unit="RS" name="temp" display_string="Measure2"
+    <measure _type="FLOAT" default_aggr="SUM" unit="RS" name="msr2" display_string="Measure2"
              description="second measure"/>
 
   </measures>
