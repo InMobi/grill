@@ -21,7 +21,6 @@ package org.apache.lens.cube.parse;
 
 import static org.apache.lens.cube.metadata.DateFactory.NOW;
 import static org.apache.lens.cube.metadata.DateFactory.TWO_DAYS_RANGE;
-import static org.apache.lens.cube.metadata.DateFactory.TWO_MONTHS_RANGE_UPTO_DAYS;
 import static org.apache.lens.cube.metadata.DateFactory.getDateWithOffset;
 import static org.apache.lens.cube.parse.CandidateTablePruneCause.CandidateTablePruneCode.SEGMENTATION_PRUNED;
 import static org.apache.lens.cube.parse.CubeQueryConfUtil.DISABLE_AGGREGATE_RESOLVER;
@@ -37,8 +36,6 @@ import static org.apache.lens.cube.parse.CubeTestSetup.getWhereForDailyAndHourly
 import static org.apache.lens.cube.parse.CubeTestSetup.getWhereForHourly2days;
 import static org.apache.lens.cube.parse.CubeTestSetup.getWhereForUpdatePeriods;
 import static org.apache.lens.cube.parse.TestCubeRewriter.compareQueries;
-
-import static org.apache.commons.lang3.time.DateUtils.addDays;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
