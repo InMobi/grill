@@ -1652,8 +1652,11 @@ public class CubeMetastoreClient {
   }
 
   boolean isFactTable(Table tbl) {
-    return tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName())) == null;
+    String tableType = tbl.getParameters().get(MetastoreConstants.TABLE_TYPE_KEY);
+    return CubeTableType.FACT.name().equals(tableType) &&
+      tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName())) == null;
   }
+
 
   boolean isFactTableForCube(Table tbl, String cube) {
     return isFactTable(tbl) && tbl.getParameters().get(MetastoreUtil.getFactCubeNameKey(tbl.getTableName()))
