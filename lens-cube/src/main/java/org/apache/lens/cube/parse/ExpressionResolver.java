@@ -518,15 +518,13 @@ class ExpressionResolver implements ContextRewriter {
             }
             // Remove expressions for which denormalized columns are no more reachable
             esc.getDeNormCtx().pruneReferences(cubeql);
-            for (String table : esc.getDeNormCtx().getTableToRefCols().keySet()) {
-              Set<String> nonReachableFields = esc.getDeNormCtx().getNonReachableReferenceFields(table);
-              if (!nonReachableFields.isEmpty()) {
-                log.info("Removing expression {} as columns {} are not available", esc, nonReachableFields);
-                iterator.remove();
-                removedEsc.add(esc);
-                removed = true;
-                break;
-              }
+            if (esc.getDeNormCtx().getTableToRefCols().keySet().stream()
+              .map(esc.getDeNormCtx()::getNonReachableReferenceFields).noneMatch(Set::isEmpty)) {
+              log.info("Removing expression {} as all tables have non reachable fields", esc);
+              iterator.remove();
+              removedEsc.add(esc);
+              removed = true;
+              break;
             }
             if (removed) {
               continue;
