@@ -19,19 +19,9 @@
   under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <name>Lens Contrib</name>
-  <parent>
-    <artifactId>apache-lens</artifactId>
-    <groupId>org.apache.lens</groupId>
-    <version>2.7.8-inm-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>lens-contrib</artifactId>
-  <packaging>pom</packaging>
-  <description>Lens Contrib jar</description>
-  <modules>
-    <module>clients</module>
-  </modules>
-</project>
+<x_virtual_fact_table source_fact_name="summary1" cube_name="virtualcube" name="virtualfact1" xmlns="uri:lens:cube:0.1"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="uri:lens:cube:0.1 cube-0.1.xsd ">
+  <properties>
+    <property name="cube.fact.query.where.filter" value=" dim1 = 10 "/>
+  </properties>
+</x_virtual_fact_table>

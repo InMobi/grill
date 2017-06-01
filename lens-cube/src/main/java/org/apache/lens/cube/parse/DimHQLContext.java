@@ -82,7 +82,7 @@ public abstract class DimHQLContext extends SimpleHQLContext implements QueryWri
     return whereBuf.toString();
   }
 
-  static void appendWhereClause(StringBuilder filterCondition, String whereClause, boolean hasMore) {
+  public static void appendWhereClause(StringBuilder filterCondition, String whereClause, boolean hasMore) {
     // Make sure we add AND only when there are already some conditions in where
     // clause
     if (hasMore && !filterCondition.toString().isEmpty() && !StringUtils.isBlank(whereClause)) {

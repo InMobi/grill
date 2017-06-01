@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.metastore.ObjectFactory;
-import org.apache.lens.api.metastore.XFactTable;
+import org.apache.lens.api.metastore.XFact;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -83,11 +83,11 @@ public class FormDataMultiPartFactory {
   }
 
   public static FormDataMultiPart createFormDataMultiPartForFact(final LensSessionHandle sessionId,
-      final XFactTable xFactTable, MediaType mt) {
+      final XFact xFact, MediaType mt) {
 
     final FormDataMultiPart mp = new FormDataMultiPart();
     mp.bodyPart(getSessionIdFormDataBodyPart(sessionId, mt));
-    mp.bodyPart(getFormDataBodyPart("fact", "fact", cubeObjectFactory.createXFactTable(xFactTable), mt));
+    mp.bodyPart(getFormDataBodyPart("fact", "fact", cubeObjectFactory.createXFact(xFact), mt));
 
     return mp;
   }
