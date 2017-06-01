@@ -28,10 +28,8 @@ import static org.apache.lens.cube.parse.TestCubeRewriter.*;
 import static org.testng.Assert.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.lens.cube.error.LensCubeErrorCode;
-import org.apache.lens.cube.error.NoCandidateFactAvailableException;
 import org.apache.lens.server.api.LensServerAPITestUtil;
 import org.apache.lens.server.api.error.LensException;
 
