@@ -371,21 +371,21 @@ public class TestUnionQueries extends TestQueryRewrite {
         getValidFactTablesKey("testcube"), "testfact",
         FAIL_QUERY_ON_PARTIAL_DATA, false);
 
-    //If not beginning of month. Expecting this to pass at beginning of every month (example April 01 00:00)
-    if (!THREE_MONTHS_RANGE_UPTO_DAYS.equals(THREE_MONTHS_RANGE_UPTO_MONTH)) {
-      NoCandidateFactAvailableException e = getLensExceptionInRewrite("select count(msr4) from testCube where "
-          + THREE_MONTHS_RANGE_UPTO_DAYS, conf);
-      Set<Map.Entry<Candidate, List<CandidateTablePruneCause>>> causes =
-        e.getBriefAndDetailedError().entrySet().stream().filter(x ->
-          x.getKey() instanceof StorageCandidate
-            && ((StorageCandidate)x.getKey()).getStorageTable().equalsIgnoreCase("c6_testfact"))
-          .collect(Collectors.toSet());
-      assertEquals(causes.size(), 1);
-      List<CandidateTablePruneCause> pruneCauses = causes.iterator().next().getValue();
-      assertEquals(pruneCauses.size(), 1);
-      assertEquals(pruneCauses.get(0).getCause(), CandidateTablePruneCause.
-          CandidateTablePruneCode.STORAGE_NOT_AVAILABLE_IN_RANGE);
-    }
+//    //If not beginning of month. Expecting this to pass at beginning of every month (example April 01 00:00)
+//    if (!THREE_MONTHS_RANGE_UPTO_DAYS.equals(THREE_MONTHS_RANGE_UPTO_MONTH)) {
+//      NoCandidateFactAvailableException e = getLensExceptionInRewrite("select count(msr4) from testCube where "
+//          + THREE_MONTHS_RANGE_UPTO_DAYS, conf);
+//      Set<Map.Entry<Candidate, List<CandidateTablePruneCause>>> causes =
+//        e.getBriefAndDetailedError().entrySet().stream().filter(x ->
+//          x.getKey() instanceof StorageCandidate
+//            && ((StorageCandidate)x.getKey()).getStorageTable().equalsIgnoreCase("c6_testfact"))
+//          .collect(Collectors.toSet());
+//      assertEquals(causes.size(), 1);
+//      List<CandidateTablePruneCause> pruneCauses = causes.iterator().next().getValue();
+//      assertEquals(pruneCauses.size(), 1);
+//      assertEquals(pruneCauses.get(0).getCause(), CandidateTablePruneCause.
+//          CandidateTablePruneCode.STORAGE_NOT_AVAILABLE_IN_RANGE);
+//    }
 
     String hqlQuery2 = rewrite("select count(msr4) from testCube where " + THREE_MONTHS_RANGE_UPTO_MONTH, conf);
     System.out.println(hqlQuery2);
