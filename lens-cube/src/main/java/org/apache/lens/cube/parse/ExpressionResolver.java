@@ -527,9 +527,6 @@ class ExpressionResolver implements ContextRewriter {
               removed = true;
               break;
             }
-            if (removed) {
-              continue;
-            }
             //remove expressions which are not valid in the timerange queried
             // If an expression is defined as
             // ex = a + b // from t1 to t2;
