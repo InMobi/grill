@@ -275,7 +275,8 @@ public class TestLensFactCommands extends LensCliApplicationTest {
       String xmlContent = sb.toString();
 
       xmlContent = xmlContent.replace("<property name=\"virtualfact.prop\" value=\"f1\"/>\n",
-        "<property name=\"virtualfact.prop\" value=\"f1\"/>" + "\n<property name=\"virtualfact.prop1\" value=\"f2\"/>\n");
+        "<property name=\"virtualfact.prop\" value=\"f1\"/>\n"
+        + "<property name=\"virtualfact.prop1\" value=\"f2\"/>\n");
 
       File newFile = new File("target/local-virtualfact.xml");
       Writer writer = new OutputStreamWriter(new FileOutputStream(newFile));
