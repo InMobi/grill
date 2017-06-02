@@ -239,7 +239,10 @@ public class SegmentationCandidate implements Candidate {
 
   @Override
   public double getCost() {
-    return segmentation.weight();
+    if (areCandidatesPicked()) {
+      return candidateStream().mapToDouble(Candidate::getCost).sum();
+    }
+    return -1;
   }
 
   @Override
@@ -281,7 +284,7 @@ public class SegmentationCandidate implements Candidate {
     // I can't ask my children to check this context for evaluability.
     return cubeStream()
       .map(cube -> cube.getExpressionByName(expr.getExprCol().getName()))
-      .allMatch(Predicate.isEqual(expr.getExprCol()));
+      .allMatch(Objects::nonNull);
   }
 
   private boolean areCandidatesPicked() {

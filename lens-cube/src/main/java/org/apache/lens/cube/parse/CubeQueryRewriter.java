@@ -206,7 +206,7 @@ public class CubeQueryRewriter {
     // Phase 2 of exprResolver : Prune candidate facts without any valid expressions
     rewriters.add(exprResolver);
 
-    if (!lightFactFirst) {
+    if (true || !lightFactFirst) {
       // Pick the least cost combination(s) (and prune others) out of a set of combinations produced
       // by CandidateCoveringSetsResolver
       rewriters.add(new LightestFactResolver());

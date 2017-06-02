@@ -34,6 +34,7 @@ import org.apache.hadoop.hive.ql.parse.HiveParser;
 
 import org.antlr.runtime.CommonToken;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -71,7 +72,7 @@ public class StorageCandidateHQLContext extends DimHQLContext {
     }
   }
 
-  CubeInterface getCube() {
+  public CubeInterface getCube() {
     return storageCandidate.getCubeQueryContext().getCube();
   }
 
@@ -149,5 +150,14 @@ public class StorageCandidateHQLContext extends DimHQLContext {
         setPrefix(getCubeQueryContext().getInsertClause());
       }
     }
+  }
+
+  @Override
+  public int hashCode() {
+    final int PRIME = 59;
+    int result = 1;
+    result = result * PRIME + getStorageCandidate().hashCode();
+    result = result * PRIME + getCube().hashCode();
+    return result;
   }
 }
