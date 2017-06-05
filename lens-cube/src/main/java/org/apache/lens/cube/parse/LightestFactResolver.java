@@ -40,19 +40,19 @@ public class LightestFactResolver implements ContextRewriter {
   public void rewriteContext(CubeQueryContext cubeql) throws LensException {
     if (cubeql.getCube() != null && !cubeql.getCandidates().isEmpty()) {
       Map<Candidate, Double> factWeightMap = cubeql.getCandidates().stream()
-        .filter(candidate -> candidate.getCost() > 0)
-        .collect(Collectors.toMap(Function.identity(), Candidate::getCost));
-
-      double minWeight = Collections.min(factWeightMap.values());
-
-      for (Iterator<Candidate> i = cubeql.getCandidates().iterator(); i.hasNext(); ) {
-        Candidate cand = i.next();
-        if (factWeightMap.containsKey(cand)) {
-          if (factWeightMap.get(cand) > minWeight) {
-            log.info("Not considering candidate:{} from final candidates as it has more fact weight:{} minimum:{}",
-              cand, factWeightMap.get(cand), minWeight);
-            cubeql.addCandidatePruningMsg(cand, new CandidateTablePruneCause(CandidateTablePruneCode.MORE_WEIGHT));
-            i.remove();
+        .filter(candidate -> candidate.getCost().isPresent())
+        .collect(Collectors.toMap(Function.identity(), x -> x.getCost().getAsDouble()));
+      if (!factWeightMap.isEmpty()) {
+        double minWeight = Collections.min(factWeightMap.values());
+        for (Iterator<Candidate> i = cubeql.getCandidates().iterator(); i.hasNext();) {
+          Candidate cand = i.next();
+          if (factWeightMap.containsKey(cand)) {
+            if (factWeightMap.get(cand) > minWeight) {
+              log.info("Not considering candidate:{} from final candidates as it has more fact weight:{} minimum:{}",
+                cand, factWeightMap.get(cand), minWeight);
+              cubeql.addCandidatePruningMsg(cand, new CandidateTablePruneCause(CandidateTablePruneCode.MORE_WEIGHT));
+              i.remove();
+            }
           }
         }
       }

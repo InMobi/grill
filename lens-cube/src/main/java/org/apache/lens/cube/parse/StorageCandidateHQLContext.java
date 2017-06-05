@@ -34,7 +34,6 @@ import org.apache.hadoop.hive.ql.parse.HiveParser;
 
 import org.antlr.runtime.CommonToken;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**

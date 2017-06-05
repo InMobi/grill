@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -238,11 +239,20 @@ public class SegmentationCandidate implements Candidate {
   }
 
   @Override
-  public double getCost() {
+  public OptionalDouble getCost() {
     if (areCandidatesPicked()) {
-      return candidateStream().mapToDouble(Candidate::getCost).sum();
+      double cost = 0.0;
+      for (Candidate candidate : getChildren()) {
+        if (candidate.getCost().isPresent()) {
+          cost += candidate.getCost().getAsDouble();
+        } else {
+          return OptionalDouble.empty();
+        }
+      }
+      return OptionalDouble.of(cost);
+    } else {
+      return OptionalDouble.empty();
     }
-    return -1;
   }
 
   @Override

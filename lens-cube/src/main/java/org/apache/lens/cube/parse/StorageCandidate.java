@@ -41,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -350,8 +351,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   @Override
-  public double getCost() {
-    return fact.weight();
+  public OptionalDouble getCost() {
+    return OptionalDouble.of(fact.weight());
   }
 
   @Override
