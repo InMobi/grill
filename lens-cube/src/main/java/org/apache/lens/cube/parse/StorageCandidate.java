@@ -769,9 +769,9 @@ public class StorageCandidate implements Candidate, CandidateTable {
     String database = SessionState.get().getCurrentDatabase();
     String ret;
     if (alias == null || alias.isEmpty()) {
-      ret = getResolvedName();
+      ret = getStorageTable();
     } else {
-      ret = getResolvedName() + " " + alias;
+      ret = getStorageTable() + " " + alias;
     }
     if (StringUtils.isNotBlank(database) && !"default".equalsIgnoreCase(database)) {
       ret = database + "." + ret;
