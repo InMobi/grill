@@ -154,11 +154,11 @@ public class RestAPITestUtil {
   }
 
   public static void createFactFailFast(final WebTarget target, final LensSessionHandle sessionId,
-    final XFactTable fact, MediaType mt) {
+    final XFactTable factTable, MediaType mt) {
 
     APIResult result = target.path("metastore").path("facts").queryParam("sessionid", sessionId)
       .request(mt).post(Entity.entity(
-          new GenericEntity<JAXBElement<XFact>>(cubeObjectFactory.createXFact(fact)) {
+          new GenericEntity<JAXBElement<XFact>>(cubeObjectFactory.createXFact(factTable)) {
           }, mt),
         APIResult.class);
     checkResponse(result);

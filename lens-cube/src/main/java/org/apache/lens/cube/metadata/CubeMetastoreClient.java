@@ -443,7 +443,7 @@ public class CubeMetastoreClient {
         if (get(timeLineKey) == null) {
           loadTimeLines(fact, storage, timeLineKey);
         }
-        log.debug("timeline for {} is: {}", storage, get(timeLineKey));
+        log.info("timeline for {} is: {}", storage, get(timeLineKey));
         // return the final value from memory
         return get(timeLineKey);
         // RESUME CHECKSTYLE CHECK DoubleCheckedLockingCheck
@@ -1666,7 +1666,7 @@ public class CubeMetastoreClient {
    * Is the table name passed a virtual fact table?
    *
    * @param virtualTableName table name
-   * @return true if it is cube fact, false otherwise
+   * @return true if it is virtual fact, false otherwise
    * @throws HiveException
    */
   public boolean isVirtualFactTable(String virtualTableName) throws LensException {
@@ -1675,7 +1675,9 @@ public class CubeMetastoreClient {
   }
 
   boolean isVirtualFactTable(Table tbl) {
-    return tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName())) != null;
+    String tableType = tbl.getParameters().get(MetastoreConstants.TABLE_TYPE_KEY);
+    return CubeTableType.FACT.name().equals(tableType)
+      && tbl.getParameters().get(getSourceFactNameKey(tbl.getTableName())) != null;
   }
 
   boolean isVirtualFactTableForCube(Table tbl, String cube) {

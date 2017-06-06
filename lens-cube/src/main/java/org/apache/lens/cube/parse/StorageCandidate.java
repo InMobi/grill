@@ -182,7 +182,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     }
     this.storageName = storageName;
     this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(fact.getSourceFactName(), storageName);
-    this.name = fact.getName();
+    this.name = getFact().getName();
     this.processTimePartCol = getConf().get(CubeQueryConfUtil.PROCESS_TIME_PART_COL);
     String formatStr = getConf().get(CubeQueryConfUtil.PART_WHERE_CLAUSE_DATE_FORMAT);
     if (formatStr != null) {
@@ -308,6 +308,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     return phrase.isEvaluable(this);
   }
 
+  @Override
   public AbstractCubeTable getTable() {
     return (AbstractCubeTable) fact;
   }
@@ -730,7 +731,6 @@ public class StorageCandidate implements Candidate, CandidateTable {
 
   @Override
   public boolean isDimAttributeEvaluable(String dim) throws LensException {
-
     return getCubeQueryContext().getDeNormCtx()
       .addRefUsage(getCubeQueryContext(), this, dim, getCubeQueryContext().getCube().getName());
   }

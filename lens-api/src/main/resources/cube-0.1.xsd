@@ -1223,7 +1223,7 @@
     <xs:annotation>
       <xs:documentation>
         XFact can either be a Cube Fact for which the user would give the full specification of the
-        measures and dimensions
+        columns and storages
         or can be a Virtual fact, for which the user would specify only the Source fact and filters if any.
         Virtual fact derives its columns and storage specific details all from the source Fact. It can however have
         different properties associated with it than the source.
