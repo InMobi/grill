@@ -105,7 +105,7 @@ public interface Candidate {
   /**
    * @return the cost of this candidate
    */
-  double getCost();
+  OptionalDouble getCost();
 
   /**
    * Returns true if this candidate contains the given candidate
@@ -356,10 +356,10 @@ public interface Candidate {
     throw new IllegalArgumentException("Candidate doesn't have children and no suitable implementation found");
   }
 
-  default Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+  default Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measurePhraseIndices) throws LensException {
     HashSet<Integer> allCovered = Sets.newHashSet();
     for (Candidate candidate : getChildren()) {
-      Set<Integer> covered = candidate.decideMeasuresToAnswer(measureIndices);
+      Set<Integer> covered = candidate.decideMeasurePhrasesToAnswer(measurePhraseIndices);
       allCovered.addAll(covered);
     }
     return allCovered;

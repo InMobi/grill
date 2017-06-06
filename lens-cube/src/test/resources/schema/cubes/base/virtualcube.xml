@@ -19,25 +19,18 @@
   under the License.
 
 -->
-<x_derived_cube parent="basecube" name="der1" xmlns="uri:lens:cube:0.1">
+<x_base_cube name="virtualcube" xmlns="uri:lens:cube:0.1">
   <properties>
-    <property name="cube.table.der1.weight" value="5.0"/>
-    <property name="cube.allfields.queriable" value="true"/>
-    <property name="cube.der1.measures.list0" value="msr1,msr11,msr9"/>
-    <property name="cube.der1.measures.list.size" value="1"/>
-    <property name="cube.der1.dimensions.list0" value="d_time,dim1,dim11"/>
-    <property name="cube.der1.parent.cube" value="basecube"/>
-    <property name="cube.der1.dimensions.list.size" value="1"/>
+    <property name="cube.timedim.partition.d_time" value="dt"/>
+    <property name="cube.virtualcube.timed.dimensions.list" value="d_time"/>
   </properties>
-  <measure_names>
-    <measure_name>msr1</measure_name>
-    <measure_name>msr11</measure_name>
-    <measure_name>msr9</measure_name>
-    <measure_name>msr16</measure_name>
-  </measure_names>
-  <dim_attr_names>
-    <attr_name>dim1</attr_name>
-    <attr_name>dim11</attr_name>
-    <attr_name>d_time</attr_name>
-  </dim_attr_names>
-</x_derived_cube>
+  <measures>
+    <measure _type="FLOAT" default_aggr="SUM" unit="RS" name="msr2" display_string="Measure2"
+             description="second measure"/>
+
+  </measures>
+  <dim_attributes>
+    <dim_attribute _type="string" name="dim1" description="basedim">
+    </dim_attribute>
+  </dim_attributes>
+</x_base_cube>

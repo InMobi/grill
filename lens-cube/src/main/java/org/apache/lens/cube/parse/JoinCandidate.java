@@ -72,8 +72,16 @@ public class JoinCandidate implements Candidate {
   }
 
   @Override
-  public double getCost() {
-    return children.stream().mapToDouble(Candidate::getCost).sum();
+  public OptionalDouble getCost() {
+    double cost = 0;
+    for (Candidate candidate : getChildren()) {
+      if (candidate.getCost().isPresent()) {
+        cost += candidate.getCost().getAsDouble();
+      } else {
+        return OptionalDouble.empty();
+      }
+    }
+    return OptionalDouble.of(cost);
   }
 
   @Override
@@ -179,11 +187,11 @@ public class JoinCandidate implements Candidate {
   }
 
   @Override
-  public Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+  public Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measureIndices) throws LensException {
     Set<Integer> remaining = Sets.newHashSet(measureIndices);
     Set<Integer> allCovered = Sets.newHashSet();
     for (Candidate child : children) {
-      Set<Integer> covered = child.decideMeasuresToAnswer(remaining);
+      Set<Integer> covered = child.decideMeasurePhrasesToAnswer(remaining);
       allCovered.addAll(covered);
       remaining = Sets.difference(remaining, covered);
     }

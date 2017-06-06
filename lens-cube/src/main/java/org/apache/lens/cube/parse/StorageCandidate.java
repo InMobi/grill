@@ -41,21 +41,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import org.apache.lens.cube.metadata.AbstractCubeTable;
-import org.apache.lens.cube.metadata.CubeFactTable;
-import org.apache.lens.cube.metadata.CubeInterface;
-import org.apache.lens.cube.metadata.DateUtil;
-import org.apache.lens.cube.metadata.Dimension;
-import org.apache.lens.cube.metadata.FactPartition;
-import org.apache.lens.cube.metadata.MetastoreConstants;
-import org.apache.lens.cube.metadata.MetastoreUtil;
-import org.apache.lens.cube.metadata.TimeRange;
-import org.apache.lens.cube.metadata.UpdatePeriod;
+import org.apache.lens.cube.metadata.*;
 import org.apache.lens.server.api.error.LensException;
 import org.apache.lens.server.api.metastore.DataCompletenessChecker;
 
@@ -126,7 +118,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
    * Participating fact, storage and dimensions for this StorageCandidate
    */
   @Getter
-  private CubeFactTable fact;
+  private FactTable fact;
   @Getter
   private String storageName;
   @Getter
@@ -180,7 +172,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
     this.answerableMeasurePhraseIndices = sc.answerableMeasurePhraseIndices;
   }
 
-  public StorageCandidate(CubeInterface cube, CubeFactTable fact, String storageName, CubeQueryContext cubeQueryContext)
+  public StorageCandidate(CubeInterface cube, FactTable fact, String storageName, CubeQueryContext cubeQueryContext)
     throws LensException {
     this.cube = cube;
     this.fact = fact;
@@ -189,7 +181,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
       throw new IllegalArgumentException("Cube,fact and storageName should be non null");
     }
     this.storageName = storageName;
-    this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(fact.getName(), storageName);
+    this.storageTable = MetastoreUtil.getFactOrDimtableStorageTableName(fact.getSourceFactName(), storageName);
     this.name = getFact().getName();
     this.processTimePartCol = getConf().get(CubeQueryConfUtil.PROCESS_TIME_PART_COL);
     String formatStr = getConf().get(CubeQueryConfUtil.PART_WHERE_CLAUSE_DATE_FORMAT);
@@ -199,7 +191,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
     completenessPartCol = getConf().get(CubeQueryConfUtil.COMPLETENESS_CHECK_PART_COL);
     completenessThreshold = getConf()
       .getFloat(CubeQueryConfUtil.COMPLETENESS_THRESHOLD, CubeQueryConfUtil.DEFAULT_COMPLETENESS_THRESHOLD);
-    Set<String> storageTblNames = getCubeMetastoreClient().getStorageTables(fact.getName(), storageName);
+
+    Set<String> storageTblNames = getCubeMetastoreClient().getStorageTables(fact, storageName);
     isStorageTblsAtUpdatePeriodLevel = storageTblNames.size() > 1
       || !storageTblNames.iterator().next().equalsIgnoreCase(storageTable);
     setStorageStartAndEndDate();
@@ -259,8 +252,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
     List<Date> startDates = new ArrayList<>();
     List<Date> endDates = new ArrayList<>();
     for (String storageTablePrefix : getValidStorageTableNames()) {
-      startDates.add(getCubeMetastoreClient().getStorageTableStartDate(storageTablePrefix, fact.getName()));
-      endDates.add(getCubeMetastoreClient().getStorageTableEndDate(storageTablePrefix, fact.getName()));
+      startDates.add(getCubeMetastoreClient().getStorageTableStartDate(storageTablePrefix, fact.getSourceFactName()));
+      endDates.add(getCubeMetastoreClient().getStorageTableEndDate(storageTablePrefix, fact.getSourceFactName()));
     }
     this.startTime = Collections.min(startDates);
     this.endTime = Collections.max(endDates);
@@ -278,7 +271,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
       return uniqueStorageTables;
     } else {
       //Get all storage tables.
-      return getCubeMetastoreClient().getStorageTables(fact.getName(), storageName);
+      return getCubeMetastoreClient().getStorageTables(fact, storageName);
     }
   }
 
@@ -302,15 +295,11 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   @Override
-  public AbstractCubeTable getTable() {
-    return fact;
-  }
-
-  @Override
   public AbstractCubeTable getBaseTable() {
     return (AbstractCubeTable) cube;
   }
 
+  @Override
   public StorageCandidate copy() throws LensException {
     return new StorageCandidate(this);
   }
@@ -321,13 +310,17 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   @Override
+  public AbstractCubeTable getTable() {
+    return (AbstractCubeTable) fact;
+  }
+
   public Optional<Date> getColumnStartTime(String column) {
     Date startTime = null;
     for (String key : getTable().getProperties().keySet()) {
       if (key.contains(MetastoreConstants.FACT_COL_START_TIME_PFX)) {
         String propCol = StringUtils.substringAfter(key, MetastoreConstants.FACT_COL_START_TIME_PFX);
         if (column.equals(propCol)) {
-          startTime = getTable().getDateFromProperty(key, false, true);
+          startTime = MetastoreUtil.getDateFromProperty(getTable().getProperties().get(key), false, true);
         }
       }
     }
@@ -341,7 +334,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
       if (key.contains(MetastoreConstants.FACT_COL_END_TIME_PFX)) {
         String propCol = StringUtils.substringAfter(key, MetastoreConstants.FACT_COL_END_TIME_PFX);
         if (column.equals(propCol)) {
-          endTime = getTable().getDateFromProperty(key, false, true);
+          endTime = MetastoreUtil.getDateFromProperty(getTable().getProperties().get(key), false, true);
         }
       }
     }
@@ -360,8 +353,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   @Override
-  public double getCost() {
-    return fact.weight();
+  public OptionalDouble getCost() {
+    return OptionalDouble.of(fact.weight());
   }
 
   @Override
@@ -436,7 +429,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
       return true;
     }
 
-    if (!getCubeMetastoreClient().partColExists(this.getFact().getName(), storageName, partCol)) {
+    if (!getCubeMetastoreClient().partColExists(this.getFact(), storageName, partCol)) {
       log.info("{} does not exist in {}", partCol, name);
       return false;
     }
@@ -587,7 +580,6 @@ public class StorageCandidate implements Candidate, CandidateTable {
     Set<FactPartition> rangeParts = getPartitions(timeRange, validUpdatePeriods, true, failOnPartialData, missingParts);
     String partCol = timeRange.getPartitionColumn();
     boolean partColNotSupported = rangeParts.isEmpty();
-    String storageTableName = getStorageTable();
 
     if (storagePruningMsgs.containsKey(this)) {
       List<CandidateTablePruneCause> causes = storagePruningMsgs.get(this);
@@ -604,11 +596,13 @@ public class StorageCandidate implements Candidate, CandidateTable {
     String sep = "";
     while (rangeParts.isEmpty()) {
       String timeDim = cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(partCol);
-      if (partColNotSupported && !getFact().hasColumn(timeDim)) {
-        unsupportedTimeDims.add(
-          cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(timeRange.getPartitionColumn())
-        );
-        break;
+      if (getFact() instanceof CubeFactTable) {
+        if (partColNotSupported && !((CubeFactTable) getFact()).hasColumn(timeDim)) {
+          unsupportedTimeDims.add(
+            cubeQueryContext.getBaseCube().getTimeDimOfPartitionColumn(timeRange.getPartitionColumn())
+          );
+          break;
+        }
       }
       TimeRange fallBackRange = getFallbackRange(prevRange, this.getFact().getName(), cubeQueryContext);
       log.info("No partitions for range:{}. fallback range: {}", timeRange, fallBackRange);
@@ -660,6 +654,10 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   private boolean evaluateMeasuresCompleteness(TimeRange timeRange) throws LensException {
+    if (getCubeMetastoreClient() == null || !getCubeMetastoreClient().isDataCompletenessCheckEnabled()) {
+      log.info("Skipping availability check for the fact table: {} as dataCompleteness check is not enabled", fact);
+      return true;
+    }
     String factDataCompletenessTag = fact.getDataCompletenessTag();
     if (factDataCompletenessTag == null) {
       log.info("Not checking completeness for the fact table:{} as the dataCompletenessTag is not set", fact);
@@ -682,7 +680,8 @@ public class StorageCandidate implements Candidate, CandidateTable {
       log.info("No Queried measures with the dataCompletenessTag, hence skipping the availability check");
       return true;
     }
-    boolean isDataComplete = false;
+    // default completenessTag will be true
+    boolean isDataComplete = true;
     DataCompletenessChecker completenessChecker = getCubeMetastoreClient().getCompletenessChecker();
     DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -704,6 +703,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
             String measureorExprFromTag = tagToMeasureOrExprMap.get(tag);
             dataCompletenessMap.computeIfAbsent(measureorExprFromTag, k -> new HashMap<>())
               .put(formatter.format(completenessResult.getKey()), completenessResult.getValue());
+            // set completeness to false if availability for measure is below threshold
             isDataComplete = false;
           }
         }
@@ -738,7 +738,6 @@ public class StorageCandidate implements Candidate, CandidateTable {
 
   @Override
   public boolean isDimAttributeEvaluable(String dim) throws LensException {
-
     return getCubeQueryContext().getDeNormCtx()
       .addRefUsage(getCubeQueryContext(), this, dim, getCubeQueryContext().getCube().getName());
   }
@@ -971,7 +970,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   @Override
-  public Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) {
+  public Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measureIndices) {
     answerableMeasurePhraseIndices.retainAll(measureIndices);
     return answerableMeasurePhraseIndices;
   }
