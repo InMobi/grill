@@ -187,11 +187,11 @@ public class JoinCandidate implements Candidate {
   }
 
   @Override
-  public Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) throws LensException {
+  public Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measureIndices) throws LensException {
     Set<Integer> remaining = Sets.newHashSet(measureIndices);
     Set<Integer> allCovered = Sets.newHashSet();
     for (Candidate child : children) {
-      Set<Integer> covered = child.decideMeasuresToAnswer(remaining);
+      Set<Integer> covered = child.decideMeasurePhrasesToAnswer(remaining);
       allCovered.addAll(covered);
       remaining = Sets.difference(remaining, covered);
     }

@@ -963,7 +963,7 @@ public class StorageCandidate implements Candidate, CandidateTable {
   }
 
   @Override
-  public Set<Integer> decideMeasuresToAnswer(Set<Integer> measureIndices) {
+  public Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measureIndices) {
     answerableMeasurePhraseIndices.retainAll(measureIndices);
     return answerableMeasurePhraseIndices;
   }
