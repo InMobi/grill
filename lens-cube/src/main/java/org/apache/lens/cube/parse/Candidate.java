@@ -356,10 +356,10 @@ public interface Candidate {
     throw new IllegalArgumentException("Candidate doesn't have children and no suitable implementation found");
   }
 
-  default Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measurePhraseIndices) throws LensException {
+  default Set<Integer> decideMeasurePhrasesToAnswer(Set<Integer> measureIndices) throws LensException {
     HashSet<Integer> allCovered = Sets.newHashSet();
     for (Candidate candidate : getChildren()) {
-      Set<Integer> covered = candidate.decideMeasurePhrasesToAnswer(measurePhraseIndices);
+      Set<Integer> covered = candidate.decideMeasurePhrasesToAnswer(measureIndices);
       allCovered.addAll(covered);
     }
     return allCovered;
