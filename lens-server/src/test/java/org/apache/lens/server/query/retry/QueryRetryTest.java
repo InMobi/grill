@@ -52,7 +52,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-@Test(groups = "post-restart", dependsOnGroups = "restart-test")
+@Test(groups = "post-restart", dependsOnGroups = "restart-test", enabled = false)
 public class QueryRetryTest extends LensJerseyTest {
 
   private LensSessionHandle session;
@@ -97,7 +97,7 @@ public class QueryRetryTest extends LensJerseyTest {
       QUERY_RETRY_POLICY_CLASSES, TestServerRetryPolicyDecider.class.getName());
   }
 
-  @Test
+  @Test(enabled = false)
   public void testSingleRetrySameDriver() throws LensException, InterruptedException {
     QueryHandle handle = getQueryService().executeAsync(session, "select 1",
       getLensConf("driver.retry/single_failure.cost", "1", "driver.retry/double_failure.cost", "2"),
@@ -116,7 +116,7 @@ public class QueryRetryTest extends LensJerseyTest {
 
   }
 
-  @Test
+  @Test(enabled = false)
   public void testRetryOnDifferentDriver() throws LensException, InterruptedException {
     QueryHandle handle = getQueryService().executeAsync(session, "select 1",
       getLensConf("driver.retry/single_failure.cost", "2", "driver.retry/double_failure.cost", "1"),
@@ -144,7 +144,7 @@ public class QueryRetryTest extends LensJerseyTest {
     assertEquals(lensQuery.getFailedAttempts(), ctx.getFailedAttempts());
   }
 
-  @Test
+  @Test(enabled = false)
   public void testFailureAfterRetry() throws LensException, InterruptedException {
     QueryHandle handle = getQueryService().executeAsync(session, "select 1",
       getLensConf("driver.retry/double_failure.cost", "1"),
@@ -162,7 +162,7 @@ public class QueryRetryTest extends LensJerseyTest {
     assertTrue(ctx.getStatus().failed());
   }
 
-  @Test
+  @Test(enabled = false)
   public void testDelayedLaunch() throws LensException, InterruptedException {
     QueryHandle handle = getQueryService().executeAsync(session, "select 1",
       getLensConf("driver.retry/double_failure.cost", "1",
@@ -182,7 +182,7 @@ public class QueryRetryTest extends LensJerseyTest {
     assertTrue(ctx.getDriverStatus().getDriverStartTime() - attempt2.getDriverFinishTime() >= 1000);
   }
 
-  @Test
+  @Test(enabled = false)
   public void testRestartWhileRetry() throws LensException, InterruptedException {
     QueryHandle handle = getQueryService().executeAsync(session, "select 1",
       getLensConf("driver.retry/double_failure.cost", "1",
