@@ -572,7 +572,7 @@ public class QueryContext extends AbstractQueryContext implements FailureContext
       getDriverStatus().setStatusMessage("Query " + getQueryHandleString() + " " + state.name().toLowerCase());
     }
     getDriverStatus().setState(state);
-    synchronized (this) {
+    synchronized (this.driverStatusUpdateListeners) {
       for (QueryDriverStatusUpdateListener listener : this.driverStatusUpdateListeners) {
         listener.onDriverStatusUpdated(getQueryHandle(), getDriverStatus());
       }
@@ -588,8 +588,10 @@ public class QueryContext extends AbstractQueryContext implements FailureContext
   }
 
 
-  public synchronized void registerStatusUpdateListener(QueryDriverStatusUpdateListener driverStatusUpdateListener) {
-    this.driverStatusUpdateListeners.add(driverStatusUpdateListener);
+  public void registerStatusUpdateListener(QueryDriverStatusUpdateListener driverStatusUpdateListener) {
+    synchronized (this.driverStatusUpdateListeners) {
+      this.driverStatusUpdateListeners.add(driverStatusUpdateListener);
+    }
   }
 
   @Override
