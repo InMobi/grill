@@ -198,7 +198,7 @@ public class QueryContext extends AbstractQueryContext implements FailureContext
   @Getter
   @Setter
   private transient Future queryLauncher;
-  transient List<QueryDriverStatusUpdateListener> driverStatusUpdateListeners = Lists.newArrayList();
+  transient List<QueryDriverStatusUpdateListener> driverStatusUpdateListeners = Lists.newCopyOnWriteArrayList();
   @Getter
   @Setter
   List<FailedAttempt> failedAttempts = Lists.newArrayList();
@@ -572,10 +572,9 @@ public class QueryContext extends AbstractQueryContext implements FailureContext
       getDriverStatus().setStatusMessage("Query " + getQueryHandleString() + " " + state.name().toLowerCase());
     }
     getDriverStatus().setState(state);
-    synchronized (this.driverStatusUpdateListeners) {
-      for (QueryDriverStatusUpdateListener listener : this.driverStatusUpdateListeners) {
-        listener.onDriverStatusUpdated(getQueryHandle(), getDriverStatus());
-      }
+
+    for (QueryDriverStatusUpdateListener listener : this.driverStatusUpdateListeners) {
+      listener.onDriverStatusUpdated(getQueryHandle(), getDriverStatus());
     }
   }
 
@@ -589,9 +588,7 @@ public class QueryContext extends AbstractQueryContext implements FailureContext
 
 
   public void registerStatusUpdateListener(QueryDriverStatusUpdateListener driverStatusUpdateListener) {
-    synchronized (this.driverStatusUpdateListeners) {
-      this.driverStatusUpdateListeners.add(driverStatusUpdateListener);
-    }
+    this.driverStatusUpdateListeners.add(driverStatusUpdateListener);
   }
 
   @Override
