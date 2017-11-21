@@ -127,7 +127,7 @@
 
   <groupId>org.apache.lens</groupId>
   <artifactId>apache-lens</artifactId>
-  <version>2.7.16-inm</version>
+  <version>2.7.17-inm-SNAPSHOT</version>
   <name>Lens</name>
   <packaging>pom</packaging>
   <description>Unified Analytics Platform</description>
@@ -388,7 +388,7 @@
     <connection>scm:git:https://github.com/InMobi/grill.git</connection>
     <url>https://github.com/InMobi/grill</url>
     <developerConnection>scm:git:https://github.com/InMobi/grill.git</developerConnection>
-    <tag>apache-lens-2.7.16-inm</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <reporting>
@@ -741,7 +741,7 @@
           <dependency>
             <groupId>org.apache.lens</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>2.7.16-inm</version>
+            <version>2.7.17-inm-SNAPSHOT</version>
           </dependency>
         </dependencies>
         <executions>
@@ -1855,7 +1855,7 @@
               <dependency>
                 <groupId>org.apache.lens</groupId>
                 <artifactId>checkstyle</artifactId>
-                <version>2.7.16-inm</version>
+                <version>2.7.17-inm-SNAPSHOT</version>
               </dependency>
             </dependencies>
             <executions>
