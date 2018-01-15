@@ -1734,6 +1734,7 @@
     <module>lens-cube</module>
     <module>lens-storage-db</module>
     <module>lens-query-lib</module>
+    <module>lens-driver-adla</module>
     <module>lens-driver-hive</module>
     <module>lens-driver-jdbc</module>
     <module>lens-driver-es</module>
