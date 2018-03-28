@@ -1524,7 +1524,7 @@ public class TestCubeRewriter extends TestQueryRewrite {
     String rewrittenQuery = ctx.toHQL();
     assertTrue(!rewrittenQuery.contains("time_range_in"));
   }
-  
+
   @Test
   public void testCubeQueryWithMultipleRanges() throws Exception {
     String hqlQuery =
