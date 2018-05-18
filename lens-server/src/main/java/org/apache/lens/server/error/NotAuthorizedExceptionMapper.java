@@ -16,25 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.lens.server.quota;
+package org.apache.lens.server.error;
 
-import org.apache.lens.server.auth.Authenticate;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-/**
- * The Class QuotaResource.
- */
-@Authenticate
-@Path("/quota")
-public class QuotaResource {
-
-  @GET
-  @Produces(MediaType.TEXT_PLAIN)
-  public String getMessage() {
-    return "Hello World! from quota";
+@Provider
+public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthorizedException> {
+  @Override
+  public Response toResponse(NotAuthorizedException exception) {
+    return exception.getResponse();
   }
 }
