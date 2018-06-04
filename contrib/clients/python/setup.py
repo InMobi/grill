@@ -52,7 +52,7 @@ class Tox(TestCommand):
 
 setup(
     name='lens-client',
-    version="2.6.1",
+    version="2.7.24-inm",
     url='http://github.com/apache/lens/',
     license='Apache Software License',
     author='Apache',
