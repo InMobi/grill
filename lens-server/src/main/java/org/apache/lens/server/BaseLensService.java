@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 import org.apache.lens.api.LensConf;
 import org.apache.lens.api.LensSessionHandle;
 import org.apache.lens.api.auth.AuthScheme;
+import org.apache.lens.api.session.SessionPerUserInfo;
 import org.apache.lens.api.session.UserSessionInfo;
 import org.apache.lens.api.util.PathValidator;
 import org.apache.lens.server.api.LensConfConstants;
@@ -253,21 +254,27 @@ public abstract class BaseLensService extends CompositeService implements Extern
    * @param password      the password
    * @throws LensException the lens exception
    */
-  public void restoreSession(LensSessionHandle sessionHandle, String userName, String password) throws LensException {
+  public void restoreSession(LensSessionHandle sessionHandle, String userName, String password,
+                             Map<String, String> configuration) throws LensException {
     HandleIdentifier handleIdentifier = new HandleIdentifier(sessionHandle.getPublicId(), sessionHandle.getSecretId());
     SessionHandle hiveSessionHandle = new SessionHandle(new TSessionHandle(handleIdentifier.toTHandleIdentifier()));
     try {
       cliService.createSessionWithSessionHandle(hiveSessionHandle, userName, password,
-        new HashMap<String, String>());
+        new HashMap<>());
       LensSessionHandle restoredSession = new LensSessionHandle(hiveSessionHandle.getHandleIdentifier().getPublicId(),
         hiveSessionHandle.getHandleIdentifier().getSecretId());
       SESSION_MAP.put(restoredSession.getPublicId().toString(), restoredSession);
-      SessionUser sessionUser = SESSION_USER_INSTANCE_MAP.get(userName);
-      if (sessionUser == null) {
-        sessionUser = new SessionUser(userName);
-        SESSION_USER_INSTANCE_MAP.put(userName, sessionUser);
+
+      String loggedinUser = userName;
+      if (configuration!= null) {
+        loggedinUser = configuration.getOrDefault(LensConfConstants.SESSION_LOGGEDIN_USER, userName);
       }
-      updateSessionsPerUser(userName);
+      SessionUser sessionUser = SESSION_USER_INSTANCE_MAP.get(loggedinUser);
+      if (sessionUser == null) {
+        sessionUser = new SessionUser(loggedinUser);
+        SESSION_USER_INSTANCE_MAP.put(loggedinUser, sessionUser);
+      }
+      updateSessionsPerUser(loggedinUser);
     } catch (HiveSQLException e) {
       throw new LensException("Error restoring session " + sessionHandle, e);
     }
@@ -591,6 +598,19 @@ public abstract class BaseLensService extends CompositeService implements Extern
       userSessionInfoList.add(sessionInfo);
     }
     return userSessionInfoList;
+  }
+
+  public List<SessionPerUserInfo> getSessionPerUser() {
+
+    List<SessionPerUserInfo> sessionsPerUserInfoList = new ArrayList<>();
+    for (Map.Entry<String, Integer> sessionsPerUser : SESSIONS_PER_USER.entrySet()) {
+      SessionPerUserInfo sessionPerUserInfo = new SessionPerUserInfo();
+      sessionPerUserInfo.setUser(sessionsPerUser.getKey());
+      sessionPerUserInfo.setSessionCount(sessionsPerUser.getValue());
+      sessionsPerUserInfoList.add(sessionPerUserInfo);
+    }
+
+    return sessionsPerUserInfoList;
   }
 }
 
